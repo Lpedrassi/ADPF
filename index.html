@@ -1,33 +1,902 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meu Workspace</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 80vh;
-            margin: 0;
-            background-color: #f4f4f9;
-            color: #333;
-        }
-        .card {
-            text-align: center;
-            background: #fff;
-            padding: 2.5rem;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-    </style>
-</head>
-<body>
-    <div class="card">
-        <h1>Workspace no Ar! 🚀</h1>
-        <p>Meu site hospedado gratuitamente no GitHub Pages.</p>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AD Parque Florianópolis</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #09090E;
+    --bg-soft: #0E0E15;
+    --surface: #16161F;
+    --surface-2: #1D1D28;
+    --border: rgba(255,255,255,0.08);
+    --border-strong: rgba(255,255,255,0.16);
+    --ink: #F5F5F8;
+    --muted: #9B9BA8;
+    --muted-2: #6C6C79;
+
+    --laranja: #FF7A33;
+    --laranja-ink: #1F0D04;
+    --azul: #3B82FF;
+    --vermelho: #FF3B52;
+    --amarelo: #FFC94D;
+    --dourado: #E3B341;
+    --azul-royal: #3B5BFF;
+    --infantil: #F9B6B6;
+    --jovens: #A2F1D5;
+    --prata: #C9CDD3;
+    --rosa-claro: #FF9EC8;
+
+    --shadow: rgba(0,0,0,0.55);
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3 {
+    font-family: "Unbounded", ui-sans-serif, system-ui, sans-serif;
+    line-height: 1.14;
+    text-wrap: balance;
+    margin: 0;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+  p { margin: 0; }
+  a { color: inherit; }
+
+  .grad-text {
+    background: linear-gradient(95deg, var(--amarelo) 0%, var(--laranja) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 0 32px; }
+
+  .pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 8px 18px; border-radius: 999px; font-size: 13px; font-weight: 700;
+  }
+  .eyebrow {
+    background: rgba(255,255,255,0.06); color: var(--ink);
+    border: 1px solid var(--border-strong);
+    text-transform: uppercase; letter-spacing: 0.06em;
+  }
+  .eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--laranja); }
+
+  /* ---------- Nav ---------- */
+  .nav-shell {
+    position: sticky; top: 18px; z-index: 50; padding: 0 20px;
+    margin-top: 18px;
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+    will-change: transform;
+    backface-visibility: hidden;
+  }
+  .nav {
+    max-width: 1160px; margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between; gap: 14px;
+    padding: 8px 8px 8px 16px; border-radius: 999px;
+    background: rgba(22,22,31,0.72);
+    backdrop-filter: blur(18px);
+    border: 1px solid var(--border);
+    box-shadow: 0 20px 40px -24px var(--shadow);
+  }
+  .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+  .brand-mark {
+    width: 38px; height: 38px; border-radius: 10px; overflow: hidden;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    background: #fff;
+  }
+  .brand-mark img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .brand-name { font-family: "Unbounded", sans-serif; font-weight: 700; font-size: 13.5px; color: var(--ink); }
+  .brand-name span { display: block; font-family: "Plus Jakarta Sans", sans-serif; font-weight: 600; font-size: 10px; letter-spacing: 0.09em; text-transform: uppercase; color: var(--muted); margin-top: 2px; }
+
+  .nav-links { display: flex; gap: 4px; list-style: none; margin: 0; padding: 0; }
+  .nav-links a {
+    text-decoration: none; font-size: 13px; font-weight: 600; color: var(--muted);
+    padding: 10px 18px; border-radius: 999px; transition: background 0.2s ease, color 0.2s ease;
+    text-transform: uppercase; letter-spacing: 0.03em;
+  }
+  .nav-links a.is-active { background: var(--ink); color: #0B0B10; }
+  .nav-links a:not(.is-active):hover { background: rgba(255,255,255,0.08); color: var(--ink); }
+
+  .nav-cta {
+    display: inline-flex; align-items: center; gap: 8px; padding: 11px 20px;
+    background: var(--laranja); color: var(--laranja-ink); text-decoration: none;
+    font-size: 14px; font-weight: 700; border-radius: 999px;
+    transition: transform 0.15s ease, box-shadow 0.2s ease;
+  }
+  .nav-cta:hover { transform: translateY(-1px); box-shadow: 0 12px 24px -10px rgba(255,122,51,0.55); }
+  @media (max-width: 780px) { .nav-links { display: none; } }
+
+  /* ---------- Login button + modal ---------- */
+  .nav-login {
+    display: inline-flex; align-items: center; gap: 8px; flex-shrink: 0;
+    padding: 10px 20px 10px 16px; border-radius: 999px;
+    background: rgba(255,196,61,0.12); border: 1px solid rgba(255,196,61,0.4);
+    font-size: 14px; font-weight: 700;
+    font-family: "Plus Jakarta Sans", sans-serif; cursor: pointer;
+    transition: border-color 0.2s ease, background 0.2s ease, transform 0.15s ease;
+  }
+  .nav-login svg { width: 19px; height: 19px; flex-shrink: 0; }
+  .nav-login:hover {
+    border-color: rgba(255,196,61,0.7); background: rgba(255,196,61,0.2); transform: translateY(-1px);
+  }
+  .nav-login-label {
+    background: linear-gradient(100deg, #FFE38A 0%, #FFB100 100%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+
+  .login-overlay {
+    position: fixed; inset: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: center; padding: 24px;
+    background: rgba(9,9,14,0.72); backdrop-filter: blur(10px);
+    opacity: 0; transition: opacity 0.2s ease;
+  }
+  .login-overlay[hidden] { display: none; }
+  .login-overlay.is-open { opacity: 1; }
+  .login-card {
+    position: relative; width: 100%; max-width: 380px;
+    background: var(--surface); border: 1px solid var(--border-strong); border-radius: 28px;
+    padding: 40px 32px 32px; box-shadow: 0 40px 80px -24px var(--shadow);
+    transform: translateY(14px) scale(0.98); transition: transform 0.22s ease;
+  }
+  .login-overlay.is-open .login-card { transform: translateY(0) scale(1); }
+  .login-close {
+    position: absolute; top: 16px; right: 16px;
+    width: 34px; height: 34px; border-radius: 999px;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(255,255,255,0.06); border: 1px solid var(--border);
+    color: var(--muted); cursor: pointer; transition: color 0.2s ease, border-color 0.2s ease;
+  }
+  .login-close:hover { color: var(--ink); border-color: var(--border-strong); }
+  .login-card h2 { font-size: 24px; font-weight: 700; margin-top: 14px; }
+  .login-sub { margin-top: 10px; font-size: 14px; color: var(--muted); }
+  .login-form { display: flex; flex-direction: column; gap: 16px; margin-top: 28px; }
+  .login-form label { display: block; font-size: 12.5px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 7px; }
+  .login-form input {
+    width: 100%; padding: 12px 16px; border-radius: 14px; font-size: 14.5px;
+    background: var(--surface-2); border: 1px solid var(--border); color: var(--ink);
+    font-family: "Plus Jakarta Sans", sans-serif; transition: border-color 0.2s ease;
+  }
+  .login-form input::placeholder { color: var(--muted-2); }
+  .login-form input:focus { outline: none; border-color: var(--azul); }
+  .login-note { margin-top: 20px; font-size: 12px; color: var(--muted-2); text-align: center; }
+
+  /* ---------- Hero ---------- */
+  .hero { position: relative; overflow: hidden; padding: 84px 0 0; }
+  .aurora { position: absolute; inset: 0; z-index: 0; overflow: hidden; }
+  .band {
+    position: absolute; width: 180%; height: 360px; left: -40%;
+    filter: blur(80px); mix-blend-mode: screen; opacity: 0.65;
+  }
+  .band-1 {
+    top: -60px;
+    background: linear-gradient(100deg, transparent 0%, var(--azul) 22%, var(--vermelho) 52%, var(--laranja) 78%, transparent 100%);
+    transform: rotate(-7deg);
+  }
+  .band-2 {
+    top: 120px;
+    background: linear-gradient(100deg, transparent 5%, var(--laranja) 30%, var(--vermelho) 60%, transparent 90%);
+    transform: rotate(-4deg);
+    opacity: 0.4;
+  }
+  .vignette {
+    position: absolute; inset: 0; z-index: 1;
+    background: radial-gradient(ellipse 70% 55% at 50% 38%, rgba(9,9,14,0.25) 0%, rgba(9,9,14,0.86) 62%, var(--bg) 100%);
+  }
+  .hero-inner { position: relative; z-index: 2; text-align: center; max-width: 900px; margin: 0 auto; padding-top: 40px; }
+  .hero h1 { font-size: clamp(28px, 6.2vw, 66px); font-weight: 800; margin-top: 26px; }
+  .hero-sub { margin: 24px auto 0; max-width: 54ch; font-size: 18px; color: var(--muted); }
+  .hero-actions { margin-top: 36px; display: flex; justify-content: center; flex-wrap: wrap; gap: 14px; }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 10px; padding: 15px 28px;
+    font-size: 15px; font-weight: 700; text-decoration: none; border-radius: 999px;
+    border: 1px solid transparent; transition: transform 0.15s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+  }
+  .btn-primary { background: var(--laranja); color: var(--laranja-ink); }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 18px 30px -14px rgba(255,122,51,0.5); }
+  .btn-ghost { background: rgba(255,255,255,0.05); color: var(--ink); border-color: var(--border-strong); }
+  .btn-ghost:hover { border-color: var(--azul); background: rgba(59,130,255,0.1); transform: translateY(-2px); }
+
+  .quicklinks { margin-top: 44px; display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; }
+  .qlink {
+    padding: 9px 18px; border-radius: 999px; font-size: 12.5px; font-weight: 600;
+    background: rgba(255,255,255,0.04); border: 1px solid var(--border); color: var(--muted);
+    text-decoration: none; transition: border-color 0.2s ease, color 0.2s ease;
+    text-transform: uppercase; letter-spacing: 0.03em;
+  }
+  .qlink:hover { color: var(--ink); }
+  .qlink.c-azul:hover { border-color: var(--azul); }
+  .qlink.c-vermelho:hover { border-color: var(--vermelho); }
+  .qlink.c-laranja:hover { border-color: var(--laranja); }
+
+  .emblem-row { margin: 60px 0 148px; display: flex; justify-content: center; position: relative; z-index: 2; }
+  .emblem-social { position: relative; width: 200px; height: 200px; }
+  .emblem-ring {
+    position: relative; z-index: 2;
+    width: 200px; height: 200px; border-radius: 40px; padding: 3px;
+    background: conic-gradient(from 200deg, var(--azul), var(--vermelho), var(--laranja), var(--azul));
+    box-shadow: 0 30px 70px -20px var(--shadow);
+  }
+  .emblem-inner {
+    width: 100%; height: 100%; border-radius: 38px; background: var(--surface);
+    display: flex; align-items: center; justify-content: center; overflow: hidden;
+  }
+  .emblem-inner img { width: 68%; height: 68%; object-fit: contain; }
+  .emblem-ring { cursor: pointer; }
+
+  .social-side {
+    position: absolute; top: 50%; left: 50%; z-index: 1;
+    width: 68px; height: 68px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    text-decoration: none; opacity: 0; pointer-events: none;
+    transform: translate(-50%, -50%) scale(0.3);
+    filter: drop-shadow(0 10px 20px rgba(0,0,0,0.5));
+    transition: opacity 0.35s ease, transform 0.35s ease;
+  }
+  .social-side img { width: 100%; height: 100%; object-fit: contain; }
+  .emblem-social:hover .social-side,
+  .emblem-social.is-open .social-side { opacity: 1; pointer-events: auto; z-index: 3; }
+  .emblem-social:hover .social-side.ig,
+  .emblem-social.is-open .social-side.ig { transform: translate(calc(-50% - 128px), -50%) scale(1); }
+  .emblem-social:hover .social-side.fb,
+  .emblem-social.is-open .social-side.fb { transform: translate(calc(-50% + 128px), -50%) scale(1); }
+  .social-side:hover { transform: translate(calc(-50% - 128px), -50%) scale(1.1); }
+  .social-side.fb:hover { transform: translate(calc(-50% + 128px), -50%) scale(1.1); }
+
+  .social-label {
+    position: absolute; top: 100%; left: 50%; z-index: 1;
+    margin-top: 16px; white-space: nowrap;
+    font-size: 12.5px; font-weight: 700; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 0.05em;
+    opacity: 0; pointer-events: none;
+    transform: translate(-50%, -6px);
+    transition: opacity 0.35s ease, transform 0.35s ease;
+  }
+  .emblem-social:hover .social-label,
+  .emblem-social.is-open .social-label { opacity: 1; transform: translate(-50%, 0); }
+
+  .fade-bottom { height: 90px; background: linear-gradient(180deg, transparent 0%, var(--bg) 100%); position: relative; z-index: 2; margin-top: -90px; }
+
+  /* ---------- Section shell ---------- */
+  section { padding: 100px 0; position: relative; }
+  .section-head { max-width: 620px; margin: 0 auto 52px; text-align: center; }
+  .section-head h2 { font-size: clamp(27px, 3.4vw, 38px); font-weight: 800; margin-top: 16px; }
+  .section-head p { margin-top: 16px; color: var(--muted); font-size: 16.5px; }
+
+  .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .reveal.is-visible { opacity: 1; transform: translateY(0); }
+  @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
+
+  /* ---------- Sobre / symbols ---------- */
+  .simbolos-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; }
+  @media (max-width: 980px) { .simbolos-grid { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 620px) { .simbolos-grid { grid-template-columns: repeat(2, 1fr); } }
+  .simbolo-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 26px;
+    padding: 26px 18px; text-align: center; transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+  }
+  .simbolo-card:hover { transform: translateY(-4px); background: var(--surface-2); }
+  .simbolo-icon {
+    width: 52px; height: 52px; border-radius: 16px; margin: 0 auto 16px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .simbolo-icon svg { width: 26px; height: 26px; }
+  .simbolo-card h3 { font-size: 14.5px; font-weight: 700; font-family: "Plus Jakarta Sans", sans-serif; }
+  .simbolo-card p { margin-top: 8px; font-size: 12.5px; color: var(--muted); line-height: 1.5; }
+
+  .sobre-copy { max-width: 68ch; margin: 44px auto 0; text-align: center; font-size: 16.5px; color: var(--muted); }
+
+  .sobre-intro { max-width: 74ch; margin: 16px auto 0; text-align: center; font-size: 19px; font-weight: 700; color: var(--ink); line-height: 1.6; }
+  .sobre-intro strong { color: var(--ink); font-weight: 700; }
+  .section-head h2.compact { font-size: clamp(22px, 2.8vw, 30px); }
+  .section-divider { margin-top: 72px; }
+
+  /* ---------- Credo ---------- */
+  .credo-block {
+    max-width: 780px; margin-left: auto; margin-right: auto; text-align: center;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 28px;
+    padding: 40px 36px;
+  }
+  .credo-block h3 { font-size: 22px; font-weight: 700; margin-top: 14px; }
+  .credo-block p { margin-top: 16px; font-size: 15.5px; color: var(--muted); line-height: 1.7; text-align: left; }
+  .credo-link {
+    display: inline-flex; align-items: center; gap: 8px; margin-top: 22px;
+    font-size: 14px; font-weight: 700; color: var(--laranja); text-decoration: none;
+    border-bottom: 1px solid transparent; transition: border-color 0.2s ease;
+  }
+  .credo-link:hover { border-color: var(--laranja); }
+
+  /* ---------- Pastores ---------- */
+  .pastores-head { text-align: center; margin-bottom: 40px; }
+  .pastores-panel {
+    position: relative; overflow: visible;
+    background:
+      radial-gradient(55% 80% at 50% 46%, rgba(59,91,255,0.42) 0%, rgba(59,91,255,0.14) 42%, transparent 72%),
+      var(--bg);
+    display: grid; grid-template-columns: 1fr 1fr;
+    align-items: end; column-gap: 0;
+    padding: 56px 24px 0;
+  }
+  @media (max-width: 700px) {
+    .pastores-panel { grid-template-columns: 1fr; padding-top: 40px; row-gap: 8px; }
+    .pastor-lg, .pastor-right { margin: 0 !important; }
+  }
+  .pastor-card { display: flex; flex-direction: column; align-items: center; }
+  .pastor-card img {
+    width: 100%; max-width: 320px; height: auto; object-fit: contain; display: block;
+    filter: drop-shadow(0 24px 34px rgba(0,0,0,0.55));
+  }
+  .pastor-lg img { max-width: 380px; }
+  .pastor-lg { margin-right: -8%; }
+  .pastor-right { margin-left: -8%; }
+  .pastor-caption {
+    text-align: center; padding: 8px 12px 26px; font-family: "Plus Jakarta Sans", sans-serif;
+  }
+  .pastor-caption .name {
+    display: block; font-family: "Unbounded", sans-serif;
+    font-size: 26px; font-weight: 700; color: var(--ink);
+  }
+  .pastor-caption .role {
+    display: block; margin-top: 4px; font-size: 12.5px; font-weight: 700; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--dourado);
+  }
+
+  /* ---------- Departamentos ---------- */
+  .departamentos-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  @media (max-width: 920px) { .departamentos-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 560px) { .departamentos-grid { grid-template-columns: 1fr; } }
+  .dept-card {
+    display: flex; align-items: center; gap: 14px;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 22px;
+    padding: 20px 22px; text-decoration: none; color: var(--ink);
+    transition: transform 0.2s ease, background 0.2s ease;
+  }
+  .dept-card:hover { transform: translateY(-4px); background: var(--surface-2); }
+  .dept-icon { font-size: 24px; flex-shrink: 0; }
+  .dept-card h3 { font-size: 15px; font-weight: 700; font-family: "Plus Jakarta Sans", sans-serif; flex: 1; }
+  .dept-arrow { color: var(--muted); font-size: 16px; flex-shrink: 0; transition: transform 0.2s ease; }
+  .dept-card:hover .dept-arrow { transform: translateX(3px); color: var(--ink); }
+
+  /* ---------- EBD ---------- */
+  .ebd-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  @media (max-width: 920px) { .ebd-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 560px) { .ebd-grid { grid-template-columns: 1fr; } }
+  .turma {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 26px;
+    padding: 26px 22px; transition: transform 0.2s ease, background 0.2s ease;
+  }
+  .turma:hover { transform: translateY(-4px); background: var(--surface-2); }
+  .turma-head { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+  .turma-badge {
+    width: 42px; height: 42px; border-radius: 14px; display: flex; align-items: center; justify-content: center;
+    font-family: Georgia, "Times New Roman", serif; font-weight: 700; font-size: 15px;
+    letter-spacing: 0.02em; flex-shrink: 0;
+  }
+  .turma h3 { font-size: 17px; font-weight: 700; font-family: "Plus Jakarta Sans", sans-serif; }
+  .turma p { font-size: 13.5px; color: var(--muted); margin-top: 8px; }
+
+  .ebd-note {
+    margin: 40px auto 0; padding: 22px 26px; border-radius: 22px;
+    background: var(--surface); border: 1px solid var(--border);
+    font-size: 14.5px; color: var(--muted); max-width: 66ch; text-align: center;
+  }
+  .ebd-note strong { color: var(--ink); font-weight: 700; }
+
+  /* ---------- Cultos ---------- */
+  .cultos-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  @media (max-width: 760px) { .cultos-grid { grid-template-columns: 1fr; } }
+  .culto-card { background: var(--surface); border: 1px solid var(--border); border-radius: 26px; padding: 30px 26px; }
+  .culto-tag {
+    display: inline-block; padding: 6px 14px; border-radius: 999px; font-size: 12px; font-weight: 700;
+    margin-bottom: 16px;
+  }
+  .culto-card h3 { font-size: 19px; font-weight: 700; font-family: "Plus Jakarta Sans", sans-serif; }
+  .culto-card p { font-size: 14px; color: var(--muted); margin-top: 8px; }
+  .cultos-note { margin-top: 26px; font-size: 13.5px; color: var(--muted-2); text-align: center; }
+
+  /* ---------- Contato ---------- */
+  .contato {
+    background:
+      radial-gradient(120% 160% at 20% -10%, rgba(255,122,51,0.22) 0%, rgba(255,122,51,0) 55%),
+      radial-gradient(120% 160% at 100% 120%, rgba(59,130,255,0.14) 0%, rgba(59,130,255,0) 55%),
+      var(--surface);
+    border: 1px solid var(--border-strong);
+    border-radius: 36px; margin: 0 20px; padding: 76px 24px;
+  }
+  .contato-inner { max-width: 720px; margin: 0 auto; text-align: center; }
+  .contato .eyebrow { background: rgba(255,255,255,0.06); border-color: var(--border-strong); color: var(--ink); }
+  .contato .eyebrow .dot { background: var(--laranja); }
+  .contato h2 { color: var(--ink); margin-top: 18px; }
+  .contato p.lead { margin-top: 16px; font-size: 17px; color: var(--muted); }
+  .placeholder-box {
+    margin-top: 32px; border-radius: 20px; border: 1px dashed var(--border-strong);
+    padding: 22px 24px; font-size: 14px; color: var(--muted); text-align: left;
+  }
+  .placeholder-box strong { color: var(--ink); }
+  .info-box {
+    margin-top: 32px; border-radius: 20px; border: 1px solid var(--border-strong);
+    background: rgba(255,255,255,0.04);
+    padding: 22px 24px; font-size: 14px; color: var(--muted); text-align: left;
+  }
+  .info-box strong { color: var(--ink); }
+  .maps-links { margin-top: 18px; display: flex; justify-content: center; flex-wrap: wrap; gap: 12px; }
+  .map-btn {
+    display: inline-flex; align-items: center; gap: 9px; padding: 11px 20px;
+    border-radius: 999px; font-size: 13.5px; font-weight: 700; text-decoration: none;
+    background: rgba(255,255,255,0.05); color: var(--ink); border: 1px solid var(--border-strong);
+    transition: transform 0.15s ease, background 0.2s ease, border-color 0.2s ease;
+  }
+  .map-btn img { width: 20px; height: 20px; object-fit: contain; flex-shrink: 0; }
+  .map-btn:hover { transform: translateY(-2px); }
+  .map-btn.gmaps:hover { border-color: var(--azul); background: rgba(59,130,255,0.12); }
+  .map-btn.waze:hover { border-color: #7ED0F0; background: rgba(126,208,240,0.12); }
+
+  /* ---------- Footer ---------- */
+  footer { padding: 46px 0 56px; }
+  .footer-inner {
+    display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap;
+    font-size: 13px; color: var(--muted-2);
+  }
+
+  :focus-visible { outline: 2px solid var(--azul); outline-offset: 2px; }
+</style>
+
+<div class="nav-shell">
+  <nav class="nav">
+    <a class="brand" href="#topo">
+      <span class="brand-mark"><img src="assets/logo/logo_nav_whitebg.webp" alt="Brasão AD Ministério do Belém" /></span>
+      <span class="brand-name">AD BELEM<span>Jaguariuna · Pq Florianópolis</span></span>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a class="is-active" href="#topo" data-nav="topo">Início</a></li>
+      <li><a href="#cultos" data-nav="cultos">Cultos</a></li>
+      <li><a href="#sobre" data-nav="sobre">Quem somos</a></li>
+      <li><a href="#departamentos" data-nav="departamentos">Departamentos</a></li>
+      <li><a href="#ebd" data-nav="ebd">EBD</a></li>
+      <li><a href="#contato-section" data-nav="contato-section">Como chegar</a></li>
+    </ul>
+    <button class="nav-login" id="loginBtn" type="button" aria-haspopup="dialog" aria-controls="loginModal">
+      <svg viewBox="0 0 24 24" fill="none" stroke="url(#navLoginGrad)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <defs>
+          <linearGradient id="navLoginGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#FFE38A" />
+            <stop offset="100%" stop-color="#FFB100" />
+          </linearGradient>
+        </defs>
+        <circle cx="12" cy="8" r="3.4"/><path d="M5 20c0-3.9 3.1-7 7-7s7 3.1 7 7"/>
+      </svg>
+      <span class="nav-login-label">Entrar</span>
+    </button>
+  </nav>
+</div>
+
+<div class="login-overlay" id="loginModal" role="dialog" aria-modal="true" aria-labelledby="loginTitle" hidden>
+  <div class="login-card">
+    <button class="login-close" id="loginClose" type="button" aria-label="Fechar">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+    <span class="pill eyebrow" id="loginTitle"><span class="dot"></span>Acesso de membro</span>
+    <p class="login-sub" style="margin-top:18px;">Que bom ter você aqui! Faça seu login para acessar o ambiente completo da igreja, incluindo Departamentos, EBD, Secretaria e Administração.</p>
+    <form class="login-form">
+      <div>
+        <label for="loginEmail">Usuário</label>
+        <input id="loginEmail" type="text" placeholder="seu usuário" autocomplete="username" required>
+      </div>
+      <div>
+        <label for="loginSenha">Senha</label>
+        <input id="loginSenha" type="password" placeholder="••••••••" autocomplete="current-password" required>
+      </div>
+      <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center; margin-top:4px;">Entrar</button>
+      <button type="button" class="btn btn-ghost" style="width:100%; justify-content:center;">Criar Conta</button>
+    </form>
+  </div>
+</div>
+
+<header class="hero" id="topo">
+  <div class="aurora" aria-hidden="true">
+    <span class="band band-1"></span>
+    <span class="band band-2"></span>
+  </div>
+  <div class="vignette" aria-hidden="true"></div>
+  <div class="wrap hero-inner reveal">
+    <span class="pill eyebrow"><span class="dot"></span>Jaguariúna · SP</span>
+    <h1>Assembleia de Deus Belém<br><span class="grad-text">Pq Florianópolis</span></h1>
+    <p class="hero-sub">Uma congregação que ensina a Palavra, fé, comunhão para toda a familia!</p>
+    <div class="hero-actions">
+      <a class="btn btn-primary" href="#cultos">Horários de cultos</a>
+      <a class="btn btn-ghost" href="#ebd">Conheça a EBD</a>
     </div>
-</body>
+    <div class="quicklinks">
+      <a class="qlink c-azul" href="#sobre">Quem somos</a>
+      <a class="qlink c-vermelho" href="#ebd">Escola Bíblica</a>
+      <a class="qlink c-laranja" href="#cultos">Programação</a>
+      <a class="qlink c-azul" href="#contato">Localização</a>
+    </div>
+    <div class="emblem-row">
+      <div class="emblem-social" id="emblemSocial">
+        <a class="social-side ig" href="https://www.instagram.com/adbelemflorianopolis/" target="_blank" rel="noopener" aria-label="Instagram">
+          <img src="assets/mapas/instagram_icon.webp" alt="Instagram" />
+        </a>
+        <div class="emblem-ring" id="emblemRing">
+          <div class="emblem-inner">
+            <img src="assets/logo/logo_new.webp" alt="Brasão da Assembleia de Deus Ministério do Belém" />
+          </div>
+        </div>
+        <a class="social-side fb" href="#" target="_blank" rel="noopener" aria-label="Facebook">
+          <img src="assets/mapas/facebook_icon.webp" alt="Facebook" />
+        </a>
+        <span class="social-label">Acesse nossas redes sociais</span>
+      </div>
+    </div>
+  </div>
+  <div class="fade-bottom" aria-hidden="true"></div>
+</header>
+
+<section id="cultos">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="pill eyebrow"><span class="dot"></span>Programação semanal</span>
+      <h2>Cultos e encontros</h2>
+      <p>Nossa programação regular de cultos e estudos ao longo da semana.</p>
+    </div>
+    <div class="cultos-grid reveal">
+      <div class="culto-card">
+        <span class="culto-tag" style="background:rgba(59,130,255,0.14); color:var(--azul)">Domingo</span>
+        <h3>Escola Bíblica Dominical</h3>
+        <p>Estudo da Palavra em turmas por idade, do Infantil aos Adultos.</p>
+      </div>
+      <div class="culto-card">
+        <span class="culto-tag" style="background:rgba(255,59,82,0.14); color:var(--vermelho)">Domingo</span>
+        <h3>Culto de Celebração</h3>
+        <p>Louvor, ministração da Palavra e comunhão com toda a igreja.</p>
+      </div>
+      <div class="culto-card">
+        <span class="culto-tag" style="background:rgba(255,122,51,0.14); color:var(--laranja)">Meio de semana</span>
+        <h3>Culto de Oração e Ensino</h3>
+        <p>Um momento de busca e aprofundamento na Palavra durante a semana.</p>
+      </div>
+    </div>
+    <p class="cultos-note reveal">Horários de referência — atualize com a agenda oficial da sua congregação antes de publicar.</p>
+  </div>
+</section>
+
+<section id="sobre">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="pill eyebrow"><span class="dot"></span>Quem somos</span>
+      <p class="sobre-intro">Somos a congregação do Parque Florianópolis, vinculada à Assembleia de Deus do Ministério do Belém em Jaguariúna-SP, sob a cobertura do nosso Templo Sede (Rua Alfredo Bueno, 1235 – Centro). Fazemos parte dessa história com a mesma vocação: pregar a Palavra com fidelidade, viver o agir do Espírito Santo e formar discípulos comprometidos com as Escrituras.</p>
+    </div>
+
+    <div class="section-head reveal section-divider">
+      <h2 class="compact">Cada símbolo do nosso brasão conta uma parte da nossa fé</h2>
+    </div>
+    <div class="simbolos-grid reveal">
+      <div class="simbolo-card">
+        <span class="simbolo-icon" style="background:transparent; width:64px; height:64px;">
+          <img src="assets/icons/tocha.webp" alt="Tocha com chama" style="width:48px;height:auto;" />
+        </span>
+        <h3>Tocha com chama</h3>
+        <p>O fogo do Espírito Santo e a vocação pentecostal que nos move.</p>
+      </div>
+      <div class="simbolo-card">
+        <span class="simbolo-icon" style="background:transparent; width:64px; height:64px;">
+          <img src="assets/icons/pomba2.webp" alt="Pomba branca" style="width:52px;height:auto;" />
+        </span>
+        <h3>Pomba branca</h3>
+        <p>A presença e a operação do Espírito Santo em nossa igreja.</p>
+      </div>
+      <div class="simbolo-card">
+        <span class="simbolo-icon" style="background:transparent; width:64px; height:64px;">
+          <img src="assets/icons/templo.webp" alt="Templo-sede" style="width:44px;height:auto;" />
+        </span>
+        <h3>Templo-sede</h3>
+        <p>A fachada do nosso templo sede na cidade de Jaguariúna.</p>
+      </div>
+      <div class="simbolo-card">
+        <span class="simbolo-icon" style="background:transparent; width:64px; height:64px;">
+          <img src="assets/icons/espada2.webp" alt="Espada com as letras AD" style="width:52px;height:auto;" />
+        </span>
+        <h3>Espada com "AD"</h3>
+        <p>A Palavra de Deus, espada do Espírito, unida à sigla Assembleia de Deus.</p>
+      </div>
+      <div class="simbolo-card">
+        <span class="simbolo-icon" style="background:transparent; width:64px; height:64px;">
+          <img src="assets/icons/faixa.webp" alt="Faixa inferior" style="width:56px;height:auto;" />
+        </span>
+        <h3>Faixa inferior</h3>
+        <p>Ministério do Belém em São Paulo — nossa filiação a matriz.</p>
+      </div>
+    </div>
+    <div class="credo-block reveal section-divider">
+      <span class="pill eyebrow"><span class="dot"></span>Nosso Credo</span>
+      <p style="margin-top:20px;">Cremos na Bíblia Sagrada como única regra infalível de fé e prática; em um só Deus eterno, em três pessoas — Pai, Filho e Espírito Santo; em Jesus Cristo, nascido de virgem, morto e ressuscitado para a nossa salvação; na necessidade do novo nascimento pela fé; no batismo em águas por imersão; no batismo com o Espírito Santo, evidenciado pelo falar em outras línguas; nos dons espirituais para a edificação da Igreja; e na volta gloriosa de Jesus Cristo.</p>
+      <a class="credo-link" href="https://ad.org.br/nosso-credo/" target="_blank" rel="noopener noreferrer">Clique aqui e leia o nosso credo completo oficial pela CGADB →</a>
+    </div>
+
+    <div class="pastores-head reveal section-divider">
+      <span class="pill eyebrow"><span class="dot"></span>Liderança</span>
+      <h2 class="compact" style="margin-top:14px;">Nossos pastores</h2>
+    </div>
+    <div class="pastores-panel reveal">
+      <figure class="pastor-card pastor-lg">
+        <img src="assets/pastores/foto2_v2_cutout.webp" alt="Pr. Rubens das Virgens, pastor presidente" />
+        <figcaption class="pastor-caption">
+          <span class="name">Rubens das Virgens</span>
+          <span class="role">Pr. Presidente</span>
+        </figcaption>
+      </figure>
+      <figure class="pastor-card pastor-right">
+        <img src="assets/pastores/foto3_v2_cutout.webp" alt="Pr. Pedro Nascimento, pastor vice-presidente e local" />
+        <figcaption class="pastor-caption">
+          <span class="name">Pedro Nascimento</span>
+          <span class="role">Pr. Vice-Presidente e Local</span>
+        </figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section id="departamentos">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="pill eyebrow"><span class="dot"></span>Nossos Departamentos</span>
+      <h2>Encontre seu lugar para servir</h2>
+      <p>Conheça os departamentos da nossa congregação e saiba mais sobre cada um deles.</p>
+    </div>
+    <div class="departamentos-grid reveal">
+      <a class="dept-card" href="https://claude.ai/code/artifact/22615238-e343-4d66-aede-89d93b99b00f">
+        <span class="dept-icon">🧸</span>
+        <h3>Infantil</h3>
+        <span class="dept-arrow">→</span>
+      </a>
+      <a class="dept-card" href="https://claude.ai/code/artifact/1525bff6-5361-4a41-aa4e-9c5197b5f63c">
+        <span class="dept-icon">🎧</span>
+        <h3>Adolescentes</h3>
+        <span class="dept-arrow">→</span>
+      </a>
+      <a class="dept-card" href="https://claude.ai/code/artifact/6fb57abb-e021-4a62-b57c-ed5f1e35c0dd">
+        <span class="dept-icon">🔥</span>
+        <h3>Jovens</h3>
+        <span class="dept-arrow">→</span>
+      </a>
+      <a class="dept-card" href="https://claude.ai/code/artifact/233d317f-e13f-4999-a814-48e61db1f40c">
+        <span class="dept-icon">🛡️</span>
+        <h3>Varões</h3>
+        <span class="dept-arrow">→</span>
+      </a>
+      <a class="dept-card" href="https://claude.ai/code/artifact/3a6b0bda-55c6-4185-9c57-d2f9ce5b8be6">
+        <span class="dept-icon">🌸</span>
+        <h3>Feminina</h3>
+        <span class="dept-arrow">→</span>
+      </a>
+      <a class="dept-card" href="https://claude.ai/code/artifact/2908094b-92f3-441a-a7e2-e4e6c39604c3">
+        <span class="dept-icon">🌍</span>
+        <h3>Missões</h3>
+        <span class="dept-arrow">→</span>
+      </a>
+      <a class="dept-card" href="#ebd">
+        <span class="dept-icon">📖</span>
+        <h3>EBD</h3>
+        <span class="dept-arrow">→</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section id="ebd">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="pill eyebrow"><span class="dot"></span>Escola Bíblica Dominical</span>
+      <h2>Ensino da Palavra para cada fase da vida</h2>
+      <p>Currículo trimestral oficial da CPAD, com estudos teológicos sistemáticos, livros bíblicos e ética cristã — preservando as diretrizes pentecostais clássicas da denominação.</p>
+    </div>
+    <div class="ebd-grid reveal">
+      <div class="turma">
+        <div class="turma-head">
+          <span class="turma-badge" style="background:rgba(255,59,82,0.14); color:var(--vermelho)">I1</span>
+          <h3>Infantil 1</h3>
+        </div>
+        <p>Primeiros passos na fé, com canções, gestos e as primeiras histórias da Bíblia.</p>
+      </div>
+      <div class="turma">
+        <div class="turma-head">
+          <span class="turma-badge" style="background:rgba(255,59,82,0.14); color:var(--vermelho)">I2</span>
+          <h3>Infantil 2</h3>
+        </div>
+        <p>Descoberta das grandes narrativas bíblicas de forma lúdica e participativa.</p>
+      </div>
+      <div class="turma">
+        <div class="turma-head">
+          <span class="turma-badge" style="background:rgba(255,122,51,0.14); color:var(--laranja)">A</span>
+          <h3>Adolescentes</h3>
+        </div>
+        <p>Identidade, escolhas e fé em diálogo com os desafios da idade.</p>
+      </div>
+      <div class="turma">
+        <div class="turma-head">
+          <span class="turma-badge" style="background:rgba(162,241,213,0.18); color:var(--jovens)">J</span>
+          <h3>Jovens</h3>
+        </div>
+        <p>Vocação, relacionamentos e vida cristã em tempos de decisão.</p>
+      </div>
+      <div class="turma">
+        <div class="turma-head">
+          <span class="turma-badge" style="background:rgba(59,91,255,0.18); color:var(--azul-royal)">V</span>
+          <h3>Adulto Varões</h3>
+        </div>
+        <p>Estudo sistemático da teologia e da ética cristã à luz das Escrituras para Homens.</p>
+      </div>
+      <div class="turma">
+        <div class="turma-head">
+          <span class="turma-badge" style="background:rgba(255,158,200,0.18); color:var(--rosa-claro)">F</span>
+          <h3>Adulto Feminino</h3>
+        </div>
+        <p>Estudo sistemático da teologia e da ética cristã à luz das Escrituras para Mulheres.</p>
+      </div>
+      <div class="turma">
+        <div class="turma-head">
+          <span class="turma-badge" style="background:rgba(201,205,211,0.18); color:var(--prata)">N</span>
+          <h3>Novos Convertidos</h3>
+        </div>
+        <p>Fundamentos da fé para quem inicia a caminhada com Cristo.</p>
+      </div>
+    </div>
+    <div class="ebd-note reveal">
+      <strong>Discipulado contínuo!</strong> Nosso propósito na EBD e nos Cultos de Ensino é mergulhar nas Escrituras e caminhar lado a lado com cada aluno. Das crianças aos adultos, passando pelos novos convertidos, nosso foco é o seu crescimento espiritual.
+    </div>
+  </div>
+</section>
+
+<section id="contato-section">
+  <div class="wrap">
+    <div class="contato reveal" id="contato">
+      <div class="contato-inner">
+        <span class="pill eyebrow"><span class="dot"></span>Visite-nos</span>
+        <h2>Venha adorar com a gente!</h2>
+        <p class="lead">Sua família é muito importante para nós. Junte-se à nossa comunidade para adorar, aprender e servir. Consulte abaixo nossos horários de cultos, EBD e programações.</p>
+        <div class="info-box">
+          <strong>Endereço: Rua Bruna Laurita Massoti de Almeida, 193B — Pq Florianópolis, Jaguariúna - SP.</strong>
+        </div>
+        <div class="maps-links">
+          <a class="map-btn gmaps" href="https://www.google.com/maps/search/?api=1&query=Rua%20Bruna%20Laurita%20Massoti%20de%20Almeida%2C%20193B%2C%20Pq%20Florian%C3%B3polis%2C%20Jaguari%C3%BAna%20-%20SP" target="_blank" rel="noopener">
+            <img src="assets/mapas/gmaps_icon.webp" alt="Google Maps" />
+            Google Maps
+          </a>
+          <a class="map-btn waze" href="https://waze.com/ul?q=Rua%20Bruna%20Laurita%20Massoti%20de%20Almeida%2C%20193B%2C%20Pq%20Florian%C3%B3polis%2C%20Jaguari%C3%BAna%20-%20SP&navigate=yes" target="_blank" rel="noopener">
+            <img src="assets/mapas/waze_icon.webp" alt="Waze" />
+            Waze
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap footer-inner">
+    <span>© <span id="ano"></span> Igreja Assembleia de Deus Parque Florianópolis — Ministério do Belém</span>
+    <span>Jaguariúna, SP</span>
+  </div>
+</footer>
+
+<script>
+  (function () {
+    var emblemSocial = document.getElementById('emblemSocial');
+    var emblemRing = document.getElementById('emblemRing');
+    if (emblemSocial && emblemRing) {
+      emblemRing.addEventListener('click', function (e) {
+        e.stopPropagation();
+        emblemSocial.classList.toggle('is-open');
+      });
+      document.addEventListener('click', function (e) {
+        if (!emblemSocial.contains(e.target)) {
+          emblemSocial.classList.remove('is-open');
+        }
+      });
+    }
+  })();
+
+  (function () {
+    document.getElementById('ano').textContent = new Date().getFullYear();
+
+    var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var revealEls = document.querySelectorAll('.reveal');
+
+    if (prefersReduced || !('IntersectionObserver' in window)) {
+      revealEls.forEach(function (el) { el.classList.add('is-visible'); });
+      return;
+    }
+
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+    revealEls.forEach(function (el, i) {
+      el.style.transitionDelay = (Math.min(i, 4) * 60) + 'ms';
+      observer.observe(el);
+    });
+  })();
+
+  (function () {
+    var btn = document.getElementById('loginBtn');
+    var modal = document.getElementById('loginModal');
+    var closeBtn = document.getElementById('loginClose');
+    var form = modal.querySelector('.login-form');
+    if (!btn || !modal) return;
+
+    function openModal() {
+      modal.hidden = false;
+      requestAnimationFrame(function () { modal.classList.add('is-open'); });
+      document.body.style.overflow = 'hidden';
+      var firstInput = modal.querySelector('input');
+      if (firstInput) firstInput.focus();
+    }
+    function closeModal() {
+      modal.classList.remove('is-open');
+      document.body.style.overflow = '';
+      setTimeout(function () { modal.hidden = true; }, 200);
+    }
+
+    btn.addEventListener('click', openModal);
+    closeBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', function (e) { if (e.target === modal) closeModal(); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !modal.hidden) closeModal(); });
+    form.addEventListener('submit', function (e) { e.preventDefault(); });
+  })();
+
+  (function () {
+    var navLinks = Array.prototype.slice.call(document.querySelectorAll('#navLinks a'));
+    if (!navLinks.length) return;
+
+    function setActive(id) {
+      navLinks.forEach(function (link) {
+        link.classList.toggle('is-active', link.dataset.nav === id);
+      });
+    }
+
+    // Feedback imediato ao clicar: o fundo branco pula na hora para o item clicado.
+    navLinks.forEach(function (link) {
+      link.addEventListener('click', function () { setActive(link.dataset.nav); });
+    });
+
+    // Ao rolar a página, o item ativo acompanha a seção visível na tela.
+    var sections = navLinks
+      .map(function (link) { return document.getElementById(link.dataset.nav); })
+      .filter(Boolean);
+
+    if ('IntersectionObserver' in window && sections.length) {
+      var observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) setActive(entry.target.id);
+        });
+      }, { rootMargin: '-45% 0px -50% 0px', threshold: 0 });
+
+      sections.forEach(function (section) { observer.observe(section); });
+    }
+  })();
+</script>
+
 </html>
