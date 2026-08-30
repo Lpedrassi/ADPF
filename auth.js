@@ -9,7 +9,8 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   GoogleAuthProvider,
-  signInWithPopup
+  signInWithPopup,
+  sendPasswordResetEmail
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
 import {
   getFirestore,
@@ -77,6 +78,21 @@ if (form) {
   }
 }
 
+window.recuperarSenha = async function () {
+  const email = document.getElementById("loginEmail").value.trim();
+  if (!email) {
+    alert("Digite seu e-mail no campo acima e clique em \"Esqueceu a senha?\" novamente.");
+    return;
+  }
+  try {
+    await sendPasswordResetEmail(auth, email);
+    alert("Enviamos um link de redefinicao de senha para " + email + ".");
+  } catch (err) {
+    alert("Nao foi possivel enviar o e-mail de redefinicao. Confira o e-mail digitado.");
+    console.error(err);
+  }
+};
+
 const googleProvider = new GoogleAuthProvider();
 window.entrarComGoogle = async function () {
   try {
@@ -97,4 +113,3 @@ window.entrarComGoogle = async function () {
     console.error(err);
   }
 };
-
