@@ -170,7 +170,7 @@
   }
   .login-close:hover { color: var(--ink); border-color: var(--border-strong); }
   .login-card h2 { font-size: 24px; font-weight: 700; margin-top: 14px; }
-  .login-sub { margin-top: 10px; font-size: 14px; color: var(--muted); }
+  .login-sub { margin-top: 10px; font-size: 14px; color: var(--ink); font-weight: 700; }
   .login-form { display: flex; flex-direction: column; gap: 16px; margin-top: 28px; }
   .login-form label { display: block; font-size: 12.5px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 7px; }
   .login-form input {
@@ -180,17 +180,18 @@
   }
   .login-form input::placeholder { color: var(--muted-2); }
     .login-form input:focus { outline: none; border-color: var(--azul); } .login-senha-wrap { position: relative; } .login-senha-wrap input { padding-right: 44px; } .toggle-senha { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); width: 30px; height: 30px; border: none; background: transparent; color: var(--muted); cursor: pointer; display: flex; align-items: center; justify-content: center; border-radius: 8px; transition: color 0.2s ease; } .toggle-senha:hover { color: var(--ink); }
-  .login-forgot { display: block; text-align: right; margin-top: -4px; font-size: 12.5px; font-weight: 600; color: var(--azul); text-decoration: none; }
+  .login-forgot { display: block; text-align: right; margin-top: 10px; font-size: 12.5px; font-weight: 600; color: var(--laranja); text-decoration: none; }
   .login-forgot:hover { text-decoration: underline; }
   .login-btn-row { display: flex; gap: 10px; margin-top: 4px; }
   .login-btn-row .btn { flex: 1; justify-content: center; }
   .login-divider { display: flex; align-items: center; gap: 12px; margin: 18px 0 2px; color: var(--muted-2); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; }
   .login-divider::before, .login-divider::after { content: ''; flex: 1; height: 1px; background: var(--border-strong); }
   .btn-google { width: 100%; justify-content: center; }
-  .btn.btn-gold { background: linear-gradient(100deg, #FFE38A 0%, #FFB100 100%); color: #241A00; border-color: transparent; }
-  .btn.btn-gold:hover { transform: translateY(-2px); box-shadow: 0 18px 30px -14px rgba(255,177,0,0.5); }
+  .btn.btn-gold { background: linear-gradient(100deg, #FFE38A 0%, #FFB100 100%); color: #fff; border-color: transparent; }
+  .btn.btn-gold:hover { background: rgba(255,177,0,0.14); border-color: #FFB100; color: #fff; transform: translateY(-2px); box-shadow: none; }
   .btn.btn-blue-grad { background: linear-gradient(100deg, #3B82FF 0%, #3B5BFF 100%); color: #fff; border-color: transparent; }
-  .btn.btn-blue-grad:hover { transform: translateY(-2px); box-shadow: 0 18px 30px -14px rgba(59,91,255,0.5); }
+  .btn.btn-blue-grad:hover { background: rgba(59,130,255,0.14); border-color: var(--azul); color: #fff; transform: translateY(-2px); box-shadow: none; }
+  #loginTitle { display: flex; width: fit-content; margin: 0 auto; font-size: 16px; font-weight: 800; }
   .login-note { margin-top: 20px; font-size: 12px; color: var(--muted-2); text-align: center; }
 
   /* ---------- Hero ---------- */
@@ -572,8 +573,8 @@
     <button class="login-close" id="loginClose" type="button" aria-label="Fechar">
       <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
     </button>
-    <span class="pill eyebrow" id="loginTitle"><span class="dot"></span>Acesso de membro</span>
-    <p class="login-sub" style="margin-top:18px;">Que bom ter você aqui! Faça seu login para acessar o ambiente completo da igreja, incluindo Departamentos, EBD, Secretaria e Administração.</p>
+    <span class="pill eyebrow" id="loginTitle"><span class="dot"></span>Acesso ao Portal</span>
+    <p class="login-sub" style="margin-top:18px;">Que bom ter você aqui!<br><br>Faça seu login para acessar o ambiente completo da igreja, incluindo áreas dos Departamentos, o Portal EBD e muito mais.</p>
     <form class="login-form">
       <div>
         <label for="loginEmail">E-mail</label>
