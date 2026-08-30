@@ -457,6 +457,69 @@
   }
 
   :focus-visible { outline: 2px solid var(--azul); outline-offset: 2px; }
+
+  /* ---------- Noticias (coverflow) ---------- */
+  .noticias-coverflow { display: flex; align-items: center; gap: 10px; }
+  .cf-stage {
+    flex: 1; position: relative; height: 420px; max-width: 640px; margin: 0 auto;
+    perspective: 1400px; overflow: hidden;
+  }
+  .cf-card {
+    position: absolute; top: 50%; left: 50%; width: 231px; height: 319px;
+    border-radius: 22px; overflow: hidden; cursor: pointer;
+    background: var(--surface); border: 1px solid var(--border-strong);
+    box-shadow: 0 24px 48px -20px var(--shadow);
+    transform: translate(-50%,-50%) translateX(var(--cf-x,0px)) rotateY(var(--cf-rot,0deg)) scale(calc(var(--cf-scale,1) * var(--cf-hover-mult,1)));
+    transition: transform 0.55s cubic-bezier(.22,.68,0,1.01), opacity 0.55s ease;
+    will-change: transform, opacity;
+  }
+  .cf-card:hover { --cf-hover-mult: 1.2; }
+  .cf-card.is-active { cursor: zoom-in; }
+  .cf-card img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .cf-dots { display: flex; justify-content: center; gap: 8px; margin-top: 22px; }
+  .cf-dot {
+    width: 8px; height: 8px; border-radius: 50%; background: var(--border-strong); border: none;
+    cursor: pointer; padding: 0; transition: background 0.2s ease, transform 0.2s ease;
+  }
+  .cf-dot.is-active { background: var(--laranja); transform: scale(1.3); }
+  .carousel-btn {
+    flex: 0 0 auto; width: 42px; height: 42px; border-radius: 999px;
+    background: var(--surface); border: 1px solid var(--border-strong); color: var(--ink);
+    font-size: 20px; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s ease, transform 0.15s ease;
+  }
+  .carousel-btn:hover { background: var(--surface-2); transform: translateY(-2px); }
+  @media (max-width: 700px) {
+    .carousel-btn { display: none; }
+    .cf-stage { height: 360px; }
+    .cf-card { width: 198px; height: 275px; }
+  }
+  .cf-lightbox-card {
+    position: relative; width: 100%; max-width: 620px;
+    background: var(--surface); border: 1px solid var(--border-strong); border-radius: 28px;
+    overflow: hidden; box-shadow: 0 40px 80px -24px var(--shadow);
+    transform: translateY(14px) scale(0.98); transition: transform 0.22s ease;
+  }
+  .login-overlay.is-open .cf-lightbox-card { transform: translateY(0) scale(1); }
+  .cf-lightbox-img-wrap { width: 100%; max-height: 62vh; background: #000; display: flex; align-items: center; justify-content: center; }
+  .cf-lightbox-img-wrap img { width: 100%; max-height: 62vh; object-fit: contain; display: block; }
+  .cf-lightbox-body { padding: 28px 32px 32px; }
+  .cf-lightbox-body h3 { font-size: 21px; font-weight: 700; margin-top: 12px; }
+  .cf-lightbox-body p { margin-top: 10px; font-size: 14.5px; color: var(--muted); line-height: 1.5; }
+  .cf-lightbox-close {
+    position: absolute; top: 16px; right: 16px; z-index: 2;
+    width: 34px; height: 34px; border-radius: 999px;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(9,9,14,0.55); backdrop-filter: blur(6px); border: 1px solid rgba(255,255,255,0.2);
+    color: #fff; cursor: pointer; transition: background 0.2s ease;
+  }
+  .cf-lightbox-close:hover { background: rgba(255,59,82,0.85); }
+  .cf-card-link {
+    display: inline-flex; align-items: center; gap: 6px; margin-top: 10px;
+    padding: 8px 16px; border-radius: 999px; font-size: 11.5px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.03em;
+    background: var(--laranja); color: var(--laranja-ink); text-decoration: none;
+  }
 </style>
 
 <div class="nav-shell">
@@ -467,6 +530,7 @@
     </a>
     <ul class="nav-links" id="navLinks">
       <li><a class="is-active" href="#topo" data-nav="topo">Início</a></li>
+      <li><a href="#noticias" data-nav="noticias">Notícias</a></li>
       <li><a href="#cultos" data-nav="cultos">Cultos</a></li>
       <li><a href="#sobre" data-nav="sobre">Quem somos</a></li>
       <li><a href="#departamentos" data-nav="departamentos">Departamentos</a></li>
@@ -511,6 +575,23 @@
   </div>
 </div>
 
+<div class="login-overlay" id="cfLightbox" role="dialog" aria-modal="true" aria-labelledby="cfLightboxTitle" hidden>
+  <div class="cf-lightbox-card">
+    <button class="cf-lightbox-close" id="cfLightboxClose" type="button" aria-label="Fechar">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+    <div class="cf-lightbox-img-wrap">
+      <img id="cfLightboxImg" src="" alt="">
+    </div>
+    <div class="cf-lightbox-body">
+      <span class="pill eyebrow" id="cfLightboxTag"><span class="dot"></span></span>
+      <h3 id="cfLightboxTitle"></h3>
+      <p id="cfLightboxDesc"></p>
+      <a class="cf-card-link" id="cfLightboxLink" href="#" target="_blank" rel="noopener" style="margin-top:16px; display:none;">Saiba mais</a>
+    </div>
+  </div>
+</div>
+
 <header class="hero" id="topo">
   <div class="aurora" aria-hidden="true">
     <span class="band band-1"></span>
@@ -550,6 +631,23 @@
   </div>
   <div class="fade-bottom" aria-hidden="true"></div>
 </header>
+
+<section id="noticias">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="pill eyebrow"><span class="dot"></span>Comunicados</span>
+      <h2>Principais Notícias</h2>
+      <p>Fique por dentro dos avisos e novidades da nossa igreja.</p>
+    </div>
+    <div class="noticias-coverflow reveal" id="cfCarousel">
+      <button class="carousel-btn" id="cfPrev" type="button" aria-label="Notícia anterior">‹</button>
+      <div class="cf-stage" id="cfStage"></div>
+      <button class="carousel-btn" id="cfNext" type="button" aria-label="Próxima notícia">›</button>
+    </div>
+    <div class="cf-dots" id="cfDots"></div>
+  </div>
+</section>
+<script type="application/json" id="noticias-data">[{"id": "n1", "tag": "Homenagem", "title": "Feliz Dia do Pastor", "desc": "14 de junho — homenagem da congregação do Florianópolis ao Pr. Pedro Nascimento.", "link": "", "image": "noticia-dia-do-pastor.jpg"}, {"id": "n2", "tag": "Evento", "title": "Pré-Congresso Renascer em Cristo 2026", "desc": "01 e 02 de agosto, às 18h — Pecado, Justiça e Juízo.", "link": "", "image": "noticia-pre-congresso-renascer.jpg"}, {"id": "n3", "tag": "Adolescentes", "title": "Cristo em Mim", "desc": "Pré-congresso de adolescentes do Grupo Manancial — 11 e 12 de abril, às 18h.", "link": "", "image": "noticia-cristo-em-mim.jpg"}, {"id": "n4", "tag": "Culto especial", "title": "Culto da Gratidão", "desc": "28 de dezembro, às 18h.", "link": "", "image": "noticia-culto-gratidao.jpg"}]</script>
 
 <section id="cultos">
   <div class="wrap">
@@ -897,6 +995,180 @@
 
       sections.forEach(function (section) { observer.observe(section); });
     }
+  })();
+</script>
+<script>
+  (function () {
+    var stage = document.getElementById('cfStage');
+    var dotsEl = document.getElementById('cfDots');
+    var prevBtn = document.getElementById('cfPrev');
+    var nextBtn = document.getElementById('cfNext');
+    var carouselEl = document.getElementById('cfCarousel');
+    var dataScript = document.getElementById('noticias-data');
+    var lightbox = document.getElementById('cfLightbox');
+    var lightboxClose = document.getElementById('cfLightboxClose');
+    var lightboxImg = document.getElementById('cfLightboxImg');
+    var lightboxTag = document.getElementById('cfLightboxTag');
+    var lightboxTitle = document.getElementById('cfLightboxTitle');
+    var lightboxDesc = document.getElementById('cfLightboxDesc');
+    var lightboxLink = document.getElementById('cfLightboxLink');
+    if (!stage || !dataScript) return;
+
+    var newsItems = [];
+    try { newsItems = JSON.parse(dataScript.textContent || '[]'); } catch (e) { newsItems = []; }
+
+    var cfIndex = 0;
+    var autoplayTimer = null;
+    var cardEls = [];
+    var dotEls = [];
+
+    function wrapOffset(i, index, len) {
+      var diff = i - index;
+      if (diff > len / 2) diff -= len;
+      if (diff < -len / 2) diff += len;
+      return diff;
+    }
+
+    function cardTransform(offset) {
+      var abs = Math.abs(offset);
+      var sign = offset < 0 ? -1 : 1;
+      if (abs === 0) return { x: 0, rot: 0, scale: 1, opacity: 1, z: 50, pe: true };
+      if (abs === 1) return { x: sign * 165, rot: sign * -32, scale: 0.8, opacity: 0.78, z: 40, pe: true };
+      if (abs === 2) return { x: sign * 270, rot: sign * -40, scale: 0.62, opacity: 0.4, z: 30, pe: true };
+      return { x: sign * 330, rot: sign * -40, scale: 0.5, opacity: 0, z: 10, pe: false };
+    }
+
+    function positionCards() {
+      var len = newsItems.length;
+      if (!len) return;
+      if (cfIndex >= len) cfIndex = 0;
+      if (cfIndex < 0) cfIndex = len - 1;
+
+      cardEls.forEach(function (entry) {
+        var offset = wrapOffset(entry.index, cfIndex, len);
+        var t = cardTransform(offset);
+        var card = entry.el;
+        card.style.setProperty('--cf-x', t.x + 'px');
+        card.style.setProperty('--cf-rot', t.rot + 'deg');
+        card.style.setProperty('--cf-scale', String(t.scale));
+        card.style.opacity = String(t.opacity);
+        card.style.zIndex = String(t.z);
+        card.style.pointerEvents = t.pe ? 'auto' : 'none';
+        card.classList.toggle('is-active', offset === 0);
+      });
+
+      dotEls.forEach(function (dot, i) {
+        dot.classList.toggle('is-active', i === cfIndex);
+      });
+    }
+
+    function buildCards() {
+      var len = newsItems.length;
+      stage.innerHTML = '';
+      dotsEl.innerHTML = '';
+      cardEls = [];
+      dotEls = [];
+      if (!len) return;
+      if (cfIndex >= len) cfIndex = 0;
+      if (cfIndex < 0) cfIndex = len - 1;
+
+      newsItems.forEach(function (item, i) {
+        var card = document.createElement('article');
+        card.className = 'cf-card';
+
+        var img = document.createElement('img');
+        img.src = item.image;
+        img.alt = item.title || '';
+        card.appendChild(img);
+
+        card.addEventListener('click', function () {
+          if (wrapOffset(i, cfIndex, newsItems.length) !== 0) goTo(i);
+          else openLightbox(item);
+        });
+
+        card.addEventListener('mouseenter', function () { card.style.zIndex = '999'; });
+        card.addEventListener('mouseleave', function () { positionCards(); });
+
+        stage.appendChild(card);
+        cardEls.push({ el: card, index: i });
+      });
+
+      newsItems.forEach(function (item, i) {
+        var dot = document.createElement('button');
+        dot.type = 'button';
+        dot.className = 'cf-dot';
+        dot.setAttribute('aria-label', 'Ir para notícia ' + (i + 1));
+        dot.addEventListener('click', function () { goTo(i); });
+        dotsEl.appendChild(dot);
+        dotEls.push(dot);
+      });
+
+      positionCards();
+    }
+
+    function goTo(i) {
+      cfIndex = i;
+      positionCards();
+      restartAutoplay();
+    }
+
+    function stopAutoplay() {
+      if (autoplayTimer) { clearInterval(autoplayTimer); autoplayTimer = null; }
+    }
+    function startAutoplay() {
+      stopAutoplay();
+      if (newsItems.length > 1) {
+        autoplayTimer = setInterval(function () {
+          cfIndex = (cfIndex + 1) % newsItems.length;
+          positionCards();
+        }, 4200);
+      }
+    }
+    function restartAutoplay() { startAutoplay(); }
+
+    if (prevBtn) prevBtn.addEventListener('click', function () { goTo((cfIndex - 1 + newsItems.length) % Math.max(newsItems.length, 1)); });
+    if (nextBtn) nextBtn.addEventListener('click', function () { goTo((cfIndex + 1) % Math.max(newsItems.length, 1)); });
+
+    if (carouselEl) {
+      carouselEl.addEventListener('mouseenter', stopAutoplay);
+      carouselEl.addEventListener('mouseleave', startAutoplay);
+    }
+
+    function openLightbox(item) {
+      if (!lightbox) return;
+      stopAutoplay();
+      if (lightboxImg) { lightboxImg.src = item.image; lightboxImg.alt = item.title || ''; }
+      if (lightboxTag) {
+        while (lightboxTag.childNodes.length > 1) lightboxTag.removeChild(lightboxTag.lastChild);
+        lightboxTag.appendChild(document.createTextNode(item.tag || ''));
+      }
+      if (lightboxTitle) lightboxTitle.textContent = item.title || '';
+      if (lightboxDesc) { lightboxDesc.textContent = item.desc || ''; lightboxDesc.style.display = item.desc ? '' : 'none'; }
+      if (lightboxLink) {
+        if (item.link) { lightboxLink.href = item.link; lightboxLink.style.display = 'inline-flex'; }
+        else { lightboxLink.removeAttribute('href'); lightboxLink.style.display = 'none'; }
+      }
+      lightbox.hidden = false;
+      requestAnimationFrame(function () { lightbox.classList.add('is-open'); });
+      document.body.style.overflow = 'hidden';
+    }
+    function closeLightbox() {
+      if (!lightbox) return;
+      lightbox.classList.remove('is-open');
+      document.body.style.overflow = '';
+      setTimeout(function () { lightbox.hidden = true; if (lightboxImg) lightboxImg.src = ''; }, 200);
+      restartAutoplay();
+    }
+    if (lightboxClose) lightboxClose.addEventListener('click', closeLightbox);
+    if (lightbox) {
+      lightbox.addEventListener('click', function (e) { if (e.target === lightbox) closeLightbox(); });
+    }
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && lightbox && !lightbox.hidden) closeLightbox();
+    });
+
+    buildCards();
+    startAutoplay();
   })();
 </script>
 <script type="module" src="auth.js"></script>
