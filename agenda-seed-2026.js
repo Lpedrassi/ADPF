@@ -120,7 +120,7 @@ export const AGENDA_SEED_2026 = [
     "escopo": "setor",
     "dataInicio": "2026-02-20",
     "dataFim": "2026-02-20",
-    "titulo": "ção de Graças — Pr. Eduardo",
+    "titulo": "Ação de Graças — Pr. Eduardo",
     "hora": null,
     "categoria": null,
     "observacao": null
@@ -282,7 +282,7 @@ export const AGENDA_SEED_2026 = [
     "escopo": "setor",
     "dataInicio": "2026-03-27",
     "dataFim": "2026-03-27",
-    "titulo": "ção de Graças — Pr. Gilson",
+    "titulo": "Ação de Graças — Pr. Gilson",
     "hora": null,
     "categoria": null,
     "observacao": null
@@ -426,7 +426,7 @@ export const AGENDA_SEED_2026 = [
     "escopo": "setor",
     "dataInicio": "2026-04-17",
     "dataFim": "2026-04-17",
-    "titulo": "ção de Graças — Pr. Albérico",
+    "titulo": "Ação de Graças — Pr. Albérico",
     "hora": null,
     "categoria": null,
     "observacao": null
@@ -597,7 +597,7 @@ export const AGENDA_SEED_2026 = [
     "escopo": "setor",
     "dataInicio": "2026-05-22",
     "dataFim": "2026-05-22",
-    "titulo": "ção de Graças — Pr. Valdemar",
+    "titulo": "Ação de Graças — Pr. Valdemar",
     "hora": null,
     "categoria": null,
     "observacao": null
@@ -1335,7 +1335,7 @@ export const AGENDA_SEED_2026 = [
     "escopo": "setor",
     "dataInicio": "2026-09-18",
     "dataFim": "2026-09-18",
-    "titulo": "ção de Graças — Pr. Cicero",
+    "titulo": "Ação de Graças — Pr. Cicero",
     "hora": null,
     "categoria": null,
     "observacao": null
@@ -1350,6 +1350,7 @@ export const AGENDA_SEED_2026 = [
     "observacao": null
   },
   {
+    "escopo": "setor",
     "dataInicio": "2026-09-25",
     "dataFim": "2026-09-25",
     "titulo": "Vigília",
@@ -1577,7 +1578,7 @@ export const AGENDA_SEED_2026 = [
     "escopo": "setor",
     "dataInicio": "2026-11-06",
     "dataFim": "2026-11-06",
-    "titulo": "ção de Graças — Ev. Lucas",
+    "titulo": "Ação de Graças — Ev. Lucas",
     "hora": null,
     "categoria": null,
     "observacao": null
@@ -1604,7 +1605,7 @@ export const AGENDA_SEED_2026 = [
     "escopo": "setor",
     "dataInicio": "2026-11-13",
     "dataFim": "2026-11-13",
-    "titulo": "ção de Graças — Pr. Osvaldo",
+    "titulo": "Ação de Graças — Pr. Osvaldo",
     "hora": null,
     "categoria": null,
     "observacao": null
@@ -1730,7 +1731,7 @@ export const AGENDA_SEED_2026 = [
     "escopo": "setor",
     "dataInicio": "2026-12-04",
     "dataFim": "2026-12-04",
-    "titulo": "ção de Graças — Pr. Amós",
+    "titulo": "Ação de Graças — Pr. Amós",
     "hora": null,
     "categoria": null,
     "observacao": null
@@ -1775,7 +1776,7 @@ export const AGENDA_SEED_2026 = [
     "escopo": "setor",
     "dataInicio": "2026-12-18",
     "dataFim": "2026-12-18",
-    "titulo": "ção de Graças — Pr. Eraldo",
+    "titulo": "Ação de Graças — Pr. Eraldo",
     "hora": null,
     "categoria": null,
     "observacao": null
