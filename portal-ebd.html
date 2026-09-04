@@ -72,8 +72,13 @@
 
   .admin-agenda-lista-wrap { margin-top: 26px; }
   .admin-agenda-lista-wrap h4 { font-size: 13px; margin: 0 0 4px; }
-  .admin-agenda-filtro { margin: 8px 0 14px; }
-  .admin-agenda-filtro select { background: var(--bg); border: 1px solid var(--border-strong); border-radius: 8px; color: var(--ink); padding: 7px 10px; font-size: 13px; }
+  .admin-agenda-filtro { margin: 8px 0 14px; display: flex; flex-wrap: wrap; gap: 8px; }
+  .admin-agenda-filtro select, .admin-agenda-filtro input {
+    background: var(--bg); border: 1px solid var(--border-strong); border-radius: 8px; color: var(--ink);
+    padding: 7px 10px; font-size: 13px; font-family: inherit;
+  }
+  .admin-agenda-filtro input[type="date"] { min-width: 130px; }
+  .admin-agenda-filtro input[type="text"] { min-width: 170px; }
   .admin-agenda-lista { display: flex; flex-direction: column; gap: 8px; max-height: 480px; overflow-y: auto; }
   .admin-agenda-item {
     display: flex; align-items: center; gap: 12px; background: var(--bg); border: 1px solid var(--border);
@@ -94,6 +99,22 @@
   }
   .admin-agenda-item-botoes button:hover { color: var(--ink); border-color: var(--laranja); }
   .admin-agenda-vazio { text-align: center; color: var(--muted-2); font-size: 13px; padding: 20px; }
+
+  .admin-check {
+    display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--ink);
+    text-transform: none; letter-spacing: normal; font-weight: 400; cursor: pointer;
+  }
+  .admin-check input { width: 16px; height: 16px; cursor: pointer; }
+  .admin-outras-datas { display: flex; flex-direction: column; gap: 8px; }
+  .outra-data-linha { display: flex; align-items: center; gap: 8px; }
+  .outra-data-linha input[type="date"] { flex: 1; max-width: 220px; }
+  .btn-admin-mini {
+    background: var(--surface-2); color: var(--ink); border: 1px solid var(--border-strong);
+    border-radius: 8px; width: 34px; height: 34px; flex-shrink: 0; font-size: 16px; font-weight: 700;
+    cursor: pointer; line-height: 1;
+  }
+  .btn-admin-mini:hover { border-color: var(--laranja); }
+  .admin-agenda-item-dept { font-size: 11.5px; color: var(--muted); }
 </style>
 </head>
 <body>
@@ -137,20 +158,39 @@
                   <option value="setor">Setor</option>
                 </select>
               </label>
-              <label>Categoria (opcional)
-                <input type="text" id="eventoCategoria" placeholder="Ex: Missões, Jovens...">
+              <label>Departamento
+                <select id="eventoCategoria" required>
+                  <option value="" disabled selected>Selecione...</option>
+                  <option value="Infantil">Infantil</option>
+                  <option value="Adolescentes">Adolescentes</option>
+                  <option value="Jovens">Jovens</option>
+                  <option value="Varões">Varões</option>
+                  <option value="Feminino">Feminino</option>
+                  <option value="Missões">Missões</option>
+                  <option value="Culto">Culto</option>
+                  <option value="_novo">+ Criar novo...</option>
+                </select>
+              </label>
+            </div>
+            <div class="admin-form-linha" id="linhaCategoriaNova" hidden>
+              <label>Nome do novo departamento
+                <input type="text" id="eventoCategoriaNova" placeholder="Ex: Casais">
               </label>
             </div>
             <div class="admin-form-linha">
               <label>Data início
                 <input type="date" id="eventoDataInicio" required>
               </label>
-              <label>Data fim (se durar mais de 1 dia)
-                <input type="date" id="eventoDataFim">
-              </label>
               <label>Horário (opcional)
                 <input type="text" id="eventoHora" placeholder="Ex: 18h">
               </label>
+            </div>
+            <label class="admin-check">
+              <input type="checkbox" id="checkMaisDeUmDia">
+              + de 1 dia?
+            </label>
+            <div id="blocoOutrasDatas" class="admin-outras-datas" hidden>
+              <div id="listaOutrasDatas"></div>
             </div>
             <label>Título
               <input type="text" id="eventoTitulo" required placeholder="Ex: Culto de Missões">
@@ -159,7 +199,7 @@
               <input type="text" id="eventoObservacao" placeholder="Ex: confirmar data com a liderança">
             </label>
             <div class="admin-form-botoes">
-              <button type="submit" class="btn-admin btn-admin-primario">Salvar evento</button>
+              <button type="submit" class="btn-admin btn-admin-primario">Salvar Evento</button>
               <button type="button" id="btnCancelarEdicao" class="btn-admin" hidden>Cancelar edição</button>
             </div>
           </form>
@@ -168,10 +208,16 @@
             <h4>Eventos cadastrados</h4>
             <div class="admin-agenda-filtro">
               <select id="filtroEscopo">
-                <option value="todos">Todos</option>
+                <option value="todos">Todos os escopos</option>
                 <option value="congregacao">Só Congregação</option>
                 <option value="setor">Só Setor</option>
               </select>
+              <select id="filtroDepartamento">
+                <option value="todos">Todos os departamentos</option>
+              </select>
+              <input type="date" id="filtroDataInicio" title="De">
+              <input type="date" id="filtroDataFim" title="Até">
+              <input type="text" id="filtroTitulo" placeholder="Buscar por título...">
             </div>
             <div id="adminAgendaLista" class="admin-agenda-lista">Carregando...</div>
           </div>
@@ -209,6 +255,8 @@
     const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
+
+    const DEPARTAMENTOS = ["Infantil", "Adolescentes", "Jovens", "Varões", "Feminino", "Missões", "Culto"];
 
     const AREAS_POR_PERFIL = {
       admin: ["areaAdmin", "areaAgenda", "areaProfessor", "areaAluno", "areaAdministrativo"],
@@ -269,19 +317,84 @@
       const campoId = document.getElementById("eventoId");
       const campoEscopo = document.getElementById("eventoEscopo");
       const campoCategoria = document.getElementById("eventoCategoria");
+      const linhaCategoriaNova = document.getElementById("linhaCategoriaNova");
+      const campoCategoriaNova = document.getElementById("eventoCategoriaNova");
       const campoDataInicio = document.getElementById("eventoDataInicio");
-      const campoDataFim = document.getElementById("eventoDataFim");
+      const checkMaisDeUmDia = document.getElementById("checkMaisDeUmDia");
+      const blocoOutrasDatas = document.getElementById("blocoOutrasDatas");
+      const listaOutrasDatas = document.getElementById("listaOutrasDatas");
       const campoHora = document.getElementById("eventoHora");
       const campoTitulo = document.getElementById("eventoTitulo");
       const campoObservacao = document.getElementById("eventoObservacao");
       const btnCancelar = document.getElementById("btnCancelarEdicao");
       const listaEl = document.getElementById("adminAgendaLista");
       const filtroEscopo = document.getElementById("filtroEscopo");
+      const filtroDepartamento = document.getElementById("filtroDepartamento");
+      const filtroDataInicio = document.getElementById("filtroDataInicio");
+      const filtroDataFim = document.getElementById("filtroDataFim");
+      const filtroTitulo = document.getElementById("filtroTitulo");
+
+      let outrasDatasState = [];
+      let eventosCache = [];
+
+      function renderOutrasDatas() {
+        listaOutrasDatas.innerHTML = "";
+        outrasDatasState.forEach((valor, indice) => {
+          const linha = document.createElement("div");
+          linha.className = "outra-data-linha";
+
+          const input = document.createElement("input");
+          input.type = "date";
+          input.value = valor;
+          input.addEventListener("change", () => { outrasDatasState[indice] = input.value; });
+
+          const ultima = indice === outrasDatasState.length - 1;
+          const botao = document.createElement("button");
+          botao.type = "button";
+          botao.className = "btn-admin-mini";
+          botao.textContent = ultima ? "+" : "×";
+          botao.title = ultima ? "Adicionar outra data" : "Remover esta data";
+          botao.addEventListener("click", () => {
+            if (ultima) {
+              outrasDatasState.push("");
+            } else {
+              outrasDatasState.splice(indice, 1);
+            }
+            renderOutrasDatas();
+          });
+
+          linha.appendChild(input);
+          linha.appendChild(botao);
+          listaOutrasDatas.appendChild(linha);
+        });
+      }
+
+      campoCategoria.addEventListener("change", () => {
+        const isNovo = campoCategoria.value === "_novo";
+        linhaCategoriaNova.hidden = !isNovo;
+        if (isNovo) campoCategoriaNova.focus();
+      });
+
+      checkMaisDeUmDia.addEventListener("change", () => {
+        if (checkMaisDeUmDia.checked) {
+          blocoOutrasDatas.hidden = false;
+          if (outrasDatasState.length === 0) outrasDatasState = [""];
+        } else {
+          blocoOutrasDatas.hidden = true;
+          outrasDatasState = [];
+        }
+        renderOutrasDatas();
+      });
 
       function limparFormulario() {
         form.reset();
         campoId.value = "";
         btnCancelar.hidden = true;
+        linhaCategoriaNova.hidden = true;
+        checkMaisDeUmDia.checked = false;
+        blocoOutrasDatas.hidden = true;
+        outrasDatasState = [];
+        renderOutrasDatas();
       }
 
       function formatarDataLista(dataISO) {
@@ -289,23 +402,90 @@
         return `${dia}/${mes}/${ano}`;
       }
 
-      async function recarregarLista() {
-        listaEl.textContent = "Carregando...";
-        let eventos;
-        try {
-          eventos = await buscarTodosEventos(true);
-        } catch (err) {
-          listaEl.textContent = "Não foi possível carregar os eventos.";
-          console.error(err);
-          return;
+      function formatarDatasEvento(ev) {
+        if (ev.outrasDatas && ev.outrasDatas.length > 0) {
+          const todas = [ev.dataInicio, ...ev.outrasDatas].sort();
+          return todas.map(formatarDataLista).join(", ");
+        }
+        if (ev.dataFim && ev.dataFim !== ev.dataInicio) {
+          return `${formatarDataLista(ev.dataInicio)} a ${formatarDataLista(ev.dataFim)}`;
+        }
+        return formatarDataLista(ev.dataInicio);
+      }
+
+      function preencherFormulario(ev, manterId) {
+        campoId.value = manterId ? ev.id : "";
+        campoEscopo.value = ev.escopo;
+
+        if (ev.categoria && DEPARTAMENTOS.includes(ev.categoria)) {
+          campoCategoria.value = ev.categoria;
+          linhaCategoriaNova.hidden = true;
+          campoCategoriaNova.value = "";
+        } else if (ev.categoria) {
+          campoCategoria.value = "_novo";
+          linhaCategoriaNova.hidden = false;
+          campoCategoriaNova.value = ev.categoria;
+        } else {
+          campoCategoria.value = "";
+          linhaCategoriaNova.hidden = true;
+          campoCategoriaNova.value = "";
         }
 
-        const filtro = filtroEscopo.value;
-        const filtrados = filtro === "todos" ? eventos : eventos.filter((e) => e.escopo === filtro);
+        campoDataInicio.value = ev.dataInicio;
+        campoHora.value = ev.hora || "";
+        campoTitulo.value = ev.titulo;
+        campoObservacao.value = ev.observacao || "";
+
+        let datasExtras = [];
+        if (ev.outrasDatas && ev.outrasDatas.length > 0) {
+          datasExtras = ev.outrasDatas.slice();
+        } else if (ev.dataFim && ev.dataFim !== ev.dataInicio) {
+          datasExtras = [ev.dataFim];
+        }
+        if (datasExtras.length > 0) {
+          checkMaisDeUmDia.checked = true;
+          blocoOutrasDatas.hidden = false;
+          outrasDatasState = datasExtras;
+        } else {
+          checkMaisDeUmDia.checked = false;
+          blocoOutrasDatas.hidden = true;
+          outrasDatasState = [];
+        }
+        renderOutrasDatas();
+
+        btnCancelar.hidden = false;
+        form.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+
+      function popularFiltroDepartamento() {
+        const atual = filtroDepartamento.value;
+        const departamentos = new Set(DEPARTAMENTOS);
+        eventosCache.forEach((e) => { if (e.categoria) departamentos.add(e.categoria); });
+        const opcoes = [...departamentos].sort();
+        filtroDepartamento.innerHTML = '<option value="todos">Todos os departamentos</option>' +
+          opcoes.map((d) => `<option value="${d}">${d}</option>`).join("");
+        if (opcoes.includes(atual)) filtroDepartamento.value = atual;
+      }
+
+      function aplicarFiltrosERenderizar() {
+        const escopo = filtroEscopo.value;
+        const departamento = filtroDepartamento.value;
+        const dataDe = filtroDataInicio.value;
+        const dataAte = filtroDataFim.value;
+        const buscaTitulo = filtroTitulo.value.trim().toLowerCase();
+
+        const filtrados = eventosCache.filter((ev) => {
+          if (escopo !== "todos" && ev.escopo !== escopo) return false;
+          if (departamento !== "todos" && ev.categoria !== departamento) return false;
+          if (dataDe && ev.dataInicio < dataDe) return false;
+          if (dataAte && ev.dataInicio > dataAte) return false;
+          if (buscaTitulo && !ev.titulo.toLowerCase().includes(buscaTitulo)) return false;
+          return true;
+        });
 
         listaEl.innerHTML = "";
         if (filtrados.length === 0) {
-          listaEl.innerHTML = '<p class="admin-agenda-vazio">Nenhum evento cadastrado ainda.</p>';
+          listaEl.innerHTML = '<p class="admin-agenda-vazio">Nenhum evento encontrado.</p>';
           return;
         }
 
@@ -315,9 +495,7 @@
 
           const dataSpan = document.createElement("span");
           dataSpan.className = "admin-agenda-item-data";
-          dataSpan.textContent = ev.dataFim && ev.dataFim !== ev.dataInicio
-            ? `${formatarDataLista(ev.dataInicio)} a ${formatarDataLista(ev.dataFim)}`
-            : formatarDataLista(ev.dataInicio);
+          dataSpan.textContent = formatarDatasEvento(ev);
 
           const corpo = document.createElement("div");
           corpo.className = "admin-agenda-item-corpo";
@@ -332,24 +510,25 @@
           corpo.appendChild(tag);
           corpo.appendChild(titulo);
 
+          if (ev.categoria) {
+            const dept = document.createElement("span");
+            dept.className = "admin-agenda-item-dept";
+            dept.textContent = ev.categoria;
+            corpo.appendChild(dept);
+          }
+
           const botoes = document.createElement("div");
           botoes.className = "admin-agenda-item-botoes";
+
+          const btnDuplicar = document.createElement("button");
+          btnDuplicar.type = "button";
+          btnDuplicar.textContent = "Duplicar";
+          btnDuplicar.addEventListener("click", () => preencherFormulario(ev, false));
 
           const btnEditar = document.createElement("button");
           btnEditar.type = "button";
           btnEditar.textContent = "Editar";
-          btnEditar.addEventListener("click", () => {
-            campoId.value = ev.id;
-            campoEscopo.value = ev.escopo;
-            campoCategoria.value = ev.categoria || "";
-            campoDataInicio.value = ev.dataInicio;
-            campoDataFim.value = ev.dataFim && ev.dataFim !== ev.dataInicio ? ev.dataFim : "";
-            campoHora.value = ev.hora || "";
-            campoTitulo.value = ev.titulo;
-            campoObservacao.value = ev.observacao || "";
-            btnCancelar.hidden = false;
-            form.scrollIntoView({ behavior: "smooth", block: "center" });
-          });
+          btnEditar.addEventListener("click", () => preencherFormulario(ev, true));
 
           const btnExcluir = document.createElement("button");
           btnExcluir.type = "button";
@@ -360,6 +539,7 @@
             recarregarLista();
           });
 
+          botoes.appendChild(btnDuplicar);
           botoes.appendChild(btnEditar);
           botoes.appendChild(btnExcluir);
 
@@ -370,15 +550,39 @@
         });
       }
 
+      async function recarregarLista() {
+        listaEl.textContent = "Carregando...";
+        try {
+          eventosCache = await buscarTodosEventos(true);
+        } catch (err) {
+          listaEl.textContent = "Não foi possível carregar os eventos.";
+          console.error(err);
+          return;
+        }
+        popularFiltroDepartamento();
+        aplicarFiltrosERenderizar();
+      }
+
       form.addEventListener("submit", async (e) => {
         e.preventDefault();
+        const categoria = campoCategoria.value === "_novo"
+          ? campoCategoriaNova.value.trim()
+          : campoCategoria.value;
+        if (!categoria) {
+          alert("Selecione ou digite um departamento.");
+          return;
+        }
+        const outrasDatas = outrasDatasState.filter((d) => d && d !== campoDataInicio.value);
+        const todasDatas = [campoDataInicio.value, ...outrasDatas].sort();
+        const dataFimCalculada = todasDatas[todasDatas.length - 1];
         try {
           await salvarEvento({
             id: campoId.value || null,
             escopo: campoEscopo.value,
-            categoria: campoCategoria.value.trim(),
+            categoria: categoria,
             dataInicio: campoDataInicio.value,
-            dataFim: campoDataFim.value || campoDataInicio.value,
+            dataFim: dataFimCalculada,
+            outrasDatas: outrasDatas,
             hora: campoHora.value.trim(),
             titulo: campoTitulo.value.trim(),
             observacao: campoObservacao.value.trim()
@@ -392,7 +596,11 @@
       });
 
       btnCancelar.addEventListener("click", limparFormulario);
-      filtroEscopo.addEventListener("change", recarregarLista);
+      filtroEscopo.addEventListener("change", aplicarFiltrosERenderizar);
+      filtroDepartamento.addEventListener("change", aplicarFiltrosERenderizar);
+      filtroDataInicio.addEventListener("change", aplicarFiltrosERenderizar);
+      filtroDataFim.addEventListener("change", aplicarFiltrosERenderizar);
+      filtroTitulo.addEventListener("input", aplicarFiltrosERenderizar);
 
       btnImportar.addEventListener("click", async () => {
         btnImportar.disabled = true;
