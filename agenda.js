@@ -56,12 +56,13 @@ export async function buscarTodosEventos(forcarRecarregar = false) {
   return lista;
 }
 
-/** Cria um evento novo. `dados` deve ter: escopo, dataInicio, dataFim, titulo, hora, categoria, observacao. */
+/** Cria um evento novo. `dados` deve ter: escopo, dataInicio, dataFim, titulo, hora, categoria, observacao, outrasDatas (opcional). */
 export async function salvarEvento(dados) {
   const registro = {
     escopo: dados.escopo,
     dataInicio: dados.dataInicio,
     dataFim: dados.dataFim || dados.dataInicio,
+    outrasDatas: dados.outrasDatas || [],
     titulo: dados.titulo,
     hora: dados.hora || null,
     categoria: dados.categoria || null,
@@ -137,6 +138,10 @@ function formatarDataCurta(dataISO) {
 }
 
 function formatarPeriodo(evento) {
+  if (evento.outrasDatas && evento.outrasDatas.length > 0) {
+    const todas = [evento.dataInicio, ...evento.outrasDatas].sort();
+    return todas.map(formatarDataCurta).join(", ");
+  }
   if (!evento.dataFim || evento.dataFim === evento.dataInicio) {
     return formatarDataCurta(evento.dataInicio);
   }
@@ -144,12 +149,16 @@ function formatarPeriodo(evento) {
 }
 
 function eventoEsteMes(evento, ano, mesIndex) {
-  // Considera o evento "deste mês" se o início OU o fim cair dentro do mês (cobre eventos que atravessam a virada do mês).
+  // Considera o evento "deste mês" se o início, o fim OU alguma das outras datas cair dentro do mês
+  // (cobre eventos que atravessam a virada do mês e eventos com datas alternadas).
   const dentro = (dataISO) => {
     const [y, m] = dataISO.split("-").map(Number);
     return y === ano && (m - 1) === mesIndex;
   };
-  return dentro(evento.dataInicio) || (evento.dataFim && dentro(evento.dataFim));
+  if (dentro(evento.dataInicio)) return true;
+  if (evento.dataFim && dentro(evento.dataFim)) return true;
+  if (evento.outrasDatas && evento.outrasDatas.some(dentro)) return true;
+  return false;
 }
 
 function montarItemLista(evento) {
