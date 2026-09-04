@@ -100,11 +100,12 @@
   .admin-agenda-item-botoes button:hover { color: var(--ink); border-color: var(--laranja); }
   .admin-agenda-vazio { text-align: center; color: var(--muted-2); font-size: 13px; padding: 20px; }
 
-  .admin-check {
-    display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--ink);
+  .admin-form .admin-check {
+    display: flex; flex-direction: row; align-items: center; gap: 8px; font-size: 13px; color: var(--ink);
     text-transform: none; letter-spacing: normal; font-weight: 400; cursor: pointer;
   }
   .admin-check input { width: 16px; height: 16px; cursor: pointer; }
+  .admin-form-linha[hidden], .admin-outras-datas[hidden] { display: none; }
   .admin-outras-datas { display: flex; flex-direction: column; gap: 8px; }
   .outra-data-linha { display: flex; align-items: center; gap: 8px; }
   .outra-data-linha input[type="date"] { flex: 1; max-width: 220px; }
