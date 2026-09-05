@@ -27,11 +27,11 @@ const db = getFirestore(app);
 
 const PERFIL_PADRAO = "aluno";
 
-async function irParaPortal(uid) {
-  const snap = await getDoc(doc(db, "usuarios", uid));
-  const perfil = snap.exists() ? snap.data().perfil : PERFIL_PADRAO;
-  sessionStorage.setItem("perfil", perfil);
-  window.location.href = "portal-ebd.html";
+// Depois do login/cadastro, o usuario continua na mesma pagina (index.html):
+// o menu lateral e a saudacao aparecem sozinhos (ver o <script type="module">
+// no fim do index.html, que escuta onAuthStateChanged). Aqui so fechamos o modal.
+function fecharModalLogin() {
+  if (window.__fecharLoginModal) window.__fecharLoginModal();
 }
 
 const form = document.querySelector(".login-form");
@@ -44,7 +44,7 @@ if (form) {
 
     try {
       const cred = await signInWithEmailAndPassword(auth, email, senha);
-      irParaPortal(cred.user.uid);
+      fecharModalLogin();
     } catch (err) {
       alert("Nao foi possivel entrar. Confira seu e-mail e senha.");
       console.error(err);
@@ -69,7 +69,7 @@ if (form) {
           perfil: PERFIL_PADRAO,
           criadoEm: serverTimestamp()
         });
-        irParaPortal(cred.user.uid);
+        fecharModalLogin();
       } catch (err) {
         alert("Nao foi possivel criar a conta. " + (err.message || ""));
         console.error(err);
@@ -107,7 +107,7 @@ window.entrarComGoogle = async function () {
         criadoEm: serverTimestamp()
       });
     }
-    irParaPortal(cred.user.uid);
+    fecharModalLogin();
   } catch (err) {
     alert("Nao foi possivel entrar com Google.");
     console.error(err);
