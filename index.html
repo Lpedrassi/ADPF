@@ -449,14 +449,13 @@
   .agenda-bloco { margin-bottom: 30px; }
   .agenda-bloco:last-child { margin-bottom: 0; }
   .agenda-bloco-titulo {
-    font-family: "Unbounded", sans-serif; font-size: 15px; font-weight: 700; margin: 0 0 6px;
+    font-family: "Unbounded", sans-serif; font-size: 15px; font-weight: 700; margin: 0 0 16px;
     display: flex; align-items: center; gap: 10px;
   }
   .agenda-bloco-titulo::before {
-    content: ""; width: 8px; height: 8px; border-radius: 999px; background: var(--laranja); flex-shrink: 0;
+    content: ""; width: 8px; height: 8px; border-radius: 999px; background: var(--azul); flex-shrink: 0;
   }
-  .agenda-bloco:nth-of-type(2) .agenda-bloco-titulo::before { background: var(--azul); }
-  .agenda-setor-nota { font-size: 13px; color: var(--muted-2); margin: 0 0 14px; }
+  .agenda-bloco:nth-of-type(2) .agenda-bloco-titulo::before { background: var(--laranja); }
   .agenda-lista { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
   .agenda-item {
     display: flex; align-items: center; gap: 14px; background: var(--surface); border: 1px solid var(--border);
@@ -467,7 +466,9 @@
   .agenda-item-data {
     flex-shrink: 0; min-width: 62px; text-align: center; font-family: "Unbounded", sans-serif; font-size: 12.5px;
     font-weight: 700; color: var(--laranja);
+    display: flex; flex-direction: column; justify-content: center; gap: 2px;
   }
+  .agenda-colunas .agenda-bloco:first-child .agenda-item-data { color: var(--azul); }
   .agenda-item-corpo { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
   .agenda-item-linha { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
   .agenda-item-titulo { font-size: 14px; font-weight: 600; color: var(--ink); }
@@ -880,7 +881,7 @@
 
     <div class="agenda-colunas reveal">
       <div class="agenda-bloco">
-        <h3 class="agenda-bloco-titulo">Nossa congregação</h3>
+        <h3 class="agenda-bloco-titulo">Agenda Pq Florianópolis</h3>
         <ul id="agendaCongregacaoLista" class="agenda-lista">
           <li class="agenda-vazio">Carregando...</li>
         </ul>
@@ -888,7 +889,6 @@
 
       <div class="agenda-bloco">
         <h3 class="agenda-bloco-titulo">Agenda do Setor</h3>
-        <p class="agenda-setor-nota">Programação regional, reunindo as congregações da nossa região (Roseira, Cruzeiro, Bananal, Jaguariúna, Primavera, Sede e outras).</p>
         <ul id="agendaSetorLista" class="agenda-lista">
           <li class="agenda-vazio">Carregando...</li>
         </ul>
