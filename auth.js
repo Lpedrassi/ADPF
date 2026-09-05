@@ -24,7 +24,7 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-const PERFIL_PADRAO = "aluno";
+const PERFIL_PADRAO = "convidado";
 
 // Depois do login/cadastro, o usuario continua na mesma pagina (index.html):
 // o menu lateral e a saudacao aparecem sozinhos (ver o <script type="module">
@@ -87,20 +87,24 @@ window.entrarComGoogle = async function () {
     const snap = await getDoc(ref);
     fecharModalLogin();
     if (!snap.exists()) {
-      // Conta nova via Google: so pegamos nome e e-mail do Google. O resto
-      // do cadastro (telefone, endereco, foto, etc.) e completado pela
-      // pessoa no modal de Perfil, em modo "completar-google".
+      // Conta nova via Google: so pegamos nome, e-mail e foto do Google. O
+      // cadastro minimo (com perfil "convidado") ja e gravado aqui, igual
+      // acontece no passo 1 do assistente por e-mail/senha - assim, mesmo se
+      // a pessoa fechar o assistente sem terminar, a conta ja existe. O
+      // resto (telefone, endereco, etc.) e completado pela pessoa no modal
+      // de Perfil, em modo "completar-google", que comeca direto no passo 2.
+      await setDoc(ref, {
+        email: cred.user.email,
+        nome: cred.user.displayName || "",
+        foto: cred.user.photoURL || "",
+        perfil: PERFIL_PADRAO,
+        criadoEm: serverTimestamp()
+      });
       if (window.__abrirPerfilModal) {
         window.__abrirPerfilModal("completar-google", {
           nome: cred.user.displayName || "",
-          email: cred.user.email || ""
-        });
-      } else {
-        await setDoc(ref, {
-          email: cred.user.email,
-          nome: cred.user.displayName || "",
-          perfil: PERFIL_PADRAO,
-          criadoEm: serverTimestamp()
+          email: cred.user.email || "",
+          foto: cred.user.photoURL || ""
         });
       }
     }
