@@ -1647,13 +1647,24 @@
     let outrasDatasState = [];
     let eventosCache = [];
 
-    // Monta os checkboxes de congregações (uma vez), mais o checkbox "Outra..."
+    // Monta o checkbox "Todas", os checkboxes de congregações (uma vez) e o checkbox "Outra..."
+    const labelTodas = document.createElement("label");
+    labelTodas.className = "admin-check";
+    const checkCongregacaoTodas = document.createElement("input");
+    checkCongregacaoTodas.type = "checkbox";
+    checkCongregacaoTodas.id = "checkCongregacaoTodas";
+    labelTodas.appendChild(checkCongregacaoTodas);
+    labelTodas.appendChild(document.createTextNode("Todas"));
+    opcoesCongregacoesEl.appendChild(labelTodas);
+
+    const checkboxesCongregacoes = [];
     CONGREGACOES_SETOR.forEach((nome) => {
       const label = document.createElement("label");
       label.className = "admin-check";
       const input = document.createElement("input");
       input.type = "checkbox";
       input.value = nome;
+      checkboxesCongregacoes.push(input);
       label.appendChild(input);
       label.appendChild(document.createTextNode(nome));
       opcoesCongregacoesEl.appendChild(label);
@@ -1666,6 +1677,19 @@
     labelOutra.appendChild(checkCongregacaoOutra);
     labelOutra.appendChild(document.createTextNode("Outra..."));
     opcoesCongregacoesEl.appendChild(labelOutra);
+
+    checkCongregacaoTodas.addEventListener("change", () => {
+      checkboxesCongregacoes.forEach((cb) => { cb.checked = checkCongregacaoTodas.checked; });
+    });
+    checkboxesCongregacoes.forEach((cb) => {
+      cb.addEventListener("change", () => {
+        if (!cb.checked) {
+          checkCongregacaoTodas.checked = false;
+        } else if (checkboxesCongregacoes.every((c) => c.checked)) {
+          checkCongregacaoTodas.checked = true;
+        }
+      });
+    });
 
     checkCongregacaoOutra.addEventListener("change", () => {
       campoCongregacaoOutra.hidden = !checkCongregacaoOutra.checked;
@@ -1681,7 +1705,7 @@
 
     function lerCongregacoesSetorSelecionadas() {
       const marcadas = Array.from(opcoesCongregacoesEl.querySelectorAll('input[type="checkbox"]:checked'))
-        .filter((cb) => cb !== checkCongregacaoOutra)
+        .filter((cb) => cb !== checkCongregacaoOutra && cb !== checkCongregacaoTodas)
         .map((cb) => cb.value);
       if (checkCongregacaoOutra.checked && campoCongregacaoOutra.value.trim()) {
         marcadas.push(campoCongregacaoOutra.value.trim());
@@ -1830,6 +1854,7 @@
           campoCongregacaoOutra.hidden = false;
           campoCongregacaoOutra.value = extras.join(", ");
         }
+        checkCongregacaoTodas.checked = checkboxesCongregacoes.every((cb) => cb.checked);
       }
 
       let datasExtras = [];
@@ -1932,7 +1957,7 @@
 
         const btnDuplicar = document.createElement("button");
         btnDuplicar.type = "button";
-        btnDuplicar.textContent = "Duplicar";
+        btnDuplicar.textContent = "Copiar";
         btnDuplicar.addEventListener("click", () => preencherFormulario(ev, false));
 
         const btnEditar = document.createElement("button");
