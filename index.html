@@ -578,6 +578,111 @@
     text-transform: uppercase; letter-spacing: 0.03em;
     background: var(--laranja); color: var(--laranja-ink); text-decoration: none;
   }
+
+  /* ==================================================================
+     Portal (menu lateral admin) - aparece apos login, dentro da Home
+     ================================================================== */
+  .portal-layout { display: block; }
+  .portal-layout.logado { display: flex; align-items: flex-start; }
+  .portal-sidebar {
+    display: none; width: 240px; flex-shrink: 0; background: var(--surface);
+    border-right: 1px solid var(--border); padding: 20px 0; flex-direction: column; gap: 2px;
+    position: sticky; top: 90px; min-height: calc(100vh - 110px);
+  }
+  .portal-layout.logado .portal-sidebar { display: flex; }
+  .sidebar-link {
+    background: transparent; border: none; color: var(--muted); text-align: left; font-size: 14px;
+    font-weight: 700; padding: 12px 24px; cursor: pointer; border-left: 3px solid transparent;
+    font-family: inherit; transition: background 0.15s ease, color 0.15s ease;
+  }
+  .sidebar-link:hover { background: var(--surface-2); color: var(--ink); }
+  .sidebar-link.active { background: var(--surface-2); color: var(--laranja); border-left-color: var(--laranja); }
+  .portal-main-wrap { flex: 1; min-width: 0; }
+  .site-home-conteudo { display: none; }
+  .site-home-conteudo.ativo { display: block; }
+  .portal-section { display: none; max-width: 900px; margin: 40px auto; padding: 26px; background: var(--surface); border: 1px solid var(--border); border-radius: 20px; }
+  .portal-section.ativo { display: block; }
+  .portal-section h2 { margin-top: 0; font-size: 18px; }
+
+  @media (max-width: 760px) {
+    .portal-layout.logado { flex-direction: column; }
+    .portal-layout.logado .portal-sidebar {
+      width: 100%; flex-direction: row; overflow-x: auto; border-right: none;
+      border-bottom: 1px solid var(--border); padding: 8px 12px; position: static; min-height: 0; gap: 4px;
+    }
+    .sidebar-link { border-left: none; border-bottom: 3px solid transparent; white-space: nowrap; padding: 10px 14px; }
+    .sidebar-link.active { border-left-color: transparent; border-bottom-color: var(--laranja); }
+  }
+
+  /* ---------- Painel de Agenda (admin) ---------- */
+  .admin-agenda-info { font-size: 13px; color: var(--muted); margin: 0 0 16px; }
+  .btn-admin {
+    background: var(--surface-2); color: var(--ink); border: 1px solid var(--border-strong);
+    border-radius: 10px; padding: 9px 16px; font-weight: 700; font-size: 13px; cursor: pointer;
+  }
+  .btn-admin:hover { border-color: var(--laranja); }
+  .btn-admin-primario { background: var(--laranja); color: var(--laranja-ink); border-color: transparent; }
+  .admin-agenda-status { font-size: 13px; margin: 10px 0 0; color: var(--muted); }
+  .admin-agenda-status.ok { color: #7CD992; }
+  .admin-agenda-status.erro { color: var(--vermelho); }
+
+  .admin-form { margin-top: 22px; display: flex; flex-direction: column; gap: 12px; }
+  .admin-form-linha { display: flex; gap: 12px; flex-wrap: wrap; }
+  .admin-form-linha label { flex: 1; min-width: 150px; }
+  .admin-form label { display: flex; flex-direction: column; gap: 5px; font-size: 12px; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; }
+  .admin-form input, .admin-form select {
+    background: var(--bg); border: 1px solid var(--border-strong); border-radius: 8px; color: var(--ink);
+    padding: 9px 12px; font-size: 14px; font-family: inherit; text-transform: none; letter-spacing: normal; font-weight: 400;
+  }
+  .admin-form input:focus, .admin-form select:focus { outline: none; border-color: var(--azul); }
+  .admin-form-botoes { display: flex; gap: 10px; margin-top: 4px; }
+
+  .admin-agenda-lista-wrap { margin-top: 26px; }
+  .admin-agenda-lista-wrap h4 { font-size: 13px; margin: 0 0 4px; }
+  .admin-agenda-filtro { margin: 8px 0 14px; display: flex; flex-wrap: wrap; gap: 8px; }
+  .admin-agenda-filtro select, .admin-agenda-filtro input {
+    background: var(--bg); border: 1px solid var(--border-strong); border-radius: 8px; color: var(--ink);
+    padding: 7px 10px; font-size: 13px; font-family: inherit;
+  }
+  .admin-agenda-filtro input[type="date"] { min-width: 130px; }
+  .admin-agenda-filtro input[type="text"] { min-width: 170px; }
+  .admin-agenda-lista { display: flex; flex-direction: column; gap: 8px; max-height: 480px; overflow-y: auto; }
+  .admin-agenda-item {
+    display: flex; align-items: center; gap: 12px; background: var(--bg); border: 1px solid var(--border);
+    border-radius: 10px; padding: 10px 14px; font-size: 13px;
+  }
+  .admin-agenda-item-data { flex-shrink: 0; min-width: 90px; color: var(--laranja); font-weight: 700; }
+  .admin-agenda-item-corpo { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+  .admin-agenda-item-tag {
+    display: inline-block; width: fit-content; font-size: 10.5px; font-weight: 700; text-transform: uppercase;
+    padding: 2px 8px; border-radius: 999px; margin-bottom: 2px;
+  }
+  .admin-agenda-item-tag.congregacao { background: rgba(255,122,51,0.15); color: var(--laranja); }
+  .admin-agenda-item-tag.setor { background: rgba(59,130,255,0.15); color: var(--azul); }
+  .admin-agenda-item-botoes { display: flex; gap: 6px; flex-shrink: 0; }
+  .admin-agenda-item-botoes button {
+    background: transparent; border: 1px solid var(--border-strong); color: var(--muted); border-radius: 7px;
+    padding: 5px 10px; font-size: 12px; cursor: pointer;
+  }
+  .admin-agenda-item-botoes button:hover { color: var(--ink); border-color: var(--laranja); }
+  .admin-agenda-vazio { text-align: center; color: var(--muted-2); font-size: 13px; padding: 20px; }
+
+  .admin-form .admin-check {
+    display: flex; flex-direction: row; align-items: center; gap: 8px; font-size: 13px; color: var(--ink);
+    text-transform: none; letter-spacing: normal; font-weight: 400; cursor: pointer;
+  }
+  .admin-check input { width: 16px; height: 16px; cursor: pointer; }
+  .admin-form-linha[hidden], .admin-outras-datas[hidden] { display: none; }
+  .admin-outras-datas { display: flex; flex-direction: column; gap: 8px; }
+  .outra-data-linha { display: flex; align-items: center; gap: 8px; }
+  .outra-data-linha input[type="date"] { flex: 1; max-width: 220px; }
+  .btn-admin-mini {
+    background: var(--surface-2); color: var(--ink); border: 1px solid var(--border-strong);
+    border-radius: 8px; width: 34px; height: 34px; flex-shrink: 0; font-size: 16px; font-weight: 700;
+    cursor: pointer; line-height: 1;
+  }
+  .btn-admin-mini:hover { border-color: var(--laranja); }
+  .admin-agenda-item-dept { font-size: 11.5px; color: var(--muted); }
 </style>
 
 <div class="nav-shell">
@@ -656,6 +761,18 @@
     </div>
   </div>
 </div>
+
+<div class="portal-layout" id="portalLayout">
+  <nav class="portal-sidebar" id="portalSidebar">
+    <button class="sidebar-link active" type="button" data-area="siteHome">Início (site)</button>
+    <button class="sidebar-link" type="button" data-area="areaAdmin">Administração</button>
+    <button class="sidebar-link" type="button" data-area="areaAgenda">Agenda de Cultos e Eventos</button>
+    <button class="sidebar-link" type="button" data-area="areaProfessor">Área do Professor</button>
+    <button class="sidebar-link" type="button" data-area="areaAluno">Área do Aluno</button>
+    <button class="sidebar-link" type="button" data-area="areaAdministrativo">Secretaria / Administrativo</button>
+  </nav>
+  <div class="portal-main-wrap" id="portalMainWrap">
+  <div class="site-home-conteudo ativo" id="siteHome">
 
 <header class="hero" id="topo">
   <div class="aurora" aria-hidden="true">
@@ -992,6 +1109,112 @@
   </div>
 </footer>
 
+  </div>
+
+  <section id="areaAdmin" class="portal-section">
+    <h2>Administração (Super User)</h2>
+    <p>Visão geral do sistema. Use o menu ao lado para acessar a Agenda de Cultos e Eventos e as demais áreas.</p>
+  </section>
+
+  <section id="areaAgenda" class="portal-section">
+    <h2>Agenda de Cultos e Eventos</h2>
+    <p class="admin-agenda-info">Cadastre, edite ou remova os eventos que aparecem na seção "Agenda" do site — tanto da nossa Congregação quanto do Setor.</p>
+
+    <button id="btnImportarAgenda" type="button" class="btn-admin" hidden>Importar agenda 2026 (uma vez só)</button>
+    <p id="importarAgendaStatus" class="admin-agenda-status"></p>
+
+    <form id="formAgendaEvento" class="admin-form">
+      <input type="hidden" id="eventoId" value="">
+      <div class="admin-form-linha">
+        <label>Escopo
+          <select id="eventoEscopo" required>
+            <option value="congregacao">Nossa congregação</option>
+            <option value="setor">Setor</option>
+          </select>
+        </label>
+        <label>Departamento
+          <select id="eventoCategoria" required>
+            <option value="" disabled selected>Selecione...</option>
+            <option value="Infantil">Infantil</option>
+            <option value="Adolescentes">Adolescentes</option>
+            <option value="Jovens">Jovens</option>
+            <option value="Varões">Varões</option>
+            <option value="Feminino">Feminino</option>
+            <option value="Missões">Missões</option>
+            <option value="Culto">Culto</option>
+            <option value="_novo">+ Criar novo...</option>
+          </select>
+        </label>
+      </div>
+      <div class="admin-form-linha" id="linhaCategoriaNova" hidden>
+        <label>Nome do novo departamento
+          <input type="text" id="eventoCategoriaNova" placeholder="Ex: Casais">
+        </label>
+      </div>
+      <div class="admin-form-linha">
+        <label>Data início
+          <input type="date" id="eventoDataInicio" required>
+        </label>
+        <label>Horário (opcional)
+          <input type="text" id="eventoHora" placeholder="Ex: 18h">
+        </label>
+      </div>
+      <label class="admin-check">
+        <input type="checkbox" id="checkMaisDeUmDia">
+        Mais dias
+      </label>
+      <div id="blocoOutrasDatas" class="admin-outras-datas" hidden>
+        <div id="listaOutrasDatas"></div>
+      </div>
+      <label>Título
+        <input type="text" id="eventoTitulo" required placeholder="Ex: Culto de Missões">
+      </label>
+      <label>Observação (opcional)
+        <input type="text" id="eventoObservacao" placeholder="Ex: confirmar data com a liderança">
+      </label>
+      <div class="admin-form-botoes">
+        <button type="submit" class="btn-admin btn-admin-primario">Salvar Evento</button>
+        <button type="button" id="btnCancelarEdicao" class="btn-admin" hidden>Cancelar edição</button>
+      </div>
+    </form>
+
+    <div class="admin-agenda-lista-wrap">
+      <h4>Eventos cadastrados</h4>
+      <div class="admin-agenda-filtro">
+        <select id="filtroEscopo">
+          <option value="todos">Todos os escopos</option>
+          <option value="congregacao">Só Congregação</option>
+          <option value="setor">Só Setor</option>
+        </select>
+        <select id="filtroDepartamento">
+          <option value="todos">Todos os departamentos</option>
+        </select>
+        <input type="date" id="filtroDataInicio" title="De">
+        <input type="date" id="filtroDataFim" title="Até">
+        <input type="text" id="filtroTitulo" placeholder="Buscar por título...">
+      </div>
+      <div id="adminAgendaLista" class="admin-agenda-lista">Carregando...</div>
+    </div>
+  </section>
+
+  <section id="areaProfessor" class="portal-section">
+    <h2>Area do Professor</h2>
+    <p>Materiais de aula, chamada da turma, avisos. (conteudo a definir)</p>
+  </section>
+
+  <section id="areaAluno" class="portal-section">
+    <h2>Area do Aluno</h2>
+    <p>Materiais de estudo, avisos da turma. (conteudo a definir)</p>
+  </section>
+
+  <section id="areaAdministrativo" class="portal-section">
+    <h2>Secretaria / Administrativo</h2>
+    <p>Cadastros, relatorios, controle administrativo. (conteudo a definir)</p>
+  </section>
+
+  </div>
+</div>
+
 <script>
   (function () {
     var emblemSocial = document.getElementById('emblemSocial');
@@ -1054,8 +1277,9 @@
       document.body.style.overflow = '';
       setTimeout(function () { modal.hidden = true; }, 200);
     }
+    window.__fecharLoginModal = closeModal;
 
-    btn.addEventListener('click', openModal);
+    btn.addEventListener('click', function () { (window.__loginBtnAcao || openModal)(); });
     closeBtn.addEventListener('click', closeModal);
     modal.addEventListener('click', function (e) { if (e.target === modal) closeModal(); });
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !modal.hidden) closeModal(); });
@@ -1270,5 +1494,404 @@
 <script type="module" src="auth.js"></script>
 <script type="module" src="agenda.js"></script>
 
+<script type="module">
+  import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+  import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+  import { firebaseConfig } from "./firebase-config.js";
+  import { buscarTodosEventos, salvarEvento, excluirEvento, importarAgendaInicial } from "./agenda.js";
+  import { AGENDA_SEED_2026 } from "./agenda-seed-2026.js";
+
+  // auth.js e agenda.js (importados acima via <script src>) ja podem ter
+  // inicializado o Firebase primeiro - por isso reaproveita o app existente.
+  const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  const DEPARTAMENTOS = ["Infantil", "Adolescentes", "Jovens", "Varões", "Feminino", "Missões", "Culto"];
+
+  const AREAS_POR_PERFIL = {
+    admin: ["siteHome", "areaAdmin", "areaAgenda", "areaProfessor", "areaAluno", "areaAdministrativo"],
+    professor: ["siteHome", "areaProfessor"],
+    aluno: ["siteHome", "areaAluno"],
+    administrativo: ["siteHome", "areaAdministrativo"]
+  };
+
+  const portalLayout = document.getElementById("portalLayout");
+  const loginLabel = document.querySelector("#loginBtn .nav-login-label");
+
+  function mostrarArea(areaId) {
+    document.getElementById("siteHome").classList.toggle("ativo", areaId === "siteHome");
+    document.querySelectorAll(".portal-section").forEach((secao) => {
+      secao.classList.toggle("ativo", secao.id === areaId);
+    });
+    document.querySelectorAll(".sidebar-link").forEach((link) => {
+      link.classList.toggle("active", link.dataset.area === areaId);
+    });
+  }
+
+  document.querySelectorAll(".sidebar-link").forEach((link) => {
+    link.addEventListener("click", () => mostrarArea(link.dataset.area));
+  });
+
+  let painelAgendaIniciado = false;
+
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) {
+      portalLayout.classList.remove("logado");
+      loginLabel.textContent = "Entrar";
+      window.__loginBtnAcao = null;
+      mostrarArea("siteHome");
+      return;
+    }
+
+    let dadosUsuario = {};
+    try {
+      const snap = await getDoc(doc(db, "usuarios", user.uid));
+      dadosUsuario = snap.exists() ? snap.data() : {};
+    } catch (err) {
+      console.error(err);
+    }
+    const perfil = dadosUsuario.perfil || "aluno";
+    const nome = dadosUsuario.nome || (user.email ? user.email.split("@")[0] : "Usuário");
+
+    loginLabel.textContent = "Olá " + nome;
+    window.__loginBtnAcao = () => signOut(auth);
+
+    const areasLiberadas = AREAS_POR_PERFIL[perfil] || AREAS_POR_PERFIL.aluno;
+    document.querySelectorAll(".sidebar-link").forEach((link) => {
+      link.hidden = !areasLiberadas.includes(link.dataset.area);
+    });
+
+    portalLayout.classList.add("logado");
+    mostrarArea("siteHome");
+
+    if (perfil === "admin" && !painelAgendaIniciado) {
+      painelAgendaIniciado = true;
+      iniciarPainelAgenda();
+    }
+  });
+
+  // =================================================================
+  // Painel de administração da Agenda (só roda se o perfil for admin)
+  // =================================================================
+  function iniciarPainelAgenda() {
+    const btnImportar = document.getElementById("btnImportarAgenda");
+    const statusImportar = document.getElementById("importarAgendaStatus");
+    const form = document.getElementById("formAgendaEvento");
+    const campoId = document.getElementById("eventoId");
+    const campoEscopo = document.getElementById("eventoEscopo");
+    const campoCategoria = document.getElementById("eventoCategoria");
+    const linhaCategoriaNova = document.getElementById("linhaCategoriaNova");
+    const campoCategoriaNova = document.getElementById("eventoCategoriaNova");
+    const campoDataInicio = document.getElementById("eventoDataInicio");
+    const checkMaisDeUmDia = document.getElementById("checkMaisDeUmDia");
+    const blocoOutrasDatas = document.getElementById("blocoOutrasDatas");
+    const listaOutrasDatas = document.getElementById("listaOutrasDatas");
+    const campoHora = document.getElementById("eventoHora");
+    const campoTitulo = document.getElementById("eventoTitulo");
+    const campoObservacao = document.getElementById("eventoObservacao");
+    const btnCancelar = document.getElementById("btnCancelarEdicao");
+    const listaEl = document.getElementById("adminAgendaLista");
+    const filtroEscopo = document.getElementById("filtroEscopo");
+    const filtroDepartamento = document.getElementById("filtroDepartamento");
+    const filtroDataInicio = document.getElementById("filtroDataInicio");
+    const filtroDataFim = document.getElementById("filtroDataFim");
+    const filtroTitulo = document.getElementById("filtroTitulo");
+
+    let outrasDatasState = [];
+    let eventosCache = [];
+
+    function renderOutrasDatas() {
+      listaOutrasDatas.innerHTML = "";
+      outrasDatasState.forEach((valor, indice) => {
+        const linha = document.createElement("div");
+        linha.className = "outra-data-linha";
+
+        const input = document.createElement("input");
+        input.type = "date";
+        input.value = valor;
+        input.addEventListener("change", () => { outrasDatasState[indice] = input.value; });
+
+        const ultima = indice === outrasDatasState.length - 1;
+        const botao = document.createElement("button");
+        botao.type = "button";
+        botao.className = "btn-admin-mini";
+        botao.textContent = ultima ? "+" : "×";
+        botao.title = ultima ? "Adicionar outra data" : "Remover esta data";
+        botao.addEventListener("click", () => {
+          if (ultima) {
+            outrasDatasState.push("");
+          } else {
+            outrasDatasState.splice(indice, 1);
+          }
+          renderOutrasDatas();
+        });
+
+        linha.appendChild(input);
+        linha.appendChild(botao);
+        listaOutrasDatas.appendChild(linha);
+      });
+    }
+
+    campoCategoria.addEventListener("change", () => {
+      const isNovo = campoCategoria.value === "_novo";
+      linhaCategoriaNova.hidden = !isNovo;
+      if (isNovo) campoCategoriaNova.focus();
+    });
+
+    checkMaisDeUmDia.addEventListener("change", () => {
+      if (checkMaisDeUmDia.checked) {
+        blocoOutrasDatas.hidden = false;
+        if (outrasDatasState.length === 0) outrasDatasState = [""];
+      } else {
+        blocoOutrasDatas.hidden = true;
+        outrasDatasState = [];
+      }
+      renderOutrasDatas();
+    });
+
+    function limparFormulario() {
+      form.reset();
+      campoId.value = "";
+      btnCancelar.hidden = true;
+      linhaCategoriaNova.hidden = true;
+      checkMaisDeUmDia.checked = false;
+      blocoOutrasDatas.hidden = true;
+      outrasDatasState = [];
+      renderOutrasDatas();
+    }
+
+    function formatarDataLista(dataISO) {
+      const [ano, mes, dia] = dataISO.split("-");
+      return `${dia}/${mes}/${ano}`;
+    }
+
+    function formatarDatasEvento(ev) {
+      if (ev.outrasDatas && ev.outrasDatas.length > 0) {
+        const todas = [ev.dataInicio, ...ev.outrasDatas].sort();
+        return todas.map(formatarDataLista).join(", ");
+      }
+      if (ev.dataFim && ev.dataFim !== ev.dataInicio) {
+        return `${formatarDataLista(ev.dataInicio)} a ${formatarDataLista(ev.dataFim)}`;
+      }
+      return formatarDataLista(ev.dataInicio);
+    }
+
+    function preencherFormulario(ev, manterId) {
+      campoId.value = manterId ? ev.id : "";
+      campoEscopo.value = ev.escopo;
+
+      if (ev.categoria && DEPARTAMENTOS.includes(ev.categoria)) {
+        campoCategoria.value = ev.categoria;
+        linhaCategoriaNova.hidden = true;
+        campoCategoriaNova.value = "";
+      } else if (ev.categoria) {
+        campoCategoria.value = "_novo";
+        linhaCategoriaNova.hidden = false;
+        campoCategoriaNova.value = ev.categoria;
+      } else {
+        campoCategoria.value = "";
+        linhaCategoriaNova.hidden = true;
+        campoCategoriaNova.value = "";
+      }
+
+      campoDataInicio.value = ev.dataInicio;
+      campoHora.value = ev.hora || "";
+      campoTitulo.value = ev.titulo;
+      campoObservacao.value = ev.observacao || "";
+
+      let datasExtras = [];
+      if (ev.outrasDatas && ev.outrasDatas.length > 0) {
+        datasExtras = ev.outrasDatas.slice();
+      } else if (ev.dataFim && ev.dataFim !== ev.dataInicio) {
+        datasExtras = [ev.dataFim];
+      }
+      if (datasExtras.length > 0) {
+        checkMaisDeUmDia.checked = true;
+        blocoOutrasDatas.hidden = false;
+        outrasDatasState = datasExtras;
+      } else {
+        checkMaisDeUmDia.checked = false;
+        blocoOutrasDatas.hidden = true;
+        outrasDatasState = [];
+      }
+      renderOutrasDatas();
+
+      btnCancelar.hidden = false;
+      form.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+
+    function popularFiltroDepartamento() {
+      const atual = filtroDepartamento.value;
+      const departamentos = new Set(DEPARTAMENTOS);
+      eventosCache.forEach((e) => { if (e.categoria) departamentos.add(e.categoria); });
+      const opcoes = [...departamentos].sort();
+      filtroDepartamento.innerHTML = '<option value="todos">Todos os departamentos</option>' +
+        opcoes.map((d) => `<option value="${d}">${d}</option>`).join("");
+      if (opcoes.includes(atual)) filtroDepartamento.value = atual;
+    }
+
+    function aplicarFiltrosERenderizar() {
+      const escopo = filtroEscopo.value;
+      const departamento = filtroDepartamento.value;
+      const dataDe = filtroDataInicio.value;
+      const dataAte = filtroDataFim.value;
+      const buscaTitulo = filtroTitulo.value.trim().toLowerCase();
+
+      const filtrados = eventosCache.filter((ev) => {
+        if (escopo !== "todos" && ev.escopo !== escopo) return false;
+        if (departamento !== "todos" && ev.categoria !== departamento) return false;
+        if (dataDe && ev.dataInicio < dataDe) return false;
+        if (dataAte && ev.dataInicio > dataAte) return false;
+        if (buscaTitulo && !ev.titulo.toLowerCase().includes(buscaTitulo)) return false;
+        return true;
+      });
+
+      listaEl.innerHTML = "";
+      if (filtrados.length === 0) {
+        listaEl.innerHTML = '<p class="admin-agenda-vazio">Nenhum evento encontrado.</p>';
+        return;
+      }
+
+      filtrados.forEach((ev) => {
+        const item = document.createElement("div");
+        item.className = "admin-agenda-item";
+
+        const dataSpan = document.createElement("span");
+        dataSpan.className = "admin-agenda-item-data";
+        dataSpan.textContent = formatarDatasEvento(ev);
+
+        const corpo = document.createElement("div");
+        corpo.className = "admin-agenda-item-corpo";
+
+        const tag = document.createElement("span");
+        tag.className = `admin-agenda-item-tag ${ev.escopo}`;
+        tag.textContent = ev.escopo === "congregacao" ? "Congregação" : "Setor";
+
+        const titulo = document.createElement("span");
+        titulo.textContent = ev.titulo + (ev.hora ? ` — ${ev.hora}` : "");
+
+        corpo.appendChild(tag);
+        corpo.appendChild(titulo);
+
+        if (ev.categoria) {
+          const dept = document.createElement("span");
+          dept.className = "admin-agenda-item-dept";
+          dept.textContent = ev.categoria;
+          corpo.appendChild(dept);
+        }
+
+        const botoes = document.createElement("div");
+        botoes.className = "admin-agenda-item-botoes";
+
+        const btnDuplicar = document.createElement("button");
+        btnDuplicar.type = "button";
+        btnDuplicar.textContent = "Duplicar";
+        btnDuplicar.addEventListener("click", () => preencherFormulario(ev, false));
+
+        const btnEditar = document.createElement("button");
+        btnEditar.type = "button";
+        btnEditar.textContent = "Editar";
+        btnEditar.addEventListener("click", () => preencherFormulario(ev, true));
+
+        const btnExcluir = document.createElement("button");
+        btnExcluir.type = "button";
+        btnExcluir.textContent = "Excluir";
+        btnExcluir.addEventListener("click", async () => {
+          if (!confirm(`Excluir o evento "${ev.titulo}"?`)) return;
+          await excluirEvento(ev.id);
+          recarregarLista();
+        });
+
+        botoes.appendChild(btnDuplicar);
+        botoes.appendChild(btnEditar);
+        botoes.appendChild(btnExcluir);
+
+        item.appendChild(dataSpan);
+        item.appendChild(corpo);
+        item.appendChild(botoes);
+        listaEl.appendChild(item);
+      });
+    }
+
+    async function recarregarLista() {
+      listaEl.textContent = "Carregando...";
+      try {
+        eventosCache = await buscarTodosEventos(true);
+      } catch (err) {
+        listaEl.textContent = "Não foi possível carregar os eventos.";
+        console.error(err);
+        return;
+      }
+      popularFiltroDepartamento();
+      aplicarFiltrosERenderizar();
+    }
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const categoria = campoCategoria.value === "_novo"
+        ? campoCategoriaNova.value.trim()
+        : campoCategoria.value;
+      if (!categoria) {
+        alert("Selecione ou digite um departamento.");
+        return;
+      }
+      const outrasDatas = outrasDatasState.filter((d) => d && d !== campoDataInicio.value);
+      const todasDatas = [campoDataInicio.value, ...outrasDatas].sort();
+      const dataFimCalculada = todasDatas[todasDatas.length - 1];
+      try {
+        await salvarEvento({
+          id: campoId.value || null,
+          escopo: campoEscopo.value,
+          categoria: categoria,
+          dataInicio: campoDataInicio.value,
+          dataFim: dataFimCalculada,
+          outrasDatas: outrasDatas,
+          hora: campoHora.value.trim(),
+          titulo: campoTitulo.value.trim(),
+          observacao: campoObservacao.value.trim()
+        });
+        limparFormulario();
+        recarregarLista();
+      } catch (err) {
+        alert("Não foi possível salvar o evento. Tente novamente.");
+        console.error(err);
+      }
+    });
+
+    btnCancelar.addEventListener("click", limparFormulario);
+    filtroEscopo.addEventListener("change", aplicarFiltrosERenderizar);
+    filtroDepartamento.addEventListener("change", aplicarFiltrosERenderizar);
+    filtroDataInicio.addEventListener("change", aplicarFiltrosERenderizar);
+    filtroDataFim.addEventListener("change", aplicarFiltrosERenderizar);
+    filtroTitulo.addEventListener("input", aplicarFiltrosERenderizar);
+
+    btnImportar.addEventListener("click", async () => {
+      btnImportar.disabled = true;
+      statusImportar.textContent = "Importando...";
+      statusImportar.className = "admin-agenda-status";
+      try {
+        const resultado = await importarAgendaInicial(AGENDA_SEED_2026);
+        if (resultado.importado) {
+          statusImportar.textContent = `Pronto! ${resultado.total} eventos importados.`;
+          statusImportar.className = "admin-agenda-status ok";
+        } else {
+          statusImportar.textContent = resultado.motivo;
+          statusImportar.className = "admin-agenda-status";
+        }
+        recarregarLista();
+      } catch (err) {
+        statusImportar.textContent = "Não foi possível importar. Tente novamente.";
+        statusImportar.className = "admin-agenda-status erro";
+        console.error(err);
+      } finally {
+        btnImportar.disabled = false;
+      }
+    });
+
+    recarregarLista();
+  }
+</script>
 
 </html>
