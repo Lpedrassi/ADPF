@@ -7,7 +7,6 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/fireba
 import {
   getAuth,
   signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
   GoogleAuthProvider,
   signInWithPopup,
   sendPasswordResetEmail
@@ -53,26 +52,13 @@ if (form) {
 
   const criarContaBtn = form.querySelector(".btn-ghost");
   if (criarContaBtn) {
-    criarContaBtn.addEventListener("click", async () => {
-      const email = document.getElementById("loginEmail").value.trim();
-      const senha = document.getElementById("loginSenha").value;
-
-      if (!email || !senha) {
-        alert("Preencha e-mail e senha para criar a conta.");
-        return;
-      }
-
-      try {
-        const cred = await createUserWithEmailAndPassword(auth, email, senha);
-        await setDoc(doc(db, "usuarios", cred.user.uid), {
-          email: email,
-          perfil: PERFIL_PADRAO,
-          criadoEm: serverTimestamp()
-        });
-        fecharModalLogin();
-      } catch (err) {
-        alert("Nao foi possivel criar a conta. " + (err.message || ""));
-        console.error(err);
+    criarContaBtn.addEventListener("click", () => {
+      // O cadastro completo (nome, endereco, foto, etc.) e feito no modal de
+      // Perfil - aqui so trocamos o modal de login pelo modal de Perfil, ja
+      // em modo "criar" (usado tambem para editar o perfil depois de logado).
+      fecharModalLogin();
+      if (window.__abrirPerfilModal) {
+        window.__abrirPerfilModal("criar");
       }
     });
   }
@@ -99,15 +85,25 @@ window.entrarComGoogle = async function () {
     const cred = await signInWithPopup(auth, googleProvider);
     const ref = doc(db, "usuarios", cred.user.uid);
     const snap = await getDoc(ref);
-    if (!snap.exists()) {
-      await setDoc(ref, {
-        email: cred.user.email,
-        nome: cred.user.displayName || "",
-        perfil: PERFIL_PADRAO,
-        criadoEm: serverTimestamp()
-      });
-    }
     fecharModalLogin();
+    if (!snap.exists()) {
+      // Conta nova via Google: so pegamos nome e e-mail do Google. O resto
+      // do cadastro (telefone, endereco, foto, etc.) e completado pela
+      // pessoa no modal de Perfil, em modo "completar-google".
+      if (window.__abrirPerfilModal) {
+        window.__abrirPerfilModal("completar-google", {
+          nome: cred.user.displayName || "",
+          email: cred.user.email || ""
+        });
+      } else {
+        await setDoc(ref, {
+          email: cred.user.email,
+          nome: cred.user.displayName || "",
+          perfil: PERFIL_PADRAO,
+          criadoEm: serverTimestamp()
+        });
+      }
+    }
   } catch (err) {
     alert("Nao foi possivel entrar com Google.");
     console.error(err);
