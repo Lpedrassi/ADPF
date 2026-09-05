@@ -149,6 +149,30 @@
     -webkit-background-clip: text; background-clip: text; color: transparent;
   }
 
+  .nav-login-wrap { position: relative; display: inline-flex; flex-shrink: 0; }
+  .nav-user-menu {
+    position: absolute; top: calc(100% + 10px); right: 0; z-index: 90;
+    width: 200px; padding: 8px; border-radius: 16px;
+    background: var(--surface); border: 1px solid var(--border-strong);
+    box-shadow: 0 24px 48px -16px var(--shadow);
+    display: flex; flex-direction: column;
+    opacity: 0; transform: translateY(-6px) scale(0.98); pointer-events: none;
+    transition: opacity 0.16s ease, transform 0.16s ease;
+  }
+  .nav-user-menu[hidden] { display: none; }
+  .nav-user-menu.is-open { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
+  .nav-user-menu-item {
+    display: flex; align-items: center; gap: 10px; width: 100%; text-align: left;
+    padding: 10px 12px; border-radius: 10px; border: none; background: transparent;
+    color: var(--ink); font-size: 13.5px; font-weight: 600; font-family: inherit; cursor: pointer;
+    transition: background 0.15s ease;
+  }
+  .nav-user-menu-item:hover { background: rgba(255,255,255,0.06); }
+  .nav-user-menu-item svg { flex-shrink: 0; color: var(--muted); }
+  .nav-user-menu-divider { height: 1px; margin: 6px 4px; background: var(--border-strong); }
+  .nav-user-menu-sair { color: var(--vermelho); }
+  .nav-user-menu-sair svg { color: var(--vermelho); }
+
   .login-overlay {
     position: fixed; inset: 0; z-index: 100;
     display: flex; align-items: center; justify-content: center; padding: 24px;
@@ -719,18 +743,39 @@
       <li><a href="#ebd" data-nav="ebd">EBD</a></li>
       <li><a href="#contato-section" data-nav="contato-section">Como chegar</a></li>
     </ul>
-    <button class="nav-login" id="loginBtn" type="button" aria-haspopup="dialog" aria-controls="loginModal">
-      <svg viewBox="0 0 24 24" fill="none" stroke="url(#navLoginGrad)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <defs>
-          <linearGradient id="navLoginGrad" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stop-color="#FFE38A" />
-            <stop offset="100%" stop-color="#FFB100" />
-          </linearGradient>
-        </defs>
-        <circle cx="12" cy="8" r="3.4"/><path d="M5 20c0-3.9 3.1-7 7-7s7 3.1 7 7"/>
-      </svg>
-      <span class="nav-login-label">Entrar</span>
-    </button>
+    <div class="nav-login-wrap" id="navLoginWrap">
+      <button class="nav-login" id="loginBtn" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="loginModal">
+        <svg viewBox="0 0 24 24" fill="none" stroke="url(#navLoginGrad)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <defs>
+            <linearGradient id="navLoginGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#FFE38A" />
+              <stop offset="100%" stop-color="#FFB100" />
+            </linearGradient>
+          </defs>
+          <circle cx="12" cy="8" r="3.4"/><path d="M5 20c0-3.9 3.1-7 7-7s7 3.1 7 7"/>
+        </svg>
+        <span class="nav-login-label">Entrar</span>
+      </button>
+      <div class="nav-user-menu" id="navUserMenu" role="menu" aria-labelledby="loginBtn" hidden>
+        <button type="button" class="nav-user-menu-item" data-acao="perfil" role="menuitem">
+          <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.4"/><path d="M5 20c0-3.9 3.1-7 7-7s7 3.1 7 7"/></svg>
+          Perfil
+        </button>
+        <button type="button" class="nav-user-menu-item" data-acao="endereco" role="menuitem">
+          <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+          Endereço
+        </button>
+        <button type="button" class="nav-user-menu-item" data-acao="ajuda" role="menuitem">
+          <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 0 1 4.9.8c0 1.7-2.4 2-2.4 3.7"/><path d="M12 17.5h.01"/></svg>
+          Ajuda
+        </button>
+        <div class="nav-user-menu-divider"></div>
+        <button type="button" class="nav-user-menu-item nav-user-menu-sair" id="btnSairMenu" role="menuitem">
+          <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
+          Sair
+        </button>
+      </div>
+    </div>
   </nav>
 </div>
 
@@ -1322,6 +1367,51 @@
     form.addEventListener('submit', function (e) { e.preventDefault(); });
   })(); (function () { var toggleBtn = document.getElementById('toggleSenha'); var senhaInput = document.getElementById('loginSenha'); var iconAberto = document.getElementById('iconOlhoAberto'); var iconFechado = document.getElementById('iconOlhoFechado'); if (!toggleBtn || !senhaInput) return; toggleBtn.addEventListener('click', function () { var mostrando = senhaInput.type === 'text'; senhaInput.type = mostrando ? 'password' : 'text'; toggleBtn.setAttribute('aria-label', mostrando ? 'Mostrar senha' : 'Ocultar senha'); if (iconAberto) iconAberto.style.display = mostrando ? '' : 'none'; if (iconFechado) iconFechado.style.display = mostrando ? 'none' : ''; }); })();
 
+  // Menu suspenso do usuário logado ("Olá <Nome>" -> Perfil / Endereço / Ajuda / Sair)
+  (function () {
+    var wrap = document.getElementById('navLoginWrap');
+    var btn = document.getElementById('loginBtn');
+    var menu = document.getElementById('navUserMenu');
+    var btnSair = document.getElementById('btnSairMenu');
+    if (!wrap || !btn || !menu) return;
+
+    function abrirMenu() {
+      menu.hidden = false;
+      requestAnimationFrame(function () { menu.classList.add('is-open'); });
+      btn.setAttribute('aria-expanded', 'true');
+    }
+    function fecharMenu() {
+      menu.classList.remove('is-open');
+      btn.setAttribute('aria-expanded', 'false');
+      setTimeout(function () { menu.hidden = true; }, 160);
+    }
+    function alternarMenu() {
+      if (menu.hidden) abrirMenu(); else fecharMenu();
+    }
+    window.__toggleUserMenu = alternarMenu;
+    window.__closeUserMenu = fecharMenu;
+
+    document.addEventListener('click', function (e) {
+      if (!menu.hidden && !wrap.contains(e.target)) fecharMenu();
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && !menu.hidden) fecharMenu();
+    });
+
+    // Perfil, Endereço e Ajuda ainda não têm conteúdo próprio - por enquanto só
+    // fecham o menu. Quando essas áreas forem construídas, ligar aqui a navegação.
+    menu.querySelectorAll('.nav-user-menu-item:not(#btnSairMenu)').forEach(function (item) {
+      item.addEventListener('click', function () { fecharMenu(); });
+    });
+
+    if (btnSair) {
+      btnSair.addEventListener('click', function () {
+        fecharMenu();
+        if (window.__logoutAcao) window.__logoutAcao();
+      });
+    }
+  })();
+
   (function () {
     var navLinks = Array.prototype.slice.call(document.querySelectorAll('#navLinks a'));
     if (!navLinks.length) return;
@@ -1579,6 +1669,8 @@
       portalLayout.classList.remove("logado");
       loginLabel.textContent = "Entrar";
       window.__loginBtnAcao = null;
+      window.__logoutAcao = null;
+      if (window.__closeUserMenu) window.__closeUserMenu();
       mostrarArea("siteHome");
       return;
     }
@@ -1594,7 +1686,8 @@
     const nome = dadosUsuario.nome || (user.email ? user.email.split("@")[0] : "Usuário");
 
     loginLabel.textContent = "Olá " + nome;
-    window.__loginBtnAcao = () => signOut(auth);
+    window.__loginBtnAcao = () => { if (window.__toggleUserMenu) window.__toggleUserMenu(); };
+    window.__logoutAcao = () => signOut(auth);
 
     const areasLiberadas = AREAS_POR_PERFIL[perfil] || AREAS_POR_PERFIL.aluno;
     document.querySelectorAll(".sidebar-link").forEach((link) => {
