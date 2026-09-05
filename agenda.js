@@ -60,7 +60,17 @@ export async function buscarTodosEventos(forcarRecarregar = false) {
   return lista;
 }
 
-/** Cria um evento novo. `dados` deve ter: escopo, dataInicio, dataFim, titulo, hora, categoria, observacao, outrasDatas (opcional). */
+/**
+ * Cria um evento novo. `dados` deve ter: escopo, dataInicio, dataFim, titulo, hora,
+ * categoria, observacao, outrasDatas (opcional).
+ *
+ * Campos extras usados quando escopo === "setor":
+ *   - congregacoesSetor: array com os nomes das congregações envolvidas no evento.
+ *   - duplicadoDoSetor: true quando este documento é a cópia automática (gerada
+ *     ao confirmar o popup "adicionar também na Agenda da Congregação?") de um
+ *     evento originalmente cadastrado como Setor — ajuda a identificar, na lista
+ *     do painel, que aquele registro da Congregação não foi digitado à mão.
+ */
 export async function salvarEvento(dados) {
   const registro = {
     escopo: dados.escopo,
@@ -71,6 +81,8 @@ export async function salvarEvento(dados) {
     hora: dados.hora || null,
     categoria: dados.categoria || null,
     observacao: dados.observacao || null,
+    congregacoesSetor: dados.congregacoesSetor || [],
+    duplicadoDoSetor: dados.duplicadoDoSetor || false,
     atualizadoEm: serverTimestamp()
   };
   if (dados.id) {
