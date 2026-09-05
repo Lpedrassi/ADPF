@@ -39,6 +39,10 @@ const MESES_PT = [
   "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
 ];
 
+const DIAS_SEMANA_PT = [
+  "Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"
+];
+
 // =================================================================
 // 1) FUNÇÕES DE DADOS (Firestore)
 // =================================================================
@@ -148,6 +152,38 @@ function formatarPeriodo(evento) {
   return `${formatarDataCurta(evento.dataInicio)} a ${formatarDataCurta(evento.dataFim)}`;
 }
 
+/** Data de hoje no formato "AAAA-MM-DD" (fuso local do navegador de quem visita o site). */
+function hojeISO() {
+  const d = new Date();
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const dd = String(d.getDate()).padStart(2, "0");
+  return `${d.getFullYear()}-${mm}-${dd}`;
+}
+
+function nomeDiaDaSemana(dataISO) {
+  const [ano, mes, dia] = dataISO.split("-").map(Number);
+  return DIAS_SEMANA_PT[new Date(ano, mes - 1, dia).getDay()];
+}
+
+/** Última data "relevante" do evento (fim, ou a maior das datas alternadas, ou o início). */
+function ultimaDataEvento(evento) {
+  const datas = [evento.dataInicio];
+  if (evento.dataFim) datas.push(evento.dataFim);
+  if (evento.outrasDatas && evento.outrasDatas.length) datas.push(...evento.outrasDatas);
+  return datas.filter(Boolean).sort().pop();
+}
+
+function eventoJaConcluido(evento, hojeISOStr) {
+  return ultimaDataEvento(evento) < hojeISOStr;
+}
+
+/** Filtra só os eventos que ainda não terminaram, ordenados do mais próximo para o mais distante. */
+function ordenarProximos(lista, hojeISOStr) {
+  return lista
+    .filter((ev) => !eventoJaConcluido(ev, hojeISOStr))
+    .sort((a, b) => (a.dataInicio || "").localeCompare(b.dataInicio || ""));
+}
+
 function eventoEsteMes(evento, ano, mesIndex) {
   // Considera o evento "deste mês" se o início, o fim OU alguma das outras datas cair dentro do mês
   // (cobre eventos que atravessam a virada do mês e eventos com datas alternadas).
@@ -161,9 +197,9 @@ function eventoEsteMes(evento, ano, mesIndex) {
   return false;
 }
 
-function montarItemLista(evento) {
+function montarItemLista(evento, destaque) {
   const li = document.createElement("li");
-  li.className = "agenda-item";
+  li.className = "agenda-item" + (destaque ? " agenda-item-proximo" : "");
 
   const data = document.createElement("span");
   data.className = "agenda-item-data";
@@ -172,17 +208,23 @@ function montarItemLista(evento) {
   const corpo = document.createElement("div");
   corpo.className = "agenda-item-corpo";
 
+  // Título e horário na mesma linha (data | título .......... horário)
+  const linha = document.createElement("div");
+  linha.className = "agenda-item-linha";
+
   const titulo = document.createElement("span");
   titulo.className = "agenda-item-titulo";
   titulo.textContent = evento.titulo;
-  corpo.appendChild(titulo);
+  linha.appendChild(titulo);
 
   if (evento.hora) {
     const hora = document.createElement("span");
     hora.className = "agenda-item-hora";
     hora.textContent = evento.hora;
-    corpo.appendChild(hora);
+    linha.appendChild(hora);
   }
+
+  corpo.appendChild(linha);
 
   if (evento.observacao) {
     const obs = document.createElement("span");
@@ -228,18 +270,35 @@ async function iniciarAgendaPublica() {
     const congregacao = doMes.filter((ev) => ev.escopo === "congregacao");
     const setor = doMes.filter((ev) => ev.escopo === "setor");
 
+    // O "próximo evento" de cada agenda é calculado sobre TODOS os eventos (não só os
+    // deste mês) - só recebe a borda dourada se, além de ser o próximo, ele aparecer
+    // no mês que está sendo exibido agora.
+    const hojeStr = hojeISO();
+    const proximoCongregacao = ordenarProximos(
+      todos.filter((ev) => ev.escopo === "congregacao"),
+      hojeStr
+    )[0];
+    const proximoSetor = ordenarProximos(
+      todos.filter((ev) => ev.escopo === "setor"),
+      hojeStr
+    )[0];
+
     elListaCongregacao.innerHTML = "";
     if (congregacao.length === 0) {
       elListaCongregacao.innerHTML = '<li class="agenda-vazio">Nenhum evento cadastrado para este mês.</li>';
     } else {
-      congregacao.forEach((ev) => elListaCongregacao.appendChild(montarItemLista(ev)));
+      congregacao.forEach((ev) =>
+        elListaCongregacao.appendChild(montarItemLista(ev, proximoCongregacao && ev.id === proximoCongregacao.id))
+      );
     }
 
     elListaSetor.innerHTML = "";
     if (setor.length === 0) {
       elListaSetor.innerHTML = '<li class="agenda-vazio">Nenhum evento cadastrado para este mês.</li>';
     } else {
-      setor.forEach((ev) => elListaSetor.appendChild(montarItemLista(ev)));
+      setor.forEach((ev) =>
+        elListaSetor.appendChild(montarItemLista(ev, proximoSetor && ev.id === proximoSetor.id))
+      );
     }
   }
 
@@ -258,4 +317,73 @@ async function iniciarAgendaPublica() {
   renderizarMesAtual();
 }
 
+// =================================================================
+// 3) CARDS "PRÓXIMOS CULTOS E EVENTOS" (seção "Cultos e encontros")
+// =================================================================
+
+/**
+ * Preenche os 2 primeiros cards da seção "Cultos e encontros" com dados reais
+ * da Agenda (o 3º card, "Campanha de Oração", continua fixo no HTML).
+ *   - Card 1 (azul): o próximo culto de domingo da nossa congregação (título
+ *     começando com "Culto" - ex.: "Culto com os Adolescentes"). Se não achar
+ *     nenhum, mantém o texto padrão "Culto de Celebração" que já está no HTML.
+ *   - Card 2 (laranja): o próximo evento da Agenda (Setor OU Congregação,
+ *     qualquer tipo), sem repetir o mesmo evento do card 1.
+ */
+async function preencherProximosCultos() {
+  const elCultoTag = document.getElementById("cultoCardCultoTag");
+  const elCultoTitulo = document.getElementById("cultoCardCultoTitulo");
+  const elCultoDesc = document.getElementById("cultoCardCultoDesc");
+  const elEventoTag = document.getElementById("cultoCardEventoTag");
+  const elEventoTitulo = document.getElementById("cultoCardEventoTitulo");
+  const elEventoDesc = document.getElementById("cultoCardEventoDesc");
+
+  if (!elCultoTag || !elEventoTag) return; // não está nesta página
+
+  let todos;
+  try {
+    todos = await buscarTodosEventos();
+  } catch (err) {
+    console.error(err);
+    return; // mantém o texto padrão que já está no HTML
+  }
+
+  const hoje = hojeISO();
+
+  // Card 1: próximo culto de domingo da nossa congregação
+  const cultosCongregacao = todos.filter(
+    (ev) => ev.escopo === "congregacao" && /^culto/i.test((ev.titulo || "").trim())
+  );
+  const proximoCulto = ordenarProximos(cultosCongregacao, hoje)[0] || null;
+
+  if (proximoCulto) {
+    elCultoTag.textContent = `${nomeDiaDaSemana(proximoCulto.dataInicio)} · ${proximoCulto.hora || "hora a definir"}`;
+    elCultoTitulo.textContent = proximoCulto.titulo;
+    elCultoDesc.textContent = proximoCulto.categoria
+      ? `Departamento: ${proximoCulto.categoria}`
+      : "Louvor, ministração da Palavra e comunhão com toda a igreja.";
+  }
+
+  // Card 2: próximo evento (Setor ou Congregação), sem repetir o do card 1
+  const proximosGeral = ordenarProximos(todos, hoje).filter(
+    (ev) => !proximoCulto || ev.id !== proximoCulto.id
+  );
+  const proximoEvento = proximosGeral[0] || null;
+
+  if (proximoEvento) {
+    const escopoLabel = proximoEvento.escopo === "setor" ? "Setor" : "Congregação";
+    elEventoTag.textContent = `${escopoLabel} · ${formatarPeriodo(proximoEvento)}`;
+    elEventoTitulo.textContent = proximoEvento.titulo;
+    const partes = [];
+    if (proximoEvento.hora) partes.push(proximoEvento.hora);
+    if (proximoEvento.observacao) partes.push(proximoEvento.observacao);
+    elEventoDesc.textContent = partes.length ? partes.join(" — ") : "Confira os detalhes na Agenda logo abaixo.";
+  } else {
+    elEventoTag.textContent = "Agenda";
+    elEventoTitulo.textContent = "Nenhum evento à vista";
+    elEventoDesc.textContent = "Assim que um novo evento for cadastrado, ele aparece aqui.";
+  }
+}
+
 iniciarAgendaPublica();
+preencherProximosCultos();
