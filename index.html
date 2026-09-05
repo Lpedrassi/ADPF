@@ -221,6 +221,17 @@
   #loginTitle { display: flex; width: fit-content; margin: 0 auto; font-size: 16px; font-weight: 800; }
   .login-note { margin-top: 20px; font-size: 12px; color: var(--muted-2); text-align: center; }
 
+  .perfil-card { max-width: 560px; max-height: 88vh; overflow-y: auto; }
+  .perfil-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 480px) { .perfil-grid-2 { grid-template-columns: 1fr; } }
+  .perfil-foto-row { display: flex; align-items: center; gap: 14px; }
+  .perfil-foto-preview { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; background: var(--surface-2); border: 1px solid var(--border-strong); flex-shrink: 0; }
+  .perfil-secao-titulo { font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin-top: 4px; }
+  .perfil-readonly { opacity: 0.65; cursor: not-allowed; }
+  .perfil-excluir-row { margin-top: 2px; }
+  .btn-danger { background: rgba(255,59,59,0.08); color: var(--vermelho); border-color: var(--vermelho); }
+  .btn-danger:hover { background: var(--vermelho); color: #fff; transform: translateY(-2px); }
+
   /* ---------- Hero ---------- */
   .hero { position: relative; overflow: hidden; padding: 84px 0 0; }
   .aurora { position: absolute; inset: 0; z-index: 0; overflow: hidden; }
@@ -806,6 +817,110 @@
         Conectar com Google
       </button>
     </form>
+  </div>
+</div>
+
+<div class="login-overlay" id="perfilModal" role="dialog" aria-modal="true" aria-labelledby="perfilTitulo" hidden>
+  <div class="login-card perfil-card">
+    <button class="login-close" id="perfilClose" type="button" aria-label="Fechar">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+    <span class="pill eyebrow" id="perfilTitulo"><span class="dot"></span>Meu Perfil</span>
+    <form class="login-form" id="perfilForm">
+      <div>
+        <label for="perfilUsuario">Usuário</label>
+        <input id="perfilUsuario" type="text" placeholder="nome de usuário">
+      </div>
+      <div class="perfil-grid-2">
+        <div>
+          <label for="perfilNome">Nome</label>
+          <input id="perfilNome" type="text" placeholder="seu nome" required>
+        </div>
+        <div>
+          <label for="perfilSobrenome">Sobrenome</label>
+          <input id="perfilSobrenome" type="text" placeholder="seu sobrenome">
+        </div>
+      </div>
+      <div>
+        <label for="perfilEmail">E-mail</label>
+        <input id="perfilEmail" type="email" placeholder="seu e-mail" autocomplete="email" required>
+      </div>
+      <div id="perfilSenhaGrupo">
+        <label for="perfilSenha">Senha</label>
+        <input id="perfilSenha" type="password" placeholder="••••••••" autocomplete="new-password">
+      </div>
+      <p class="login-note" id="perfilGoogleNota" hidden style="margin-top:0;">Conta conectada com o Google. Se quiser, defina uma senha depois em "Trocar senha".</p>
+      <div>
+        <label for="perfilTelefone">Telefone</label>
+        <input id="perfilTelefone" type="tel" placeholder="DD - 0000-0000" inputmode="numeric">
+      </div>
+      <div class="perfil-foto-row">
+        <img id="perfilFotoPreview" class="perfil-foto-preview" alt="Foto do perfil">
+        <div style="flex:1;">
+          <label for="perfilFotoInput">Foto</label>
+          <input id="perfilFotoInput" type="file" accept="image/*">
+        </div>
+      </div>
+
+      <div class="perfil-secao-titulo">Endereço</div>
+      <div class="perfil-grid-2">
+        <div>
+          <label for="perfilCep">CEP</label>
+          <input id="perfilCep" type="text" placeholder="00000-000" inputmode="numeric" maxlength="9">
+        </div>
+        <div>
+          <label for="perfilNumero">Número</label>
+          <input id="perfilNumero" type="text" placeholder="nº">
+        </div>
+      </div>
+      <div>
+        <label for="perfilRua">Rua</label>
+        <input id="perfilRua" type="text" placeholder="rua">
+      </div>
+      <div>
+        <label for="perfilComplemento">Complemento</label>
+        <input id="perfilComplemento" type="text" placeholder="apto, bloco, etc.">
+      </div>
+      <div class="perfil-grid-2">
+        <div>
+          <label for="perfilBairro">Bairro</label>
+          <input id="perfilBairro" type="text" placeholder="bairro">
+        </div>
+        <div>
+          <label for="perfilCidade">Cidade</label>
+          <input id="perfilCidade" type="text" placeholder="cidade">
+        </div>
+      </div>
+
+      <div>
+        <label for="perfilPerfilCampo">Perfil</label>
+        <input id="perfilPerfilCampo" type="text" class="perfil-readonly" readonly>
+      </div>
+
+      <div class="perfil-excluir-row" id="perfilTrocarSenhaRow" hidden>
+        <a href="#" class="login-forgot" id="perfilTrocarSenhaLink" style="text-align:left;display:inline-block;">Trocar senha</a>
+      </div>
+
+      <p class="login-note" id="perfilMensagem" style="margin-top:0;"></p>
+
+      <div class="login-btn-row">
+        <button type="submit" class="btn btn-blue-grad" id="perfilBtnSalvar" style="flex:1;justify-content:center;">Salvar</button>
+      </div>
+      <div class="perfil-excluir-row" id="perfilExcluirRow" hidden>
+        <button type="button" class="btn btn-danger" id="perfilBtnExcluir" style="width:100%;justify-content:center;">Excluir Conta!</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="login-overlay" id="modalConfirmarExcluirConta" role="dialog" aria-modal="true" aria-labelledby="confirmarExcluirContaTitulo" hidden>
+  <div class="login-card confirm-card">
+    <span class="pill eyebrow" id="confirmarExcluirContaTitulo"><span class="dot"></span>Excluir Conta</span>
+    <p>Tem certeza que deseja excluir sua conta? Essa ação não pode ser desfeita.</p>
+    <div class="login-btn-row">
+      <button type="button" class="btn btn-ghost" id="btnExcluirContaNao">Cancelar</button>
+      <button type="button" class="btn btn-danger" id="btnExcluirContaSim">Sim, excluir</button>
+    </div>
   </div>
 </div>
 
@@ -1398,10 +1513,16 @@
       if (e.key === 'Escape' && !menu.hidden) fecharMenu();
     });
 
-    // Perfil, Endereço e Ajuda ainda não têm conteúdo próprio - por enquanto só
-    // fecham o menu. Quando essas áreas forem construídas, ligar aqui a navegação.
+    // Perfil abre o formulario de perfil (definido no script principal, mais
+    // abaixo). Endereço e Ajuda ainda não têm conteúdo próprio - por enquanto
+    // só fecham o menu.
     menu.querySelectorAll('.nav-user-menu-item:not(#btnSairMenu)').forEach(function (item) {
-      item.addEventListener('click', function () { fecharMenu(); });
+      item.addEventListener('click', function () {
+        fecharMenu();
+        if (item.dataset.acao === 'perfil' && window.__abrirPerfilModal) {
+          window.__abrirPerfilModal('editar');
+        }
+      });
     });
 
     if (btnSair) {
@@ -1622,8 +1743,13 @@
 
 <script type="module">
   import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
-  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
-  import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+  import {
+    getAuth, onAuthStateChanged, signOut,
+    createUserWithEmailAndPassword, sendPasswordResetEmail, deleteUser
+  } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+  import {
+    getFirestore, doc, getDoc, setDoc, deleteDoc, serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
   import { firebaseConfig } from "./firebase-config.js";
   import { buscarTodosEventos, salvarEvento, excluirEvento, importarAgendaInicial } from "./agenda.js";
   import { AGENDA_SEED_2026 } from "./agenda-seed-2026.js";
@@ -1663,6 +1789,7 @@
   });
 
   let painelAgendaIniciado = false;
+  let usuarioAtualCache = null;
 
   onAuthStateChanged(auth, async (user) => {
     if (!user) {
@@ -1670,6 +1797,7 @@
       loginLabel.textContent = "Entrar";
       window.__loginBtnAcao = null;
       window.__logoutAcao = null;
+      usuarioAtualCache = null;
       if (window.__closeUserMenu) window.__closeUserMenu();
       mostrarArea("siteHome");
       return;
@@ -1684,6 +1812,7 @@
     }
     const perfil = dadosUsuario.perfil || "aluno";
     const nome = dadosUsuario.nome || (user.email ? user.email.split("@")[0] : "Usuário");
+    usuarioAtualCache = Object.assign({ uid: user.uid, email: user.email }, dadosUsuario);
 
     loginLabel.textContent = "Olá " + nome;
     window.__loginBtnAcao = () => { if (window.__toggleUserMenu) window.__toggleUserMenu(); };
@@ -1702,6 +1831,289 @@
       iniciarPainelAgenda();
     }
   });
+
+  // =================================================================
+  // Modal de Perfil - serve tanto para editar o cadastro de quem já
+  // está logado quanto para Criar Conta (chamado pelo auth.js) e para
+  // completar o cadastro de quem entrou pela primeira vez com Google.
+  // =================================================================
+  (function () {
+    const modal = document.getElementById("perfilModal");
+    if (!modal) return;
+    const closeBtn = document.getElementById("perfilClose");
+    const form = document.getElementById("perfilForm");
+    const titulo = document.getElementById("perfilTitulo");
+    const btnSalvar = document.getElementById("perfilBtnSalvar");
+    const mensagemEl = document.getElementById("perfilMensagem");
+    const senhaGrupo = document.getElementById("perfilSenhaGrupo");
+    const campoSenha = document.getElementById("perfilSenha");
+    const googleNota = document.getElementById("perfilGoogleNota");
+    const trocarSenhaRow = document.getElementById("perfilTrocarSenhaRow");
+    const trocarSenhaLink = document.getElementById("perfilTrocarSenhaLink");
+    const excluirRow = document.getElementById("perfilExcluirRow");
+    const btnExcluir = document.getElementById("perfilBtnExcluir");
+
+    const campoUsuario = document.getElementById("perfilUsuario");
+    const campoNome = document.getElementById("perfilNome");
+    const campoSobrenome = document.getElementById("perfilSobrenome");
+    const campoEmail = document.getElementById("perfilEmail");
+    const campoTelefone = document.getElementById("perfilTelefone");
+    const fotoInput = document.getElementById("perfilFotoInput");
+    const fotoPreview = document.getElementById("perfilFotoPreview");
+    const campoCep = document.getElementById("perfilCep");
+    const campoNumero = document.getElementById("perfilNumero");
+    const campoRua = document.getElementById("perfilRua");
+    const campoComplemento = document.getElementById("perfilComplemento");
+    const campoBairro = document.getElementById("perfilBairro");
+    const campoCidade = document.getElementById("perfilCidade");
+    const campoPerfilCampo = document.getElementById("perfilPerfilCampo");
+
+    const modalExcluir = document.getElementById("modalConfirmarExcluirConta");
+    const btnExcluirSim = document.getElementById("btnExcluirContaSim");
+    const btnExcluirNao = document.getElementById("btnExcluirContaNao");
+
+    const FOTO_PADRAO = "data:image/svg+xml;utf8," + encodeURIComponent(
+      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%239aa0ad" stroke-width="1.6"><circle cx="12" cy="8" r="3.4"/><path d="M5 20c0-3.9 3.1-7 7-7s7 3.1 7 7"/></svg>'
+    );
+    const ROTULOS_PERFIL = { admin: "Administrador", professor: "Professor", aluno: "Aluno", administrativo: "Administrativo" };
+
+    let modoAtual = "criar";
+    let fotoBase64Atual = "";
+
+    function rotuloPerfil(perfil) {
+      return ROTULOS_PERFIL[perfil] || "Aluno";
+    }
+
+    function limparFormulario() {
+      form.reset();
+      fotoBase64Atual = "";
+      fotoPreview.src = FOTO_PADRAO;
+      mensagemEl.textContent = "";
+    }
+
+    function abrirModal(modo, dadosGoogle) {
+      modoAtual = modo || "editar";
+      limparFormulario();
+
+      senhaGrupo.hidden = modoAtual !== "criar";
+      campoSenha.required = modoAtual === "criar";
+      googleNota.hidden = modoAtual !== "completar-google";
+      trocarSenhaRow.hidden = modoAtual !== "editar";
+      excluirRow.hidden = modoAtual !== "editar";
+      campoEmail.readOnly = modoAtual !== "criar";
+
+      if (modoAtual === "editar" && usuarioAtualCache) {
+        titulo.innerHTML = '<span class="dot"></span>Meu Perfil';
+        btnSalvar.textContent = "Salvar";
+        campoUsuario.value = usuarioAtualCache.usuario || "";
+        campoNome.value = usuarioAtualCache.nome || "";
+        campoSobrenome.value = usuarioAtualCache.sobrenome || "";
+        campoEmail.value = usuarioAtualCache.email || "";
+        campoTelefone.value = usuarioAtualCache.telefone || "";
+        const end = usuarioAtualCache.endereco || {};
+        campoCep.value = end.cep || "";
+        campoRua.value = end.rua || "";
+        campoNumero.value = end.numero || "";
+        campoComplemento.value = end.complemento || "";
+        campoBairro.value = end.bairro || "";
+        campoCidade.value = end.cidade || "";
+        campoPerfilCampo.value = rotuloPerfil(usuarioAtualCache.perfil);
+        fotoBase64Atual = usuarioAtualCache.foto || "";
+        fotoPreview.src = fotoBase64Atual || FOTO_PADRAO;
+      } else if (modoAtual === "completar-google") {
+        titulo.innerHTML = '<span class="dot"></span>Complete seu Cadastro';
+        btnSalvar.textContent = "Concluir Cadastro";
+        campoNome.value = (dadosGoogle && dadosGoogle.nome) || "";
+        campoEmail.value = (dadosGoogle && dadosGoogle.email) || "";
+        campoPerfilCampo.value = rotuloPerfil("aluno");
+      } else {
+        titulo.innerHTML = '<span class="dot"></span>Criar Conta';
+        btnSalvar.textContent = "Criar Conta";
+        campoPerfilCampo.value = rotuloPerfil("aluno");
+      }
+
+      modal.hidden = false;
+      requestAnimationFrame(() => modal.classList.add("is-open"));
+      document.body.style.overflow = "hidden";
+    }
+
+    function fecharModal() {
+      modal.classList.remove("is-open");
+      document.body.style.overflow = "";
+      setTimeout(() => { modal.hidden = true; }, 200);
+    }
+
+    window.__abrirPerfilModal = abrirModal;
+    window.__fecharPerfilModal = fecharModal;
+
+    closeBtn.addEventListener("click", fecharModal);
+    modal.addEventListener("click", (e) => { if (e.target === modal) fecharModal(); });
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !modal.hidden) fecharModal(); });
+
+    // Mascara simples de telefone: DD - 0000-0000
+    campoTelefone.addEventListener("input", () => {
+      const digitos = campoTelefone.value.replace(/\D/g, "").slice(0, 10);
+      let formatado = "";
+      if (digitos.length > 0) formatado = digitos.slice(0, 2);
+      if (digitos.length > 2) formatado += " - " + digitos.slice(2, 6);
+      if (digitos.length > 6) formatado += "-" + digitos.slice(6, 10);
+      campoTelefone.value = formatado;
+    });
+
+    // Foto: comprime a imagem num quadrado pequeno e guarda como base64
+    // direto no Firestore (sem usar Firebase Storage).
+    fotoInput.addEventListener("change", () => {
+      const arquivo = fotoInput.files && fotoInput.files[0];
+      if (!arquivo) return;
+      const leitor = new FileReader();
+      leitor.onload = () => {
+        const img = new Image();
+        img.onload = () => {
+          const tamanho = 160;
+          const canvas = document.createElement("canvas");
+          canvas.width = tamanho;
+          canvas.height = tamanho;
+          const ctx = canvas.getContext("2d");
+          const escala = Math.max(tamanho / img.width, tamanho / img.height);
+          const w = img.width * escala, h = img.height * escala;
+          ctx.drawImage(img, (tamanho - w) / 2, (tamanho - h) / 2, w, h);
+          fotoBase64Atual = canvas.toDataURL("image/jpeg", 0.7);
+          fotoPreview.src = fotoBase64Atual;
+        };
+        img.src = leitor.result;
+      };
+      leitor.readAsDataURL(arquivo);
+    });
+
+    // CEP: preenche Rua, Bairro e Cidade automaticamente (API ViaCEP)
+    campoCep.addEventListener("input", () => {
+      const digitos = campoCep.value.replace(/\D/g, "").slice(0, 8);
+      campoCep.value = digitos.length > 5 ? digitos.slice(0, 5) + "-" + digitos.slice(5) : digitos;
+    });
+    campoCep.addEventListener("blur", async () => {
+      const digitos = campoCep.value.replace(/\D/g, "");
+      if (digitos.length !== 8) return;
+      try {
+        const resp = await fetch("https://viacep.com.br/ws/" + digitos + "/json/");
+        const dados = await resp.json();
+        if (dados.erro) return;
+        campoRua.value = dados.logradouro || campoRua.value;
+        campoBairro.value = dados.bairro || campoBairro.value;
+        campoCidade.value = dados.localidade || campoCidade.value;
+        campoNumero.focus();
+      } catch (err) {
+        console.error(err);
+      }
+    });
+
+    trocarSenhaLink.addEventListener("click", async (e) => {
+      e.preventDefault();
+      if (!usuarioAtualCache || !usuarioAtualCache.email) return;
+      try {
+        await sendPasswordResetEmail(auth, usuarioAtualCache.email);
+        mensagemEl.textContent = "Enviamos um link para trocar sua senha em " + usuarioAtualCache.email + ".";
+      } catch (err) {
+        mensagemEl.textContent = "Não foi possível enviar o e-mail de troca de senha.";
+        console.error(err);
+      }
+    });
+
+    function confirmarExclusaoConta() {
+      return new Promise((resolve) => {
+        if (!modalExcluir) { resolve(window.confirm("Excluir sua conta? Essa ação não pode ser desfeita.")); return; }
+        modalExcluir.hidden = false;
+        requestAnimationFrame(() => modalExcluir.classList.add("is-open"));
+        function fechar(resultado) {
+          modalExcluir.classList.remove("is-open");
+          setTimeout(() => { modalExcluir.hidden = true; }, 200);
+          btnExcluirSim.removeEventListener("click", onSim);
+          btnExcluirNao.removeEventListener("click", onNao);
+          resolve(resultado);
+        }
+        function onSim() { fechar(true); }
+        function onNao() { fechar(false); }
+        btnExcluirSim.addEventListener("click", onSim);
+        btnExcluirNao.addEventListener("click", onNao);
+      });
+    }
+
+    btnExcluir.addEventListener("click", async () => {
+      const confirmar = await confirmarExclusaoConta();
+      if (!confirmar) return;
+      try {
+        const uid = auth.currentUser.uid;
+        await deleteDoc(doc(db, "usuarios", uid));
+        await deleteUser(auth.currentUser);
+        fecharModal();
+      } catch (err) {
+        if (err.code === "auth/requires-recent-login") {
+          alert("Por segurança, saia e entre novamente antes de excluir a conta.");
+        } else {
+          alert("Não foi possível excluir a conta. " + (err.message || ""));
+        }
+        console.error(err);
+      }
+    });
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      mensagemEl.textContent = "";
+
+      const emailFinal = campoEmail.value.trim();
+      const dadosPerfil = {
+        usuario: campoUsuario.value.trim(),
+        nome: campoNome.value.trim(),
+        sobrenome: campoSobrenome.value.trim(),
+        telefone: campoTelefone.value.trim(),
+        foto: fotoBase64Atual || "",
+        endereco: {
+          cep: campoCep.value.trim(),
+          rua: campoRua.value.trim(),
+          numero: campoNumero.value.trim(),
+          complemento: campoComplemento.value.trim(),
+          bairro: campoBairro.value.trim(),
+          cidade: campoCidade.value.trim()
+        }
+      };
+
+      if (!dadosPerfil.nome) {
+        mensagemEl.textContent = "Preencha ao menos o nome.";
+        return;
+      }
+
+      btnSalvar.disabled = true;
+      try {
+        let perfilFinal = "aluno";
+        if (modoAtual === "criar") {
+          const senha = campoSenha.value;
+          if (!emailFinal || !senha) {
+            mensagemEl.textContent = "Preencha e-mail e senha para criar a conta.";
+            btnSalvar.disabled = false;
+            return;
+          }
+          const cred = await createUserWithEmailAndPassword(auth, emailFinal, senha);
+          await setDoc(doc(db, "usuarios", cred.user.uid), Object.assign({}, dadosPerfil, {
+            email: emailFinal, perfil: "aluno", criadoEm: serverTimestamp()
+          }));
+        } else if (modoAtual === "completar-google") {
+          await setDoc(doc(db, "usuarios", auth.currentUser.uid), Object.assign({}, dadosPerfil, {
+            email: emailFinal, perfil: "aluno", criadoEm: serverTimestamp()
+          }), { merge: true });
+        } else {
+          perfilFinal = (usuarioAtualCache && usuarioAtualCache.perfil) || "aluno";
+          await setDoc(doc(db, "usuarios", auth.currentUser.uid), dadosPerfil, { merge: true });
+        }
+        usuarioAtualCache = Object.assign({}, usuarioAtualCache, dadosPerfil, { email: emailFinal, perfil: perfilFinal });
+        loginLabel.textContent = "Olá " + (dadosPerfil.nome || emailFinal.split("@")[0]);
+        fecharModal();
+      } catch (err) {
+        mensagemEl.textContent = "Não foi possível salvar. " + (err.message || "");
+        console.error(err);
+      } finally {
+        btnSalvar.disabled = false;
+      }
+    });
+  })();
 
   // =================================================================
   // Painel de administração da Agenda (só roda se o perfil for admin)
