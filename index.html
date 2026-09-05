@@ -689,6 +689,19 @@
   }
   .btn-admin-mini:hover { border-color: var(--laranja); }
   .admin-agenda-item-dept { font-size: 11.5px; color: var(--muted); }
+
+  .admin-congregacoes-grupo { display: flex; flex-direction: column; gap: 8px; }
+  .admin-congregacoes-grupo[hidden] { display: none; }
+  .admin-congregacoes-grupo > span { font-size: 12px; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; }
+  .admin-congregacoes-opcoes { display: flex; flex-wrap: wrap; gap: 8px 18px; }
+  .admin-congregacoes-opcoes .admin-check { text-transform: none; }
+  #eventoCongregacaoOutra[hidden] { display: none; }
+  .admin-agenda-item-dup { font-size: 11px; color: var(--azul); font-weight: 700; }
+
+  .confirm-card { max-width: 420px; text-align: left; }
+  .confirm-card h3 { font-size: 19px; font-weight: 800; margin: 0; }
+  .confirm-card p { margin-top: 12px; font-size: 14px; color: var(--muted); line-height: 1.5; }
+  .confirm-card .login-btn-row { margin-top: 22px; }
 </style>
 
 <div class="nav-shell">
@@ -748,6 +761,17 @@
         Conectar com Google
       </button>
     </form>
+  </div>
+</div>
+
+<div class="login-overlay" id="modalConfirmarDuplicar" role="dialog" aria-modal="true" aria-labelledby="confirmarDuplicarTitulo" hidden>
+  <div class="login-card confirm-card">
+    <span class="pill eyebrow" id="confirmarDuplicarTitulo"><span class="dot"></span>Evento do Setor</span>
+    <p id="confirmarDuplicarTexto"></p>
+    <div class="login-btn-row">
+      <button type="button" class="btn btn-ghost" id="btnConfirmarDuplicarNao">Não, só Setor</button>
+      <button type="button" class="btn btn-primary btn-gold" id="btnConfirmarDuplicarSim">Sim, duplicar</button>
+    </div>
   </div>
 </div>
 
@@ -1133,7 +1157,7 @@
     <form id="formAgendaEvento" class="admin-form">
       <input type="hidden" id="eventoId" value="">
       <div class="admin-form-linha">
-        <label>Escopo
+        <label>Agenda
           <select id="eventoEscopo" required>
             <option value="congregacao">Nossa congregação</option>
             <option value="setor">Setor</option>
@@ -1157,6 +1181,11 @@
         <label>Nome do novo departamento
           <input type="text" id="eventoCategoriaNova" placeholder="Ex: Casais">
         </label>
+      </div>
+      <div class="admin-congregacoes-grupo" id="linhaCongregacoesSetor" hidden>
+        <span>Congregações envolvidas (Setor)</span>
+        <div class="admin-congregacoes-opcoes" id="opcoesCongregacoes"></div>
+        <input type="text" id="eventoCongregacaoOutra" placeholder="Nome da nova congregação" hidden>
       </div>
       <div class="admin-form-linha">
         <label>Data início
@@ -1516,6 +1545,8 @@
   const db = getFirestore(app);
 
   const DEPARTAMENTOS = ["Infantil", "Adolescentes", "Jovens", "Varões", "Feminino", "Missões", "Culto"];
+  const CONGREGACOES_SETOR = ["Sede", "Roseira", "Cruzeiro", "Bananal", "Jaguariúna", "Primavera", "Pq Florianópolis"];
+  const CONGREGACAO_LOCAL = "Pq Florianópolis";
 
   const AREAS_POR_PERFIL = {
     admin: ["siteHome", "areaAdmin", "areaAgenda", "areaProfessor", "areaAluno", "areaAdministrativo"],
@@ -1605,9 +1636,84 @@
     const filtroDataInicio = document.getElementById("filtroDataInicio");
     const filtroDataFim = document.getElementById("filtroDataFim");
     const filtroTitulo = document.getElementById("filtroTitulo");
+    const linhaCongregacoesSetor = document.getElementById("linhaCongregacoesSetor");
+    const opcoesCongregacoesEl = document.getElementById("opcoesCongregacoes");
+    const campoCongregacaoOutra = document.getElementById("eventoCongregacaoOutra");
+    const modalConfirmarDuplicar = document.getElementById("modalConfirmarDuplicar");
+    const confirmarDuplicarTexto = document.getElementById("confirmarDuplicarTexto");
+    const btnConfirmarDuplicarSim = document.getElementById("btnConfirmarDuplicarSim");
+    const btnConfirmarDuplicarNao = document.getElementById("btnConfirmarDuplicarNao");
 
     let outrasDatasState = [];
     let eventosCache = [];
+
+    // Monta os checkboxes de congregações (uma vez), mais o checkbox "Outra..."
+    CONGREGACOES_SETOR.forEach((nome) => {
+      const label = document.createElement("label");
+      label.className = "admin-check";
+      const input = document.createElement("input");
+      input.type = "checkbox";
+      input.value = nome;
+      label.appendChild(input);
+      label.appendChild(document.createTextNode(nome));
+      opcoesCongregacoesEl.appendChild(label);
+    });
+    const labelOutra = document.createElement("label");
+    labelOutra.className = "admin-check";
+    const checkCongregacaoOutra = document.createElement("input");
+    checkCongregacaoOutra.type = "checkbox";
+    checkCongregacaoOutra.id = "checkCongregacaoOutra";
+    labelOutra.appendChild(checkCongregacaoOutra);
+    labelOutra.appendChild(document.createTextNode("Outra..."));
+    opcoesCongregacoesEl.appendChild(labelOutra);
+
+    checkCongregacaoOutra.addEventListener("change", () => {
+      campoCongregacaoOutra.hidden = !checkCongregacaoOutra.checked;
+      if (checkCongregacaoOutra.checked) campoCongregacaoOutra.focus();
+      else campoCongregacaoOutra.value = "";
+    });
+
+    function limparCongregacoesSetor() {
+      opcoesCongregacoesEl.querySelectorAll('input[type="checkbox"]').forEach((cb) => { cb.checked = false; });
+      campoCongregacaoOutra.hidden = true;
+      campoCongregacaoOutra.value = "";
+    }
+
+    function lerCongregacoesSetorSelecionadas() {
+      const marcadas = Array.from(opcoesCongregacoesEl.querySelectorAll('input[type="checkbox"]:checked'))
+        .filter((cb) => cb !== checkCongregacaoOutra)
+        .map((cb) => cb.value);
+      if (checkCongregacaoOutra.checked && campoCongregacaoOutra.value.trim()) {
+        marcadas.push(campoCongregacaoOutra.value.trim());
+      }
+      return marcadas;
+    }
+
+    campoEscopo.addEventListener("change", () => {
+      const ehSetor = campoEscopo.value === "setor";
+      linhaCongregacoesSetor.hidden = !ehSetor;
+      if (!ehSetor) limparCongregacoesSetor();
+    });
+
+    /** Mostra o popup de confirmação; resolve true (duplicar) ou false (só Setor). */
+    function confirmarDuplicarNaCongregacao(mensagem) {
+      return new Promise((resolve) => {
+        confirmarDuplicarTexto.textContent = mensagem;
+        modalConfirmarDuplicar.hidden = false;
+        requestAnimationFrame(() => modalConfirmarDuplicar.classList.add("is-open"));
+        function fechar(resultado) {
+          modalConfirmarDuplicar.classList.remove("is-open");
+          setTimeout(() => { modalConfirmarDuplicar.hidden = true; }, 200);
+          btnConfirmarDuplicarSim.removeEventListener("click", onSim);
+          btnConfirmarDuplicarNao.removeEventListener("click", onNao);
+          resolve(resultado);
+        }
+        function onSim() { fechar(true); }
+        function onNao() { fechar(false); }
+        btnConfirmarDuplicarSim.addEventListener("click", onSim);
+        btnConfirmarDuplicarNao.addEventListener("click", onNao);
+      });
+    }
 
     function renderOutrasDatas() {
       listaOutrasDatas.innerHTML = "";
@@ -1667,6 +1773,8 @@
       blocoOutrasDatas.hidden = true;
       outrasDatasState = [];
       renderOutrasDatas();
+      linhaCongregacoesSetor.hidden = campoEscopo.value !== "setor";
+      limparCongregacoesSetor();
     }
 
     function formatarDataLista(dataISO) {
@@ -1707,6 +1815,22 @@
       campoHora.value = ev.hora || "";
       campoTitulo.value = ev.titulo;
       campoObservacao.value = ev.observacao || "";
+
+      limparCongregacoesSetor();
+      linhaCongregacoesSetor.hidden = ev.escopo !== "setor";
+      if (ev.escopo === "setor" && ev.congregacoesSetor && ev.congregacoesSetor.length > 0) {
+        const extras = [];
+        ev.congregacoesSetor.forEach((nome) => {
+          const cb = opcoesCongregacoesEl.querySelector(`input[type="checkbox"][value="${CSS.escape(nome)}"]`);
+          if (cb) cb.checked = true;
+          else extras.push(nome);
+        });
+        if (extras.length > 0) {
+          checkCongregacaoOutra.checked = true;
+          campoCongregacaoOutra.hidden = false;
+          campoCongregacaoOutra.value = extras.join(", ");
+        }
+      }
 
       let datasExtras = [];
       if (ev.outrasDatas && ev.outrasDatas.length > 0) {
@@ -1789,6 +1913,20 @@
           corpo.appendChild(dept);
         }
 
+        if (ev.escopo === "setor" && ev.congregacoesSetor && ev.congregacoesSetor.length > 0) {
+          const congs = document.createElement("span");
+          congs.className = "admin-agenda-item-dept";
+          congs.textContent = "Congregações: " + ev.congregacoesSetor.join(", ");
+          corpo.appendChild(congs);
+        }
+
+        if (ev.duplicadoDoSetor) {
+          const dup = document.createElement("span");
+          dup.className = "admin-agenda-item-dup";
+          dup.textContent = "🔗 Adicionado automaticamente a partir de um evento do Setor";
+          corpo.appendChild(dup);
+        }
+
         const botoes = document.createElement("div");
         botoes.className = "admin-agenda-item-botoes";
 
@@ -1844,9 +1982,30 @@
         alert("Selecione ou digite um departamento.");
         return;
       }
+
+      const ehSetor = campoEscopo.value === "setor";
+      let congregacoesSetor = [];
+      if (ehSetor) {
+        congregacoesSetor = lerCongregacoesSetorSelecionadas();
+        if (congregacoesSetor.length === 0) {
+          alert("Selecione ao menos uma congregação envolvida no evento do Setor.");
+          return;
+        }
+      }
+
       const outrasDatas = outrasDatasState.filter((d) => d && d !== campoDataInicio.value);
       const todasDatas = [campoDataInicio.value, ...outrasDatas].sort();
       const dataFimCalculada = todasDatas[todasDatas.length - 1];
+      const ehEventoNovo = !campoId.value;
+      const envolvePqFlorianopolis = ehSetor && congregacoesSetor.includes(CONGREGACAO_LOCAL);
+
+      let duplicarNaCongregacao = false;
+      if (ehEventoNovo && envolvePqFlorianopolis) {
+        duplicarNaCongregacao = await confirmarDuplicarNaCongregacao(
+          `Este evento do Setor envolve a Congregação ${CONGREGACAO_LOCAL}. Deseja adicioná-lo também na Agenda da nossa Congregação?`
+        );
+      }
+
       try {
         await salvarEvento({
           id: campoId.value || null,
@@ -1857,8 +2016,26 @@
           outrasDatas: outrasDatas,
           hora: campoHora.value.trim(),
           titulo: campoTitulo.value.trim(),
-          observacao: campoObservacao.value.trim()
+          observacao: campoObservacao.value.trim(),
+          congregacoesSetor: ehSetor ? congregacoesSetor : []
         });
+
+        if (duplicarNaCongregacao) {
+          await salvarEvento({
+            id: null,
+            escopo: "congregacao",
+            categoria: categoria,
+            dataInicio: campoDataInicio.value,
+            dataFim: dataFimCalculada,
+            outrasDatas: outrasDatas,
+            hora: campoHora.value.trim(),
+            titulo: campoTitulo.value.trim(),
+            observacao: campoObservacao.value.trim(),
+            congregacoesSetor: [],
+            duplicadoDoSetor: true
+          });
+        }
+
         limparFormulario();
         recarregarLista();
       } catch (err) {
