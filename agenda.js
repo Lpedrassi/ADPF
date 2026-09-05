@@ -152,6 +152,33 @@ function formatarPeriodo(evento) {
   return `${formatarDataCurta(evento.dataInicio)} a ${formatarDataCurta(evento.dataFim)}`;
 }
 
+/**
+ * Período compacto para exibição em uma única linha na lista da Agenda:
+ * "27/09" (dia único), "04 a 05/09" (período no mesmo mês) ou
+ * "28/08 a 02/09" (período que atravessa o mês). Não trata datas alternadas
+ * (outrasDatas) - para isso use datasIndividuais().
+ */
+function formatarPeriodoCompacto(evento) {
+  if (!evento.dataFim || evento.dataFim === evento.dataInicio) {
+    return formatarDataCurta(evento.dataInicio);
+  }
+  const [anoI, mesI, diaI] = evento.dataInicio.split("-");
+  const [anoF, mesF, diaF] = evento.dataFim.split("-");
+  if (anoI === anoF && mesI === mesF) {
+    return `${diaI} a ${diaF}/${mesF}`;
+  }
+  return `${formatarDataCurta(evento.dataInicio)} a ${formatarDataCurta(evento.dataFim)}`;
+}
+
+/**
+ * Lista de datas avulsas (dataInicio + outrasDatas) já formatadas como "dd/mm",
+ * em ordem - para eventos com datas alternadas, mostradas uma embaixo da outra.
+ */
+function datasIndividuais(evento) {
+  const todas = [evento.dataInicio, ...(evento.outrasDatas || [])].sort();
+  return todas.map(formatarDataCurta);
+}
+
 /** Data de hoje no formato "AAAA-MM-DD" (fuso local do navegador de quem visita o site). */
 function hojeISO() {
   const d = new Date();
@@ -201,9 +228,21 @@ function montarItemLista(evento, destaque) {
   const li = document.createElement("li");
   li.className = "agenda-item" + (destaque ? " agenda-item-proximo" : "");
 
-  const data = document.createElement("span");
+  const data = document.createElement("div");
   data.className = "agenda-item-data";
-  data.textContent = formatarPeriodo(evento);
+  if (evento.outrasDatas && evento.outrasDatas.length > 0) {
+    datasIndividuais(evento).forEach((texto) => {
+      const linha = document.createElement("span");
+      linha.className = "agenda-item-data-linha";
+      linha.textContent = texto;
+      data.appendChild(linha);
+    });
+  } else {
+    const linha = document.createElement("span");
+    linha.className = "agenda-item-data-linha";
+    linha.textContent = formatarPeriodoCompacto(evento);
+    data.appendChild(linha);
+  }
 
   const corpo = document.createElement("div");
   corpo.className = "agenda-item-corpo";
