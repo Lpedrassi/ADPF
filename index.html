@@ -222,6 +222,7 @@
   .login-note { margin-top: 20px; font-size: 12px; color: var(--muted-2); text-align: center; }
 
   .perfil-card { max-width: 560px; max-height: 88vh; overflow-y: auto; }
+  .perfil-step-indicator { margin-top: 8px; font-size: 12px; font-weight: 700; color: var(--muted); text-align: center; text-transform: uppercase; letter-spacing: 0.04em; }
   .perfil-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
   @media (max-width: 480px) { .perfil-grid-2 { grid-template-columns: 1fr; } }
   .perfil-foto-row { display: flex; align-items: center; gap: 14px; }
@@ -725,6 +726,19 @@
   .btn-admin-mini:hover { border-color: var(--laranja); }
   .admin-agenda-item-dept { font-size: 11.5px; color: var(--muted); }
 
+  .admin-perfis-lista { display: flex; flex-direction: column; gap: 8px; margin-top: 18px; max-height: 520px; overflow-y: auto; }
+  .admin-perfis-item {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px; background: var(--bg); border: 1px solid var(--border);
+    border-radius: 10px; padding: 10px 14px; font-size: 13px;
+  }
+  .admin-perfis-item-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .admin-perfis-item-nome { font-weight: 700; }
+  .admin-perfis-item-email { font-size: 11.5px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .admin-perfis-item-select {
+    background: var(--surface-2); border: 1px solid var(--border-strong); border-radius: 8px; color: var(--ink);
+    padding: 7px 10px; font-size: 13px; font-family: inherit; flex-shrink: 0;
+  }
+
   .admin-congregacoes-grupo { display: flex; flex-direction: column; gap: 8px; }
   .admin-congregacoes-grupo[hidden] { display: none; }
   .admin-congregacoes-grupo > span { font-size: 12px; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; }
@@ -826,12 +840,14 @@
       <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
     </button>
     <span class="pill eyebrow" id="perfilTitulo"><span class="dot"></span>Meu Perfil</span>
+    <p class="perfil-step-indicator" id="perfilStepIndicador" hidden>Passo 1 de 3</p>
     <form class="login-form" id="perfilForm">
-      <div>
+      <div data-show="editar">
         <label for="perfilUsuario">Usuário</label>
         <input id="perfilUsuario" type="text" placeholder="nome de usuário">
       </div>
-      <div class="perfil-grid-2">
+
+      <div class="perfil-grid-2" data-show="editar step2">
         <div>
           <label for="perfilNome">Nome</label>
           <input id="perfilNome" type="text" placeholder="seu nome" required>
@@ -841,20 +857,33 @@
           <input id="perfilSobrenome" type="text" placeholder="seu sobrenome">
         </div>
       </div>
-      <div>
+
+      <div data-show="editar step1">
         <label for="perfilEmail">E-mail</label>
         <input id="perfilEmail" type="email" placeholder="seu e-mail" autocomplete="email" required>
       </div>
-      <div id="perfilSenhaGrupo">
+      <div id="perfilSenhaGrupo" data-show="step1">
         <label for="perfilSenha">Senha</label>
         <input id="perfilSenha" type="password" placeholder="••••••••" autocomplete="new-password">
       </div>
-      <p class="login-note" id="perfilGoogleNota" hidden style="margin-top:0;">Conta conectada com o Google. Se quiser, defina uma senha depois em "Trocar senha".</p>
-      <div>
+      <div id="perfilSenhaConfirmarGrupo" data-show="step1">
+        <label for="perfilSenhaConfirmar">Confirmar senha</label>
+        <input id="perfilSenhaConfirmar" type="password" placeholder="••••••••" autocomplete="new-password">
+      </div>
+      <div class="login-divider" data-show="step1">ou</div>
+      <button type="button" class="btn btn-ghost btn-google" id="perfilBtnGoogle" data-show="step1" onclick="entrarComGoogle()">
+        <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.9 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.6 6.1 29.6 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.7-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.6 15.9 18.9 13 24 13c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.6 6.1 29.6 4 24 4 16.3 4 9.6 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.5 0 10.4-1.9 14.3-5.1l-6.6-5.4C29.6 35.5 26.9 36.5 24 36.5c-5.3 0-9.7-3.4-11.3-8.2l-6.6 5.1C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.4-2.3 4.4-4.3 5.8l6.6 5.4C40.1 36.5 44 30.9 44 24c0-1.3-.1-2.7-.4-3.5z"/></svg>
+        Usar dados do Google
+      </button>
+
+      <p class="login-note" id="perfilGoogleNota" hidden style="margin-top:0;">Conectado com o Google — nome e e-mail já preenchidos.</p>
+
+      <div data-show="editar step2">
         <label for="perfilTelefone">Telefone</label>
         <input id="perfilTelefone" type="tel" placeholder="DD - 0000-0000" inputmode="numeric">
       </div>
-      <div class="perfil-foto-row">
+
+      <div class="perfil-foto-row" data-show="editar step3">
         <img id="perfilFotoPreview" class="perfil-foto-preview" alt="Foto do perfil">
         <div style="flex:1;">
           <label for="perfilFotoInput">Foto</label>
@@ -862,8 +891,8 @@
         </div>
       </div>
 
-      <div class="perfil-secao-titulo">Endereço</div>
-      <div class="perfil-grid-2">
+      <div class="perfil-secao-titulo" data-show="editar step2">Endereço</div>
+      <div class="perfil-grid-2" data-show="editar step2">
         <div>
           <label for="perfilCep">CEP</label>
           <input id="perfilCep" type="text" placeholder="00000-000" inputmode="numeric" maxlength="9">
@@ -873,15 +902,15 @@
           <input id="perfilNumero" type="text" placeholder="nº">
         </div>
       </div>
-      <div>
+      <div data-show="editar step2">
         <label for="perfilRua">Rua</label>
         <input id="perfilRua" type="text" placeholder="rua">
       </div>
-      <div>
+      <div data-show="editar step2">
         <label for="perfilComplemento">Complemento</label>
         <input id="perfilComplemento" type="text" placeholder="apto, bloco, etc.">
       </div>
-      <div class="perfil-grid-2">
+      <div class="perfil-grid-2" data-show="editar step2">
         <div>
           <label for="perfilBairro">Bairro</label>
           <input id="perfilBairro" type="text" placeholder="bairro">
@@ -892,22 +921,34 @@
         </div>
       </div>
 
-      <div>
+      <div data-show="editar">
         <label for="perfilPerfilCampo">Perfil</label>
         <input id="perfilPerfilCampo" type="text" class="perfil-readonly" readonly>
       </div>
 
-      <div class="perfil-excluir-row" id="perfilTrocarSenhaRow" hidden>
+      <div class="perfil-excluir-row" id="perfilTrocarSenhaRow" data-show="editar">
         <a href="#" class="login-forgot" id="perfilTrocarSenhaLink" style="text-align:left;display:inline-block;">Trocar senha</a>
       </div>
 
       <p class="login-note" id="perfilMensagem" style="margin-top:0;"></p>
 
-      <div class="login-btn-row">
+      <div class="login-btn-row" data-show="editar">
         <button type="submit" class="btn btn-blue-grad" id="perfilBtnSalvar" style="flex:1;justify-content:center;">Salvar</button>
       </div>
-      <div class="perfil-excluir-row" id="perfilExcluirRow" hidden>
+      <div class="perfil-excluir-row" id="perfilExcluirRow" data-show="editar">
         <button type="button" class="btn btn-danger" id="perfilBtnExcluir" style="width:100%;justify-content:center;">Excluir Conta!</button>
+      </div>
+
+      <div class="login-btn-row" data-show="step1">
+        <button type="button" class="btn btn-blue-grad" id="perfilBtnAvancar1" style="flex:1;justify-content:center;">Avançar</button>
+      </div>
+      <div class="login-btn-row" data-show="step2">
+        <button type="button" class="btn btn-ghost" id="perfilBtnVoltar2" style="flex:1;justify-content:center;">Voltar</button>
+        <button type="button" class="btn btn-blue-grad" id="perfilBtnAvancar2" style="flex:1;justify-content:center;">Avançar</button>
+      </div>
+      <div class="login-btn-row" data-show="step3">
+        <button type="button" class="btn btn-ghost" id="perfilBtnPular3" style="flex:1;justify-content:center;">Pular</button>
+        <button type="button" class="btn btn-blue-grad" id="perfilBtnConcluir3" style="flex:1;justify-content:center;">Concluir</button>
       </div>
     </form>
   </div>
@@ -956,6 +997,7 @@
   <nav class="portal-sidebar" id="portalSidebar">
     <button class="sidebar-link active" type="button" data-area="siteHome">Início (site)</button>
     <button class="sidebar-link" type="button" data-area="areaAdmin">Administração</button>
+    <button class="sidebar-link" type="button" data-area="areaGerenciarPerfis">Gerenciar Perfis</button>
     <button class="sidebar-link" type="button" data-area="areaAgenda">Agenda de Cultos e Eventos</button>
     <button class="sidebar-link" type="button" data-area="areaProfessor">Área do Professor</button>
     <button class="sidebar-link" type="button" data-area="areaAluno">Área do Aluno</button>
@@ -1305,6 +1347,13 @@
   <section id="areaAdmin" class="portal-section">
     <h2>Administração (Super User)</h2>
     <p>Visão geral do sistema. Use o menu ao lado para acessar a Agenda de Cultos e Eventos e as demais áreas.</p>
+  </section>
+
+  <section id="areaGerenciarPerfis" class="portal-section">
+    <h2>Gerenciar Perfis</h2>
+    <p class="admin-agenda-info">Defina o perfil de acesso de cada pessoa cadastrada no site. Contas novas entram como "Convidado" até serem revisadas aqui.</p>
+    <p id="gerenciarPerfisStatus" class="admin-agenda-status"></p>
+    <div id="gerenciarPerfisLista" class="admin-perfis-lista">Carregando...</div>
   </section>
 
   <section id="areaAgenda" class="portal-section">
@@ -1748,7 +1797,8 @@
     createUserWithEmailAndPassword, sendPasswordResetEmail, deleteUser
   } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
   import {
-    getFirestore, doc, getDoc, setDoc, deleteDoc, serverTimestamp
+    getFirestore, doc, getDoc, setDoc, deleteDoc, serverTimestamp,
+    collection, getDocs, updateDoc
   } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
   import { firebaseConfig } from "./firebase-config.js";
   import { buscarTodosEventos, salvarEvento, excluirEvento, importarAgendaInicial } from "./agenda.js";
@@ -1765,10 +1815,11 @@
   const CONGREGACAO_LOCAL = "Pq Florianópolis";
 
   const AREAS_POR_PERFIL = {
-    admin: ["siteHome", "areaAdmin", "areaAgenda", "areaProfessor", "areaAluno", "areaAdministrativo"],
+    admin: ["siteHome", "areaAdmin", "areaGerenciarPerfis", "areaAgenda", "areaProfessor", "areaAluno", "areaAdministrativo"],
     professor: ["siteHome", "areaProfessor"],
     aluno: ["siteHome", "areaAluno"],
-    administrativo: ["siteHome", "areaAdministrativo"]
+    administrativo: ["siteHome", "areaAdministrativo"],
+    convidado: ["siteHome"]
   };
 
   const portalLayout = document.getElementById("portalLayout");
@@ -1789,6 +1840,7 @@
   });
 
   let painelAgendaIniciado = false;
+  let gerenciarPerfisIniciado = false;
   let usuarioAtualCache = null;
 
   onAuthStateChanged(auth, async (user) => {
@@ -1830,7 +1882,89 @@
       painelAgendaIniciado = true;
       iniciarPainelAgenda();
     }
+    if (perfil === "admin" && !gerenciarPerfisIniciado) {
+      gerenciarPerfisIniciado = true;
+      iniciarGerenciarPerfis();
+    }
   });
+
+  // =================================================================
+  // Gerenciar Perfis (só admin) - lista todos os usuarios cadastrados e
+  // deixa escolher o perfil de cada um (Convidado, Aluno, Professor,
+  // Administrativo, Administrador).
+  // =================================================================
+  function iniciarGerenciarPerfis() {
+    const listaEl = document.getElementById("gerenciarPerfisLista");
+    const statusEl = document.getElementById("gerenciarPerfisStatus");
+    if (!listaEl) return;
+
+    const ROTULOS_GERENCIAR = { convidado: "Convidado", aluno: "Aluno", professor: "Professor", administrativo: "Administrativo", admin: "Administrador" };
+
+    async function carregar() {
+      listaEl.innerHTML = "Carregando...";
+      try {
+        const snap = await getDocs(collection(db, "usuarios"));
+        const usuarios = [];
+        snap.forEach((d) => usuarios.push(Object.assign({ uid: d.id }, d.data())));
+        usuarios.sort((a, b) => (a.nome || a.email || "").localeCompare(b.nome || b.email || ""));
+
+        if (!usuarios.length) {
+          listaEl.innerHTML = '<div class="admin-agenda-vazio">Nenhum usuário cadastrado ainda.</div>';
+          return;
+        }
+
+        listaEl.innerHTML = "";
+        usuarios.forEach((u) => {
+          const item = document.createElement("div");
+          item.className = "admin-perfis-item";
+
+          const info = document.createElement("div");
+          info.className = "admin-perfis-item-info";
+          const nomeEl = document.createElement("span");
+          nomeEl.className = "admin-perfis-item-nome";
+          nomeEl.textContent = [u.nome, u.sobrenome].filter(Boolean).join(" ") || "(sem nome)";
+          const emailEl = document.createElement("span");
+          emailEl.className = "admin-perfis-item-email";
+          emailEl.textContent = u.email || u.uid;
+          info.appendChild(nomeEl);
+          info.appendChild(emailEl);
+
+          const select = document.createElement("select");
+          select.className = "admin-perfis-item-select";
+          Object.keys(ROTULOS_GERENCIAR).forEach((valor) => {
+            const opt = document.createElement("option");
+            opt.value = valor;
+            opt.textContent = ROTULOS_GERENCIAR[valor];
+            if ((u.perfil || "convidado") === valor) opt.selected = true;
+            select.appendChild(opt);
+          });
+          select.addEventListener("change", async () => {
+            select.disabled = true;
+            try {
+              await updateDoc(doc(db, "usuarios", u.uid), { perfil: select.value });
+              statusEl.textContent = "Perfil de " + (u.nome || u.email || u.uid) + " atualizado para " + ROTULOS_GERENCIAR[select.value] + ".";
+              statusEl.className = "admin-agenda-status ok";
+            } catch (err) {
+              statusEl.textContent = "Não foi possível salvar. " + (err.message || "");
+              statusEl.className = "admin-agenda-status erro";
+              console.error(err);
+            } finally {
+              select.disabled = false;
+            }
+          });
+
+          item.appendChild(info);
+          item.appendChild(select);
+          listaEl.appendChild(item);
+        });
+      } catch (err) {
+        listaEl.innerHTML = '<div class="admin-agenda-vazio">Não foi possível carregar a lista de usuários.</div>';
+        console.error(err);
+      }
+    }
+
+    carregar();
+  }
 
   // =================================================================
   // Modal de Perfil - serve tanto para editar o cadastro de quem já
@@ -1843,15 +1977,19 @@
     const closeBtn = document.getElementById("perfilClose");
     const form = document.getElementById("perfilForm");
     const titulo = document.getElementById("perfilTitulo");
+    const stepIndicador = document.getElementById("perfilStepIndicador");
     const btnSalvar = document.getElementById("perfilBtnSalvar");
     const mensagemEl = document.getElementById("perfilMensagem");
-    const senhaGrupo = document.getElementById("perfilSenhaGrupo");
     const campoSenha = document.getElementById("perfilSenha");
+    const campoSenhaConfirmar = document.getElementById("perfilSenhaConfirmar");
     const googleNota = document.getElementById("perfilGoogleNota");
-    const trocarSenhaRow = document.getElementById("perfilTrocarSenhaRow");
     const trocarSenhaLink = document.getElementById("perfilTrocarSenhaLink");
-    const excluirRow = document.getElementById("perfilExcluirRow");
     const btnExcluir = document.getElementById("perfilBtnExcluir");
+    const btnAvancar1 = document.getElementById("perfilBtnAvancar1");
+    const btnVoltar2 = document.getElementById("perfilBtnVoltar2");
+    const btnAvancar2 = document.getElementById("perfilBtnAvancar2");
+    const btnPular3 = document.getElementById("perfilBtnPular3");
+    const btnConcluir3 = document.getElementById("perfilBtnConcluir3");
 
     const campoUsuario = document.getElementById("perfilUsuario");
     const campoNome = document.getElementById("perfilNome");
@@ -1875,13 +2013,34 @@
     const FOTO_PADRAO = "data:image/svg+xml;utf8," + encodeURIComponent(
       '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%239aa0ad" stroke-width="1.6"><circle cx="12" cy="8" r="3.4"/><path d="M5 20c0-3.9 3.1-7 7-7s7 3.1 7 7"/></svg>'
     );
-    const ROTULOS_PERFIL = { admin: "Administrador", professor: "Professor", aluno: "Aluno", administrativo: "Administrativo" };
+    const ROTULOS_PERFIL = { admin: "Administrador", professor: "Professor", aluno: "Aluno", administrativo: "Administrativo", convidado: "Convidado" };
 
     let modoAtual = "criar";
+    let wizardPasso = 1;
     let fotoBase64Atual = "";
 
     function rotuloPerfil(perfil) {
-      return ROTULOS_PERFIL[perfil] || "Aluno";
+      return ROTULOS_PERFIL[perfil] || "Convidado";
+    }
+
+    // O modo "editar" mostra tudo de uma vez, no formulário único de sempre.
+    // Os modos "criar" e "completar-google" mostram só o passo atual do
+    // assistente (1, 2 ou 3) - cada campo/bloco do formulário tem um atributo
+    // data-show dizendo em quais contextos ele aparece.
+    function contextoAtual() {
+      return modoAtual === "editar" ? "editar" : ("step" + wizardPasso);
+    }
+
+    function aplicarVisibilidade() {
+      const ctx = contextoAtual();
+      form.querySelectorAll("[data-show]").forEach((el) => {
+        el.hidden = !el.dataset.show.split(" ").includes(ctx);
+      });
+      googleNota.hidden = !(modoAtual === "completar-google" && ctx === "step2");
+      if (btnVoltar2) btnVoltar2.hidden = ctx !== "step2" || modoAtual === "completar-google";
+      campoEmail.readOnly = modoAtual !== "criar";
+      stepIndicador.hidden = modoAtual === "editar";
+      if (!stepIndicador.hidden) stepIndicador.textContent = "Passo " + wizardPasso + " de 3";
     }
 
     function limparFormulario() {
@@ -1891,20 +2050,30 @@
       mensagemEl.textContent = "";
     }
 
+    function coletarDadosPessoais() {
+      return {
+        usuario: campoUsuario.value.trim(),
+        nome: campoNome.value.trim(),
+        sobrenome: campoSobrenome.value.trim(),
+        telefone: campoTelefone.value.trim(),
+        endereco: {
+          cep: campoCep.value.trim(),
+          rua: campoRua.value.trim(),
+          numero: campoNumero.value.trim(),
+          complemento: campoComplemento.value.trim(),
+          bairro: campoBairro.value.trim(),
+          cidade: campoCidade.value.trim()
+        }
+      };
+    }
+
     function abrirModal(modo, dadosGoogle) {
       modoAtual = modo || "editar";
+      wizardPasso = modoAtual === "completar-google" ? 2 : 1;
       limparFormulario();
-
-      senhaGrupo.hidden = modoAtual !== "criar";
-      campoSenha.required = modoAtual === "criar";
-      googleNota.hidden = modoAtual !== "completar-google";
-      trocarSenhaRow.hidden = modoAtual !== "editar";
-      excluirRow.hidden = modoAtual !== "editar";
-      campoEmail.readOnly = modoAtual !== "criar";
 
       if (modoAtual === "editar" && usuarioAtualCache) {
         titulo.innerHTML = '<span class="dot"></span>Meu Perfil';
-        btnSalvar.textContent = "Salvar";
         campoUsuario.value = usuarioAtualCache.usuario || "";
         campoNome.value = usuarioAtualCache.nome || "";
         campoSobrenome.value = usuarioAtualCache.sobrenome || "";
@@ -1922,15 +2091,15 @@
         fotoPreview.src = fotoBase64Atual || FOTO_PADRAO;
       } else if (modoAtual === "completar-google") {
         titulo.innerHTML = '<span class="dot"></span>Complete seu Cadastro';
-        btnSalvar.textContent = "Concluir Cadastro";
         campoNome.value = (dadosGoogle && dadosGoogle.nome) || "";
         campoEmail.value = (dadosGoogle && dadosGoogle.email) || "";
-        campoPerfilCampo.value = rotuloPerfil("aluno");
+        fotoBase64Atual = (dadosGoogle && dadosGoogle.foto) || "";
+        fotoPreview.src = fotoBase64Atual || FOTO_PADRAO;
       } else {
         titulo.innerHTML = '<span class="dot"></span>Criar Conta';
-        btnSalvar.textContent = "Criar Conta";
-        campoPerfilCampo.value = rotuloPerfil("aluno");
       }
+
+      aplicarVisibilidade();
 
       modal.hidden = false;
       requestAnimationFrame(() => modal.classList.add("is-open"));
@@ -1949,6 +2118,7 @@
     closeBtn.addEventListener("click", fecharModal);
     modal.addEventListener("click", (e) => { if (e.target === modal) fecharModal(); });
     document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !modal.hidden) fecharModal(); });
+    form.addEventListener("submit", (e) => { e.preventDefault(); });
 
     // Mascara simples de telefone: DD - 0000-0000
     campoTelefone.addEventListener("input", () => {
@@ -2055,26 +2225,11 @@
       }
     });
 
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
+    // ---------- Modo "editar" (já logado): salva tudo de uma vez ----------
+    btnSalvar.addEventListener("click", async () => {
       mensagemEl.textContent = "";
-
-      const emailFinal = campoEmail.value.trim();
-      const dadosPerfil = {
-        usuario: campoUsuario.value.trim(),
-        nome: campoNome.value.trim(),
-        sobrenome: campoSobrenome.value.trim(),
-        telefone: campoTelefone.value.trim(),
-        foto: fotoBase64Atual || "",
-        endereco: {
-          cep: campoCep.value.trim(),
-          rua: campoRua.value.trim(),
-          numero: campoNumero.value.trim(),
-          complemento: campoComplemento.value.trim(),
-          bairro: campoBairro.value.trim(),
-          cidade: campoCidade.value.trim()
-        }
-      };
+      const dadosPerfil = coletarDadosPessoais();
+      dadosPerfil.foto = fotoBase64Atual || "";
 
       if (!dadosPerfil.nome) {
         mensagemEl.textContent = "Preencha ao menos o nome.";
@@ -2083,28 +2238,10 @@
 
       btnSalvar.disabled = true;
       try {
-        let perfilFinal = "aluno";
-        if (modoAtual === "criar") {
-          const senha = campoSenha.value;
-          if (!emailFinal || !senha) {
-            mensagemEl.textContent = "Preencha e-mail e senha para criar a conta.";
-            btnSalvar.disabled = false;
-            return;
-          }
-          const cred = await createUserWithEmailAndPassword(auth, emailFinal, senha);
-          await setDoc(doc(db, "usuarios", cred.user.uid), Object.assign({}, dadosPerfil, {
-            email: emailFinal, perfil: "aluno", criadoEm: serverTimestamp()
-          }));
-        } else if (modoAtual === "completar-google") {
-          await setDoc(doc(db, "usuarios", auth.currentUser.uid), Object.assign({}, dadosPerfil, {
-            email: emailFinal, perfil: "aluno", criadoEm: serverTimestamp()
-          }), { merge: true });
-        } else {
-          perfilFinal = (usuarioAtualCache && usuarioAtualCache.perfil) || "aluno";
-          await setDoc(doc(db, "usuarios", auth.currentUser.uid), dadosPerfil, { merge: true });
-        }
-        usuarioAtualCache = Object.assign({}, usuarioAtualCache, dadosPerfil, { email: emailFinal, perfil: perfilFinal });
-        loginLabel.textContent = "Olá " + (dadosPerfil.nome || emailFinal.split("@")[0]);
+        await setDoc(doc(db, "usuarios", auth.currentUser.uid), dadosPerfil, { merge: true });
+        const perfilFinal = (usuarioAtualCache && usuarioAtualCache.perfil) || "convidado";
+        usuarioAtualCache = Object.assign({}, usuarioAtualCache, dadosPerfil, { perfil: perfilFinal });
+        loginLabel.textContent = "Olá " + (dadosPerfil.nome || (usuarioAtualCache.email || "").split("@")[0]);
         fecharModal();
       } catch (err) {
         mensagemEl.textContent = "Não foi possível salvar. " + (err.message || "");
@@ -2113,6 +2250,107 @@
         btnSalvar.disabled = false;
       }
     });
+
+    // ---------- Assistente de Criar Conta / Completar cadastro (3 passos) ----------
+    // Contas novas entram sempre com perfil "convidado" - só um administrador,
+    // em "Gerenciar Perfis", pode promover a pessoa para Aluno/Professor/
+    // Administrativo/Administrador depois.
+
+    // Passo 1: e-mail + senha + confirmar senha (ou "Usar dados do Google",
+    // que já autentica e pula direto para o passo 2 - ver auth.js).
+    btnAvancar1.addEventListener("click", async () => {
+      mensagemEl.textContent = "";
+      const email = campoEmail.value.trim();
+      const senha = campoSenha.value;
+      const confirmar = campoSenhaConfirmar.value;
+
+      if (!email || !senha) {
+        mensagemEl.textContent = "Preencha e-mail e senha.";
+        return;
+      }
+      if (senha.length < 6) {
+        mensagemEl.textContent = "A senha precisa ter pelo menos 6 caracteres.";
+        return;
+      }
+      if (senha !== confirmar) {
+        mensagemEl.textContent = "As senhas digitadas são diferentes.";
+        return;
+      }
+
+      btnAvancar1.disabled = true;
+      try {
+        const cred = await createUserWithEmailAndPassword(auth, email, senha);
+        await setDoc(doc(db, "usuarios", cred.user.uid), {
+          email: email,
+          perfil: "convidado",
+          criadoEm: serverTimestamp()
+        });
+        wizardPasso = 2;
+        aplicarVisibilidade();
+        campoNome.focus();
+      } catch (err) {
+        if (err.code === "auth/email-already-in-use") {
+          mensagemEl.textContent = "Esse e-mail já tem uma conta. Tente entrar em vez de criar uma nova.";
+        } else if (err.code === "auth/invalid-email") {
+          mensagemEl.textContent = "Digite um e-mail válido.";
+        } else if (err.code === "auth/weak-password") {
+          mensagemEl.textContent = "Escolha uma senha mais forte (pelo menos 6 caracteres).";
+        } else {
+          mensagemEl.textContent = "Não foi possível criar a conta. " + (err.message || "");
+        }
+        console.error(err);
+      } finally {
+        btnAvancar1.disabled = false;
+      }
+    });
+
+    // Passo 2: dados pessoais (Nome, Sobrenome, Telefone, Endereço).
+    btnVoltar2.addEventListener("click", () => {
+      wizardPasso = 1;
+      aplicarVisibilidade();
+    });
+
+    btnAvancar2.addEventListener("click", async () => {
+      mensagemEl.textContent = "";
+      const dadosPerfil = coletarDadosPessoais();
+      if (!dadosPerfil.nome) {
+        mensagemEl.textContent = "Preencha ao menos o nome.";
+        return;
+      }
+      btnAvancar2.disabled = true;
+      try {
+        await setDoc(doc(db, "usuarios", auth.currentUser.uid), dadosPerfil, { merge: true });
+        wizardPasso = 3;
+        aplicarVisibilidade();
+      } catch (err) {
+        mensagemEl.textContent = "Não foi possível salvar. " + (err.message || "");
+        console.error(err);
+      } finally {
+        btnAvancar2.disabled = false;
+      }
+    });
+
+    // Passo 3: Foto (opcional - "Pular" conclui o cadastro sem foto).
+    async function concluirCadastro() {
+      mensagemEl.textContent = "";
+      try {
+        if (fotoBase64Atual) {
+          await setDoc(doc(db, "usuarios", auth.currentUser.uid), { foto: fotoBase64Atual }, { merge: true });
+        }
+        const nomeFinal = campoNome.value.trim();
+        const emailFinal = campoEmail.value.trim();
+        usuarioAtualCache = Object.assign({}, usuarioAtualCache, coletarDadosPessoais(), {
+          email: emailFinal, foto: fotoBase64Atual || "", perfil: "convidado"
+        });
+        loginLabel.textContent = "Olá " + (nomeFinal || emailFinal.split("@")[0]);
+        fecharModal();
+      } catch (err) {
+        mensagemEl.textContent = "Não foi possível salvar a foto. " + (err.message || "");
+        console.error(err);
+      }
+    }
+    btnPular3.addEventListener("click", concluirCadastro);
+    btnConcluir3.addEventListener("click", concluirCadastro);
   })();
 
   // =================================================================
