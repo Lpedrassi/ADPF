@@ -98,6 +98,7 @@ window.entrarComGoogle = async function () {
         nome: cred.user.displayName || "",
         foto: cred.user.photoURL || "",
         perfil: PERFIL_PADRAO,
+        ativo: true,
         criadoEm: serverTimestamp()
       });
       if (window.__abrirPerfilModal) {
