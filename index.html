@@ -735,6 +735,9 @@
   .admin-perfis-item-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
   .admin-perfis-item-nome { font-weight: 700; }
   .admin-perfis-item-email { font-size: 11.5px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .admin-perfis-item-status { font-size: 11.5px; min-height: 14px; }
+  .admin-perfis-item-status.ok { color: #7CD992; }
+  .admin-perfis-item-status.erro { color: var(--vermelho); }
   .admin-perfis-item-select {
     background: var(--surface-2); border: 1px solid var(--border-strong); border-radius: 8px; color: var(--ink);
     padding: 7px 10px; font-size: 13px; font-family: inherit; flex-shrink: 0;
@@ -1909,7 +1912,7 @@
     const statusEl = document.getElementById("gerenciarPerfisStatus");
     if (!listaEl) return;
 
-    const ROTULOS_GERENCIAR = { convidado: "Convidado", aluno: "Aluno", professor: "Professor", administrativo: "Administrativo", admin: "Administrador" };
+    const ROTULOS_GERENCIAR = { convidado: "Convidado", aluno: "Aluno", professor: "Professor", administrativo: "Administrativo", admin: "Administrador Master" };
 
     async function carregar() {
       listaEl.innerHTML = "Carregando...";
@@ -1940,8 +1943,11 @@
           const emailEl = document.createElement("span");
           emailEl.className = "admin-perfis-item-email";
           emailEl.textContent = u.email || u.uid;
+          const statusItemEl = document.createElement("span");
+          statusItemEl.className = "admin-perfis-item-status";
           info.appendChild(nomeEl);
           info.appendChild(emailEl);
+          info.appendChild(statusItemEl);
 
           const select = document.createElement("select");
           select.className = "admin-perfis-item-select";
@@ -1954,16 +1960,25 @@
           });
           select.addEventListener("change", async () => {
             select.disabled = true;
+            if (statusItemEl.__timeout) clearTimeout(statusItemEl.__timeout);
             try {
               await updateDoc(doc(db, "usuarios", u.uid), { perfil: select.value });
               statusEl.textContent = "Perfil de " + (u.nome || u.email || u.uid) + " atualizado para " + ROTULOS_GERENCIAR[select.value] + ".";
               statusEl.className = "admin-agenda-status ok";
+              statusItemEl.textContent = "✓ Salvo: " + ROTULOS_GERENCIAR[select.value];
+              statusItemEl.className = "admin-perfis-item-status ok";
             } catch (err) {
               statusEl.textContent = "Não foi possível salvar. " + (err.message || "");
               statusEl.className = "admin-agenda-status erro";
+              statusItemEl.textContent = "✗ Não foi possível salvar";
+              statusItemEl.className = "admin-perfis-item-status erro";
               console.error(err);
             } finally {
               select.disabled = false;
+              statusItemEl.__timeout = setTimeout(() => {
+                statusItemEl.textContent = "";
+                statusItemEl.className = "admin-perfis-item-status";
+              }, 4000);
             }
           });
 
@@ -2027,7 +2042,7 @@
     const FOTO_PADRAO = "data:image/svg+xml;utf8," + encodeURIComponent(
       '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%239aa0ad" stroke-width="1.6"><circle cx="12" cy="8" r="3.4"/><path d="M5 20c0-3.9 3.1-7 7-7s7 3.1 7 7"/></svg>'
     );
-    const ROTULOS_PERFIL = { admin: "Administrador", professor: "Professor", aluno: "Aluno", administrativo: "Administrativo", convidado: "Convidado" };
+    const ROTULOS_PERFIL = { admin: "Administrador Master", professor: "Professor", aluno: "Aluno", administrativo: "Administrativo", convidado: "Convidado" };
 
     let modoAtual = "criar";
     let wizardPasso = 1;
