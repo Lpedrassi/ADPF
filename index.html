@@ -206,6 +206,14 @@
     font-family: "Plus Jakarta Sans", sans-serif; transition: border-color 0.2s ease;
   }
   .login-form input::placeholder { color: var(--muted-2); }
+  .login-form select {
+    width: 100%; padding: 12px 16px; border-radius: 14px; font-size: 14.5px;
+    background: var(--surface-2); border: 1px solid var(--border); color: var(--ink);
+    font-family: "Plus Jakarta Sans", sans-serif; transition: border-color 0.2s ease; appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239B9BA8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M6 9l6 6 6-6'/></svg>");
+    background-repeat: no-repeat; background-position: right 14px center; background-size: 16px;
+  }
+  .login-form select:focus { outline: none; border-color: var(--azul); }
     .login-form input:focus { outline: none; border-color: var(--azul); } .login-senha-wrap { position: relative; } .login-senha-wrap input { padding-right: 44px; } .toggle-senha { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); width: 30px; height: 30px; border: none; background: transparent; color: var(--muted); cursor: pointer; display: flex; align-items: center; justify-content: center; border-radius: 8px; transition: color 0.2s ease; } .toggle-senha:hover { color: var(--ink); }
   .login-forgot { display: block; text-align: right; margin-top: 10px; font-size: 12.5px; font-weight: 600; color: var(--laranja); text-decoration: none; }
   .login-forgot:hover { text-decoration: underline; }
@@ -738,7 +746,7 @@
     display: flex; align-items: center; justify-content: space-between; gap: 12px; background: var(--bg); border: 1px solid var(--border);
     border-radius: 10px; padding: 10px 14px; font-size: 13px;
   }
-  .admin-perfis-item-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .admin-perfis-item-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
   .admin-perfis-item-nome { font-weight: 700; }
   .admin-perfis-item-email { font-size: 11.5px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .admin-perfis-item-status { font-size: 11.5px; min-height: 14px; }
@@ -1038,16 +1046,58 @@
 </div>
 
 <div class="login-overlay" id="gerenciarPerfilEditModal" role="dialog" aria-modal="true" aria-labelledby="gerenciarPerfilEditTitulo" hidden>
-  <div class="login-card">
+  <div class="login-card perfil-card">
     <button class="login-close" id="gerenciarPerfilEditClose" type="button" aria-label="Fechar">
       <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
     </button>
     <span class="pill eyebrow" id="gerenciarPerfilEditTitulo"><span class="dot"></span>Editar usuário</span>
     <form class="login-form" id="gerenciarPerfilEditForm">
+      <div class="perfil-foto-row">
+        <img id="gerenciarPerfilEditFotoPreview" class="perfil-foto-preview" alt="Foto do perfil">
+        <div style="flex:1;">
+          <label for="gerenciarPerfilEditFotoInput">Foto</label>
+          <input id="gerenciarPerfilEditFotoInput" type="file" accept="image/*">
+        </div>
+      </div>
+
+      <div>
+        <label for="gerenciarPerfilEditUsuario">Usuário</label>
+        <input id="gerenciarPerfilEditUsuario" type="text" placeholder="nome de usuário">
+      </div>
+
+      <div class="perfil-grid-2">
+        <div>
+          <label for="gerenciarPerfilEditNome">Nome</label>
+          <input id="gerenciarPerfilEditNome" type="text" placeholder="nome">
+        </div>
+        <div>
+          <label for="gerenciarPerfilEditSobrenome">Sobrenome</label>
+          <input id="gerenciarPerfilEditSobrenome" type="text" placeholder="sobrenome">
+        </div>
+      </div>
+
+      <div>
+        <label for="gerenciarPerfilEditEmail">E-mail</label>
+        <input id="gerenciarPerfilEditEmail" type="email" disabled>
+      </div>
+
+      <div class="perfil-grid-2">
+        <div>
+          <label for="gerenciarPerfilEditTelefone">Telefone</label>
+          <input id="gerenciarPerfilEditTelefone" type="tel" placeholder="DD - 0000-0000" inputmode="numeric">
+        </div>
+        <div>
+          <label for="gerenciarPerfilEditDataNascimento">Data de nascimento</label>
+          <input id="gerenciarPerfilEditDataNascimento" type="text" placeholder="dd/mm/aaaa" inputmode="numeric" maxlength="10">
+        </div>
+      </div>
+
       <div>
         <label for="gerenciarPerfilEditPerfil">Perfil</label>
         <select id="gerenciarPerfilEditPerfil"></select>
       </div>
+
+      <div class="perfil-secao-titulo">Endereço</div>
       <div class="perfil-grid-2">
         <div>
           <label for="gerenciarPerfilEditCep">CEP</label>
@@ -2438,6 +2488,14 @@
       modalEditar.__wired = true;
       const editarClose = document.getElementById("gerenciarPerfilEditClose");
       const editarForm = document.getElementById("gerenciarPerfilEditForm");
+      const editarFotoInput = document.getElementById("gerenciarPerfilEditFotoInput");
+      const editarFotoPreview = document.getElementById("gerenciarPerfilEditFotoPreview");
+      const editarUsuario = document.getElementById("gerenciarPerfilEditUsuario");
+      const editarNome = document.getElementById("gerenciarPerfilEditNome");
+      const editarSobrenome = document.getElementById("gerenciarPerfilEditSobrenome");
+      const editarEmail = document.getElementById("gerenciarPerfilEditEmail");
+      const editarTelefone = document.getElementById("gerenciarPerfilEditTelefone");
+      const editarDataNascimento = document.getElementById("gerenciarPerfilEditDataNascimento");
       const editarPerfilSelect = document.getElementById("gerenciarPerfilEditPerfil");
       const editarCep = document.getElementById("gerenciarPerfilEditCep");
       const editarNumero = document.getElementById("gerenciarPerfilEditNumero");
@@ -2449,7 +2507,22 @@
       const editarMensagem = document.getElementById("gerenciarPerfilEditMensagem");
       const editarBtnSalvar = document.getElementById("gerenciarPerfilEditBtnSalvar");
       const editarTitulo = document.getElementById("gerenciarPerfilEditTitulo");
+      const FOTO_PADRAO_EDITAR = "data:image/svg+xml;utf8," + encodeURIComponent(
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%239aa0ad" stroke-width="1.6"><circle cx="12" cy="8" r="3.4"/><path d="M5 20c0-3.9 3.1-7 7-7s7 3.1 7 7"/></svg>'
+      );
       let usuarioEditandoUid = null;
+      let fotoBase64Editar = "";
+
+      function dataIsoParaBrEditar(iso) {
+        const partes = (iso || "").split("-");
+        if (partes.length !== 3) return "";
+        return partes[2] + "/" + partes[1] + "/" + partes[0];
+      }
+      function dataBrParaIsoEditar(br) {
+        const digitos = (br || "").replace(/\D/g, "");
+        if (digitos.length !== 8) return "";
+        return digitos.slice(4, 8) + "-" + digitos.slice(2, 4) + "-" + digitos.slice(0, 2);
+      }
 
       Object.keys(ROTULOS_GERENCIAR).forEach((valor) => {
         const opt = document.createElement("option");
@@ -2468,6 +2541,47 @@
       modalEditar.addEventListener("click", (e) => { if (e.target === modalEditar) fecharEditar(); });
       document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !modalEditar.hidden) fecharEditar(); });
       editarForm.addEventListener("submit", (e) => { e.preventDefault(); });
+
+      editarTelefone.addEventListener("input", () => {
+        const digitos = editarTelefone.value.replace(/\D/g, "").slice(0, 10);
+        let formatado = "";
+        if (digitos.length > 0) formatado = digitos.slice(0, 2);
+        if (digitos.length > 2) formatado += " - " + digitos.slice(2, 6);
+        if (digitos.length > 6) formatado += "-" + digitos.slice(6, 10);
+        editarTelefone.value = formatado;
+      });
+
+      editarDataNascimento.addEventListener("input", () => {
+        const digitos = editarDataNascimento.value.replace(/\D/g, "").slice(0, 8);
+        let formatado = "";
+        if (digitos.length > 0) formatado = digitos.slice(0, 2);
+        if (digitos.length > 2) formatado += "/" + digitos.slice(2, 4);
+        if (digitos.length > 4) formatado += "/" + digitos.slice(4, 8);
+        editarDataNascimento.value = formatado;
+      });
+
+      editarFotoInput.addEventListener("change", () => {
+        const arquivo = editarFotoInput.files && editarFotoInput.files[0];
+        if (!arquivo) return;
+        const leitor = new FileReader();
+        leitor.onload = () => {
+          const img = new Image();
+          img.onload = () => {
+            const tamanho = 160;
+            const canvas = document.createElement("canvas");
+            canvas.width = tamanho;
+            canvas.height = tamanho;
+            const ctx = canvas.getContext("2d");
+            const escala = Math.max(tamanho / img.width, tamanho / img.height);
+            const w = img.width * escala, h = img.height * escala;
+            ctx.drawImage(img, (tamanho - w) / 2, (tamanho - h) / 2, w, h);
+            fotoBase64Editar = canvas.toDataURL("image/jpeg", 0.7);
+            editarFotoPreview.src = fotoBase64Editar;
+          };
+          img.src = leitor.result;
+        };
+        leitor.readAsDataURL(arquivo);
+      });
 
       editarCep.addEventListener("input", () => {
         const digitos = editarCep.value.replace(/\D/g, "").slice(0, 8);
@@ -2493,6 +2607,11 @@
         editarMensagem.textContent = "";
         editarMensagem.className = "login-note";
         const dadosUsuario = {
+          usuario: editarUsuario.value.trim(),
+          nome: editarNome.value.trim(),
+          sobrenome: editarSobrenome.value.trim(),
+          telefone: editarTelefone.value.trim(),
+          dataNascimento: dataBrParaIsoEditar(editarDataNascimento.value),
           perfil: editarPerfilSelect.value,
           ativo: editarAtivo.checked,
           endereco: {
@@ -2504,6 +2623,7 @@
             cidade: editarCidade.value.trim()
           }
         };
+        if (fotoBase64Editar) dadosUsuario.foto = fotoBase64Editar;
         editarBtnSalvar.disabled = true;
         try {
           await setDoc(doc(db, "usuarios", usuarioEditandoUid), dadosUsuario, { merge: true });
@@ -2521,9 +2641,17 @@
 
       window.__abrirGerenciarPerfilEdit = function (usuario) {
         usuarioEditandoUid = usuario.uid;
+        fotoBase64Editar = "";
         editarMensagem.textContent = "";
         editarMensagem.className = "login-note";
         editarTitulo.textContent = [usuario.nome, usuario.sobrenome].filter(Boolean).join(" ") || usuario.email || usuario.uid;
+        editarFotoPreview.src = usuario.foto || FOTO_PADRAO_EDITAR;
+        editarUsuario.value = usuario.usuario || "";
+        editarNome.value = usuario.nome || "";
+        editarSobrenome.value = usuario.sobrenome || "";
+        editarEmail.value = usuario.email || "";
+        editarTelefone.value = usuario.telefone || "";
+        editarDataNascimento.value = dataIsoParaBrEditar(usuario.dataNascimento);
         editarPerfilSelect.value = usuario.perfil || "convidado";
         const end = usuario.endereco || {};
         editarCep.value = end.cep || "";
