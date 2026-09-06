@@ -230,6 +230,8 @@
   .perfil-foto-preview { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; background: var(--surface-2); border: 1px solid var(--border-strong); flex-shrink: 0; }
   .perfil-secao-titulo { font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin-top: 4px; }
   .perfil-readonly { opacity: 0.65; cursor: not-allowed; }
+  .perfil-header-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .perfil-tipo-label { font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; white-space: nowrap; }
   .perfil-excluir-row { margin-top: 2px; }
   .btn-danger { background: rgba(255,59,59,0.08); color: var(--vermelho); border-color: var(--vermelho); }
   .btn-danger:hover { background: var(--vermelho); color: #fff; transform: translateY(-2px); }
@@ -863,9 +865,20 @@
     <button class="login-close" id="perfilClose" type="button" aria-label="Fechar">
       <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
     </button>
-    <span class="pill eyebrow" id="perfilTitulo"><span class="dot"></span>Meu Perfil</span>
+    <div class="perfil-header-row">
+      <span class="pill eyebrow" id="perfilTitulo"><span class="dot"></span>Meu Perfil</span>
+      <span class="perfil-tipo-label" id="perfilTipoLabel" hidden></span>
+    </div>
     <p class="perfil-step-indicator" id="perfilStepIndicador" hidden>Passo 1 de 3</p>
     <form class="login-form" id="perfilForm">
+      <div class="perfil-foto-row" data-show="editar step3">
+        <img id="perfilFotoPreview" class="perfil-foto-preview" alt="Foto do perfil">
+        <div style="flex:1;">
+          <label for="perfilFotoInput">Foto</label>
+          <input id="perfilFotoInput" type="file" accept="image/*">
+        </div>
+      </div>
+
       <div data-show="editar">
         <label for="perfilUsuario">Usuário</label>
         <input id="perfilUsuario" type="text" placeholder="nome de usuário">
@@ -909,19 +922,11 @@
 
       <div data-show="editar step2">
         <label for="perfilDataNascimento">Data de nascimento</label>
-        <input id="perfilDataNascimento" type="date">
+        <input id="perfilDataNascimento" type="text" placeholder="dd/mm/aaaa" inputmode="numeric" maxlength="10">
       </div>
 
-      <div class="perfil-foto-row" data-show="editar step3">
-        <img id="perfilFotoPreview" class="perfil-foto-preview" alt="Foto do perfil">
-        <div style="flex:1;">
-          <label for="perfilFotoInput">Foto</label>
-          <input id="perfilFotoInput" type="file" accept="image/*">
-        </div>
-      </div>
-
-      <div class="perfil-secao-titulo" data-show="editar step2">Endereço</div>
-      <div class="perfil-grid-2" data-show="editar step2">
+      <div class="perfil-secao-titulo" data-show="step2">Endereço</div>
+      <div class="perfil-grid-2" data-show="step2">
         <div>
           <label for="perfilCep">CEP</label>
           <input id="perfilCep" type="text" placeholder="00000-000" inputmode="numeric" maxlength="9">
@@ -931,15 +936,15 @@
           <input id="perfilNumero" type="text" placeholder="nº">
         </div>
       </div>
-      <div data-show="editar step2">
+      <div data-show="step2">
         <label for="perfilRua">Rua</label>
         <input id="perfilRua" type="text" placeholder="rua">
       </div>
-      <div data-show="editar step2">
+      <div data-show="step2">
         <label for="perfilComplemento">Complemento</label>
         <input id="perfilComplemento" type="text" placeholder="apto, bloco, etc.">
       </div>
-      <div class="perfil-grid-2" data-show="editar step2">
+      <div class="perfil-grid-2" data-show="step2">
         <div>
           <label for="perfilBairro">Bairro</label>
           <input id="perfilBairro" type="text" placeholder="bairro">
@@ -948,11 +953,6 @@
           <label for="perfilCidade">Cidade</label>
           <input id="perfilCidade" type="text" placeholder="cidade">
         </div>
-      </div>
-
-      <div data-show="editar">
-        <label for="perfilPerfilCampo">Perfil</label>
-        <input id="perfilPerfilCampo" type="text" class="perfil-readonly" readonly>
       </div>
 
       <div class="perfil-excluir-row" id="perfilTrocarSenhaRow" data-show="editar">
@@ -978,6 +978,51 @@
       <div class="login-btn-row" data-show="step3">
         <button type="button" class="btn btn-ghost" id="perfilBtnPular3" style="flex:1;justify-content:center;">Pular</button>
         <button type="button" class="btn btn-blue-grad" id="perfilBtnConcluir3" style="flex:1;justify-content:center;">Concluir</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="login-overlay" id="enderecoModal" role="dialog" aria-modal="true" aria-labelledby="enderecoTitulo" hidden>
+  <div class="login-card">
+    <button class="login-close" id="enderecoClose" type="button" aria-label="Fechar">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+    <span class="pill eyebrow" id="enderecoTitulo"><span class="dot"></span>Endereço</span>
+    <form class="login-form" id="enderecoForm">
+      <div class="perfil-grid-2">
+        <div>
+          <label for="enderecoCep">CEP</label>
+          <input id="enderecoCep" type="text" placeholder="00000-000" inputmode="numeric" maxlength="9">
+        </div>
+        <div>
+          <label for="enderecoNumero">Número</label>
+          <input id="enderecoNumero" type="text" placeholder="nº">
+        </div>
+      </div>
+      <div>
+        <label for="enderecoRua">Rua</label>
+        <input id="enderecoRua" type="text" placeholder="rua">
+      </div>
+      <div>
+        <label for="enderecoComplemento">Complemento</label>
+        <input id="enderecoComplemento" type="text" placeholder="apto, bloco, etc.">
+      </div>
+      <div class="perfil-grid-2">
+        <div>
+          <label for="enderecoBairro">Bairro</label>
+          <input id="enderecoBairro" type="text" placeholder="bairro">
+        </div>
+        <div>
+          <label for="enderecoCidade">Cidade</label>
+          <input id="enderecoCidade" type="text" placeholder="cidade">
+        </div>
+      </div>
+
+      <p class="login-note" id="enderecoMensagem" style="margin-top:0;"></p>
+
+      <div class="login-btn-row">
+        <button type="submit" class="btn btn-blue-grad" id="enderecoBtnSalvar" style="flex:1;justify-content:center;">Salvar</button>
       </div>
     </form>
   </div>
@@ -1757,6 +1802,8 @@
         fecharMenu();
         if (item.dataset.acao === 'perfil' && window.__abrirPerfilModal) {
           window.__abrirPerfilModal('editar');
+        } else if (item.dataset.acao === 'endereco' && window.__abrirEnderecoModal) {
+          window.__abrirEnderecoModal();
         }
       });
     });
@@ -3210,7 +3257,7 @@
     const campoComplemento = document.getElementById("perfilComplemento");
     const campoBairro = document.getElementById("perfilBairro");
     const campoCidade = document.getElementById("perfilCidade");
-    const campoPerfilCampo = document.getElementById("perfilPerfilCampo");
+    const tipoLabel = document.getElementById("perfilTipoLabel");
 
     const modalExcluir = document.getElementById("modalConfirmarExcluirConta");
     const btnExcluirSim = document.getElementById("btnExcluirContaSim");
@@ -3227,6 +3274,19 @@
 
     function rotuloPerfil(perfil) {
       return ROTULOS_PERFIL[perfil] || "Convidado";
+    }
+
+    // Data de nascimento: guardada no banco em ISO (aaaa-mm-dd), mas
+    // mostrada e digitada no formato brasileiro (dd/mm/aaaa).
+    function dataIsoParaBr(iso) {
+      const partes = (iso || "").split("-");
+      if (partes.length !== 3) return "";
+      return partes[2] + "/" + partes[1] + "/" + partes[0];
+    }
+    function dataBrParaIso(br) {
+      const digitos = (br || "").replace(/\D/g, "");
+      if (digitos.length !== 8) return "";
+      return digitos.slice(4, 8) + "-" + digitos.slice(2, 4) + "-" + digitos.slice(0, 2);
     }
 
     // O modo "editar" mostra tudo de uma vez, no formulário único de sempre.
@@ -3262,7 +3322,7 @@
         nome: campoNome.value.trim(),
         sobrenome: campoSobrenome.value.trim(),
         telefone: campoTelefone.value.trim(),
-        dataNascimento: campoDataNascimento.value || "",
+        dataNascimento: dataBrParaIso(campoDataNascimento.value),
         endereco: {
           cep: campoCep.value.trim(),
           rua: campoRua.value.trim(),
@@ -3286,7 +3346,7 @@
         campoSobrenome.value = usuarioAtualCache.sobrenome || "";
         campoEmail.value = usuarioAtualCache.email || "";
         campoTelefone.value = usuarioAtualCache.telefone || "";
-        campoDataNascimento.value = usuarioAtualCache.dataNascimento || "";
+        campoDataNascimento.value = dataIsoParaBr(usuarioAtualCache.dataNascimento);
         const end = usuarioAtualCache.endereco || {};
         campoCep.value = end.cep || "";
         campoRua.value = end.rua || "";
@@ -3294,17 +3354,20 @@
         campoComplemento.value = end.complemento || "";
         campoBairro.value = end.bairro || "";
         campoCidade.value = end.cidade || "";
-        campoPerfilCampo.value = rotuloPerfil(usuarioAtualCache.perfil);
+        tipoLabel.textContent = rotuloPerfil(usuarioAtualCache.perfil);
+        tipoLabel.hidden = false;
         fotoBase64Atual = usuarioAtualCache.foto || "";
         fotoPreview.src = fotoBase64Atual || FOTO_PADRAO;
       } else if (modoAtual === "completar-google") {
         titulo.innerHTML = '<span class="dot"></span>Complete seu Cadastro';
+        tipoLabel.hidden = true;
         campoNome.value = (dadosGoogle && dadosGoogle.nome) || "";
         campoEmail.value = (dadosGoogle && dadosGoogle.email) || "";
         fotoBase64Atual = (dadosGoogle && dadosGoogle.foto) || "";
         fotoPreview.src = fotoBase64Atual || FOTO_PADRAO;
       } else {
         titulo.innerHTML = '<span class="dot"></span>Criar Conta';
+        tipoLabel.hidden = true;
       }
 
       aplicarVisibilidade();
@@ -3336,6 +3399,16 @@
       if (digitos.length > 2) formatado += " - " + digitos.slice(2, 6);
       if (digitos.length > 6) formatado += "-" + digitos.slice(6, 10);
       campoTelefone.value = formatado;
+    });
+
+    // Mascara de data de nascimento: dd/mm/aaaa
+    campoDataNascimento.addEventListener("input", () => {
+      const digitos = campoDataNascimento.value.replace(/\D/g, "").slice(0, 8);
+      let formatado = "";
+      if (digitos.length > 0) formatado = digitos.slice(0, 2);
+      if (digitos.length > 2) formatado += "/" + digitos.slice(2, 4);
+      if (digitos.length > 4) formatado += "/" + digitos.slice(4, 8);
+      campoDataNascimento.value = formatado;
     });
 
     // Foto: comprime a imagem num quadrado pequeno e guarda como base64
@@ -3559,6 +3632,98 @@
     }
     btnPular3.addEventListener("click", concluirCadastro);
     btnConcluir3.addEventListener("click", concluirCadastro);
+  })();
+
+  // =================================================================
+  // Modal de Endereço - separado do Meu Perfil, aberto pelo item
+  // "Endereço" do menu da conta.
+  // =================================================================
+  (function () {
+    const modal = document.getElementById("enderecoModal");
+    if (!modal) return;
+    const closeBtn = document.getElementById("enderecoClose");
+    const form = document.getElementById("enderecoForm");
+    const btnSalvar = document.getElementById("enderecoBtnSalvar");
+    const mensagemEl = document.getElementById("enderecoMensagem");
+    const campoCep = document.getElementById("enderecoCep");
+    const campoNumero = document.getElementById("enderecoNumero");
+    const campoRua = document.getElementById("enderecoRua");
+    const campoComplemento = document.getElementById("enderecoComplemento");
+    const campoBairro = document.getElementById("enderecoBairro");
+    const campoCidade = document.getElementById("enderecoCidade");
+
+    function abrirModal() {
+      mensagemEl.textContent = "";
+      const end = (usuarioAtualCache && usuarioAtualCache.endereco) || {};
+      campoCep.value = end.cep || "";
+      campoNumero.value = end.numero || "";
+      campoRua.value = end.rua || "";
+      campoComplemento.value = end.complemento || "";
+      campoBairro.value = end.bairro || "";
+      campoCidade.value = end.cidade || "";
+      modal.hidden = false;
+      requestAnimationFrame(() => modal.classList.add("is-open"));
+      document.body.style.overflow = "hidden";
+    }
+
+    function fecharModal() {
+      modal.classList.remove("is-open");
+      document.body.style.overflow = "";
+      setTimeout(() => { modal.hidden = true; }, 200);
+    }
+
+    window.__abrirEnderecoModal = abrirModal;
+
+    closeBtn.addEventListener("click", fecharModal);
+    modal.addEventListener("click", (e) => { if (e.target === modal) fecharModal(); });
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !modal.hidden) fecharModal(); });
+    form.addEventListener("submit", (e) => { e.preventDefault(); });
+
+    campoCep.addEventListener("input", () => {
+      const digitos = campoCep.value.replace(/\D/g, "").slice(0, 8);
+      campoCep.value = digitos.length > 5 ? digitos.slice(0, 5) + "-" + digitos.slice(5) : digitos;
+    });
+    campoCep.addEventListener("blur", async () => {
+      const digitos = campoCep.value.replace(/\D/g, "");
+      if (digitos.length !== 8) return;
+      try {
+        const resp = await fetch("https://viacep.com.br/ws/" + digitos + "/json/");
+        const dados = await resp.json();
+        if (dados.erro) return;
+        campoRua.value = dados.logradouro || campoRua.value;
+        campoBairro.value = dados.bairro || campoBairro.value;
+        campoCidade.value = dados.localidade || campoCidade.value;
+        campoNumero.focus();
+      } catch (err) {
+        console.error(err);
+      }
+    });
+
+    btnSalvar.addEventListener("click", async () => {
+      mensagemEl.textContent = "";
+      if (!auth.currentUser) return;
+      const dadosEndereco = {
+        endereco: {
+          cep: campoCep.value.trim(),
+          numero: campoNumero.value.trim(),
+          rua: campoRua.value.trim(),
+          complemento: campoComplemento.value.trim(),
+          bairro: campoBairro.value.trim(),
+          cidade: campoCidade.value.trim()
+        }
+      };
+      btnSalvar.disabled = true;
+      try {
+        await setDoc(doc(db, "usuarios", auth.currentUser.uid), dadosEndereco, { merge: true });
+        usuarioAtualCache = Object.assign({}, usuarioAtualCache, dadosEndereco);
+        fecharModal();
+      } catch (err) {
+        mensagemEl.textContent = "Não foi possível salvar. " + (err.message || "");
+        console.error(err);
+      } finally {
+        btnSalvar.disabled = false;
+      }
+    });
   })();
 
   // =================================================================
