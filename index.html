@@ -743,6 +743,26 @@
     padding: 7px 10px; font-size: 13px; font-family: inherit; flex-shrink: 0;
   }
 
+  .professor-canvas-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin: 16px 0; }
+  .professor-canvas-card {
+    background: var(--surface-2); border: 1px solid var(--border-strong); border-radius: 12px;
+    padding: 16px; text-align: left; cursor: pointer; color: var(--ink); font-family: inherit;
+    display: flex; flex-direction: column; gap: 4px; transition: border-color .15s;
+  }
+  .professor-canvas-card:hover { border-color: var(--azul); }
+  .professor-canvas-card.is-ativo { border-color: var(--azul); background: var(--surface); }
+  .professor-canvas-titulo { font-weight: 700; font-size: 15px; }
+  .professor-canvas-sub { font-size: 12px; color: var(--muted); }
+  .professor-canvas-painel { border-top: 1px solid var(--border-strong); padding-top: 16px; margin-top: 4px; }
+  .professor-resumo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 10px; }
+  .professor-resumo-card {
+    background: var(--surface-2); border: 1px solid var(--border-strong); border-radius: 10px;
+    padding: 10px; text-align: center; display: flex; flex-direction: column; gap: 2px;
+  }
+  .professor-resumo-valor { font-size: 18px; font-weight: 700; }
+  .professor-resumo-rotulo { font-size: 11px; color: var(--muted); }
+  .admin-perfis-item-sub { font-size: 11.5px; color: var(--muted); display: block; margin-top: 2px; }
+
   .admin-congregacoes-grupo { display: flex; flex-direction: column; gap: 8px; }
   .admin-congregacoes-grupo[hidden] { display: none; }
   .admin-congregacoes-grupo > span { font-size: 12px; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; }
@@ -887,6 +907,11 @@
         <input id="perfilTelefone" type="tel" placeholder="DD - 0000-0000" inputmode="numeric">
       </div>
 
+      <div data-show="editar step2">
+        <label for="perfilDataNascimento">Data de nascimento</label>
+        <input id="perfilDataNascimento" type="date">
+      </div>
+
       <div class="perfil-foto-row" data-show="editar step3">
         <img id="perfilFotoPreview" class="perfil-foto-preview" alt="Foto do perfil">
         <div style="flex:1;">
@@ -1003,6 +1028,7 @@
     <button class="sidebar-link" type="button" data-area="areaAdmin">Administração</button>
     <button class="sidebar-link" type="button" data-area="areaGerenciarPerfis">Gerenciar Perfis</button>
     <button class="sidebar-link" type="button" data-area="areaGerenciarSalas">Gerenciar Professores por Salas</button>
+    <button class="sidebar-link" type="button" data-area="areaGerenciarLicoes">Gerenciar Lições</button>
     <button class="sidebar-link" type="button" data-area="areaAgenda">Agenda de Cultos e Eventos</button>
     <button class="sidebar-link" type="button" data-area="areaProfessor">Área do Professor</button>
     <button class="sidebar-link" type="button" data-area="areaAluno">Área do Aluno</button>
@@ -1361,6 +1387,21 @@
     <div id="gerenciarPerfisLista" class="admin-perfis-lista">Carregando...</div>
   </section>
 
+  <section id="areaGerenciarLicoes" class="portal-section">
+    <h2>Gerenciar Lições</h2>
+    <p class="admin-agenda-info">Cadastre os títulos das lições da revista trimestral da EBD. O Professor escolhe entre esses títulos ao lançar a chamada, mas pode editar o texto depois de escolher.</p>
+    <div class="admin-form">
+      <label>Trimestre
+        <input type="text" id="licoesTrimestre" placeholder="Ex.: 3º Trimestre de 2026">
+      </label>
+      <div id="licoesCamposLista"></div>
+      <div class="admin-form-botoes">
+        <button type="button" id="btnSalvarLicoes" class="btn-admin">Salvar Lições</button>
+      </div>
+      <p id="licoesStatus" class="admin-agenda-status"></p>
+    </div>
+  </section>
+
   <section id="areaGerenciarSalas" class="portal-section">
     <h2>Gerenciar Professores por Salas</h2>
     <p class="admin-agenda-info">Cadastre as Salas da Escola Bíblica Dominical e escolha quem é o Professor responsável por cada uma. A atribuição fica valendo até você trocar.</p>
@@ -1457,11 +1498,11 @@
 
   <section id="areaProfessor" class="portal-section">
     <h2>Área do Professor</h2>
-    <p class="admin-agenda-info">Faça a chamada da sua Sala e lance a oferta de cada aluno. O Administrador Master e o Administrativo também podem lançar em qualquer Sala.</p>
+    <p class="admin-agenda-info">Faça a chamada da sua Sala e lance a oferta dos alunos e suba arquivos que considere ser apoio para a sala de aula.</p>
 
     <div id="professorSalaSeletorWrap" class="admin-form-linha" style="margin-top:14px;" hidden>
       <label>Sala
-        <select id="professorSalaSeletor"></select>
+        <select id="professorSalaSeletor" class="admin-perfis-item-select"></select>
       </label>
     </div>
 
@@ -1469,70 +1510,127 @@
 
     <div id="professorConteudo" hidden>
 
-      <div class="admin-agenda-lista-wrap">
-        <h4>Alunos matriculados nesta Sala</h4>
+      <div class="professor-canvas-grid">
+        <button type="button" class="professor-canvas-card" data-canvas="alunos">
+          <span class="professor-canvas-titulo">Alunos Matriculados</span>
+          <span class="professor-canvas-sub">Ver e gerenciar quem está na Sala</span>
+        </button>
+        <button type="button" class="professor-canvas-card" data-canvas="chamada">
+          <span class="professor-canvas-titulo">Chamada</span>
+          <span class="professor-canvas-sub">Presença e ofertas da aula</span>
+        </button>
+        <button type="button" class="professor-canvas-card" data-canvas="arquivos">
+          <span class="professor-canvas-titulo">Arquivos e documentos</span>
+          <span class="professor-canvas-sub">Materiais de apoio da Sala</span>
+        </button>
+      </div>
+
+      <div id="canvasPainelAlunos" class="professor-canvas-painel" hidden>
+        <h4>Alunos Matriculados</h4>
+        <p class="admin-agenda-info">Verifique e adicione aqui os alunos matriculados em sua sala.</p>
+
         <div id="salaAlunosLista" class="admin-perfis-lista"></div>
+
         <div class="admin-form-linha" style="margin-top:10px;">
           <label style="flex:2;">Vincular cadastro já existente no site
-            <select id="salaAlunoCandidato"></select>
+            <select id="salaAlunoCandidato" class="admin-perfis-item-select"></select>
           </label>
           <div style="display:flex; align-items:flex-end;">
             <button type="button" id="btnAdicionarAlunoConta" class="btn-admin">+ Vincular à Sala</button>
           </div>
         </div>
-        <div class="admin-form-linha">
-          <label style="flex:2;">Adicionar sem login (crianças, etc.)
-            <input type="text" id="salaAlunoAvulsoNome" placeholder="Nome do aluno">
-          </label>
-          <div style="display:flex; align-items:flex-end;">
+
+        <div class="admin-form" style="margin-top:6px;">
+          <div class="admin-form-linha">
+            <label style="flex:2;">Adicionar sem login (crianças, etc.)
+              <input type="text" id="salaAlunoAvulsoNome" placeholder="Nome do aluno">
+            </label>
+            <label style="flex:1;">Data de nascimento
+              <input type="date" id="salaAlunoAvulsoNascimento">
+            </label>
+          </div>
+          <div class="admin-form-linha" style="align-items:center;">
+            <label style="display:flex; align-items:center; gap:6px; flex:1;">
+              <input type="checkbox" id="salaAlunoAvulsoCrianca" style="width:auto;">
+              É uma criança!
+            </label>
+          </div>
+          <div id="salaAlunoAvulsoResponsaveisWrap" class="admin-form-linha" hidden>
+            <label style="flex:1;">Pai/Responsável
+              <input type="text" id="salaAlunoAvulsoPai" placeholder="Nome do pai ou responsável">
+            </label>
+            <label style="flex:1;">Mãe/Responsável
+              <input type="text" id="salaAlunoAvulsoMae" placeholder="Nome da mãe ou responsável">
+            </label>
+          </div>
+          <div class="admin-form-botoes">
             <button type="button" id="btnAdicionarAlunoAvulso" class="btn-admin">+ Adicionar sem login</button>
           </div>
         </div>
         <p id="salaAlunosStatus" class="admin-agenda-status"></p>
       </div>
 
-      <form id="formRelatorioAula" class="admin-form">
-        <div class="admin-form-linha">
-          <label>Data da aula
-            <input type="date" id="relatorioData" required>
-          </label>
-        </div>
-        <label>Tema da aula
-          <input type="text" id="relatorioTema" placeholder="Ex.: A parábola do semeador">
-        </label>
-
-        <div class="admin-agenda-lista-wrap">
+      <div id="canvasPainelChamada" class="professor-canvas-painel" hidden>
+        <form id="formRelatorioAula" class="admin-form">
           <h4>Chamada</h4>
-          <div id="chamadaLista" class="admin-perfis-lista"></div>
-          <p id="chamadaVazia" class="admin-agenda-vazio" hidden>Nenhum aluno matriculado nesta Sala ainda. Adicione alunos acima.</p>
-        </div>
+          <p id="chamadaSubinfo" class="admin-agenda-info"></p>
 
-        <div class="admin-form-linha" style="margin-top:10px;">
-          <label style="flex:2;">Adicionar ouvinte (visitante avulso do dia)
-            <input type="text" id="ouvinteNome" placeholder="Nome do ouvinte">
-          </label>
-          <div style="display:flex; align-items:flex-end;">
-            <button type="button" id="btnAdicionarOuvinte" class="btn-admin">+ Adicionar ouvinte</button>
-          </div>
-        </div>
-        <div id="ouvintesLista" class="admin-perfis-lista"></div>
-
-        <div class="admin-agenda-lista-wrap">
-          <h4>Resumo (calculado automaticamente)</h4>
           <div class="admin-form-linha">
-            <span><strong>Matriculados:</strong> <span id="resumoMatriculados">0</span></span>
-            <span><strong>Presentes:</strong> <span id="resumoPresentes">0</span></span>
-            <span><strong>Ausentes:</strong> <span id="resumoAusentes">0</span></span>
-            <span><strong>Visitantes:</strong> <span id="resumoVisitantes">0</span></span>
-            <span><strong>Total de Ofertas:</strong> R$ <span id="resumoOfertas">0,00</span></span>
+            <label>Data da aula
+              <input type="date" id="relatorioData" required>
+            </label>
           </div>
-        </div>
+          <label>Tema da aula (Lição)
+            <select id="relatorioTemaSeletor" class="admin-perfis-item-select"></select>
+          </label>
+          <label>Título da lição (pode editar)
+            <input type="text" id="relatorioTema" placeholder="Ex.: A parábola do semeador">
+          </label>
 
-        <div class="admin-form-botoes">
-          <button type="submit" class="btn-admin">Salvar Relatório</button>
+          <div class="admin-form-linha" style="margin-top:10px;">
+            <label style="flex:2;">Adicionar visitante (avulso do dia)
+              <input type="text" id="ouvinteNome" placeholder="Nome do visitante">
+            </label>
+            <div style="display:flex; align-items:flex-end;">
+              <button type="button" id="btnAdicionarOuvinte" class="btn-admin">+ Adicionar visitante</button>
+            </div>
+          </div>
+          <div id="ouvintesLista" class="admin-perfis-lista"></div>
+
+          <div class="admin-agenda-lista-wrap">
+            <div id="chamadaLista" class="admin-perfis-lista"></div>
+            <p id="chamadaVazia" class="admin-agenda-vazio" hidden>Nenhum aluno matriculado nesta Sala ainda. Adicione alunos em "Alunos Matriculados".</p>
+          </div>
+
+          <div class="admin-agenda-lista-wrap">
+            <h4>Resumo</h4>
+            <div class="professor-resumo-grid">
+              <div class="professor-resumo-card"><span class="professor-resumo-valor" id="resumoMatriculados">0</span><span class="professor-resumo-rotulo">Matriculados</span></div>
+              <div class="professor-resumo-card"><span class="professor-resumo-valor" id="resumoPresentes">0</span><span class="professor-resumo-rotulo">Presentes</span></div>
+              <div class="professor-resumo-card"><span class="professor-resumo-valor" id="resumoAusentes">0</span><span class="professor-resumo-rotulo">Ausentes</span></div>
+              <div class="professor-resumo-card"><span class="professor-resumo-valor" id="resumoVisitantes">0</span><span class="professor-resumo-rotulo">Visitantes</span></div>
+              <div class="professor-resumo-card"><span class="professor-resumo-valor">R$ <span id="resumoOfertas">0,00</span></span><span class="professor-resumo-rotulo">Total de Ofertas</span></div>
+            </div>
+          </div>
+
+          <div class="admin-form-botoes">
+            <button type="submit" class="btn-admin">Salvar Relatório</button>
+          </div>
+          <p id="relatorioStatus" class="admin-agenda-status"></p>
+        </form>
+      </div>
+
+      <div id="canvasPainelArquivos" class="professor-canvas-painel" hidden>
+        <h4>Arquivos e documentos</h4>
+        <p class="admin-agenda-info">Suba aqui documentos PDF, slides ou imagens que seus alunos podem usar antes ou durante as aulas.</p>
+        <div class="admin-form-linha">
+          <input type="file" id="arquivoSalaInput" accept=".pdf,.ppt,.pptx,.doc,.docx,image/*" style="flex:2;">
+          <button type="button" id="btnEnviarArquivo" class="btn-admin">Enviar arquivo</button>
         </div>
-        <p id="relatorioStatus" class="admin-agenda-status"></p>
-      </form>
+        <p id="arquivoSalaStatus" class="admin-agenda-status"></p>
+        <div id="arquivosSalaLista" class="admin-perfis-lista"></div>
+      </div>
+
     </div>
   </section>
 
@@ -1889,6 +1987,9 @@
     getFirestore, doc, getDoc, setDoc, serverTimestamp,
     collection, getDocs, updateDoc
   } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+  import {
+    getStorage, ref as storageRef, uploadBytes, getDownloadURL, deleteObject
+  } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-storage.js";
   import { firebaseConfig } from "./firebase-config.js";
   import { buscarTodosEventos, salvarEvento, excluirEvento, importarAgendaInicial } from "./agenda.js";
   import { AGENDA_SEED_2026 } from "./agenda-seed-2026.js";
@@ -1898,13 +1999,14 @@
   const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db = getFirestore(app);
+  const storage = getStorage(app);
 
   const DEPARTAMENTOS = ["Infantil", "Adolescentes", "Jovens", "Varões", "Feminino", "Missões", "Culto"];
   const CONGREGACOES_SETOR = ["Sede", "Roseira", "Cruzeiro", "Bananal", "Jaguariúna", "Primavera", "Pq Florianópolis"];
   const CONGREGACAO_LOCAL = "Pq Florianópolis";
 
   const AREAS_POR_PERFIL = {
-    admin: ["siteHome", "areaAdmin", "areaGerenciarPerfis", "areaGerenciarSalas", "areaAgenda", "areaProfessor", "areaAluno", "areaAdministrativo"],
+    admin: ["siteHome", "areaAdmin", "areaGerenciarPerfis", "areaGerenciarSalas", "areaGerenciarLicoes", "areaAgenda", "areaProfessor", "areaAluno", "areaAdministrativo"],
     professor: ["siteHome", "areaProfessor"],
     aluno: ["siteHome", "areaAluno"],
     administrativo: ["siteHome", "areaAdministrativo", "areaProfessor"],
@@ -1931,6 +2033,7 @@
   let painelAgendaIniciado = false;
   let gerenciarPerfisIniciado = false;
   let gerenciarSalasIniciado = false;
+  let gerenciarLicoesIniciado = false;
   let areaProfessorIniciado = false;
   let usuarioAtualCache = null;
 
@@ -1990,6 +2093,10 @@
     if (perfil === "admin" && !gerenciarSalasIniciado) {
       gerenciarSalasIniciado = true;
       iniciarGerenciarSalas();
+    }
+    if (perfil === "admin" && !gerenciarLicoesIniciado) {
+      gerenciarLicoesIniciado = true;
+      iniciarGerenciarLicoes();
     }
     if ((perfil === "professor" || perfil === "administrativo" || perfil === "admin") && !areaProfessorIniciado) {
       areaProfessorIniciado = true;
@@ -2248,6 +2355,70 @@
   }
 
   // =================================================================
+  // Gerenciar Lições (só admin) - cadastra os títulos das lições da
+  // revista trimestral. O Professor usa essa lista para escolher o tema
+  // da aula na Área do Professor, mas ainda pode editar o texto depois.
+  // =================================================================
+  function iniciarGerenciarLicoes() {
+    const campoTrimestre = document.getElementById("licoesTrimestre");
+    const camposLista = document.getElementById("licoesCamposLista");
+    const btnSalvar = document.getElementById("btnSalvarLicoes");
+    const statusEl = document.getElementById("licoesStatus");
+    if (!camposLista || !btnSalvar) return;
+
+    const campos = [];
+    camposLista.innerHTML = "";
+    for (let i = 1; i <= 13; i++) {
+      const label = document.createElement("label");
+      label.textContent = "Lição " + i;
+      const input = document.createElement("input");
+      input.type = "text";
+      input.placeholder = "Título da lição " + i;
+      label.appendChild(input);
+      camposLista.appendChild(label);
+      campos.push(input);
+    }
+
+    async function carregar() {
+      try {
+        const snap = await getDoc(doc(db, "licoes", "atual"));
+        if (snap.exists()) {
+          const d = snap.data();
+          campoTrimestre.value = d.trimestre || "";
+          (d.titulos || []).forEach((t, idx) => { if (campos[idx]) campos[idx].value = t || ""; });
+        }
+      } catch (err) {
+        statusEl.textContent = "Não foi possível carregar as lições. " + (err.message || "");
+        statusEl.className = "admin-agenda-status erro";
+        console.error(err);
+      }
+    }
+
+    btnSalvar.addEventListener("click", async () => {
+      btnSalvar.disabled = true;
+      statusEl.textContent = "";
+      try {
+        const titulos = campos.map((c) => c.value.trim());
+        await setDoc(doc(db, "licoes", "atual"), {
+          trimestre: campoTrimestre.value.trim(),
+          titulos: titulos,
+          atualizadoEm: serverTimestamp()
+        }, { merge: true });
+        statusEl.textContent = "Lições salvas com sucesso.";
+        statusEl.className = "admin-agenda-status ok";
+      } catch (err) {
+        statusEl.textContent = "Não foi possível salvar. " + (err.message || "");
+        statusEl.className = "admin-agenda-status erro";
+        console.error(err);
+      } finally {
+        btnSalvar.disabled = false;
+      }
+    });
+
+    carregar();
+  }
+
+  // =================================================================
   // Área do Professor - lança o relatório da aula (tema, matriculados,
   // presentes, ausentes, visitantes, ofertas). O Professor só vê as
   // Salas em que está escalado; Administrativo e Admin veem todas
@@ -2265,11 +2436,18 @@
 
     const campoData = document.getElementById("relatorioData");
     const campoTema = document.getElementById("relatorioTema");
+    const relatorioTemaSeletor = document.getElementById("relatorioTemaSeletor");
+    const chamadaSubinfo = document.getElementById("chamadaSubinfo");
 
     const salaAlunosLista = document.getElementById("salaAlunosLista");
     const salaAlunoCandidato = document.getElementById("salaAlunoCandidato");
     const btnAdicionarAlunoConta = document.getElementById("btnAdicionarAlunoConta");
     const salaAlunoAvulsoNome = document.getElementById("salaAlunoAvulsoNome");
+    const salaAlunoAvulsoNascimento = document.getElementById("salaAlunoAvulsoNascimento");
+    const salaAlunoAvulsoCrianca = document.getElementById("salaAlunoAvulsoCrianca");
+    const salaAlunoAvulsoResponsaveisWrap = document.getElementById("salaAlunoAvulsoResponsaveisWrap");
+    const salaAlunoAvulsoPai = document.getElementById("salaAlunoAvulsoPai");
+    const salaAlunoAvulsoMae = document.getElementById("salaAlunoAvulsoMae");
     const btnAdicionarAlunoAvulso = document.getElementById("btnAdicionarAlunoAvulso");
     const salaAlunosStatus = document.getElementById("salaAlunosStatus");
 
@@ -2285,8 +2463,19 @@
     const resumoVisitantes = document.getElementById("resumoVisitantes");
     const resumoOfertas = document.getElementById("resumoOfertas");
 
+    const canvasBotoes = document.querySelectorAll(".professor-canvas-card");
+    const canvasPaineis = {
+      alunos: document.getElementById("canvasPainelAlunos"),
+      chamada: document.getElementById("canvasPainelChamada"),
+      arquivos: document.getElementById("canvasPainelArquivos")
+    };
+    const arquivoSalaInput = document.getElementById("arquivoSalaInput");
+    const btnEnviarArquivo = document.getElementById("btnEnviarArquivo");
+    const arquivoSalaStatus = document.getElementById("arquivoSalaStatus");
+    const arquivosSalaLista = document.getElementById("arquivosSalaLista");
+
     let minhasSalas = [];
-    let alunosDaSala = []; // { matriculaId, nome }
+    let alunosDaSala = []; // { matriculaId, nome, idade, paiResponsavel, maeResponsavel }
     let chamadaEstado = {}; // matriculaId -> { presente, ofertaValor, ofertaMetodo }
     let ouvintes = []; // { nome, ofertaValor, ofertaMetodo }
 
@@ -2300,8 +2489,27 @@
       return (v || 0).toFixed(2).replace(".", ",");
     }
 
+    function calcularIdade(dataISO) {
+      if (!dataISO) return null;
+      const hoje = new Date();
+      const nasc = new Date(dataISO + "T00:00:00");
+      if (isNaN(nasc.getTime())) return null;
+      let idade = hoje.getFullYear() - nasc.getFullYear();
+      const m = hoje.getMonth() - nasc.getMonth();
+      if (m < 0 || (m === 0 && hoje.getDate() < nasc.getDate())) idade--;
+      return idade;
+    }
+
+    function mostrarCanvas(nome) {
+      canvasBotoes.forEach((b) => b.classList.toggle("is-ativo", b.dataset.canvas === nome));
+      Object.keys(canvasPaineis).forEach((k) => { if (canvasPaineis[k]) canvasPaineis[k].hidden = k !== nome; });
+      if (nome === "arquivos") carregarArquivosSala();
+    }
+    canvasBotoes.forEach((b) => b.addEventListener("click", () => mostrarCanvas(b.dataset.canvas)));
+
     function novoSeletorMetodo(valorAtual, onChange) {
       const select = document.createElement("select");
+      select.className = "admin-perfis-item-select";
       ["dinheiro", "pix"].forEach((m) => {
         const opt = document.createElement("option");
         opt.value = m;
@@ -2345,6 +2553,18 @@
       return { matriculados, presentes, ausentes, visitantes, ofertas };
     }
 
+    function atualizarCabecalhoChamada() {
+      const sala = minhasSalas.find((s) => s.id === seletor.value);
+      const partes = [];
+      if (campoTema.value) partes.push('Lição: "' + campoTema.value + '"');
+      if (campoData.value) {
+        const d = new Date(campoData.value + "T00:00:00");
+        partes.push("Data: " + d.toLocaleDateString("pt-BR"));
+      }
+      partes.push("Professor: " + (sala && sala.professorNome ? sala.professorNome : "—"));
+      chamadaSubinfo.textContent = partes.join(" · ");
+    }
+
     function renderOuvintes() {
       ouvintesLista.innerHTML = "";
       ouvintes.forEach((o, idx) => {
@@ -2355,7 +2575,7 @@
         info.className = "admin-perfis-item-info";
         const nomeEl = document.createElement("span");
         nomeEl.className = "admin-perfis-item-nome";
-        nomeEl.textContent = o.nome + " (ouvinte)";
+        nomeEl.textContent = o.nome + " (visitante)";
         info.appendChild(nomeEl);
 
         const direita = document.createElement("div");
@@ -2368,7 +2588,7 @@
         const btnRemover = document.createElement("button");
         btnRemover.type = "button";
         btnRemover.textContent = "×";
-        btnRemover.title = "Remover ouvinte";
+        btnRemover.title = "Remover visitante";
         btnRemover.className = "btn-admin";
         btnRemover.addEventListener("click", () => {
           ouvintes.splice(idx, 1);
@@ -2388,7 +2608,7 @@
       chamadaVazia.hidden = alunosDaSala.length > 0;
       alunosDaSala.forEach((aluno) => {
         if (!chamadaEstado[aluno.matriculaId]) {
-          chamadaEstado[aluno.matriculaId] = { presente: false, ofertaValor: 0, ofertaMetodo: "dinheiro" };
+          chamadaEstado[aluno.matriculaId] = { presente: true, ofertaValor: 0, ofertaMetodo: "dinheiro" };
         }
         const st = chamadaEstado[aluno.matriculaId];
 
@@ -2406,12 +2626,19 @@
         checkbox.checked = !!st.presente;
         checkbox.addEventListener("change", () => { st.presente = checkbox.checked; recalcularResumo(); });
 
+        const nomeWrap = document.createElement("span");
         const nomeEl = document.createElement("span");
         nomeEl.className = "admin-perfis-item-nome";
         nomeEl.textContent = aluno.nome;
+        nomeWrap.appendChild(nomeEl);
+        nomeWrap.appendChild(document.createElement("br"));
+        const subEl = document.createElement("span");
+        subEl.className = "admin-perfis-item-sub";
+        subEl.textContent = "Idade: " + (aluno.idade != null ? aluno.idade : "—");
+        nomeWrap.appendChild(subEl);
 
         info.appendChild(checkbox);
-        info.appendChild(nomeEl);
+        info.appendChild(nomeWrap);
 
         const direita = document.createElement("div");
         direita.style.display = "flex";
@@ -2430,13 +2657,26 @@
     async function carregarAlunosDaSala(salaId) {
       salaAlunosLista.innerHTML = "Carregando...";
       try {
+        const usuariosSnap = await getDocs(collection(db, "usuarios"));
+        const uidToUsuario = {};
+        usuariosSnap.forEach((d) => { uidToUsuario[d.id] = d.data(); });
+
         const snap = await getDocs(collection(db, "matriculas"));
         const todas = [];
         snap.forEach((d) => todas.push(Object.assign({ matriculaId: d.id }, d.data())));
 
-        alunosDaSala = todas
-          .filter((m) => m.salaId === salaId && m.ativo !== false)
-          .map((m) => ({ matriculaId: m.matriculaId, nome: m.nome || "(sem nome)" }));
+        const matriculasDaSala = todas.filter((m) => m.salaId === salaId && m.ativo !== false);
+        alunosDaSala = matriculasDaSala.map((m) => {
+          const conta = m.tipo === "conta" ? uidToUsuario[m.uid] : null;
+          const dataNasc = m.tipo === "conta" ? (conta && conta.dataNascimento) : m.dataNascimento;
+          return {
+            matriculaId: m.matriculaId,
+            nome: m.nome || "(sem nome)",
+            idade: calcularIdade(dataNasc),
+            paiResponsavel: m.paiResponsavel || "",
+            maeResponsavel: m.maeResponsavel || ""
+          };
+        });
         alunosDaSala.sort((a, b) => a.nome.localeCompare(b.nome));
 
         salaAlunosLista.innerHTML = "";
@@ -2452,6 +2692,16 @@
             nomeEl.className = "admin-perfis-item-nome";
             nomeEl.textContent = aluno.nome;
             info.appendChild(nomeEl);
+
+            const subPartes = ["Idade: " + (aluno.idade != null ? aluno.idade : "—")];
+            if (aluno.paiResponsavel || aluno.maeResponsavel) {
+              subPartes.push("Pai/Mãe: " + (aluno.paiResponsavel || "—") + " / " + (aluno.maeResponsavel || "—"));
+            }
+            const subEl = document.createElement("span");
+            subEl.className = "admin-perfis-item-sub";
+            subEl.textContent = subPartes.join(" · ");
+            info.appendChild(subEl);
+
             const btnRemover = document.createElement("button");
             btnRemover.type = "button";
             btnRemover.className = "btn-admin";
@@ -2476,10 +2726,7 @@
           });
         }
 
-        const usuariosSnap = await getDocs(collection(db, "usuarios"));
-        const jaVinculados = new Set(
-          todas.filter((m) => m.salaId === salaId && m.ativo !== false && m.uid).map((m) => m.uid)
-        );
+        const jaVinculados = new Set(matriculasDaSala.filter((m) => m.uid).map((m) => m.uid));
         const candidatos = [];
         usuariosSnap.forEach((d) => {
           const u = d.data();
@@ -2515,6 +2762,124 @@
       }
     }
 
+    async function carregarLicoes() {
+      relatorioTemaSeletor.innerHTML = "";
+      const optVazia = document.createElement("option");
+      optVazia.value = "";
+      optVazia.textContent = "Selecione uma lição...";
+      relatorioTemaSeletor.appendChild(optVazia);
+      try {
+        const snap = await getDoc(doc(db, "licoes", "atual"));
+        const titulos = snap.exists() ? (snap.data().titulos || []) : [];
+        titulos.filter(Boolean).forEach((titulo) => {
+          const opt = document.createElement("option");
+          opt.value = titulo;
+          opt.textContent = titulo;
+          relatorioTemaSeletor.appendChild(opt);
+        });
+      } catch (err) {
+        console.error(err);
+      }
+    }
+    relatorioTemaSeletor.addEventListener("change", () => {
+      if (relatorioTemaSeletor.value) {
+        campoTema.value = relatorioTemaSeletor.value;
+        atualizarCabecalhoChamada();
+      }
+    });
+    campoTema.addEventListener("input", atualizarCabecalhoChamada);
+
+    async function carregarArquivosSala() {
+      const salaId = seletor.value;
+      if (!salaId || !arquivosSalaLista) return;
+      arquivosSalaLista.innerHTML = "Carregando...";
+      try {
+        const snap = await getDocs(collection(db, "arquivosSala"));
+        const arquivos = [];
+        snap.forEach((d) => { const a = d.data(); if (a.salaId === salaId && a.ativo !== false) arquivos.push(Object.assign({ id: d.id }, a)); });
+        arquivos.sort((a, b) => (b.criadoEmMs || 0) - (a.criadoEmMs || 0));
+        arquivosSalaLista.innerHTML = "";
+        if (!arquivos.length) {
+          arquivosSalaLista.innerHTML = '<div class="admin-agenda-vazio">Nenhum arquivo enviado ainda.</div>';
+        } else {
+          arquivos.forEach((a) => {
+            const item = document.createElement("div");
+            item.className = "admin-perfis-item";
+            const info = document.createElement("div");
+            info.className = "admin-perfis-item-info";
+            const link = document.createElement("a");
+            link.href = a.url;
+            link.target = "_blank";
+            link.rel = "noopener";
+            link.className = "admin-perfis-item-nome";
+            link.textContent = a.nome || "arquivo";
+            info.appendChild(link);
+            const btnRemover = document.createElement("button");
+            btnRemover.type = "button";
+            btnRemover.className = "btn-admin";
+            btnRemover.textContent = "Remover";
+            btnRemover.addEventListener("click", async () => {
+              btnRemover.disabled = true;
+              try {
+                if (a.caminho) {
+                  try { await deleteObject(storageRef(storage, a.caminho)); } catch (e) { console.error(e); }
+                }
+                await updateDoc(doc(db, "arquivosSala", a.id), { ativo: false });
+                await carregarArquivosSala();
+              } catch (err) {
+                arquivoSalaStatus.textContent = "Não foi possível remover. " + (err.message || "");
+                arquivoSalaStatus.className = "admin-agenda-status erro";
+                console.error(err);
+                btnRemover.disabled = false;
+              }
+            });
+            item.appendChild(info);
+            item.appendChild(btnRemover);
+            arquivosSalaLista.appendChild(item);
+          });
+        }
+      } catch (err) {
+        arquivosSalaLista.innerHTML = '<div class="admin-agenda-vazio">Não foi possível carregar os arquivos.</div>';
+        console.error(err);
+      }
+    }
+
+    btnEnviarArquivo.addEventListener("click", async () => {
+      const arquivo = arquivoSalaInput.files && arquivoSalaInput.files[0];
+      const salaId = seletor.value;
+      if (!arquivo || !salaId) return;
+      btnEnviarArquivo.disabled = true;
+      arquivoSalaStatus.textContent = "Enviando...";
+      arquivoSalaStatus.className = "admin-agenda-status";
+      try {
+        const caminho = "salas/" + salaId + "/" + Date.now() + "_" + arquivo.name;
+        const refArquivo = storageRef(storage, caminho);
+        await uploadBytes(refArquivo, arquivo);
+        const url = await getDownloadURL(refArquivo);
+        await setDoc(doc(collection(db, "arquivosSala")), {
+          salaId: salaId,
+          nome: arquivo.name,
+          url: url,
+          caminho: caminho,
+          ativo: true,
+          enviadoPorUid: usuarioAtualCache.uid,
+          enviadoPorNome: usuarioAtualCache.nome || usuarioAtualCache.email || "",
+          criadoEm: serverTimestamp(),
+          criadoEmMs: Date.now()
+        });
+        arquivoSalaInput.value = "";
+        arquivoSalaStatus.textContent = "Arquivo enviado com sucesso.";
+        arquivoSalaStatus.className = "admin-agenda-status ok";
+        await carregarArquivosSala();
+      } catch (err) {
+        arquivoSalaStatus.textContent = "Não foi possível enviar. " + (err.message || "");
+        arquivoSalaStatus.className = "admin-agenda-status erro";
+        console.error(err);
+      } finally {
+        btnEnviarArquivo.disabled = false;
+      }
+    });
+
     async function carregarRelatorio(salaId, data) {
       if (!salaId || !data) return;
       statusEl.textContent = "";
@@ -2539,12 +2904,14 @@
       }
       renderChamada();
       renderOuvintes();
+      atualizarCabecalhoChamada();
     }
 
     async function recarregarTudo() {
       const salaId = seletor.value;
       await carregarAlunosDaSala(salaId);
       await carregarRelatorio(salaId, campoData.value);
+      if (!canvasPaineis.arquivos.hidden) await carregarArquivosSala();
     }
 
     async function montarSeletor() {
@@ -2579,6 +2946,8 @@
         });
 
         campoData.value = hojeISO();
+        mostrarCanvas("alunos");
+        await carregarLicoes();
         await recarregarTudo();
       } catch (err) {
         semSalaAviso.hidden = false;
@@ -2590,6 +2959,10 @@
 
     seletor.addEventListener("change", recarregarTudo);
     campoData.addEventListener("change", () => carregarRelatorio(seletor.value, campoData.value));
+
+    salaAlunoAvulsoCrianca.addEventListener("change", () => {
+      salaAlunoAvulsoResponsaveisWrap.hidden = !salaAlunoAvulsoCrianca.checked;
+    });
 
     btnAdicionarAlunoConta.addEventListener("click", async () => {
       const uid = salaAlunoCandidato.value;
@@ -2621,6 +2994,7 @@
     btnAdicionarAlunoAvulso.addEventListener("click", async () => {
       const nome = salaAlunoAvulsoNome.value.trim();
       if (!nome) return;
+      const eCrianca = salaAlunoAvulsoCrianca.checked;
       btnAdicionarAlunoAvulso.disabled = true;
       try {
         await setDoc(doc(collection(db, "matriculas")), {
@@ -2628,11 +3002,20 @@
           tipo: "avulso",
           uid: null,
           nome: nome,
+          dataNascimento: salaAlunoAvulsoNascimento.value || "",
+          eCrianca: eCrianca,
+          paiResponsavel: eCrianca ? salaAlunoAvulsoPai.value.trim() : "",
+          maeResponsavel: eCrianca ? salaAlunoAvulsoMae.value.trim() : "",
           ativo: true,
           criadoEm: serverTimestamp(),
           criadoPorUid: usuarioAtualCache.uid
         });
         salaAlunoAvulsoNome.value = "";
+        salaAlunoAvulsoNascimento.value = "";
+        salaAlunoAvulsoCrianca.checked = false;
+        salaAlunoAvulsoResponsaveisWrap.hidden = true;
+        salaAlunoAvulsoPai.value = "";
+        salaAlunoAvulsoMae.value = "";
         salaAlunosStatus.textContent = "Aluno adicionado à Sala.";
         salaAlunosStatus.className = "admin-agenda-status ok";
         await recarregarTudo();
@@ -2733,6 +3116,7 @@
     const campoSobrenome = document.getElementById("perfilSobrenome");
     const campoEmail = document.getElementById("perfilEmail");
     const campoTelefone = document.getElementById("perfilTelefone");
+    const campoDataNascimento = document.getElementById("perfilDataNascimento");
     const fotoInput = document.getElementById("perfilFotoInput");
     const fotoPreview = document.getElementById("perfilFotoPreview");
     const campoCep = document.getElementById("perfilCep");
@@ -2793,6 +3177,7 @@
         nome: campoNome.value.trim(),
         sobrenome: campoSobrenome.value.trim(),
         telefone: campoTelefone.value.trim(),
+        dataNascimento: campoDataNascimento.value || "",
         endereco: {
           cep: campoCep.value.trim(),
           rua: campoRua.value.trim(),
@@ -2816,6 +3201,7 @@
         campoSobrenome.value = usuarioAtualCache.sobrenome || "";
         campoEmail.value = usuarioAtualCache.email || "";
         campoTelefone.value = usuarioAtualCache.telefone || "";
+        campoDataNascimento.value = usuarioAtualCache.dataNascimento || "";
         const end = usuarioAtualCache.endereco || {};
         campoCep.value = end.cep || "";
         campoRua.value = end.rua || "";
