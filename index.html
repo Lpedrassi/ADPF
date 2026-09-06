@@ -1457,7 +1457,7 @@
 
   <section id="areaProfessor" class="portal-section">
     <h2>Área do Professor</h2>
-    <p class="admin-agenda-info">Lance o relatório da sua Sala depois de cada aula: tema, matriculados, presentes, ausentes, visitantes e ofertas. O Administrador Master e o Administrativo também podem lançar em qualquer Sala.</p>
+    <p class="admin-agenda-info">Faça a chamada da sua Sala e lance a oferta de cada aluno. O Administrador Master e o Administrativo também podem lançar em qualquer Sala.</p>
 
     <div id="professorSalaSeletorWrap" class="admin-form-linha" style="margin-top:14px;" hidden>
       <label>Sala
@@ -1467,39 +1467,73 @@
 
     <p id="professorSemSalaAviso" class="admin-agenda-vazio" hidden>Você ainda não está escalado em nenhuma Sala. Peça para o Administrador Master te atribuir em "Gerenciar Professores por Salas".</p>
 
-    <form id="formRelatorioAula" class="admin-form" hidden>
-      <div class="admin-form-linha">
-        <label>Data da aula
-          <input type="date" id="relatorioData" required>
-        </label>
+    <div id="professorConteudo" hidden>
+
+      <div class="admin-agenda-lista-wrap">
+        <h4>Alunos matriculados nesta Sala</h4>
+        <div id="salaAlunosLista" class="admin-perfis-lista"></div>
+        <div class="admin-form-linha" style="margin-top:10px;">
+          <label style="flex:2;">Vincular cadastro já existente no site
+            <select id="salaAlunoCandidato"></select>
+          </label>
+          <div style="display:flex; align-items:flex-end;">
+            <button type="button" id="btnAdicionarAlunoConta" class="btn-admin">+ Vincular à Sala</button>
+          </div>
+        </div>
+        <div class="admin-form-linha">
+          <label style="flex:2;">Adicionar sem login (crianças, etc.)
+            <input type="text" id="salaAlunoAvulsoNome" placeholder="Nome do aluno">
+          </label>
+          <div style="display:flex; align-items:flex-end;">
+            <button type="button" id="btnAdicionarAlunoAvulso" class="btn-admin">+ Adicionar sem login</button>
+          </div>
+        </div>
+        <p id="salaAlunosStatus" class="admin-agenda-status"></p>
       </div>
-      <label>Tema da aula
-        <input type="text" id="relatorioTema" placeholder="Ex.: A parábola do semeador">
-      </label>
-      <div class="admin-form-linha">
-        <label>Matriculados
-          <input type="number" id="relatorioMatriculados" min="0" step="1">
+
+      <form id="formRelatorioAula" class="admin-form">
+        <div class="admin-form-linha">
+          <label>Data da aula
+            <input type="date" id="relatorioData" required>
+          </label>
+        </div>
+        <label>Tema da aula
+          <input type="text" id="relatorioTema" placeholder="Ex.: A parábola do semeador">
         </label>
-        <label>Presentes
-          <input type="number" id="relatorioPresentes" min="0" step="1">
-        </label>
-        <label>Ausentes
-          <input type="number" id="relatorioAusentes" min="0" step="1">
-        </label>
-        <label>Visitantes
-          <input type="number" id="relatorioVisitantes" min="0" step="1">
-        </label>
-      </div>
-      <div class="admin-form-linha">
-        <label style="max-width:220px;">Total de Ofertas (R$)
-          <input type="number" id="relatorioOfertas" min="0" step="0.01">
-        </label>
-      </div>
-      <div class="admin-form-botoes">
-        <button type="submit" class="btn-admin">Salvar Relatório</button>
-      </div>
-      <p id="relatorioStatus" class="admin-agenda-status"></p>
-    </form>
+
+        <div class="admin-agenda-lista-wrap">
+          <h4>Chamada</h4>
+          <div id="chamadaLista" class="admin-perfis-lista"></div>
+          <p id="chamadaVazia" class="admin-agenda-vazio" hidden>Nenhum aluno matriculado nesta Sala ainda. Adicione alunos acima.</p>
+        </div>
+
+        <div class="admin-form-linha" style="margin-top:10px;">
+          <label style="flex:2;">Adicionar ouvinte (visitante avulso do dia)
+            <input type="text" id="ouvinteNome" placeholder="Nome do ouvinte">
+          </label>
+          <div style="display:flex; align-items:flex-end;">
+            <button type="button" id="btnAdicionarOuvinte" class="btn-admin">+ Adicionar ouvinte</button>
+          </div>
+        </div>
+        <div id="ouvintesLista" class="admin-perfis-lista"></div>
+
+        <div class="admin-agenda-lista-wrap">
+          <h4>Resumo (calculado automaticamente)</h4>
+          <div class="admin-form-linha">
+            <span><strong>Matriculados:</strong> <span id="resumoMatriculados">0</span></span>
+            <span><strong>Presentes:</strong> <span id="resumoPresentes">0</span></span>
+            <span><strong>Ausentes:</strong> <span id="resumoAusentes">0</span></span>
+            <span><strong>Visitantes:</strong> <span id="resumoVisitantes">0</span></span>
+            <span><strong>Total de Ofertas:</strong> R$ <span id="resumoOfertas">0,00</span></span>
+          </div>
+        </div>
+
+        <div class="admin-form-botoes">
+          <button type="submit" class="btn-admin">Salvar Relatório</button>
+        </div>
+        <p id="relatorioStatus" class="admin-agenda-status"></p>
+      </form>
+    </div>
   </section>
 
   <section id="areaAluno" class="portal-section">
@@ -2224,19 +2258,37 @@
     const seletorWrap = document.getElementById("professorSalaSeletorWrap");
     const seletor = document.getElementById("professorSalaSeletor");
     const semSalaAviso = document.getElementById("professorSemSalaAviso");
+    const conteudo = document.getElementById("professorConteudo");
     const form = document.getElementById("formRelatorioAula");
     const statusEl = document.getElementById("relatorioStatus");
     if (!seletor || !form) return;
 
     const campoData = document.getElementById("relatorioData");
     const campoTema = document.getElementById("relatorioTema");
-    const campoMatriculados = document.getElementById("relatorioMatriculados");
-    const campoPresentes = document.getElementById("relatorioPresentes");
-    const campoAusentes = document.getElementById("relatorioAusentes");
-    const campoVisitantes = document.getElementById("relatorioVisitantes");
-    const campoOfertas = document.getElementById("relatorioOfertas");
+
+    const salaAlunosLista = document.getElementById("salaAlunosLista");
+    const salaAlunoCandidato = document.getElementById("salaAlunoCandidato");
+    const btnAdicionarAlunoConta = document.getElementById("btnAdicionarAlunoConta");
+    const salaAlunoAvulsoNome = document.getElementById("salaAlunoAvulsoNome");
+    const btnAdicionarAlunoAvulso = document.getElementById("btnAdicionarAlunoAvulso");
+    const salaAlunosStatus = document.getElementById("salaAlunosStatus");
+
+    const chamadaLista = document.getElementById("chamadaLista");
+    const chamadaVazia = document.getElementById("chamadaVazia");
+    const ouvinteNomeInput = document.getElementById("ouvinteNome");
+    const btnAdicionarOuvinte = document.getElementById("btnAdicionarOuvinte");
+    const ouvintesLista = document.getElementById("ouvintesLista");
+
+    const resumoMatriculados = document.getElementById("resumoMatriculados");
+    const resumoPresentes = document.getElementById("resumoPresentes");
+    const resumoAusentes = document.getElementById("resumoAusentes");
+    const resumoVisitantes = document.getElementById("resumoVisitantes");
+    const resumoOfertas = document.getElementById("resumoOfertas");
 
     let minhasSalas = [];
+    let alunosDaSala = []; // { matriculaId, nome }
+    let chamadaEstado = {}; // matriculaId -> { presente, ofertaValor, ofertaMetodo }
+    let ouvintes = []; // { nome, ofertaValor, ofertaMetodo }
 
     function hojeISO() {
       const d = new Date();
@@ -2244,32 +2296,255 @@
       return local.toISOString().slice(0, 10);
     }
 
+    function formatarMoeda(v) {
+      return (v || 0).toFixed(2).replace(".", ",");
+    }
+
+    function novoSeletorMetodo(valorAtual, onChange) {
+      const select = document.createElement("select");
+      ["dinheiro", "pix"].forEach((m) => {
+        const opt = document.createElement("option");
+        opt.value = m;
+        opt.textContent = m === "dinheiro" ? "Dinheiro" : "Pix";
+        if (valorAtual === m) opt.selected = true;
+        select.appendChild(opt);
+      });
+      select.addEventListener("change", () => onChange(select.value));
+      return select;
+    }
+
+    function novoCampoOferta(valorAtual, onInput) {
+      const input = document.createElement("input");
+      input.type = "number";
+      input.min = "0";
+      input.step = "0.01";
+      input.placeholder = "Oferta R$";
+      input.style.width = "110px";
+      input.value = valorAtual || "";
+      input.addEventListener("input", () => onInput(Number(input.value) || 0));
+      return input;
+    }
+
+    function recalcularResumo() {
+      const matriculados = alunosDaSala.length;
+      let presentes = 0;
+      let ofertas = 0;
+      alunosDaSala.forEach((a) => {
+        const st = chamadaEstado[a.matriculaId];
+        if (st && st.presente) presentes++;
+        if (st && st.ofertaValor) ofertas += Number(st.ofertaValor) || 0;
+      });
+      ouvintes.forEach((o) => { ofertas += Number(o.ofertaValor) || 0; });
+      const ausentes = matriculados - presentes;
+      const visitantes = ouvintes.length;
+      resumoMatriculados.textContent = matriculados;
+      resumoPresentes.textContent = presentes;
+      resumoAusentes.textContent = ausentes;
+      resumoVisitantes.textContent = visitantes;
+      resumoOfertas.textContent = formatarMoeda(ofertas);
+      return { matriculados, presentes, ausentes, visitantes, ofertas };
+    }
+
+    function renderOuvintes() {
+      ouvintesLista.innerHTML = "";
+      ouvintes.forEach((o, idx) => {
+        const item = document.createElement("div");
+        item.className = "admin-perfis-item";
+
+        const info = document.createElement("div");
+        info.className = "admin-perfis-item-info";
+        const nomeEl = document.createElement("span");
+        nomeEl.className = "admin-perfis-item-nome";
+        nomeEl.textContent = o.nome + " (ouvinte)";
+        info.appendChild(nomeEl);
+
+        const direita = document.createElement("div");
+        direita.style.display = "flex";
+        direita.style.gap = "8px";
+        direita.style.alignItems = "center";
+        direita.appendChild(novoCampoOferta(o.ofertaValor, (v) => { o.ofertaValor = v; recalcularResumo(); }));
+        direita.appendChild(novoSeletorMetodo(o.ofertaMetodo, (v) => { o.ofertaMetodo = v; }));
+
+        const btnRemover = document.createElement("button");
+        btnRemover.type = "button";
+        btnRemover.textContent = "×";
+        btnRemover.title = "Remover ouvinte";
+        btnRemover.className = "btn-admin";
+        btnRemover.addEventListener("click", () => {
+          ouvintes.splice(idx, 1);
+          renderOuvintes();
+          recalcularResumo();
+        });
+        direita.appendChild(btnRemover);
+
+        item.appendChild(info);
+        item.appendChild(direita);
+        ouvintesLista.appendChild(item);
+      });
+    }
+
+    function renderChamada() {
+      chamadaLista.innerHTML = "";
+      chamadaVazia.hidden = alunosDaSala.length > 0;
+      alunosDaSala.forEach((aluno) => {
+        if (!chamadaEstado[aluno.matriculaId]) {
+          chamadaEstado[aluno.matriculaId] = { presente: false, ofertaValor: 0, ofertaMetodo: "dinheiro" };
+        }
+        const st = chamadaEstado[aluno.matriculaId];
+
+        const item = document.createElement("div");
+        item.className = "admin-perfis-item";
+
+        const info = document.createElement("div");
+        info.className = "admin-perfis-item-info";
+        info.style.flexDirection = "row";
+        info.style.alignItems = "center";
+        info.style.gap = "8px";
+
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.checked = !!st.presente;
+        checkbox.addEventListener("change", () => { st.presente = checkbox.checked; recalcularResumo(); });
+
+        const nomeEl = document.createElement("span");
+        nomeEl.className = "admin-perfis-item-nome";
+        nomeEl.textContent = aluno.nome;
+
+        info.appendChild(checkbox);
+        info.appendChild(nomeEl);
+
+        const direita = document.createElement("div");
+        direita.style.display = "flex";
+        direita.style.gap = "8px";
+        direita.style.alignItems = "center";
+        direita.appendChild(novoCampoOferta(st.ofertaValor, (v) => { st.ofertaValor = v; recalcularResumo(); }));
+        direita.appendChild(novoSeletorMetodo(st.ofertaMetodo, (v) => { st.ofertaMetodo = v; }));
+
+        item.appendChild(info);
+        item.appendChild(direita);
+        chamadaLista.appendChild(item);
+      });
+      recalcularResumo();
+    }
+
+    async function carregarAlunosDaSala(salaId) {
+      salaAlunosLista.innerHTML = "Carregando...";
+      try {
+        const snap = await getDocs(collection(db, "matriculas"));
+        const todas = [];
+        snap.forEach((d) => todas.push(Object.assign({ matriculaId: d.id }, d.data())));
+
+        alunosDaSala = todas
+          .filter((m) => m.salaId === salaId && m.ativo !== false)
+          .map((m) => ({ matriculaId: m.matriculaId, nome: m.nome || "(sem nome)" }));
+        alunosDaSala.sort((a, b) => a.nome.localeCompare(b.nome));
+
+        salaAlunosLista.innerHTML = "";
+        if (!alunosDaSala.length) {
+          salaAlunosLista.innerHTML = '<div class="admin-agenda-vazio">Nenhum aluno matriculado ainda.</div>';
+        } else {
+          alunosDaSala.forEach((aluno) => {
+            const item = document.createElement("div");
+            item.className = "admin-perfis-item";
+            const info = document.createElement("div");
+            info.className = "admin-perfis-item-info";
+            const nomeEl = document.createElement("span");
+            nomeEl.className = "admin-perfis-item-nome";
+            nomeEl.textContent = aluno.nome;
+            info.appendChild(nomeEl);
+            const btnRemover = document.createElement("button");
+            btnRemover.type = "button";
+            btnRemover.className = "btn-admin";
+            btnRemover.textContent = "Remover da Sala";
+            btnRemover.addEventListener("click", async () => {
+              btnRemover.disabled = true;
+              try {
+                await updateDoc(doc(db, "matriculas", aluno.matriculaId), { ativo: false });
+                salaAlunosStatus.textContent = aluno.nome + " removido da Sala.";
+                salaAlunosStatus.className = "admin-agenda-status ok";
+                await recarregarTudo();
+              } catch (err) {
+                salaAlunosStatus.textContent = "Não foi possível remover. " + (err.message || "");
+                salaAlunosStatus.className = "admin-agenda-status erro";
+                console.error(err);
+                btnRemover.disabled = false;
+              }
+            });
+            item.appendChild(info);
+            item.appendChild(btnRemover);
+            salaAlunosLista.appendChild(item);
+          });
+        }
+
+        const usuariosSnap = await getDocs(collection(db, "usuarios"));
+        const jaVinculados = new Set(
+          todas.filter((m) => m.salaId === salaId && m.ativo !== false && m.uid).map((m) => m.uid)
+        );
+        const candidatos = [];
+        usuariosSnap.forEach((d) => {
+          const u = d.data();
+          if (u.ativo !== false && !jaVinculados.has(d.id)) {
+            candidatos.push({ uid: d.id, nome: [u.nome, u.sobrenome].filter(Boolean).join(" ") || u.email || d.id });
+          }
+        });
+        candidatos.sort((a, b) => a.nome.localeCompare(b.nome));
+        salaAlunoCandidato.innerHTML = "";
+        if (!candidatos.length) {
+          const opt = document.createElement("option");
+          opt.value = "";
+          opt.textContent = "Nenhum cadastro disponível";
+          salaAlunoCandidato.appendChild(opt);
+          btnAdicionarAlunoConta.disabled = true;
+        } else {
+          btnAdicionarAlunoConta.disabled = false;
+          candidatos.forEach((c) => {
+            const opt = document.createElement("option");
+            opt.value = c.uid;
+            opt.textContent = c.nome;
+            salaAlunoCandidato.appendChild(opt);
+          });
+        }
+
+        chamadaEstado = {};
+        ouvintes = [];
+        renderChamada();
+        renderOuvintes();
+      } catch (err) {
+        salaAlunosLista.innerHTML = '<div class="admin-agenda-vazio">Não foi possível carregar os alunos desta Sala.</div>';
+        console.error(err);
+      }
+    }
+
     async function carregarRelatorio(salaId, data) {
       if (!salaId || !data) return;
       statusEl.textContent = "";
       statusEl.className = "admin-agenda-status";
       campoTema.value = "";
-      campoMatriculados.value = "";
-      campoPresentes.value = "";
-      campoAusentes.value = "";
-      campoVisitantes.value = "";
-      campoOfertas.value = "";
+      chamadaEstado = {};
+      ouvintes = [];
       try {
         const snap = await getDoc(doc(db, "relatoriosAula", salaId + "_" + data));
         if (snap.exists()) {
           const r = snap.data();
           campoTema.value = r.tema || "";
-          campoMatriculados.value = r.matriculados != null ? r.matriculados : "";
-          campoPresentes.value = r.presentes != null ? r.presentes : "";
-          campoAusentes.value = r.ausentes != null ? r.ausentes : "";
-          campoVisitantes.value = r.visitantes != null ? r.visitantes : "";
-          campoOfertas.value = r.ofertas != null ? r.ofertas : "";
+          (r.chamada || []).forEach((c) => {
+            chamadaEstado[c.matriculaId] = { presente: !!c.presente, ofertaValor: c.ofertaValor || 0, ofertaMetodo: c.ofertaMetodo || "dinheiro" };
+          });
+          ouvintes = (r.ouvintes || []).map((o) => Object.assign({}, o));
         }
       } catch (err) {
         statusEl.textContent = "Não foi possível carregar o relatório dessa data. " + (err.message || "");
         statusEl.className = "admin-agenda-status erro";
         console.error(err);
       }
+      renderChamada();
+      renderOuvintes();
+    }
+
+    async function recarregarTudo() {
+      const salaId = seletor.value;
+      await carregarAlunosDaSala(salaId);
+      await carregarRelatorio(salaId, campoData.value);
     }
 
     async function montarSeletor() {
@@ -2288,13 +2563,13 @@
         if (!minhasSalas.length) {
           seletorWrap.hidden = true;
           semSalaAviso.hidden = false;
-          form.hidden = true;
+          conteudo.hidden = true;
           return;
         }
 
         semSalaAviso.hidden = true;
         seletorWrap.hidden = false;
-        form.hidden = false;
+        conteudo.hidden = false;
         seletor.innerHTML = "";
         minhasSalas.forEach((s) => {
           const opt = document.createElement("option");
@@ -2304,17 +2579,80 @@
         });
 
         campoData.value = hojeISO();
-        await carregarRelatorio(seletor.value, campoData.value);
+        await recarregarTudo();
       } catch (err) {
         semSalaAviso.hidden = false;
         semSalaAviso.textContent = "Não foi possível carregar suas Salas.";
-        form.hidden = true;
+        conteudo.hidden = true;
         console.error(err);
       }
     }
 
-    seletor.addEventListener("change", () => carregarRelatorio(seletor.value, campoData.value));
+    seletor.addEventListener("change", recarregarTudo);
     campoData.addEventListener("change", () => carregarRelatorio(seletor.value, campoData.value));
+
+    btnAdicionarAlunoConta.addEventListener("click", async () => {
+      const uid = salaAlunoCandidato.value;
+      if (!uid) return;
+      const opt = salaAlunoCandidato.selectedOptions[0];
+      btnAdicionarAlunoConta.disabled = true;
+      try {
+        await setDoc(doc(collection(db, "matriculas")), {
+          salaId: seletor.value,
+          tipo: "conta",
+          uid: uid,
+          nome: opt ? opt.textContent : uid,
+          ativo: true,
+          criadoEm: serverTimestamp(),
+          criadoPorUid: usuarioAtualCache.uid
+        });
+        salaAlunosStatus.textContent = "Aluno vinculado à Sala.";
+        salaAlunosStatus.className = "admin-agenda-status ok";
+        await recarregarTudo();
+      } catch (err) {
+        salaAlunosStatus.textContent = "Não foi possível adicionar. " + (err.message || "");
+        salaAlunosStatus.className = "admin-agenda-status erro";
+        console.error(err);
+      } finally {
+        btnAdicionarAlunoConta.disabled = false;
+      }
+    });
+
+    btnAdicionarAlunoAvulso.addEventListener("click", async () => {
+      const nome = salaAlunoAvulsoNome.value.trim();
+      if (!nome) return;
+      btnAdicionarAlunoAvulso.disabled = true;
+      try {
+        await setDoc(doc(collection(db, "matriculas")), {
+          salaId: seletor.value,
+          tipo: "avulso",
+          uid: null,
+          nome: nome,
+          ativo: true,
+          criadoEm: serverTimestamp(),
+          criadoPorUid: usuarioAtualCache.uid
+        });
+        salaAlunoAvulsoNome.value = "";
+        salaAlunosStatus.textContent = "Aluno adicionado à Sala.";
+        salaAlunosStatus.className = "admin-agenda-status ok";
+        await recarregarTudo();
+      } catch (err) {
+        salaAlunosStatus.textContent = "Não foi possível adicionar. " + (err.message || "");
+        salaAlunosStatus.className = "admin-agenda-status erro";
+        console.error(err);
+      } finally {
+        btnAdicionarAlunoAvulso.disabled = false;
+      }
+    });
+
+    btnAdicionarOuvinte.addEventListener("click", () => {
+      const nome = ouvinteNomeInput.value.trim();
+      if (!nome) return;
+      ouvintes.push({ nome: nome, ofertaValor: 0, ofertaMetodo: "dinheiro" });
+      ouvinteNomeInput.value = "";
+      renderOuvintes();
+      recalcularResumo();
+    });
 
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -2322,19 +2660,32 @@
       const data = campoData.value;
       if (!salaId || !data) return;
       const sala = minhasSalas.find((s) => s.id === salaId);
+      const resumo = recalcularResumo();
       const botao = form.querySelector('button[type="submit"]');
       botao.disabled = true;
       try {
+        const chamadaArray = alunosDaSala.map((a) => {
+          const st = chamadaEstado[a.matriculaId] || { presente: false, ofertaValor: 0, ofertaMetodo: "dinheiro" };
+          return {
+            matriculaId: a.matriculaId,
+            nome: a.nome,
+            presente: !!st.presente,
+            ofertaValor: Number(st.ofertaValor) || 0,
+            ofertaMetodo: st.ofertaMetodo || "dinheiro"
+          };
+        });
         await setDoc(doc(db, "relatoriosAula", salaId + "_" + data), {
           salaId: salaId,
           salaNome: sala ? sala.nome : "",
           data: data,
           tema: campoTema.value.trim(),
-          matriculados: Number(campoMatriculados.value) || 0,
-          presentes: Number(campoPresentes.value) || 0,
-          ausentes: Number(campoAusentes.value) || 0,
-          visitantes: Number(campoVisitantes.value) || 0,
-          ofertas: Number(campoOfertas.value) || 0,
+          chamada: chamadaArray,
+          ouvintes: ouvintes,
+          matriculados: resumo.matriculados,
+          presentes: resumo.presentes,
+          ausentes: resumo.ausentes,
+          visitantes: resumo.visitantes,
+          ofertas: resumo.ofertas,
           lancadoPorUid: usuarioAtualCache.uid,
           lancadoPorNome: usuarioAtualCache.nome || usuarioAtualCache.email || "",
           atualizadoEm: serverTimestamp()
@@ -2352,7 +2703,6 @@
 
     montarSeletor();
   }
-
   // =================================================================
   // Modal de Perfil - serve tanto para editar o cadastro de quem já
   // está logado quanto para Criar Conta (chamado pelo auth.js) e para
