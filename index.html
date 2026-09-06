@@ -220,6 +220,8 @@
   .btn.btn-blue-grad:hover { background: rgba(59,130,255,0.14); border-color: var(--azul); color: #fff; transform: translateY(-2px); box-shadow: none; }
   #loginTitle { display: flex; width: fit-content; margin: 0 auto; font-size: 16px; font-weight: 800; }
   .login-note { margin-top: 20px; font-size: 12px; color: var(--muted-2); text-align: center; }
+  .login-note.ok { color: #7CD992; }
+  .login-note.erro { color: var(--vermelho); }
 
   .perfil-card { max-width: 560px; max-height: 88vh; overflow-y: auto; }
   #perfilForm [data-show][hidden] { display: none !important; }
@@ -642,7 +644,7 @@
   }
   .sidebar-link:hover { background: var(--surface-2); color: var(--ink); }
   .sidebar-link.active { background: var(--surface-2); color: var(--laranja); border-left-color: var(--laranja); }
-  .sidebar-category { padding: 18px 24px 6px; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted-2); }
+  .sidebar-category { padding: 18px 24px 6px; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: var(--azul); }
   .sidebar-category:first-of-type { padding-top: 6px; }
   .portal-main-wrap { flex: 1; min-width: 0; }
   .site-home-conteudo { display: none; }
@@ -746,6 +748,11 @@
     background: var(--surface-2); border: 1px solid var(--border-strong); border-radius: 8px; color: var(--ink);
     padding: 7px 10px; font-size: 13px; font-family: inherit; flex-shrink: 0;
   }
+  .admin-perfis-item-editar {
+    background: var(--surface-2); border: 1px solid var(--border-strong); border-radius: 8px; color: var(--ink);
+    padding: 6px 10px; font-size: 14px; font-family: inherit; flex-shrink: 0; cursor: pointer; line-height: 1;
+  }
+  .admin-perfis-item-editar:hover { border-color: var(--azul); }
 
   .professor-canvas-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin: 16px 0; }
   .professor-canvas-card {
@@ -1030,6 +1037,60 @@
   </div>
 </div>
 
+<div class="login-overlay" id="gerenciarPerfilEditModal" role="dialog" aria-modal="true" aria-labelledby="gerenciarPerfilEditTitulo" hidden>
+  <div class="login-card">
+    <button class="login-close" id="gerenciarPerfilEditClose" type="button" aria-label="Fechar">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+    <span class="pill eyebrow" id="gerenciarPerfilEditTitulo"><span class="dot"></span>Editar usuário</span>
+    <form class="login-form" id="gerenciarPerfilEditForm">
+      <div>
+        <label for="gerenciarPerfilEditPerfil">Perfil</label>
+        <select id="gerenciarPerfilEditPerfil"></select>
+      </div>
+      <div class="perfil-grid-2">
+        <div>
+          <label for="gerenciarPerfilEditCep">CEP</label>
+          <input id="gerenciarPerfilEditCep" type="text" placeholder="00000-000" inputmode="numeric" maxlength="9">
+        </div>
+        <div>
+          <label for="gerenciarPerfilEditNumero">Número</label>
+          <input id="gerenciarPerfilEditNumero" type="text" placeholder="nº">
+        </div>
+      </div>
+      <div>
+        <label for="gerenciarPerfilEditRua">Rua</label>
+        <input id="gerenciarPerfilEditRua" type="text" placeholder="rua">
+      </div>
+      <div>
+        <label for="gerenciarPerfilEditComplemento">Complemento</label>
+        <input id="gerenciarPerfilEditComplemento" type="text" placeholder="apto, bloco, etc.">
+      </div>
+      <div class="perfil-grid-2">
+        <div>
+          <label for="gerenciarPerfilEditBairro">Bairro</label>
+          <input id="gerenciarPerfilEditBairro" type="text" placeholder="bairro">
+        </div>
+        <div>
+          <label for="gerenciarPerfilEditCidade">Cidade</label>
+          <input id="gerenciarPerfilEditCidade" type="text" placeholder="cidade">
+        </div>
+      </div>
+
+      <label class="admin-check">
+        <input type="checkbox" id="gerenciarPerfilEditAtivo">
+        Conta ativa
+      </label>
+
+      <p class="login-note" id="gerenciarPerfilEditMensagem" style="margin-top:0;"></p>
+
+      <div class="login-btn-row">
+        <button type="submit" class="btn btn-blue-grad" id="gerenciarPerfilEditBtnSalvar" style="flex:1;justify-content:center;">Salvar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
 <div class="login-overlay" id="modalConfirmarExcluirConta" role="dialog" aria-modal="true" aria-labelledby="confirmarExcluirContaTitulo" hidden>
   <div class="login-card confirm-card">
     <span class="pill eyebrow" id="confirmarExcluirContaTitulo"><span class="dot"></span>Excluir Conta</span>
@@ -1074,7 +1135,6 @@
     <button class="sidebar-link active" type="button" data-area="siteHome">Início (site)</button>
 
     <div class="sidebar-category">Administração</div>
-    <button class="sidebar-link" type="button" data-area="areaAdmin">Administração</button>
     <button class="sidebar-link" type="button" data-area="areaGerenciarPerfis">Gerenciar Perfis</button>
     <button class="sidebar-link" type="button" data-area="areaAgenda">Agenda de Cultos e Eventos</button>
     <button class="sidebar-link" type="button" data-area="areaPostsSite">Post's do Site!</button>
@@ -1429,11 +1489,6 @@
 </footer>
 
   </div>
-
-  <section id="areaAdmin" class="portal-section">
-    <h2>Administração (Super User)</h2>
-    <p>Visão geral do sistema. Use o menu ao lado para acessar a Agenda de Cultos e Eventos e as demais áreas.</p>
-  </section>
 
   <section id="areaGerenciarPerfis" class="portal-section">
     <h2>Gerenciar Perfis</h2>
@@ -2170,7 +2225,7 @@
   const CONGREGACAO_LOCAL = "Pq Florianópolis";
 
   const AREAS_POR_PERFIL = {
-    admin: ["siteHome", "areaAdmin", "areaGerenciarPerfis", "areaGerenciarSalas", "areaGerenciarLicoes", "areaAgenda", "areaProfessor", "areaAluno", "areaAdministrativo", "areaPostsSite", "areaGerenciarEscala", "areaGerenciarProfessoresPorSala", "areaCadastroSalas"],
+    admin: ["siteHome", "areaGerenciarPerfis", "areaGerenciarSalas", "areaGerenciarLicoes", "areaAgenda", "areaProfessor", "areaAluno", "areaAdministrativo", "areaPostsSite", "areaGerenciarEscala", "areaGerenciarProfessoresPorSala", "areaCadastroSalas"],
     professor: ["siteHome", "areaProfessor"],
     aluno: ["siteHome", "areaAluno"],
     administrativo: ["siteHome", "areaAdministrativo", "areaProfessor"],
@@ -2357,14 +2412,131 @@
             }
           });
 
+          const btnEditar = document.createElement("button");
+          btnEditar.type = "button";
+          btnEditar.className = "admin-perfis-item-editar";
+          btnEditar.setAttribute("aria-label", "Editar perfil, endereço e status de " + (u.nome || u.email || u.uid));
+          btnEditar.textContent = "✏️";
+          btnEditar.addEventListener("click", () => {
+            if (window.__abrirGerenciarPerfilEdit) window.__abrirGerenciarPerfilEdit(u);
+          });
+
           item.appendChild(info);
           item.appendChild(select);
+          item.appendChild(btnEditar);
           listaEl.appendChild(item);
         });
       } catch (err) {
         listaEl.innerHTML = '<div class="admin-agenda-vazio">Não foi possível carregar a lista de usuários.</div>';
         console.error(err);
       }
+    }
+
+    // Modal de edição avançada (Perfil, Endereço, Ativo) - aberto pelo botão de lápis.
+    const modalEditar = document.getElementById("gerenciarPerfilEditModal");
+    if (modalEditar && !modalEditar.__wired) {
+      modalEditar.__wired = true;
+      const editarClose = document.getElementById("gerenciarPerfilEditClose");
+      const editarForm = document.getElementById("gerenciarPerfilEditForm");
+      const editarPerfilSelect = document.getElementById("gerenciarPerfilEditPerfil");
+      const editarCep = document.getElementById("gerenciarPerfilEditCep");
+      const editarNumero = document.getElementById("gerenciarPerfilEditNumero");
+      const editarRua = document.getElementById("gerenciarPerfilEditRua");
+      const editarComplemento = document.getElementById("gerenciarPerfilEditComplemento");
+      const editarBairro = document.getElementById("gerenciarPerfilEditBairro");
+      const editarCidade = document.getElementById("gerenciarPerfilEditCidade");
+      const editarAtivo = document.getElementById("gerenciarPerfilEditAtivo");
+      const editarMensagem = document.getElementById("gerenciarPerfilEditMensagem");
+      const editarBtnSalvar = document.getElementById("gerenciarPerfilEditBtnSalvar");
+      const editarTitulo = document.getElementById("gerenciarPerfilEditTitulo");
+      let usuarioEditandoUid = null;
+
+      Object.keys(ROTULOS_GERENCIAR).forEach((valor) => {
+        const opt = document.createElement("option");
+        opt.value = valor;
+        opt.textContent = ROTULOS_GERENCIAR[valor];
+        editarPerfilSelect.appendChild(opt);
+      });
+
+      function fecharEditar() {
+        modalEditar.classList.remove("is-open");
+        document.body.style.overflow = "";
+        setTimeout(() => { modalEditar.hidden = true; }, 200);
+      }
+
+      editarClose.addEventListener("click", fecharEditar);
+      modalEditar.addEventListener("click", (e) => { if (e.target === modalEditar) fecharEditar(); });
+      document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !modalEditar.hidden) fecharEditar(); });
+      editarForm.addEventListener("submit", (e) => { e.preventDefault(); });
+
+      editarCep.addEventListener("input", () => {
+        const digitos = editarCep.value.replace(/\D/g, "").slice(0, 8);
+        editarCep.value = digitos.length > 5 ? digitos.slice(0, 5) + "-" + digitos.slice(5) : digitos;
+      });
+      editarCep.addEventListener("blur", async () => {
+        const digitos = editarCep.value.replace(/\D/g, "");
+        if (digitos.length !== 8) return;
+        try {
+          const resp = await fetch("https://viacep.com.br/ws/" + digitos + "/json/");
+          const dados = await resp.json();
+          if (dados.erro) return;
+          editarRua.value = dados.logradouro || editarRua.value;
+          editarBairro.value = dados.bairro || editarBairro.value;
+          editarCidade.value = dados.localidade || editarCidade.value;
+        } catch (err) {
+          console.error(err);
+        }
+      });
+
+      editarBtnSalvar.addEventListener("click", async () => {
+        if (!usuarioEditandoUid) return;
+        editarMensagem.textContent = "";
+        editarMensagem.className = "login-note";
+        const dadosUsuario = {
+          perfil: editarPerfilSelect.value,
+          ativo: editarAtivo.checked,
+          endereco: {
+            cep: editarCep.value.trim(),
+            numero: editarNumero.value.trim(),
+            rua: editarRua.value.trim(),
+            complemento: editarComplemento.value.trim(),
+            bairro: editarBairro.value.trim(),
+            cidade: editarCidade.value.trim()
+          }
+        };
+        editarBtnSalvar.disabled = true;
+        try {
+          await setDoc(doc(db, "usuarios", usuarioEditandoUid), dadosUsuario, { merge: true });
+          editarMensagem.textContent = "Salvo com sucesso.";
+          editarMensagem.className = "login-note ok";
+          setTimeout(() => { fecharEditar(); carregar(); }, 700);
+        } catch (err) {
+          editarMensagem.textContent = "Não foi possível salvar. " + (err.message || "");
+          editarMensagem.className = "login-note erro";
+          console.error(err);
+        } finally {
+          editarBtnSalvar.disabled = false;
+        }
+      });
+
+      window.__abrirGerenciarPerfilEdit = function (usuario) {
+        usuarioEditandoUid = usuario.uid;
+        editarMensagem.textContent = "";
+        editarMensagem.className = "login-note";
+        editarTitulo.textContent = [usuario.nome, usuario.sobrenome].filter(Boolean).join(" ") || usuario.email || usuario.uid;
+        editarPerfilSelect.value = usuario.perfil || "convidado";
+        const end = usuario.endereco || {};
+        editarCep.value = end.cep || "";
+        editarNumero.value = end.numero || "";
+        editarRua.value = end.rua || "";
+        editarComplemento.value = end.complemento || "";
+        editarBairro.value = end.bairro || "";
+        editarCidade.value = end.cidade || "";
+        editarAtivo.checked = usuario.ativo !== false;
+        modalEditar.hidden = false;
+        requestAnimationFrame(() => modalEditar.classList.add("is-open"));
+        document.body.style.overflow = "hidden";
+      };
     }
 
     carregar();
