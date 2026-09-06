@@ -2293,6 +2293,11 @@
     document.querySelectorAll(".sidebar-link").forEach((link) => {
       link.classList.toggle("active", link.dataset.area === areaId);
     });
+    // Recarrega listas que dependem de outros cadastros (ex: perfil de
+    // usuários) toda vez que a área é reaberta, para não mostrar dados
+    // desatualizados de quando a área foi carregada pela primeira vez.
+    if (areaId === "areaGerenciarPerfis" && window.__recarregarGerenciarPerfis) window.__recarregarGerenciarPerfis();
+    if (areaId === "areaGerenciarSalas" && window.__recarregarGerenciarSalas) window.__recarregarGerenciarSalas();
   }
 
   document.querySelectorAll(".sidebar-link").forEach((link) => {
@@ -2667,6 +2672,7 @@
       };
     }
 
+    window.__recarregarGerenciarPerfis = carregar;
     carregar();
   }
 
@@ -2824,6 +2830,7 @@
       });
     }
 
+    window.__recarregarGerenciarSalas = carregar;
     carregar();
   }
 
@@ -2977,6 +2984,7 @@
       canvasBotoes.forEach((b) => b.classList.toggle("is-ativo", b.dataset.canvas === nome));
       Object.keys(canvasPaineis).forEach((k) => { if (canvasPaineis[k]) canvasPaineis[k].hidden = k !== nome; });
       if (nome === "arquivos") carregarArquivosSala();
+      if (nome === "alunos") recarregarTudo();
     }
     canvasBotoes.forEach((b) => b.addEventListener("click", () => mostrarCanvas(b.dataset.canvas)));
 
@@ -3419,7 +3427,6 @@
         campoData.value = hojeISO();
         mostrarCanvas("alunos");
         await carregarLicoes();
-        await recarregarTudo();
       } catch (err) {
         semSalaAviso.hidden = false;
         semSalaAviso.textContent = "Não foi possível carregar suas Salas.";
