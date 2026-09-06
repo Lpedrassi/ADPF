@@ -239,6 +239,8 @@
   .perfil-foto-row { display: flex; align-items: center; gap: 14px; }
   .perfil-foto-preview { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; background: var(--surface-2); border: 1px solid var(--border-strong); flex-shrink: 0; }
   .perfil-secao-titulo { font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin-top: 4px; }
+  .licoes-conteudo { overflow: hidden; max-height: 0; transition: max-height 0.35s ease; }
+  .licoes-conteudo.aberto { max-height: 2400px; }
   .perfil-readonly { opacity: 0.65; cursor: not-allowed; }
   .perfil-header-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
   .perfil-tipo-label { font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; white-space: nowrap; }
@@ -1549,16 +1551,35 @@
 
   <section id="areaGerenciarLicoes" class="portal-section">
     <h2>Gerenciar Lições</h2>
-    <p class="admin-agenda-info">Cadastre os títulos das lições da revista trimestral da EBD. O Professor escolhe entre esses títulos ao lançar a chamada, mas pode editar o texto depois de escolher.</p>
+    <p class="admin-agenda-info">Cadastre os títulos das lições da revista trimestral de cada Sala. O Professor escolhe entre esses títulos ao lançar a chamada, mas pode editar o texto depois de escolher.</p>
     <div class="admin-form">
-      <label>Trimestre
-        <input type="text" id="licoesTrimestre" placeholder="Ex.: 3º Trimestre de 2026">
+      <label>Sala
+        <select id="licoesSalaSeletor">
+          <option value="">Selecione uma Sala...</option>
+        </select>
       </label>
-      <div id="licoesCamposLista"></div>
-      <div class="admin-form-botoes">
-        <button type="button" id="btnSalvarLicoes" class="btn-admin">Salvar Lições</button>
+    </div>
+    <div id="licoesConteudo" class="licoes-conteudo">
+      <div class="admin-form">
+        <label>Trimestre
+          <input type="text" id="licoesTrimestre" placeholder="Ex.: 3º Trimestre de 2026">
+        </label>
+        <div id="licoesCamposLista"></div>
+        <div class="admin-form-botoes">
+          <button type="button" id="btnSalvarLicoes" class="btn-admin">Salvar Lições</button>
+        </div>
+        <p id="licoesStatus" class="admin-agenda-status"></p>
+
+        <div class="perfil-secao-titulo">Revista em PDF</div>
+        <p class="admin-agenda-info" style="margin-top:-6px;">Envie o PDF da revista trimestral desta Sala — vai aparecer para o Professor (e, quando a Sala do Aluno tiver conteúdo, para os Alunos também).</p>
+        <p id="licoesPdfAtual" class="admin-agenda-info" hidden></p>
+        <div class="admin-form-linha">
+          <input type="file" id="licoesPdfInput" accept="application/pdf">
+          <button type="button" id="btnEnviarPdfLicoes" class="btn-admin">Enviar PDF</button>
+          <button type="button" id="btnRemoverPdfLicoes" class="btn-ghost" hidden>Remover PDF</button>
+        </div>
+        <p id="licoesPdfStatus" class="admin-agenda-status"></p>
       </div>
-      <p id="licoesStatus" class="admin-agenda-status"></p>
     </div>
   </section>
 
@@ -1665,6 +1686,8 @@
         <select id="professorSalaSeletor" class="admin-perfis-item-select"></select>
       </label>
     </div>
+
+    <p id="professorRevistaPdf" class="admin-agenda-info" hidden></p>
 
     <p id="professorSemSalaAviso" class="admin-agenda-vazio" hidden>Você ainda não está escalado em nenhuma Sala. Peça para o Administrador Master te atribuir em "Gerenciar Perfil Professores e Alunos".</p>
 
@@ -2298,6 +2321,7 @@
     // desatualizados de quando a área foi carregada pela primeira vez.
     if (areaId === "areaGerenciarPerfis" && window.__recarregarGerenciarPerfis) window.__recarregarGerenciarPerfis();
     if (areaId === "areaGerenciarSalas" && window.__recarregarGerenciarSalas) window.__recarregarGerenciarSalas();
+    if (areaId === "areaGerenciarLicoes" && window.__recarregarGerenciarLicoesSalas) window.__recarregarGerenciarLicoesSalas();
   }
 
   document.querySelectorAll(".sidebar-link").forEach((link) => {
@@ -2840,11 +2864,18 @@
   // da aula na Área do Professor, mas ainda pode editar o texto depois.
   // =================================================================
   function iniciarGerenciarLicoes() {
+    const seletorSala = document.getElementById("licoesSalaSeletor");
+    const conteudoWrap = document.getElementById("licoesConteudo");
     const campoTrimestre = document.getElementById("licoesTrimestre");
     const camposLista = document.getElementById("licoesCamposLista");
     const btnSalvar = document.getElementById("btnSalvarLicoes");
     const statusEl = document.getElementById("licoesStatus");
-    if (!camposLista || !btnSalvar) return;
+    const pdfAtualEl = document.getElementById("licoesPdfAtual");
+    const pdfInput = document.getElementById("licoesPdfInput");
+    const btnEnviarPdf = document.getElementById("btnEnviarPdfLicoes");
+    const btnRemoverPdf = document.getElementById("btnRemoverPdfLicoes");
+    const pdfStatusEl = document.getElementById("licoesPdfStatus");
+    if (!seletorSala || !camposLista || !btnSalvar) return;
 
     const campos = [];
     camposLista.innerHTML = "";
@@ -2859,14 +2890,56 @@
       campos.push(input);
     }
 
-    async function carregar() {
+    let licaoAtualDados = null;
+
+    async function popularSalas() {
       try {
-        const snap = await getDoc(doc(db, "licoes", "atual"));
+        const snap = await getDocs(collection(db, "salas"));
+        const salas = [];
+        snap.forEach((d) => salas.push(Object.assign({ id: d.id }, d.data())));
+        salas.sort((a, b) => (a.nome || "").localeCompare(b.nome || ""));
+        const valorAtual = seletorSala.value;
+        seletorSala.innerHTML = '<option value="">Selecione uma Sala...</option>';
+        salas.forEach((s) => {
+          const opt = document.createElement("option");
+          opt.value = s.id;
+          opt.textContent = s.nome + (s.departamento ? " (" + s.departamento + ")" : "");
+          seletorSala.appendChild(opt);
+        });
+        if (valorAtual && salas.some((s) => s.id === valorAtual)) seletorSala.value = valorAtual;
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    function atualizarPdfUI() {
+      if (licaoAtualDados && licaoAtualDados.revistaPdfUrl) {
+        pdfAtualEl.hidden = false;
+        pdfAtualEl.innerHTML = "PDF atual: <a href=\"" + licaoAtualDados.revistaPdfUrl + "\" target=\"_blank\" rel=\"noopener\">" + (licaoAtualDados.revistaPdfNome || "revista.pdf") + "</a>";
+        btnRemoverPdf.hidden = false;
+      } else {
+        pdfAtualEl.hidden = true;
+        pdfAtualEl.textContent = "";
+        btnRemoverPdf.hidden = true;
+      }
+    }
+
+    async function carregar(salaId) {
+      statusEl.textContent = "";
+      pdfStatusEl.textContent = "";
+      try {
+        const snap = await getDoc(doc(db, "licoes", salaId));
         if (snap.exists()) {
           const d = snap.data();
+          licaoAtualDados = d;
           campoTrimestre.value = d.trimestre || "";
-          (d.titulos || []).forEach((t, idx) => { if (campos[idx]) campos[idx].value = t || ""; });
+          campos.forEach((c, idx) => { c.value = (d.titulos || [])[idx] || ""; });
+        } else {
+          licaoAtualDados = null;
+          campoTrimestre.value = "";
+          campos.forEach((c) => { c.value = ""; });
         }
+        atualizarPdfUI();
       } catch (err) {
         statusEl.textContent = "Não foi possível carregar as lições. " + (err.message || "");
         statusEl.className = "admin-agenda-status erro";
@@ -2874,12 +2947,24 @@
       }
     }
 
+    seletorSala.addEventListener("change", async () => {
+      const salaId = seletorSala.value;
+      if (!salaId) {
+        conteudoWrap.classList.remove("aberto");
+        return;
+      }
+      await carregar(salaId);
+      conteudoWrap.classList.add("aberto");
+    });
+
     btnSalvar.addEventListener("click", async () => {
+      const salaId = seletorSala.value;
+      if (!salaId) return;
       btnSalvar.disabled = true;
       statusEl.textContent = "";
       try {
         const titulos = campos.map((c) => c.value.trim());
-        await setDoc(doc(db, "licoes", "atual"), {
+        await setDoc(doc(db, "licoes", salaId), {
           trimestre: campoTrimestre.value.trim(),
           titulos: titulos,
           atualizadoEm: serverTimestamp()
@@ -2895,7 +2980,72 @@
       }
     });
 
-    carregar();
+    btnEnviarPdf.addEventListener("click", async () => {
+      const salaId = seletorSala.value;
+      const arquivo = pdfInput.files && pdfInput.files[0];
+      if (!salaId || !arquivo) return;
+      btnEnviarPdf.disabled = true;
+      pdfStatusEl.textContent = "Conectando ao Google Drive...";
+      pdfStatusEl.className = "admin-agenda-status";
+      try {
+        if (licaoAtualDados && licaoAtualDados.revistaPdfDriveId) {
+          try { await removerArquivoDoDrive(licaoAtualDados.revistaPdfDriveId); } catch (e) { console.error(e); }
+        }
+        pdfStatusEl.textContent = "Enviando...";
+        const resultado = await enviarArquivoParaDrive(arquivo, salaId);
+        await setDoc(doc(db, "licoes", salaId), {
+          revistaPdfNome: arquivo.name,
+          revistaPdfUrl: resultado.url,
+          revistaPdfDriveId: resultado.driveFileId,
+          atualizadoEm: serverTimestamp()
+        }, { merge: true });
+        licaoAtualDados = Object.assign({}, licaoAtualDados, {
+          revistaPdfNome: arquivo.name,
+          revistaPdfUrl: resultado.url,
+          revistaPdfDriveId: resultado.driveFileId
+        });
+        atualizarPdfUI();
+        pdfInput.value = "";
+        pdfStatusEl.textContent = "PDF enviado com sucesso.";
+        pdfStatusEl.className = "admin-agenda-status ok";
+      } catch (err) {
+        pdfStatusEl.textContent = "Não foi possível enviar o PDF. " + (err.message || "");
+        pdfStatusEl.className = "admin-agenda-status erro";
+        console.error(err);
+      } finally {
+        btnEnviarPdf.disabled = false;
+      }
+    });
+
+    btnRemoverPdf.addEventListener("click", async () => {
+      const salaId = seletorSala.value;
+      if (!salaId) return;
+      btnRemoverPdf.disabled = true;
+      pdfStatusEl.textContent = "";
+      try {
+        if (licaoAtualDados && licaoAtualDados.revistaPdfDriveId) {
+          try { await removerArquivoDoDrive(licaoAtualDados.revistaPdfDriveId); } catch (e) { console.error(e); }
+        }
+        await setDoc(doc(db, "licoes", salaId), {
+          revistaPdfNome: "",
+          revistaPdfUrl: "",
+          revistaPdfDriveId: ""
+        }, { merge: true });
+        licaoAtualDados = Object.assign({}, licaoAtualDados, { revistaPdfNome: "", revistaPdfUrl: "", revistaPdfDriveId: "" });
+        atualizarPdfUI();
+        pdfStatusEl.textContent = "PDF removido.";
+        pdfStatusEl.className = "admin-agenda-status ok";
+      } catch (err) {
+        pdfStatusEl.textContent = "Não foi possível remover o PDF. " + (err.message || "");
+        pdfStatusEl.className = "admin-agenda-status erro";
+        console.error(err);
+      } finally {
+        btnRemoverPdf.disabled = false;
+      }
+    });
+
+    window.__recarregarGerenciarLicoesSalas = popularSalas;
+    popularSalas();
   }
 
   // =================================================================
@@ -2910,6 +3060,7 @@
     const seletor = document.getElementById("professorSalaSeletor");
     const semSalaAviso = document.getElementById("professorSemSalaAviso");
     const conteudo = document.getElementById("professorConteudo");
+    const revistaPdfEl = document.getElementById("professorRevistaPdf");
     const form = document.getElementById("formRelatorioAula");
     const statusEl = document.getElementById("relatorioStatus");
     if (!seletor || !form) return;
@@ -3249,15 +3400,23 @@
       optVazia.value = "";
       optVazia.textContent = "Selecione uma lição...";
       relatorioTemaSeletor.appendChild(optVazia);
+      const salaId = seletor.value;
+      if (revistaPdfEl) { revistaPdfEl.hidden = true; revistaPdfEl.innerHTML = ""; }
+      if (!salaId) return;
       try {
-        const snap = await getDoc(doc(db, "licoes", "atual"));
-        const titulos = snap.exists() ? (snap.data().titulos || []) : [];
+        const snap = await getDoc(doc(db, "licoes", salaId));
+        const dados = snap.exists() ? snap.data() : null;
+        const titulos = dados ? (dados.titulos || []) : [];
         titulos.filter(Boolean).forEach((titulo) => {
           const opt = document.createElement("option");
           opt.value = titulo;
           opt.textContent = titulo;
           relatorioTemaSeletor.appendChild(opt);
         });
+        if (revistaPdfEl && dados && dados.revistaPdfUrl) {
+          revistaPdfEl.hidden = false;
+          revistaPdfEl.innerHTML = "📘 Revista trimestral" + (dados.trimestre ? " (" + dados.trimestre + ")" : "") + ": <a href=\"" + dados.revistaPdfUrl + "\" target=\"_blank\" rel=\"noopener\">" + (dados.revistaPdfNome || "abrir PDF") + "</a>";
+        }
       } catch (err) {
         console.error(err);
       }
@@ -3390,6 +3549,7 @@
       const salaId = seletor.value;
       await carregarAlunosDaSala(salaId);
       await carregarRelatorio(salaId, campoData.value);
+      await carregarLicoes();
       if (!canvasPaineis.arquivos.hidden) await carregarArquivosSala();
     }
 
