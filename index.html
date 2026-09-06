@@ -1795,10 +1795,10 @@
   import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
   import {
     getAuth, onAuthStateChanged, signOut,
-    createUserWithEmailAndPassword, sendPasswordResetEmail, deleteUser
+    createUserWithEmailAndPassword, sendPasswordResetEmail
   } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
   import {
-    getFirestore, doc, getDoc, setDoc, deleteDoc, serverTimestamp,
+    getFirestore, doc, getDoc, setDoc, serverTimestamp,
     collection, getDocs, updateDoc
   } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
   import { firebaseConfig } from "./firebase-config.js";
@@ -1863,7 +1863,17 @@
     } catch (err) {
       console.error(err);
     }
-    const perfil = dadosUsuario.perfil || "aluno";
+
+    if (dadosUsuario.ativo === false) {
+      // Conta excluída (desativada) - ver "Excluir Conta" no modal de Perfil.
+      // Em vez de apagar o cadastro do banco, só marcamos ativo:false e
+      // bloqueamos o acesso aqui, na hora do login.
+      await signOut(auth);
+      alert("Esta conta foi excluída e não pode mais ser usada para entrar.");
+      return;
+    }
+
+    const perfil = dadosUsuario.perfil || "convidado";
     const nome = dadosUsuario.nome || (user.email ? user.email.split("@")[0] : "Usuário");
     usuarioAtualCache = Object.assign({ uid: user.uid, email: user.email }, dadosUsuario);
 
@@ -1871,7 +1881,7 @@
     window.__loginBtnAcao = () => { if (window.__toggleUserMenu) window.__toggleUserMenu(); };
     window.__logoutAcao = () => signOut(auth);
 
-    const areasLiberadas = AREAS_POR_PERFIL[perfil] || AREAS_POR_PERFIL.aluno;
+    const areasLiberadas = AREAS_POR_PERFIL[perfil] || AREAS_POR_PERFIL.convidado;
     document.querySelectorAll(".sidebar-link").forEach((link) => {
       link.hidden = !areasLiberadas.includes(link.dataset.area);
     });
@@ -1907,15 +1917,18 @@
         const snap = await getDocs(collection(db, "usuarios"));
         const usuarios = [];
         snap.forEach((d) => usuarios.push(Object.assign({ uid: d.id }, d.data())));
-        usuarios.sort((a, b) => (a.nome || a.email || "").localeCompare(b.nome || b.email || ""));
+        // Contas com ativo:false foram excluídas pela própria pessoa (ver
+        // "Excluir Conta" no modal de Perfil) - não aparecem aqui.
+        const usuariosAtivos = usuarios.filter((u) => u.ativo !== false);
+        usuariosAtivos.sort((a, b) => (a.nome || a.email || "").localeCompare(b.nome || b.email || ""));
 
-        if (!usuarios.length) {
+        if (!usuariosAtivos.length) {
           listaEl.innerHTML = '<div class="admin-agenda-vazio">Nenhum usuário cadastrado ainda.</div>';
           return;
         }
 
         listaEl.innerHTML = "";
-        usuarios.forEach((u) => {
+        usuariosAtivos.forEach((u) => {
           const item = document.createElement("div");
           item.className = "admin-perfis-item";
 
@@ -2213,15 +2226,14 @@
       if (!confirmar) return;
       try {
         const uid = auth.currentUser.uid;
-        await deleteDoc(doc(db, "usuarios", uid));
-        await deleteUser(auth.currentUser);
+        // "Excluir Conta" não apaga o cadastro do banco de dados - só marca
+        // ativo:false. A pessoa não consegue mais entrar (ver onAuthStateChanged),
+        // e o cadastro deixa de aparecer nas listagens (ex.: Gerenciar Perfis).
+        await updateDoc(doc(db, "usuarios", uid), { ativo: false });
+        await signOut(auth);
         fecharModal();
       } catch (err) {
-        if (err.code === "auth/requires-recent-login") {
-          alert("Por segurança, saia e entre novamente antes de excluir a conta.");
-        } else {
-          alert("Não foi possível excluir a conta. " + (err.message || ""));
-        }
+        alert("Não foi possível excluir a conta. " + (err.message || ""));
         console.error(err);
       }
     });
@@ -2284,6 +2296,7 @@
         await setDoc(doc(db, "usuarios", cred.user.uid), {
           email: email,
           perfil: "convidado",
+          ativo: true,
           criadoEm: serverTimestamp()
         });
         wizardPasso = 2;
