@@ -1002,6 +1002,7 @@
     <button class="sidebar-link active" type="button" data-area="siteHome">Início (site)</button>
     <button class="sidebar-link" type="button" data-area="areaAdmin">Administração</button>
     <button class="sidebar-link" type="button" data-area="areaGerenciarPerfis">Gerenciar Perfis</button>
+    <button class="sidebar-link" type="button" data-area="areaGerenciarSalas">Gerenciar Professores por Salas</button>
     <button class="sidebar-link" type="button" data-area="areaAgenda">Agenda de Cultos e Eventos</button>
     <button class="sidebar-link" type="button" data-area="areaProfessor">Área do Professor</button>
     <button class="sidebar-link" type="button" data-area="areaAluno">Área do Aluno</button>
@@ -1358,6 +1359,14 @@
     <p class="admin-agenda-info">Defina o perfil de acesso de cada pessoa cadastrada no site. Contas novas entram como "Convidado" até serem revisadas aqui.</p>
     <p id="gerenciarPerfisStatus" class="admin-agenda-status"></p>
     <div id="gerenciarPerfisLista" class="admin-perfis-lista">Carregando...</div>
+  </section>
+
+  <section id="areaGerenciarSalas" class="portal-section">
+    <h2>Gerenciar Professores por Salas</h2>
+    <p class="admin-agenda-info">Cadastre as Salas da Escola Bíblica Dominical e escolha quem é o Professor responsável por cada uma. A atribuição fica valendo até você trocar.</p>
+    <button id="btnImportarSalas" type="button" class="btn-admin" hidden>Cadastrar as 6 Salas padrão (uma vez só)</button>
+    <p id="gerenciarSalasStatus" class="admin-agenda-status"></p>
+    <div id="gerenciarSalasLista" class="admin-perfis-lista">Carregando...</div>
   </section>
 
   <section id="areaAgenda" class="portal-section">
@@ -1819,7 +1828,7 @@
   const CONGREGACAO_LOCAL = "Pq Florianópolis";
 
   const AREAS_POR_PERFIL = {
-    admin: ["siteHome", "areaAdmin", "areaGerenciarPerfis", "areaAgenda", "areaProfessor", "areaAluno", "areaAdministrativo"],
+    admin: ["siteHome", "areaAdmin", "areaGerenciarPerfis", "areaGerenciarSalas", "areaAgenda", "areaProfessor", "areaAluno", "areaAdministrativo"],
     professor: ["siteHome", "areaProfessor"],
     aluno: ["siteHome", "areaAluno"],
     administrativo: ["siteHome", "areaAdministrativo"],
@@ -1845,6 +1854,7 @@
 
   let painelAgendaIniciado = false;
   let gerenciarPerfisIniciado = false;
+  let gerenciarSalasIniciado = false;
   let usuarioAtualCache = null;
 
   onAuthStateChanged(auth, async (user) => {
@@ -1899,6 +1909,10 @@
     if (perfil === "admin" && !gerenciarPerfisIniciado) {
       gerenciarPerfisIniciado = true;
       iniciarGerenciarPerfis();
+    }
+    if (perfil === "admin" && !gerenciarSalasIniciado) {
+      gerenciarSalasIniciado = true;
+      iniciarGerenciarSalas();
     }
   });
 
@@ -1990,6 +2004,163 @@
         listaEl.innerHTML = '<div class="admin-agenda-vazio">Não foi possível carregar a lista de usuários.</div>';
         console.error(err);
       }
+    }
+
+    carregar();
+  }
+
+  // =================================================================
+  // Gerenciar Professores por Salas (só admin) - cadastra as Salas da
+  // Escola Bíblica Dominical e escolhe o Professor responsável por cada
+  // uma. A atribuição fica valendo até ser trocada manualmente aqui.
+  // =================================================================
+  function iniciarGerenciarSalas() {
+    const listaEl = document.getElementById("gerenciarSalasLista");
+    const statusEl = document.getElementById("gerenciarSalasStatus");
+    const btnImportar = document.getElementById("btnImportarSalas");
+    if (!listaEl) return;
+
+    const SALAS_PADRAO = [
+      { id: "cordeirinhos-de-cristo", nome: "Cordeirinhos de Cristo", departamento: "Infantil 1" },
+      { id: "estrela-da-manha", nome: "Estrela da Manhã", departamento: "Infantil 2" },
+      { id: "manancial", nome: "Manancial", departamento: "Adolescentes" },
+      { id: "renacer-em-cristo", nome: "Renacer em Cristo", departamento: "Jovens" },
+      { id: "sacerdotes-de-cristo", nome: "Sacerdotes de Cristo", departamento: "Varões" },
+      { id: "colunas-da-verdade", nome: "Colunas da Verdade", departamento: "Feminino" }
+    ];
+
+    let professoresCache = [];
+
+    async function carregar() {
+      listaEl.innerHTML = "Carregando...";
+      try {
+        const [salasSnap, usuariosSnap] = await Promise.all([
+          getDocs(collection(db, "salas")),
+          getDocs(collection(db, "usuarios"))
+        ]);
+
+        const salas = [];
+        salasSnap.forEach((d) => salas.push(Object.assign({ id: d.id }, d.data())));
+        salas.sort((a, b) => (a.nome || "").localeCompare(b.nome || ""));
+
+        professoresCache = [];
+        usuariosSnap.forEach((d) => {
+          const u = d.data();
+          if (u.perfil === "professor" && u.ativo !== false) {
+            professoresCache.push({ uid: d.id, nome: [u.nome, u.sobrenome].filter(Boolean).join(" ") || u.email || d.id });
+          }
+        });
+        professoresCache.sort((a, b) => a.nome.localeCompare(b.nome));
+
+        if (btnImportar) btnImportar.hidden = salas.length > 0;
+
+        if (!salas.length) {
+          listaEl.innerHTML = '<div class="admin-agenda-vazio">Nenhuma Sala cadastrada ainda. Use o botão acima para cadastrar as 6 Salas padrão.</div>';
+          return;
+        }
+
+        listaEl.innerHTML = "";
+        salas.forEach((sala) => {
+          const item = document.createElement("div");
+          item.className = "admin-perfis-item";
+
+          const info = document.createElement("div");
+          info.className = "admin-perfis-item-info";
+          const nomeEl = document.createElement("span");
+          nomeEl.className = "admin-perfis-item-nome";
+          nomeEl.textContent = sala.nome;
+          const depEl = document.createElement("span");
+          depEl.className = "admin-perfis-item-email";
+          depEl.textContent = sala.departamento || "";
+          const statusItemEl = document.createElement("span");
+          statusItemEl.className = "admin-perfis-item-status";
+          info.appendChild(nomeEl);
+          info.appendChild(depEl);
+          info.appendChild(statusItemEl);
+
+          const select = document.createElement("select");
+          select.className = "admin-perfis-item-select";
+          const optNenhum = document.createElement("option");
+          optNenhum.value = "";
+          optNenhum.textContent = "Sem professor definido";
+          if (!sala.professorUid) optNenhum.selected = true;
+          select.appendChild(optNenhum);
+          professoresCache.forEach((p) => {
+            const opt = document.createElement("option");
+            opt.value = p.uid;
+            opt.textContent = p.nome;
+            if (sala.professorUid === p.uid) opt.selected = true;
+            select.appendChild(opt);
+          });
+          if (sala.professorUid && !professoresCache.some((p) => p.uid === sala.professorUid)) {
+            const optAtual = document.createElement("option");
+            optAtual.value = sala.professorUid;
+            optAtual.textContent = (sala.professorNome || sala.professorUid) + " (perfil não é mais Professor)";
+            optAtual.selected = true;
+            select.appendChild(optAtual);
+          }
+
+          select.addEventListener("change", async () => {
+            select.disabled = true;
+            if (statusItemEl.__timeout) clearTimeout(statusItemEl.__timeout);
+            const professor = professoresCache.find((p) => p.uid === select.value);
+            try {
+              await updateDoc(doc(db, "salas", sala.id), {
+                professorUid: select.value || null,
+                professorNome: professor ? professor.nome : ""
+              });
+              statusEl.textContent = "Professor da Sala " + sala.nome + " atualizado.";
+              statusEl.className = "admin-agenda-status ok";
+              statusItemEl.textContent = "✓ Salvo";
+              statusItemEl.className = "admin-perfis-item-status ok";
+            } catch (err) {
+              statusEl.textContent = "Não foi possível salvar. " + (err.message || "");
+              statusEl.className = "admin-agenda-status erro";
+              statusItemEl.textContent = "✗ Não foi possível salvar";
+              statusItemEl.className = "admin-perfis-item-status erro";
+              console.error(err);
+            } finally {
+              select.disabled = false;
+              statusItemEl.__timeout = setTimeout(() => {
+                statusItemEl.textContent = "";
+                statusItemEl.className = "admin-perfis-item-status";
+              }, 4000);
+            }
+          });
+
+          item.appendChild(info);
+          item.appendChild(select);
+          listaEl.appendChild(item);
+        });
+      } catch (err) {
+        listaEl.innerHTML = '<div class="admin-agenda-vazio">Não foi possível carregar as Salas.</div>';
+        console.error(err);
+      }
+    }
+
+    if (btnImportar) {
+      btnImportar.addEventListener("click", async () => {
+        btnImportar.disabled = true;
+        try {
+          for (const sala of SALAS_PADRAO) {
+            await setDoc(doc(db, "salas", sala.id), {
+              nome: sala.nome,
+              departamento: sala.departamento,
+              professorUid: null,
+              professorNome: "",
+              criadoEm: serverTimestamp()
+            }, { merge: true });
+          }
+          btnImportar.hidden = true;
+          await carregar();
+        } catch (err) {
+          statusEl.textContent = "Não foi possível cadastrar as Salas padrão. " + (err.message || "");
+          statusEl.className = "admin-agenda-status erro";
+          console.error(err);
+        } finally {
+          btnImportar.disabled = false;
+        }
+      });
     }
 
     carregar();
