@@ -642,6 +642,8 @@
   }
   .sidebar-link:hover { background: var(--surface-2); color: var(--ink); }
   .sidebar-link.active { background: var(--surface-2); color: var(--laranja); border-left-color: var(--laranja); }
+  .sidebar-category { padding: 18px 24px 6px; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted-2); }
+  .sidebar-category:first-of-type { padding-top: 6px; }
   .portal-main-wrap { flex: 1; min-width: 0; }
   .site-home-conteudo { display: none; }
   .site-home-conteudo.ativo { display: block; }
@@ -1070,14 +1072,22 @@
 <div class="portal-layout" id="portalLayout">
   <nav class="portal-sidebar" id="portalSidebar">
     <button class="sidebar-link active" type="button" data-area="siteHome">Início (site)</button>
+
+    <div class="sidebar-category">Administração</div>
     <button class="sidebar-link" type="button" data-area="areaAdmin">Administração</button>
     <button class="sidebar-link" type="button" data-area="areaGerenciarPerfis">Gerenciar Perfis</button>
-    <button class="sidebar-link" type="button" data-area="areaGerenciarSalas">Gerenciar Professores por Salas</button>
-    <button class="sidebar-link" type="button" data-area="areaGerenciarLicoes">Gerenciar Lições</button>
     <button class="sidebar-link" type="button" data-area="areaAgenda">Agenda de Cultos e Eventos</button>
-    <button class="sidebar-link" type="button" data-area="areaProfessor">Área do Professor</button>
-    <button class="sidebar-link" type="button" data-area="areaAluno">Área do Aluno</button>
-    <button class="sidebar-link" type="button" data-area="areaAdministrativo">Secretaria / Administrativo</button>
+    <button class="sidebar-link" type="button" data-area="areaPostsSite">Post's do Site!</button>
+
+    <div class="sidebar-category">Portal EBD</div>
+    <button class="sidebar-link" type="button" data-area="areaAluno">Sala do Aluno</button>
+    <button class="sidebar-link" type="button" data-area="areaProfessor">Sala do Professor</button>
+    <button class="sidebar-link" type="button" data-area="areaAdministrativo">Sala da Secretaria</button>
+    <button class="sidebar-link" type="button" data-area="areaGerenciarEscala">Gerenciar Escala EBD</button>
+    <button class="sidebar-link" type="button" data-area="areaGerenciarSalas">Gerenciar Perfil Professores e Alunos</button>
+    <button class="sidebar-link" type="button" data-area="areaGerenciarProfessoresPorSala">Gerenciar Professores por Sala</button>
+    <button class="sidebar-link" type="button" data-area="areaCadastroSalas">Gerenciar Salas</button>
+    <button class="sidebar-link" type="button" data-area="areaGerenciarLicoes">Gerenciar Lições</button>
   </nav>
   <div class="portal-main-wrap" id="portalMainWrap">
   <div class="site-home-conteudo ativo" id="siteHome">
@@ -1448,7 +1458,7 @@
   </section>
 
   <section id="areaGerenciarSalas" class="portal-section">
-    <h2>Gerenciar Professores por Salas</h2>
+    <h2>Gerenciar Perfil Professores e Alunos</h2>
     <p class="admin-agenda-info">Cadastre as Salas da Escola Bíblica Dominical e escolha quem é o Professor responsável por cada uma. A atribuição fica valendo até você trocar.</p>
     <button id="btnImportarSalas" type="button" class="btn-admin" hidden>Cadastrar as 6 Salas padrão (uma vez só)</button>
     <p id="gerenciarSalasStatus" class="admin-agenda-status"></p>
@@ -1542,7 +1552,7 @@
   </section>
 
   <section id="areaProfessor" class="portal-section">
-    <h2>Área do Professor</h2>
+    <h2>Sala do Professor</h2>
     <p class="admin-agenda-info">Faça a chamada da sua Sala e lance a oferta dos alunos e suba arquivos que considere ser apoio para a sala de aula.</p>
 
     <div id="professorSalaSeletorWrap" class="admin-form-linha" style="margin-top:14px;" hidden>
@@ -1551,7 +1561,7 @@
       </label>
     </div>
 
-    <p id="professorSemSalaAviso" class="admin-agenda-vazio" hidden>Você ainda não está escalado em nenhuma Sala. Peça para o Administrador Master te atribuir em "Gerenciar Professores por Salas".</p>
+    <p id="professorSemSalaAviso" class="admin-agenda-vazio" hidden>Você ainda não está escalado em nenhuma Sala. Peça para o Administrador Master te atribuir em "Gerenciar Perfil Professores e Alunos".</p>
 
     <div id="professorConteudo" hidden>
 
@@ -1680,13 +1690,33 @@
   </section>
 
   <section id="areaAluno" class="portal-section">
-    <h2>Area do Aluno</h2>
+    <h2>Sala do Aluno</h2>
     <p>Materiais de estudo, avisos da turma. (conteudo a definir)</p>
   </section>
 
   <section id="areaAdministrativo" class="portal-section">
-    <h2>Secretaria / Administrativo</h2>
+    <h2>Sala da Secretaria</h2>
     <p>Cadastros, relatorios, controle administrativo. (conteudo a definir)</p>
+  </section>
+
+  <section id="areaPostsSite" class="portal-section">
+    <h2>Post's do Site!</h2>
+    <p>Gerencie aqui os posts do carrossel de notícias principais da home do site. (conteúdo a definir)</p>
+  </section>
+
+  <section id="areaGerenciarEscala" class="portal-section">
+    <h2>Gerenciar Escala EBD</h2>
+    <p>Escala de professores e responsáveis da Escola Bíblica Dominical. (conteúdo a definir)</p>
+  </section>
+
+  <section id="areaGerenciarProfessoresPorSala" class="portal-section">
+    <h2>Gerenciar Professores por Sala</h2>
+    <p>Conteúdo a definir.</p>
+  </section>
+
+  <section id="areaCadastroSalas" class="portal-section">
+    <h2>Gerenciar Salas</h2>
+    <p>Cadastro e organização das Salas da Escola Bíblica Dominical. (conteúdo a definir)</p>
   </section>
 
   </div>
@@ -2140,7 +2170,7 @@
   const CONGREGACAO_LOCAL = "Pq Florianópolis";
 
   const AREAS_POR_PERFIL = {
-    admin: ["siteHome", "areaAdmin", "areaGerenciarPerfis", "areaGerenciarSalas", "areaGerenciarLicoes", "areaAgenda", "areaProfessor", "areaAluno", "areaAdministrativo"],
+    admin: ["siteHome", "areaAdmin", "areaGerenciarPerfis", "areaGerenciarSalas", "areaGerenciarLicoes", "areaAgenda", "areaProfessor", "areaAluno", "areaAdministrativo", "areaPostsSite", "areaGerenciarEscala", "areaGerenciarProfessoresPorSala", "areaCadastroSalas"],
     professor: ["siteHome", "areaProfessor"],
     aluno: ["siteHome", "areaAluno"],
     administrativo: ["siteHome", "areaAdministrativo", "areaProfessor"],
@@ -2211,6 +2241,15 @@
     const areasLiberadas = AREAS_POR_PERFIL[perfil] || AREAS_POR_PERFIL.convidado;
     document.querySelectorAll(".sidebar-link").forEach((link) => {
       link.hidden = !areasLiberadas.includes(link.dataset.area);
+    });
+    document.querySelectorAll(".sidebar-category").forEach((cat) => {
+      let el = cat.nextElementSibling;
+      let temVisivel = false;
+      while (el && !el.classList.contains("sidebar-category")) {
+        if (el.classList.contains("sidebar-link") && !el.hidden) { temVisivel = true; break; }
+        el = el.nextElementSibling;
+      }
+      cat.hidden = !temVisivel;
     });
 
     portalLayout.classList.add("logado");
