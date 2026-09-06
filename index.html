@@ -1456,8 +1456,50 @@
   </section>
 
   <section id="areaProfessor" class="portal-section">
-    <h2>Area do Professor</h2>
-    <p>Materiais de aula, chamada da turma, avisos. (conteudo a definir)</p>
+    <h2>Área do Professor</h2>
+    <p class="admin-agenda-info">Lance o relatório da sua Sala depois de cada aula: tema, matriculados, presentes, ausentes, visitantes e ofertas. O Administrador Master e o Administrativo também podem lançar em qualquer Sala.</p>
+
+    <div id="professorSalaSeletorWrap" class="admin-form-linha" style="margin-top:14px;" hidden>
+      <label>Sala
+        <select id="professorSalaSeletor"></select>
+      </label>
+    </div>
+
+    <p id="professorSemSalaAviso" class="admin-agenda-vazio" hidden>Você ainda não está escalado em nenhuma Sala. Peça para o Administrador Master te atribuir em "Gerenciar Professores por Salas".</p>
+
+    <form id="formRelatorioAula" class="admin-form" hidden>
+      <div class="admin-form-linha">
+        <label>Data da aula
+          <input type="date" id="relatorioData" required>
+        </label>
+      </div>
+      <label>Tema da aula
+        <input type="text" id="relatorioTema" placeholder="Ex.: A parábola do semeador">
+      </label>
+      <div class="admin-form-linha">
+        <label>Matriculados
+          <input type="number" id="relatorioMatriculados" min="0" step="1">
+        </label>
+        <label>Presentes
+          <input type="number" id="relatorioPresentes" min="0" step="1">
+        </label>
+        <label>Ausentes
+          <input type="number" id="relatorioAusentes" min="0" step="1">
+        </label>
+        <label>Visitantes
+          <input type="number" id="relatorioVisitantes" min="0" step="1">
+        </label>
+      </div>
+      <div class="admin-form-linha">
+        <label style="max-width:220px;">Total de Ofertas (R$)
+          <input type="number" id="relatorioOfertas" min="0" step="0.01">
+        </label>
+      </div>
+      <div class="admin-form-botoes">
+        <button type="submit" class="btn-admin">Salvar Relatório</button>
+      </div>
+      <p id="relatorioStatus" class="admin-agenda-status"></p>
+    </form>
   </section>
 
   <section id="areaAluno" class="portal-section">
@@ -1831,7 +1873,7 @@
     admin: ["siteHome", "areaAdmin", "areaGerenciarPerfis", "areaGerenciarSalas", "areaAgenda", "areaProfessor", "areaAluno", "areaAdministrativo"],
     professor: ["siteHome", "areaProfessor"],
     aluno: ["siteHome", "areaAluno"],
-    administrativo: ["siteHome", "areaAdministrativo"],
+    administrativo: ["siteHome", "areaAdministrativo", "areaProfessor"],
     convidado: ["siteHome"]
   };
 
@@ -1855,6 +1897,7 @@
   let painelAgendaIniciado = false;
   let gerenciarPerfisIniciado = false;
   let gerenciarSalasIniciado = false;
+  let areaProfessorIniciado = false;
   let usuarioAtualCache = null;
 
   onAuthStateChanged(auth, async (user) => {
@@ -1913,6 +1956,10 @@
     if (perfil === "admin" && !gerenciarSalasIniciado) {
       gerenciarSalasIniciado = true;
       iniciarGerenciarSalas();
+    }
+    if ((perfil === "professor" || perfil === "administrativo" || perfil === "admin") && !areaProfessorIniciado) {
+      areaProfessorIniciado = true;
+      iniciarAreaProfessor();
     }
   });
 
@@ -2164,6 +2211,146 @@
     }
 
     carregar();
+  }
+
+  // =================================================================
+  // Área do Professor - lança o relatório da aula (tema, matriculados,
+  // presentes, ausentes, visitantes, ofertas). O Professor só vê as
+  // Salas em que está escalado; Administrativo e Admin veem todas
+  // (mesma autonomia do Professor, para casos de professor leigo ou
+  // visitante que não consiga usar o site).
+  // =================================================================
+  function iniciarAreaProfessor() {
+    const seletorWrap = document.getElementById("professorSalaSeletorWrap");
+    const seletor = document.getElementById("professorSalaSeletor");
+    const semSalaAviso = document.getElementById("professorSemSalaAviso");
+    const form = document.getElementById("formRelatorioAula");
+    const statusEl = document.getElementById("relatorioStatus");
+    if (!seletor || !form) return;
+
+    const campoData = document.getElementById("relatorioData");
+    const campoTema = document.getElementById("relatorioTema");
+    const campoMatriculados = document.getElementById("relatorioMatriculados");
+    const campoPresentes = document.getElementById("relatorioPresentes");
+    const campoAusentes = document.getElementById("relatorioAusentes");
+    const campoVisitantes = document.getElementById("relatorioVisitantes");
+    const campoOfertas = document.getElementById("relatorioOfertas");
+
+    let minhasSalas = [];
+
+    function hojeISO() {
+      const d = new Date();
+      const local = new Date(d.getTime() - d.getTimezoneOffset() * 60000);
+      return local.toISOString().slice(0, 10);
+    }
+
+    async function carregarRelatorio(salaId, data) {
+      if (!salaId || !data) return;
+      statusEl.textContent = "";
+      statusEl.className = "admin-agenda-status";
+      campoTema.value = "";
+      campoMatriculados.value = "";
+      campoPresentes.value = "";
+      campoAusentes.value = "";
+      campoVisitantes.value = "";
+      campoOfertas.value = "";
+      try {
+        const snap = await getDoc(doc(db, "relatoriosAula", salaId + "_" + data));
+        if (snap.exists()) {
+          const r = snap.data();
+          campoTema.value = r.tema || "";
+          campoMatriculados.value = r.matriculados != null ? r.matriculados : "";
+          campoPresentes.value = r.presentes != null ? r.presentes : "";
+          campoAusentes.value = r.ausentes != null ? r.ausentes : "";
+          campoVisitantes.value = r.visitantes != null ? r.visitantes : "";
+          campoOfertas.value = r.ofertas != null ? r.ofertas : "";
+        }
+      } catch (err) {
+        statusEl.textContent = "Não foi possível carregar o relatório dessa data. " + (err.message || "");
+        statusEl.className = "admin-agenda-status erro";
+        console.error(err);
+      }
+    }
+
+    async function montarSeletor() {
+      try {
+        const snap = await getDocs(collection(db, "salas"));
+        const todasSalas = [];
+        snap.forEach((d) => todasSalas.push(Object.assign({ id: d.id }, d.data())));
+        todasSalas.sort((a, b) => (a.nome || "").localeCompare(b.nome || ""));
+
+        const perfilAtual = (usuarioAtualCache && usuarioAtualCache.perfil) || "convidado";
+        const podeVerTodas = perfilAtual === "administrativo" || perfilAtual === "admin";
+        const uidAtual = usuarioAtualCache && usuarioAtualCache.uid;
+
+        minhasSalas = podeVerTodas ? todasSalas : todasSalas.filter((s) => s.professorUid === uidAtual);
+
+        if (!minhasSalas.length) {
+          seletorWrap.hidden = true;
+          semSalaAviso.hidden = false;
+          form.hidden = true;
+          return;
+        }
+
+        semSalaAviso.hidden = true;
+        seletorWrap.hidden = false;
+        form.hidden = false;
+        seletor.innerHTML = "";
+        minhasSalas.forEach((s) => {
+          const opt = document.createElement("option");
+          opt.value = s.id;
+          opt.textContent = s.nome + (s.departamento ? " (" + s.departamento + ")" : "");
+          seletor.appendChild(opt);
+        });
+
+        campoData.value = hojeISO();
+        await carregarRelatorio(seletor.value, campoData.value);
+      } catch (err) {
+        semSalaAviso.hidden = false;
+        semSalaAviso.textContent = "Não foi possível carregar suas Salas.";
+        form.hidden = true;
+        console.error(err);
+      }
+    }
+
+    seletor.addEventListener("change", () => carregarRelatorio(seletor.value, campoData.value));
+    campoData.addEventListener("change", () => carregarRelatorio(seletor.value, campoData.value));
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const salaId = seletor.value;
+      const data = campoData.value;
+      if (!salaId || !data) return;
+      const sala = minhasSalas.find((s) => s.id === salaId);
+      const botao = form.querySelector('button[type="submit"]');
+      botao.disabled = true;
+      try {
+        await setDoc(doc(db, "relatoriosAula", salaId + "_" + data), {
+          salaId: salaId,
+          salaNome: sala ? sala.nome : "",
+          data: data,
+          tema: campoTema.value.trim(),
+          matriculados: Number(campoMatriculados.value) || 0,
+          presentes: Number(campoPresentes.value) || 0,
+          ausentes: Number(campoAusentes.value) || 0,
+          visitantes: Number(campoVisitantes.value) || 0,
+          ofertas: Number(campoOfertas.value) || 0,
+          lancadoPorUid: usuarioAtualCache.uid,
+          lancadoPorNome: usuarioAtualCache.nome || usuarioAtualCache.email || "",
+          atualizadoEm: serverTimestamp()
+        }, { merge: true });
+        statusEl.textContent = "Relatório salvo com sucesso.";
+        statusEl.className = "admin-agenda-status ok";
+      } catch (err) {
+        statusEl.textContent = "Não foi possível salvar o relatório. " + (err.message || "");
+        statusEl.className = "admin-agenda-status erro";
+        console.error(err);
+      } finally {
+        botao.disabled = false;
+      }
+    });
+
+    montarSeletor();
   }
 
   // =================================================================
