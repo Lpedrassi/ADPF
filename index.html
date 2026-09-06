@@ -1974,6 +1974,7 @@
     startAutoplay();
   })();
 </script>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 <script type="module" src="auth.js"></script>
 <script type="module" src="agenda.js"></script>
 
@@ -1987,9 +1988,6 @@
     getFirestore, doc, getDoc, setDoc, serverTimestamp,
     collection, getDocs, updateDoc
   } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
-  import {
-    getStorage, ref as storageRef, uploadBytes, getDownloadURL, deleteObject
-  } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-storage.js";
   import { firebaseConfig } from "./firebase-config.js";
   import { buscarTodosEventos, salvarEvento, excluirEvento, importarAgendaInicial } from "./agenda.js";
   import { AGENDA_SEED_2026 } from "./agenda-seed-2026.js";
@@ -1999,7 +1997,96 @@
   const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db = getFirestore(app);
-  const storage = getStorage(app);
+
+  // ===== Google Drive (upload de arquivos da Sala do Professor) =====
+  const GOOGLE_OAUTH_CLIENT_ID = "65986016663-i3ncli597c2hb05pf6b98u6pck622ddh.apps.googleusercontent.com";
+  const GOOGLE_DRIVE_SCOPE = "https://www.googleapis.com/auth/drive.file";
+  const SALA_DRIVE_FOLDERS = {
+    "cordeirinhos-de-cristo": "1vGwfC9d0V2WqT_XJxh4TAMPbtI7LOssm",
+    "estrela-da-manha": "1XF_WQWj2VpOKsOF2pubthqjej634U1EP",
+    "manancial": "1ghr4E94nSwnHtmKxkBOpDmZPBUqD2YHa",
+    "renacer-em-cristo": "1JkZbJadGv02IXqHdxKxIG6zKH1seKwZA",
+    "sacerdotes-de-cristo": "1qxWrLhgBQhnMgcJMQRtaoQpNkzMUJeQD",
+    "colunas-da-verdade": "1wU0gjEa5ed-Xv-E4LqWSCtwYvcdkc2kH"
+  };
+  let googleDriveTokenClient = null;
+  let googleDriveAccessToken = null;
+  let googleDriveTokenExpira = 0;
+
+  function obterTokenDrive() {
+    return new Promise((resolve, reject) => {
+      if (googleDriveAccessToken && Date.now() < googleDriveTokenExpira) {
+        resolve(googleDriveAccessToken);
+        return;
+      }
+      if (!window.google || !window.google.accounts || !window.google.accounts.oauth2) {
+        reject(new Error("Não foi possível carregar o login do Google. Recarregue a página e tente novamente."));
+        return;
+      }
+      if (!googleDriveTokenClient) {
+        googleDriveTokenClient = google.accounts.oauth2.initTokenClient({
+          client_id: GOOGLE_OAUTH_CLIENT_ID,
+          scope: GOOGLE_DRIVE_SCOPE,
+          callback: () => {}
+        });
+      }
+      googleDriveTokenClient.callback = (resposta) => {
+        if (resposta && resposta.access_token) {
+          googleDriveAccessToken = resposta.access_token;
+          googleDriveTokenExpira = Date.now() + (Number(resposta.expires_in || 3500) * 1000);
+          resolve(googleDriveAccessToken);
+        } else {
+          reject(new Error("Não foi possível autorizar o acesso ao Google Drive."));
+        }
+      };
+      googleDriveTokenClient.requestAccessToken({ prompt: "" });
+    });
+  }
+
+  async function enviarArquivoParaDrive(arquivo, salaId) {
+    const pastaId = SALA_DRIVE_FOLDERS[salaId];
+    if (!pastaId) throw new Error("Esta sala ainda não tem uma pasta do Google Drive configurada.");
+    const token = await obterTokenDrive();
+    const metadata = { name: arquivo.name, parents: [pastaId] };
+    const initResp = await fetch("https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable", {
+      method: "POST",
+      headers: {
+        "Authorization": "Bearer " + token,
+        "Content-Type": "application/json; charset=UTF-8"
+      },
+      body: JSON.stringify(metadata)
+    });
+    if (!initResp.ok) throw new Error("Não foi possível iniciar o envio para o Google Drive.");
+    const uploadUrl = initResp.headers.get("Location");
+    const uploadResp = await fetch(uploadUrl, {
+      method: "PUT",
+      headers: { "Content-Type": arquivo.type || "application/octet-stream" },
+      body: arquivo
+    });
+    if (!uploadResp.ok) throw new Error("Não foi possível enviar o arquivo para o Google Drive.");
+    const arquivoDrive = await uploadResp.json();
+    await fetch("https://www.googleapis.com/drive/v3/files/" + arquivoDrive.id + "/permissions", {
+      method: "POST",
+      headers: {
+        "Authorization": "Bearer " + token,
+        "Content-Type": "application/json; charset=UTF-8"
+      },
+      body: JSON.stringify({ role: "reader", type: "anyone" })
+    });
+    return {
+      driveFileId: arquivoDrive.id,
+      url: "https://drive.google.com/uc?export=download&id=" + arquivoDrive.id
+    };
+  }
+
+  async function removerArquivoDoDrive(driveFileId) {
+    if (!driveFileId) return;
+    const token = await obterTokenDrive();
+    await fetch("https://www.googleapis.com/drive/v3/files/" + driveFileId, {
+      method: "DELETE",
+      headers: { "Authorization": "Bearer " + token }
+    });
+  }
 
   const DEPARTAMENTOS = ["Infantil", "Adolescentes", "Jovens", "Varões", "Feminino", "Missões", "Culto"];
   const CONGREGACOES_SETOR = ["Sede", "Roseira", "Cruzeiro", "Bananal", "Jaguariúna", "Primavera", "Pq Florianópolis"];
@@ -2821,8 +2908,8 @@
             btnRemover.addEventListener("click", async () => {
               btnRemover.disabled = true;
               try {
-                if (a.caminho) {
-                  try { await deleteObject(storageRef(storage, a.caminho)); } catch (e) { console.error(e); }
+                if (a.driveFileId) {
+                  try { await removerArquivoDoDrive(a.driveFileId); } catch (e) { console.error(e); }
                 }
                 await updateDoc(doc(db, "arquivosSala", a.id), { ativo: false });
                 await carregarArquivosSala();
@@ -2849,18 +2936,16 @@
       const salaId = seletor.value;
       if (!arquivo || !salaId) return;
       btnEnviarArquivo.disabled = true;
-      arquivoSalaStatus.textContent = "Enviando...";
+      arquivoSalaStatus.textContent = "Conectando ao Google Drive...";
       arquivoSalaStatus.className = "admin-agenda-status";
       try {
-        const caminho = "salas/" + salaId + "/" + Date.now() + "_" + arquivo.name;
-        const refArquivo = storageRef(storage, caminho);
-        await uploadBytes(refArquivo, arquivo);
-        const url = await getDownloadURL(refArquivo);
+        arquivoSalaStatus.textContent = "Enviando...";
+        const resultado = await enviarArquivoParaDrive(arquivo, salaId);
         await setDoc(doc(collection(db, "arquivosSala")), {
           salaId: salaId,
           nome: arquivo.name,
-          url: url,
-          caminho: caminho,
+          url: resultado.url,
+          driveFileId: resultado.driveFileId,
           ativo: true,
           enviadoPorUid: usuarioAtualCache.uid,
           enviadoPorNome: usuarioAtualCache.nome || usuarioAtualCache.email || "",
