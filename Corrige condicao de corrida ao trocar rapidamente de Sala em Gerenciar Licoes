@@ -2929,6 +2929,7 @@
       pdfStatusEl.textContent = "";
       try {
         const snap = await getDoc(doc(db, "licoes", salaId));
+        if (seletorSala.value !== salaId) return; // a Sala foi trocada de novo enquanto isso carregava
         if (snap.exists()) {
           const d = snap.data();
           licaoAtualDados = d;
@@ -2941,6 +2942,7 @@
         }
         atualizarPdfUI();
       } catch (err) {
+        if (seletorSala.value !== salaId) return;
         statusEl.textContent = "Não foi possível carregar as lições. " + (err.message || "");
         statusEl.className = "admin-agenda-status erro";
         console.error(err);
