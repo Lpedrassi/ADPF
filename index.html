@@ -241,6 +241,8 @@
   .perfil-secao-titulo { font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin-top: 4px; }
   .licoes-conteudo { overflow: hidden; max-height: 0; transition: max-height 0.35s ease; }
   .licoes-conteudo.aberto { max-height: 2400px; }
+  .canva-sanfona-conteudo { overflow: hidden; max-height: 0; transition: max-height 0.35s ease; }
+  .canva-sanfona-conteudo.aberto { max-height: 3000px; }
   .perfil-readonly { opacity: 0.65; cursor: not-allowed; }
   .perfil-header-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
   .perfil-tipo-label { font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; white-space: nowrap; }
@@ -1196,8 +1198,6 @@
     <button class="sidebar-link" type="button" data-area="areaProfessor">Sala do Professor</button>
     <button class="sidebar-link" type="button" data-area="areaAdministrativo">Sala da Secretaria</button>
     <button class="sidebar-link" type="button" data-area="areaGerenciarEscala">Gerenciar Escala EBD</button>
-    <button class="sidebar-link" type="button" data-area="areaGerenciarSalas">Gerenciar Perfil Professores e Alunos</button>
-    <button class="sidebar-link" type="button" data-area="areaGerenciarProfessoresPorSala">Gerenciar Professores por Sala</button>
     <button class="sidebar-link" type="button" data-area="areaCadastroSalas">Gerenciar Salas</button>
     <button class="sidebar-link" type="button" data-area="areaGerenciarLicoes">Gerenciar Lições</button>
   </nav>
@@ -1583,15 +1583,7 @@
     </div>
   </section>
 
-  <section id="areaGerenciarSalas" class="portal-section">
-    <h2>Gerenciar Perfil Professores e Alunos</h2>
-    <p class="admin-agenda-info">Cadastre as Salas da Escola Bíblica Dominical e escolha quem é o Professor responsável por cada uma. A atribuição fica valendo até você trocar.</p>
-    <button id="btnImportarSalas" type="button" class="btn-admin" hidden>Cadastrar as 6 Salas padrão (uma vez só)</button>
-    <p id="gerenciarSalasStatus" class="admin-agenda-status"></p>
-    <div id="gerenciarSalasLista" class="admin-perfis-lista">Carregando...</div>
-  </section>
-
-  <section id="areaAgenda" class="portal-section">
+    <section id="areaAgenda" class="portal-section">
     <h2>Agenda de Cultos e Eventos</h2>
     <p class="admin-agenda-info">Cadastre, edite ou remova os eventos que aparecem na seção "Agenda" do site — tanto da nossa Congregação quanto do Setor.</p>
 
@@ -1689,7 +1681,7 @@
 
     <p id="professorRevistaPdf" class="admin-agenda-info" hidden></p>
 
-    <p id="professorSemSalaAviso" class="admin-agenda-vazio" hidden>Você ainda não está escalado em nenhuma Sala. Peça para o Administrador Master te atribuir em "Gerenciar Perfil Professores e Alunos".</p>
+    <p id="professorSemSalaAviso" class="admin-agenda-vazio" hidden>Você ainda não está escalado em nenhuma Sala. Peça para o Administrador Master te atribuir em "Gerenciar Salas" (Professores por Turma).</p>
 
     <div id="professorConteudo" hidden>
 
@@ -1837,14 +1829,71 @@
     <p>Escala de professores e responsáveis da Escola Bíblica Dominical. (conteúdo a definir)</p>
   </section>
 
-  <section id="areaGerenciarProfessoresPorSala" class="portal-section">
-    <h2>Gerenciar Professores por Sala</h2>
-    <p>Conteúdo a definir.</p>
-  </section>
-
-  <section id="areaCadastroSalas" class="portal-section">
+    <section id="areaCadastroSalas" class="portal-section">
     <h2>Gerenciar Salas</h2>
-    <p>Cadastro e organização das Salas da Escola Bíblica Dominical. (conteúdo a definir)</p>
+    <p class="admin-agenda-info">Organize as Salas da Escola Bíblica Dominical: crie e edite as Turmas e escale quem é o Professor (e o Auxiliar) de cada uma.</p>
+
+    <div class="professor-canvas-grid">
+      <button type="button" class="professor-canvas-card" data-canvasala="turma">
+        <span class="professor-canvas-titulo">Gerenciar Turma</span>
+        <span class="professor-canvas-sub">Criar, editar e excluir Salas</span>
+      </button>
+      <button type="button" class="professor-canvas-card" data-canvasala="professores">
+        <span class="professor-canvas-titulo">Professores por Turma</span>
+        <span class="professor-canvas-sub">Escale o Professor e o Auxiliar de cada Sala</span>
+      </button>
+      <button type="button" class="professor-canvas-card" data-canvasala="extra">
+        <span class="professor-canvas-titulo">Em breve</span>
+        <span class="professor-canvas-sub">Novidades a caminho</span>
+      </button>
+    </div>
+
+    <div id="canvaSalaTurma" class="canva-sanfona-conteudo">
+      <button id="btnImportarSalas" type="button" class="btn-admin" hidden>Cadastrar as 6 Salas padrão (uma vez só)</button>
+
+      <div class="admin-form" style="margin-top:6px;">
+        <div class="admin-form-linha">
+          <label style="flex:2;">Nome da Sala
+            <input type="text" id="salaNomeInput" placeholder="Ex.: Cordeirinhos de Cristo">
+          </label>
+          <label style="flex:1;">Departamento
+            <select id="salaDepartamentoSelect">
+              <option value="" disabled selected>Selecione...</option>
+              <option value="Infantil">Infantil</option>
+              <option value="Adolescentes">Adolescentes</option>
+              <option value="Jovens">Jovens</option>
+              <option value="Varões">Varões</option>
+              <option value="Feminino">Feminino</option>
+              <option value="Missões">Missões</option>
+              <option value="Culto">Culto</option>
+              <option value="__novo__">+ Criar novo...</option>
+            </select>
+          </label>
+        </div>
+        <div class="admin-form-linha" id="salaDepartamentoNovoWrap" hidden>
+          <label style="flex:1;">Nome do novo departamento
+            <input type="text" id="salaDepartamentoNovoInput" placeholder="Digite o novo departamento">
+          </label>
+        </div>
+        <div class="admin-form-botoes">
+          <button type="button" id="btnSalvarSala" class="btn-admin">+ Adicionar Sala</button>
+        </div>
+      </div>
+      <p id="salaTurmaFormStatus" class="admin-agenda-status"></p>
+
+      <p id="gerenciarTurmaStatus" class="admin-agenda-status"></p>
+      <div id="gerenciarTurmaLista" class="admin-perfis-lista">Carregando...</div>
+    </div>
+
+    <div id="canvaSalaProfessores" class="canva-sanfona-conteudo">
+      <p class="admin-agenda-info">Escolha quem é o Professor responsável por cada Sala e, se houver, um Professor Auxiliar. A atribuição fica valendo até você trocar.</p>
+      <p id="gerenciarSalasStatus" class="admin-agenda-status"></p>
+      <div id="gerenciarSalasLista" class="admin-perfis-lista">Carregando...</div>
+    </div>
+
+    <div id="canvaSalaExtra" class="canva-sanfona-conteudo">
+      <p class="admin-agenda-info">🌱 Em breve, novas ferramentas para organizar suas Salas por aqui. Continue firme — cada etapa constrói a próxima!</p>
+    </div>
   </section>
 
   </div>
@@ -2191,7 +2240,7 @@
   } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
   import {
     getFirestore, doc, getDoc, setDoc, serverTimestamp,
-    collection, getDocs, updateDoc
+    collection, getDocs, updateDoc, deleteDoc, query, where, limit
   } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
   import { firebaseConfig } from "./firebase-config.js";
   import { buscarTodosEventos, salvarEvento, excluirEvento, importarAgendaInicial } from "./agenda.js";
@@ -2298,7 +2347,7 @@
   const CONGREGACAO_LOCAL = "Pq Florianópolis";
 
   const AREAS_POR_PERFIL = {
-    admin: ["siteHome", "areaGerenciarPerfis", "areaGerenciarSalas", "areaGerenciarLicoes", "areaAgenda", "areaProfessor", "areaAluno", "areaAdministrativo", "areaPostsSite", "areaGerenciarEscala", "areaGerenciarProfessoresPorSala", "areaCadastroSalas"],
+    admin: ["siteHome", "areaGerenciarPerfis", "areaGerenciarLicoes", "areaAgenda", "areaProfessor", "areaAluno", "areaAdministrativo", "areaPostsSite", "areaGerenciarEscala", "areaCadastroSalas"],
     professor: ["siteHome", "areaProfessor"],
     aluno: ["siteHome", "areaAluno"],
     administrativo: ["siteHome", "areaAdministrativo", "areaProfessor"],
@@ -2320,7 +2369,7 @@
     // usuários) toda vez que a área é reaberta, para não mostrar dados
     // desatualizados de quando a área foi carregada pela primeira vez.
     if (areaId === "areaGerenciarPerfis" && window.__recarregarGerenciarPerfis) window.__recarregarGerenciarPerfis();
-    if (areaId === "areaGerenciarSalas" && window.__recarregarGerenciarSalas) window.__recarregarGerenciarSalas();
+    if (areaId === "areaCadastroSalas" && window.__recarregarGerenciarSalas) window.__recarregarGerenciarSalas();
     if (areaId === "areaGerenciarLicoes" && window.__recarregarGerenciarLicoesSalas) window.__recarregarGerenciarLicoesSalas();
   }
 
@@ -2706,10 +2755,29 @@
   // uma. A atribuição fica valendo até ser trocada manualmente aqui.
   // =================================================================
   function iniciarGerenciarSalas() {
-    const listaEl = document.getElementById("gerenciarSalasLista");
-    const statusEl = document.getElementById("gerenciarSalasStatus");
-    const btnImportar = document.getElementById("btnImportarSalas");
-    if (!listaEl) return;
+    const grid = document.querySelector("#areaCadastroSalas .professor-canvas-grid");
+    if (!grid) return;
+
+    const CANVA_ALVOS = {
+      turma: "canvaSalaTurma",
+      professores: "canvaSalaProfessores",
+      extra: "canvaSalaExtra"
+    };
+    const cards = grid.querySelectorAll(".professor-canvas-card");
+    cards.forEach((card) => {
+      card.addEventListener("click", () => {
+        const alvoId = CANVA_ALVOS[card.dataset.canvasala];
+        const alvo = document.getElementById(alvoId);
+        if (!alvo) return;
+        const jaAberto = alvo.classList.contains("aberto");
+        document.querySelectorAll("#areaCadastroSalas .canva-sanfona-conteudo").forEach((el) => el.classList.remove("aberto"));
+        cards.forEach((c) => c.classList.remove("is-ativo"));
+        if (!jaAberto) {
+          alvo.classList.add("aberto");
+          card.classList.add("is-ativo");
+        }
+      });
+    });
 
     const SALAS_PADRAO = [
       { id: "cordeirinhos-de-cristo", nome: "Cordeirinhos de Cristo", departamento: "Infantil 1" },
@@ -2720,19 +2788,51 @@
       { id: "colunas-da-verdade", nome: "Colunas da Verdade", departamento: "Feminino" }
     ];
 
-    let professoresCache = [];
+    const listaTurmaEl = document.getElementById("gerenciarTurmaLista");
+    const statusTurmaEl = document.getElementById("gerenciarTurmaStatus");
+    const btnImportar = document.getElementById("btnImportarSalas");
+    const nomeInput = document.getElementById("salaNomeInput");
+    const depSelect = document.getElementById("salaDepartamentoSelect");
+    const depNovoWrap = document.getElementById("salaDepartamentoNovoWrap");
+    const depNovoInput = document.getElementById("salaDepartamentoNovoInput");
+    const btnSalvarSala = document.getElementById("btnSalvarSala");
+    const formStatusEl = document.getElementById("salaTurmaFormStatus");
 
-    async function carregar() {
-      listaEl.innerHTML = "Carregando...";
+    const listaProfEl = document.getElementById("gerenciarSalasLista");
+    const statusProfEl = document.getElementById("gerenciarSalasStatus");
+
+    if (!listaTurmaEl || !listaProfEl) return;
+
+    if (depSelect) {
+      depSelect.addEventListener("change", () => {
+        if (depNovoWrap) depNovoWrap.hidden = depSelect.value !== "__novo__";
+      });
+    }
+
+    function slugify(texto) {
+      return (texto || "")
+        .toString()
+        .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/(^-+|-+$)/g, "");
+    }
+
+    let professoresCache = [];
+    let salasCache = [];
+
+    async function carregarSalas() {
+      listaTurmaEl.innerHTML = "Carregando...";
+      listaProfEl.innerHTML = "Carregando...";
       try {
         const [salasSnap, usuariosSnap] = await Promise.all([
           getDocs(collection(db, "salas")),
           getDocs(collection(db, "usuarios"))
         ]);
 
-        const salas = [];
-        salasSnap.forEach((d) => salas.push(Object.assign({ id: d.id }, d.data())));
-        salas.sort((a, b) => (a.nome || "").localeCompare(b.nome || ""));
+        salasCache = [];
+        salasSnap.forEach((d) => salasCache.push(Object.assign({ id: d.id }, d.data())));
+        salasCache.sort((a, b) => (a.nome || "").localeCompare(b.nome || ""));
 
         professoresCache = [];
         usuariosSnap.forEach((d) => {
@@ -2743,70 +2843,332 @@
         });
         professoresCache.sort((a, b) => a.nome.localeCompare(b.nome));
 
-        if (btnImportar) btnImportar.hidden = salas.length > 0;
+        if (btnImportar) btnImportar.hidden = salasCache.length > 0;
 
-        if (!salas.length) {
-          listaEl.innerHTML = '<div class="admin-agenda-vazio">Nenhuma Sala cadastrada ainda. Use o botão acima para cadastrar as 6 Salas padrão.</div>';
+        renderTurma();
+        renderProfessores();
+      } catch (err) {
+        listaTurmaEl.innerHTML = '<div class="admin-agenda-vazio">Não foi possível carregar as Salas.</div>';
+        listaProfEl.innerHTML = '<div class="admin-agenda-vazio">Não foi possível carregar as Salas.</div>';
+        console.error(err);
+      }
+    }
+
+    function renderTurma() {
+      if (!salasCache.length) {
+        listaTurmaEl.innerHTML = '<div class="admin-agenda-vazio">Nenhuma Sala cadastrada ainda. Use o botão acima para cadastrar as 6 Salas padrão, ou adicione uma nova no formulário acima.</div>';
+        return;
+      }
+      listaTurmaEl.innerHTML = "";
+      salasCache.forEach((sala) => {
+        const item = document.createElement("div");
+        item.className = "admin-perfis-item";
+
+        const info = document.createElement("div");
+        info.className = "admin-perfis-item-info";
+        const nomeEl = document.createElement("span");
+        nomeEl.className = "admin-perfis-item-nome";
+        nomeEl.textContent = sala.nome;
+        const depEl = document.createElement("span");
+        depEl.className = "admin-perfis-item-email";
+        depEl.textContent = sala.departamento || "";
+        const statusItemEl = document.createElement("span");
+        statusItemEl.className = "admin-perfis-item-status";
+        info.appendChild(nomeEl);
+        info.appendChild(depEl);
+        info.appendChild(statusItemEl);
+
+        const btnEditar = document.createElement("button");
+        btnEditar.type = "button";
+        btnEditar.className = "admin-perfis-item-editar";
+        btnEditar.textContent = "✏️";
+        btnEditar.title = "Editar Sala";
+        btnEditar.addEventListener("click", () => abrirEdicaoTurma(item, sala));
+
+        const btnExcluir = document.createElement("button");
+        btnExcluir.type = "button";
+        btnExcluir.className = "admin-perfis-item-editar btn-danger";
+        btnExcluir.textContent = "🗑️";
+        btnExcluir.title = "Excluir Sala";
+        btnExcluir.addEventListener("click", () => excluirSala(sala, statusItemEl));
+
+        item.appendChild(info);
+        item.appendChild(btnEditar);
+        item.appendChild(btnExcluir);
+        listaTurmaEl.appendChild(item);
+      });
+    }
+
+    function abrirEdicaoTurma(item, sala) {
+      const jaEditando = item.querySelector(".admin-sala-editar-form");
+      if (jaEditando) {
+        jaEditando.remove();
+        Array.from(item.children).forEach((c) => (c.style.display = ""));
+        return;
+      }
+
+      Array.from(item.children).forEach((c) => (c.style.display = "none"));
+
+      const form = document.createElement("div");
+      form.className = "admin-form admin-sala-editar-form";
+      form.style.flex = "1";
+
+      const linha = document.createElement("div");
+      linha.className = "admin-form-linha";
+      const labelNome = document.createElement("label");
+      labelNome.style.flex = "2";
+      labelNome.textContent = "Nome da Sala";
+      const inputNome = document.createElement("input");
+      inputNome.type = "text";
+      inputNome.value = sala.nome || "";
+      labelNome.appendChild(inputNome);
+
+      const labelDep = document.createElement("label");
+      labelDep.style.flex = "1";
+      labelDep.textContent = "Departamento";
+      const selectDep = document.createElement("select");
+      DEPARTAMENTOS.forEach((d) => {
+        const opt = document.createElement("option");
+        opt.value = d;
+        opt.textContent = d;
+        if (sala.departamento === d) opt.selected = true;
+        selectDep.appendChild(opt);
+      });
+      const optNovo = document.createElement("option");
+      optNovo.value = "__novo__";
+      optNovo.textContent = "+ Criar novo...";
+      const usaCustom = !!sala.departamento && !DEPARTAMENTOS.includes(sala.departamento);
+      if (usaCustom) optNovo.selected = true;
+      selectDep.appendChild(optNovo);
+      labelDep.appendChild(selectDep);
+
+      const inputDepNovo = document.createElement("input");
+      inputDepNovo.type = "text";
+      inputDepNovo.placeholder = "Nome do novo departamento";
+      inputDepNovo.value = usaCustom ? sala.departamento : "";
+      inputDepNovo.hidden = !usaCustom;
+      selectDep.addEventListener("change", () => { inputDepNovo.hidden = selectDep.value !== "__novo__"; });
+
+      linha.appendChild(labelNome);
+      linha.appendChild(labelDep);
+      form.appendChild(linha);
+      form.appendChild(inputDepNovo);
+
+      const botoes = document.createElement("div");
+      botoes.className = "admin-form-botoes";
+      const btnSalvarEdicao = document.createElement("button");
+      btnSalvarEdicao.type = "button";
+      btnSalvarEdicao.className = "btn-admin";
+      btnSalvarEdicao.textContent = "Salvar";
+      const btnCancelar = document.createElement("button");
+      btnCancelar.type = "button";
+      btnCancelar.className = "btn-admin";
+      btnCancelar.textContent = "Cancelar";
+      botoes.appendChild(btnSalvarEdicao);
+      botoes.appendChild(btnCancelar);
+      form.appendChild(botoes);
+
+      btnCancelar.addEventListener("click", () => {
+        form.remove();
+        Array.from(item.children).forEach((c) => (c.style.display = ""));
+      });
+
+      btnSalvarEdicao.addEventListener("click", async () => {
+        const novoNome = inputNome.value.trim();
+        const novoDep = selectDep.value === "__novo__" ? inputDepNovo.value.trim() : selectDep.value;
+        if (!novoNome) { alert("Digite o nome da Sala."); return; }
+        btnSalvarEdicao.disabled = true;
+        try {
+          await updateDoc(doc(db, "salas", sala.id), { nome: novoNome, departamento: novoDep || "" });
+          statusTurmaEl.textContent = 'Sala "' + novoNome + '" atualizada.';
+          statusTurmaEl.className = "admin-agenda-status ok";
+          await carregarSalas();
+        } catch (err) {
+          statusTurmaEl.textContent = "Não foi possível salvar. " + (err.message || "");
+          statusTurmaEl.className = "admin-agenda-status erro";
+          console.error(err);
+          btnSalvarEdicao.disabled = false;
+        }
+      });
+
+      item.appendChild(form);
+    }
+
+    async function salaTemVinculos(sala) {
+      if (sala.professorUid || sala.professorAuxiliarUid) return true;
+      const [matriculasSnap, relatoriosSnap, arquivosSnap, licaoSnap] = await Promise.all([
+        getDocs(query(collection(db, "matriculas"), where("salaId", "==", sala.id), limit(1))),
+        getDocs(query(collection(db, "relatoriosAula"), where("salaId", "==", sala.id), limit(1))),
+        getDocs(query(collection(db, "arquivosSala"), where("salaId", "==", sala.id), limit(1))),
+        getDoc(doc(db, "licoes", sala.id))
+      ]);
+      const licaoDados = licaoSnap.exists() ? licaoSnap.data() : null;
+      const temLicao = !!(licaoDados && (
+        licaoDados.trimestre ||
+        (Array.isArray(licaoDados.titulos) && licaoDados.titulos.some((t) => t)) ||
+        licaoDados.revistaPdfUrl
+      ));
+      return !matriculasSnap.empty || !relatoriosSnap.empty || !arquivosSnap.empty || temLicao;
+    }
+
+    async function excluirSala(sala, statusItemEl) {
+      statusItemEl.textContent = "Verificando...";
+      statusItemEl.className = "admin-perfis-item-status";
+      try {
+        const temVinculos = await salaTemVinculos(sala);
+        if (temVinculos) {
+          alert(
+            'Esta Sala não pode ser excluída porque já tem dados vinculados ' +
+            '(professor escalado, alunos matriculados, lições cadastradas ou arquivos enviados). ' +
+            'Remova esses vínculos antes de excluir a Sala.'
+          );
+          statusItemEl.textContent = "";
           return;
         }
+        if (!window.confirm('Excluir a Sala "' + sala.nome + '"? Essa ação não pode ser desfeita.')) {
+          statusItemEl.textContent = "";
+          return;
+        }
+        await deleteDoc(doc(db, "salas", sala.id));
+        statusTurmaEl.textContent = 'Sala "' + sala.nome + '" excluída.';
+        statusTurmaEl.className = "admin-agenda-status ok";
+        await carregarSalas();
+      } catch (err) {
+        statusItemEl.textContent = "";
+        statusTurmaEl.textContent = "Não foi possível excluir. " + (err.message || "");
+        statusTurmaEl.className = "admin-agenda-status erro";
+        console.error(err);
+      }
+    }
 
-        listaEl.innerHTML = "";
-        salas.forEach((sala) => {
-          const item = document.createElement("div");
-          item.className = "admin-perfis-item";
-
-          const info = document.createElement("div");
-          info.className = "admin-perfis-item-info";
-          const nomeEl = document.createElement("span");
-          nomeEl.className = "admin-perfis-item-nome";
-          nomeEl.textContent = sala.nome;
-          const depEl = document.createElement("span");
-          depEl.className = "admin-perfis-item-email";
-          depEl.textContent = sala.departamento || "";
-          const statusItemEl = document.createElement("span");
-          statusItemEl.className = "admin-perfis-item-status";
-          info.appendChild(nomeEl);
-          info.appendChild(depEl);
-          info.appendChild(statusItemEl);
-
-          const select = document.createElement("select");
-          select.className = "admin-perfis-item-select";
-          const optNenhum = document.createElement("option");
-          optNenhum.value = "";
-          optNenhum.textContent = "Sem professor definido";
-          if (!sala.professorUid) optNenhum.selected = true;
-          select.appendChild(optNenhum);
-          professoresCache.forEach((p) => {
-            const opt = document.createElement("option");
-            opt.value = p.uid;
-            opt.textContent = p.nome;
-            if (sala.professorUid === p.uid) opt.selected = true;
-            select.appendChild(opt);
+    if (btnSalvarSala) {
+      btnSalvarSala.addEventListener("click", async () => {
+        const nome = (nomeInput.value || "").trim();
+        const departamento = depSelect.value === "__novo__" ? (depNovoInput.value || "").trim() : depSelect.value;
+        if (!nome) { alert("Digite o nome da Sala."); return; }
+        if (!departamento) { alert("Selecione ou digite o Departamento."); return; }
+        let id = slugify(nome) || ("sala-" + Date.now());
+        let base = id;
+        let sufixo = 2;
+        while (salasCache.some((s) => s.id === id)) {
+          id = base + "-" + sufixo;
+          sufixo++;
+        }
+        btnSalvarSala.disabled = true;
+        try {
+          await setDoc(doc(db, "salas", id), {
+            nome: nome,
+            departamento: departamento,
+            professorUid: null,
+            professorNome: "",
+            professorAuxiliarUid: null,
+            professorAuxiliarNome: "",
+            criadoEm: serverTimestamp()
           });
-          if (sala.professorUid && !professoresCache.some((p) => p.uid === sala.professorUid)) {
-            const optAtual = document.createElement("option");
-            optAtual.value = sala.professorUid;
-            optAtual.textContent = (sala.professorNome || sala.professorUid) + " (perfil não é mais Professor)";
-            optAtual.selected = true;
-            select.appendChild(optAtual);
-          }
+          nomeInput.value = "";
+          depSelect.value = "";
+          if (depNovoWrap) depNovoWrap.hidden = true;
+          if (depNovoInput) depNovoInput.value = "";
+          formStatusEl.textContent = 'Sala "' + nome + '" cadastrada.';
+          formStatusEl.className = "admin-agenda-status ok";
+          await carregarSalas();
+        } catch (err) {
+          formStatusEl.textContent = "Não foi possível cadastrar a Sala. " + (err.message || "");
+          formStatusEl.className = "admin-agenda-status erro";
+          console.error(err);
+        } finally {
+          btnSalvarSala.disabled = false;
+        }
+      });
+    }
 
+    function montarSelectProfessor(valorAtual, nomeAtualCache, rotuloNenhum) {
+      const select = document.createElement("select");
+      select.className = "admin-perfis-item-select";
+      const optNenhum = document.createElement("option");
+      optNenhum.value = "";
+      optNenhum.textContent = rotuloNenhum;
+      if (!valorAtual) optNenhum.selected = true;
+      select.appendChild(optNenhum);
+      professoresCache.forEach((p) => {
+        const opt = document.createElement("option");
+        opt.value = p.uid;
+        opt.textContent = p.nome;
+        if (valorAtual === p.uid) opt.selected = true;
+        select.appendChild(opt);
+      });
+      if (valorAtual && !professoresCache.some((p) => p.uid === valorAtual)) {
+        const optAtual = document.createElement("option");
+        optAtual.value = valorAtual;
+        optAtual.textContent = (nomeAtualCache || valorAtual) + " (perfil não é mais Professor)";
+        optAtual.selected = true;
+        select.appendChild(optAtual);
+      }
+      return select;
+    }
+
+    function renderProfessores() {
+      if (!salasCache.length) {
+        listaProfEl.innerHTML = '<div class="admin-agenda-vazio">Nenhuma Sala cadastrada ainda. Cadastre as Salas em "Gerenciar Turma".</div>';
+        return;
+      }
+      listaProfEl.innerHTML = "";
+      salasCache.forEach((sala) => {
+        const item = document.createElement("div");
+        item.className = "admin-perfis-item";
+
+        const info = document.createElement("div");
+        info.className = "admin-perfis-item-info";
+        const nomeEl = document.createElement("span");
+        nomeEl.className = "admin-perfis-item-nome";
+        nomeEl.textContent = sala.nome;
+        const depEl = document.createElement("span");
+        depEl.className = "admin-perfis-item-email";
+        depEl.textContent = sala.departamento || "";
+        const statusItemEl = document.createElement("span");
+        statusItemEl.className = "admin-perfis-item-status";
+        info.appendChild(nomeEl);
+        info.appendChild(depEl);
+        info.appendChild(statusItemEl);
+
+        const selectsWrap = document.createElement("div");
+        selectsWrap.style.display = "flex";
+        selectsWrap.style.gap = "8px";
+        selectsWrap.style.flexWrap = "wrap";
+
+        const wrapPrincipal = document.createElement("label");
+        wrapPrincipal.style.fontSize = "11px";
+        wrapPrincipal.style.color = "var(--muted)";
+        wrapPrincipal.textContent = "Professor";
+        const selectPrincipal = montarSelectProfessor(sala.professorUid, sala.professorNome, "Sem professor definido");
+        wrapPrincipal.appendChild(document.createElement("br"));
+        wrapPrincipal.appendChild(selectPrincipal);
+
+        const wrapAuxiliar = document.createElement("label");
+        wrapAuxiliar.style.fontSize = "11px";
+        wrapAuxiliar.style.color = "var(--muted)";
+        wrapAuxiliar.textContent = "Professor Auxiliar";
+        const selectAuxiliar = montarSelectProfessor(sala.professorAuxiliarUid, sala.professorAuxiliarNome, "Sem auxiliar definido");
+        wrapAuxiliar.appendChild(document.createElement("br"));
+        wrapAuxiliar.appendChild(selectAuxiliar);
+
+        function ligarSalvarSelecao(select, campoUid, campoNome) {
           select.addEventListener("change", async () => {
             select.disabled = true;
             if (statusItemEl.__timeout) clearTimeout(statusItemEl.__timeout);
             const professor = professoresCache.find((p) => p.uid === select.value);
+            const dados = {};
+            dados[campoUid] = select.value || null;
+            dados[campoNome] = professor ? professor.nome : "";
             try {
-              await updateDoc(doc(db, "salas", sala.id), {
-                professorUid: select.value || null,
-                professorNome: professor ? professor.nome : ""
-              });
-              statusEl.textContent = "Professor da Sala " + sala.nome + " atualizado.";
-              statusEl.className = "admin-agenda-status ok";
+              await updateDoc(doc(db, "salas", sala.id), dados);
+              statusProfEl.textContent = "Sala " + sala.nome + " atualizada.";
+              statusProfEl.className = "admin-agenda-status ok";
               statusItemEl.textContent = "✓ Salvo";
               statusItemEl.className = "admin-perfis-item-status ok";
             } catch (err) {
-              statusEl.textContent = "Não foi possível salvar. " + (err.message || "");
-              statusEl.className = "admin-agenda-status erro";
+              statusProfEl.textContent = "Não foi possível salvar. " + (err.message || "");
+              statusProfEl.className = "admin-agenda-status erro";
               statusItemEl.textContent = "✗ Não foi possível salvar";
               statusItemEl.className = "admin-perfis-item-status erro";
               console.error(err);
@@ -2818,15 +3180,17 @@
               }, 4000);
             }
           });
+        }
+        ligarSalvarSelecao(selectPrincipal, "professorUid", "professorNome");
+        ligarSalvarSelecao(selectAuxiliar, "professorAuxiliarUid", "professorAuxiliarNome");
 
-          item.appendChild(info);
-          item.appendChild(select);
-          listaEl.appendChild(item);
-        });
-      } catch (err) {
-        listaEl.innerHTML = '<div class="admin-agenda-vazio">Não foi possível carregar as Salas.</div>';
-        console.error(err);
-      }
+        selectsWrap.appendChild(wrapPrincipal);
+        selectsWrap.appendChild(wrapAuxiliar);
+
+        item.appendChild(info);
+        item.appendChild(selectsWrap);
+        listaProfEl.appendChild(item);
+      });
     }
 
     if (btnImportar) {
@@ -2839,14 +3203,16 @@
               departamento: sala.departamento,
               professorUid: null,
               professorNome: "",
+              professorAuxiliarUid: null,
+              professorAuxiliarNome: "",
               criadoEm: serverTimestamp()
             }, { merge: true });
           }
           btnImportar.hidden = true;
-          await carregar();
+          await carregarSalas();
         } catch (err) {
-          statusEl.textContent = "Não foi possível cadastrar as Salas padrão. " + (err.message || "");
-          statusEl.className = "admin-agenda-status erro";
+          statusTurmaEl.textContent = "Não foi possível cadastrar as Salas padrão. " + (err.message || "");
+          statusTurmaEl.className = "admin-agenda-status erro";
           console.error(err);
         } finally {
           btnImportar.disabled = false;
@@ -2854,8 +3220,8 @@
       });
     }
 
-    window.__recarregarGerenciarSalas = carregar;
-    carregar();
+    window.__recarregarGerenciarSalas = carregarSalas;
+    carregarSalas();
   }
 
   // =================================================================
