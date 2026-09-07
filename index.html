@@ -3093,6 +3093,7 @@
             professorUid: null,
             professorNome: "",
             professores: [],
+            professoresUids: [],
             criadoEm: serverTimestamp()
           });
           nomeInput.value = "";
@@ -3113,12 +3114,15 @@
     }
 
     async function salvarPoolProfessores(sala, novaLista) {
+      const uids = novaLista.map((p) => p.uid);
       await updateDoc(doc(db, "salas", sala.id), {
         professores: novaLista,
+        professoresUids: uids,
         professorUid: novaLista[0] ? novaLista[0].uid : null,
         professorNome: novaLista[0] ? novaLista[0].nome : ""
       });
       sala.professores = novaLista;
+      sala.professoresUids = uids;
       sala.professorUid = novaLista[0] ? novaLista[0].uid : null;
       sala.professorNome = novaLista[0] ? novaLista[0].nome : "";
     }
