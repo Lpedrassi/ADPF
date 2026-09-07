@@ -37,6 +37,14 @@
   }
 
   * { box-sizing: border-box; }
+
+  select {
+    background: var(--surface-2); border: 1px solid var(--border-strong); border-radius: 8px; color: var(--ink);
+    padding: 7px 10px; font-size: 13px; font-family: inherit;
+  }
+  select:focus { outline: none; border-color: var(--azul); }
+  select option { background: var(--surface-2); color: var(--ink); }
+
   html { scroll-behavior: smooth; }
   @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 
@@ -814,12 +822,12 @@
 <div class="nav-shell">
   <nav class="nav">
     <a class="brand" href="#topo">
-      <span class="brand-mark"><img src="logo_nav_whitebg.webp" alt="BrasÃ£o AD MinistÃ©rio do BelÃ©m" /></span>
-      <span class="brand-name">AD BELEM<span>Jaguariuna Â· Pq FlorianÃ³polis</span></span>
+      <span class="brand-mark"><img src="logo_nav_whitebg.webp" alt="Brasão AD Ministério do Belém" /></span>
+      <span class="brand-name">AD BELEM<span>Jaguariuna · Pq Florianópolis</span></span>
     </a>
     <ul class="nav-links" id="navLinks">
-      <li><a class="is-active" href="#topo" data-nav="topo">InÃ­cio</a></li>
-      <li><a href="#noticias" data-nav="noticias">NotÃ­cias</a></li>
+      <li><a class="is-active" href="#topo" data-nav="topo">Início</a></li>
+      <li><a href="#noticias" data-nav="noticias">Notícias</a></li>
       <li><a href="#cultos" data-nav="cultos">Cultos</a></li>
       <li><a href="#sobre" data-nav="sobre">Quem somos</a></li>
       <li><a href="#departamentos" data-nav="departamentos">Departamentos</a></li>
@@ -846,7 +854,7 @@
         </button>
         <button type="button" class="nav-user-menu-item" data-acao="endereco" role="menuitem">
           <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-          EndereÃ§o
+          Endereço
         </button>
         <button type="button" class="nav-user-menu-item" data-acao="ajuda" role="menuitem">
           <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 0 1 4.9.8c0 1.7-2.4 2-2.4 3.7"/><path d="M12 17.5h.01"/></svg>
@@ -868,7 +876,7 @@
       <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
     </button>
     <span class="pill eyebrow" id="loginTitle"><span class="dot"></span>Acesso ao Portal</span>
-    <p class="login-sub" style="margin-top:18px;">Que bom ter vocÃª aqui!<br><br>FaÃ§a seu login para acessar o ambiente completo da igreja, incluindo Ã¡reas dos Departamentos, o Portal EBD e muito mais.</p>
+    <p class="login-sub" style="margin-top:18px;">Que bom ter você aqui!<br><br>Faça seu login para acessar o ambiente completo da igreja, incluindo áreas dos Departamentos, o Portal EBD e muito mais.</p>
     <form class="login-form">
       <div>
         <label for="loginEmail">E-mail</label>
@@ -876,7 +884,7 @@
       </div>
       <div>
         <label for="loginSenha">Senha</label>
-        <div class="login-senha-wrap"><input id="loginSenha" type="password" placeholder="â¢â¢â¢â¢â¢â¢â¢â¢" autocomplete="current-password" required><button type="button" class="toggle-senha" id="toggleSenha" aria-label="Mostrar senha"><svg id="iconOlhoAberto" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/></svg><svg id="iconOlhoFechado" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 19c-7 0-11-7-11-7a21.6 21.6 0 0 1 5.06-5.94M9.9 4.24A10.7 10.7 0 0 1 12 4c7 0 11 7 11 7a21.6 21.6 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg></button></div>
+        <div class="login-senha-wrap"><input id="loginSenha" type="password" placeholder="••••••••" autocomplete="current-password" required><button type="button" class="toggle-senha" id="toggleSenha" aria-label="Mostrar senha"><svg id="iconOlhoAberto" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/></svg><svg id="iconOlhoFechado" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 19c-7 0-11-7-11-7a21.6 21.6 0 0 1 5.06-5.94M9.9 4.24A10.7 10.7 0 0 1 12 4c7 0 11 7 11 7a21.6 21.6 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg></button></div>
         <a href="#" class="login-forgot" onclick="if (window.recuperarSenha) recuperarSenha(); return false;">Esqueceu a senha?</a>
       </div>
       <div class="login-btn-row">
@@ -912,8 +920,8 @@
       </div>
 
       <div data-show="editar">
-        <label for="perfilUsuario">UsuÃ¡rio</label>
-        <input id="perfilUsuario" type="text" placeholder="nome de usuÃ¡rio">
+        <label for="perfilUsuario">Usuário</label>
+        <input id="perfilUsuario" type="text" placeholder="nome de usuário">
       </div>
 
       <div class="perfil-grid-2" data-show="editar step2">
@@ -933,11 +941,11 @@
       </div>
       <div id="perfilSenhaGrupo" data-show="step1">
         <label for="perfilSenha">Senha</label>
-        <input id="perfilSenha" type="password" placeholder="â¢â¢â¢â¢â¢â¢â¢â¢" autocomplete="new-password">
+        <input id="perfilSenha" type="password" placeholder="••••••••" autocomplete="new-password">
       </div>
       <div id="perfilSenhaConfirmarGrupo" data-show="step1">
         <label for="perfilSenhaConfirmar">Confirmar senha</label>
-        <input id="perfilSenhaConfirmar" type="password" placeholder="â¢â¢â¢â¢â¢â¢â¢â¢" autocomplete="new-password">
+        <input id="perfilSenhaConfirmar" type="password" placeholder="••••••••" autocomplete="new-password">
       </div>
       <div class="login-divider" data-show="step1">ou</div>
       <button type="button" class="btn btn-ghost btn-google" id="perfilBtnGoogle" data-show="step1" onclick="entrarComGoogle()">
@@ -945,7 +953,7 @@
         Usar dados do Google
       </button>
 
-      <p class="login-note" id="perfilGoogleNota" hidden style="margin-top:0;">Conectado com o Google â nome e e-mail jÃ¡ preenchidos.</p>
+      <p class="login-note" id="perfilGoogleNota" hidden style="margin-top:0;">Conectado com o Google — nome e e-mail já preenchidos.</p>
 
       <div data-show="editar step2">
         <label for="perfilTelefone">Telefone</label>
@@ -957,15 +965,15 @@
         <input id="perfilDataNascimento" type="text" placeholder="dd/mm/aaaa" inputmode="numeric" maxlength="10">
       </div>
 
-      <div class="perfil-secao-titulo" data-show="step2">EndereÃ§o</div>
+      <div class="perfil-secao-titulo" data-show="step2">Endereço</div>
       <div class="perfil-grid-2" data-show="step2">
         <div>
           <label for="perfilCep">CEP</label>
           <input id="perfilCep" type="text" placeholder="00000-000" inputmode="numeric" maxlength="9">
         </div>
         <div>
-          <label for="perfilNumero">NÃºmero</label>
-          <input id="perfilNumero" type="text" placeholder="nÂº">
+          <label for="perfilNumero">Número</label>
+          <input id="perfilNumero" type="text" placeholder="nº">
         </div>
       </div>
       <div data-show="step2">
@@ -1001,11 +1009,11 @@
       </div>
 
       <div class="login-btn-row" data-show="step1">
-        <button type="button" class="btn btn-blue-grad" id="perfilBtnAvancar1" style="flex:1;justify-content:center;">AvanÃ§ar</button>
+        <button type="button" class="btn btn-blue-grad" id="perfilBtnAvancar1" style="flex:1;justify-content:center;">Avançar</button>
       </div>
       <div class="login-btn-row" data-show="step2">
         <button type="button" class="btn btn-ghost" id="perfilBtnVoltar2" style="flex:1;justify-content:center;">Voltar</button>
-        <button type="button" class="btn btn-blue-grad" id="perfilBtnAvancar2" style="flex:1;justify-content:center;">AvanÃ§ar</button>
+        <button type="button" class="btn btn-blue-grad" id="perfilBtnAvancar2" style="flex:1;justify-content:center;">Avançar</button>
       </div>
       <div class="login-btn-row" data-show="step3">
         <button type="button" class="btn btn-ghost" id="perfilBtnPular3" style="flex:1;justify-content:center;">Pular</button>
@@ -1020,7 +1028,7 @@
     <button class="login-close" id="enderecoClose" type="button" aria-label="Fechar">
       <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
     </button>
-    <span class="pill eyebrow" id="enderecoTitulo"><span class="dot"></span>EndereÃ§o</span>
+    <span class="pill eyebrow" id="enderecoTitulo"><span class="dot"></span>Endereço</span>
     <form class="login-form" id="enderecoForm">
       <div class="perfil-grid-2">
         <div>
@@ -1028,8 +1036,8 @@
           <input id="enderecoCep" type="text" placeholder="00000-000" inputmode="numeric" maxlength="9">
         </div>
         <div>
-          <label for="enderecoNumero">NÃºmero</label>
-          <input id="enderecoNumero" type="text" placeholder="nÂº">
+          <label for="enderecoNumero">Número</label>
+          <input id="enderecoNumero" type="text" placeholder="nº">
         </div>
       </div>
       <div>
@@ -1065,7 +1073,7 @@
     <button class="login-close" id="gerenciarPerfilEditClose" type="button" aria-label="Fechar">
       <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
     </button>
-    <span class="pill eyebrow" id="gerenciarPerfilEditTitulo"><span class="dot"></span>Editar usuÃ¡rio</span>
+    <span class="pill eyebrow" id="gerenciarPerfilEditTitulo"><span class="dot"></span>Editar usuário</span>
     <form class="login-form" id="gerenciarPerfilEditForm">
       <div class="perfil-foto-row">
         <img id="gerenciarPerfilEditFotoPreview" class="perfil-foto-preview" alt="Foto do perfil">
@@ -1076,8 +1084,8 @@
       </div>
 
       <div>
-        <label for="gerenciarPerfilEditUsuario">UsuÃ¡rio</label>
-        <input id="gerenciarPerfilEditUsuario" type="text" placeholder="nome de usuÃ¡rio">
+        <label for="gerenciarPerfilEditUsuario">Usuário</label>
+        <input id="gerenciarPerfilEditUsuario" type="text" placeholder="nome de usuário">
       </div>
 
       <div class="perfil-grid-2">
@@ -1112,15 +1120,15 @@
         <select id="gerenciarPerfilEditPerfil"></select>
       </div>
 
-      <div class="perfil-secao-titulo">EndereÃ§o</div>
+      <div class="perfil-secao-titulo">Endereço</div>
       <div class="perfil-grid-2">
         <div>
           <label for="gerenciarPerfilEditCep">CEP</label>
           <input id="gerenciarPerfilEditCep" type="text" placeholder="00000-000" inputmode="numeric" maxlength="9">
         </div>
         <div>
-          <label for="gerenciarPerfilEditNumero">NÃºmero</label>
-          <input id="gerenciarPerfilEditNumero" type="text" placeholder="nÂº">
+          <label for="gerenciarPerfilEditNumero">Número</label>
+          <input id="gerenciarPerfilEditNumero" type="text" placeholder="nº">
         </div>
       </div>
       <div>
@@ -1159,7 +1167,7 @@
 <div class="login-overlay" id="modalConfirmarExcluirConta" role="dialog" aria-modal="true" aria-labelledby="confirmarExcluirContaTitulo" hidden>
   <div class="login-card confirm-card">
     <span class="pill eyebrow" id="confirmarExcluirContaTitulo"><span class="dot"></span>Excluir Conta</span>
-    <p>Tem certeza que deseja excluir sua conta? Essa aÃ§Ã£o nÃ£o pode ser desfeita.</p>
+    <p>Tem certeza que deseja excluir sua conta? Essa ação não pode ser desfeita.</p>
     <div class="login-btn-row">
       <button type="button" class="btn btn-ghost" id="btnExcluirContaNao">Cancelar</button>
       <button type="button" class="btn btn-danger" id="btnExcluirContaSim">Sim, excluir</button>
@@ -1172,7 +1180,7 @@
     <span class="pill eyebrow" id="confirmarDuplicarTitulo"><span class="dot"></span>Evento do Setor</span>
     <p id="confirmarDuplicarTexto"></p>
     <div class="login-btn-row">
-      <button type="button" class="btn btn-ghost" id="btnConfirmarDuplicarNao">NÃ£o, sÃ³ Setor</button>
+      <button type="button" class="btn btn-ghost" id="btnConfirmarDuplicarNao">Não, só Setor</button>
       <button type="button" class="btn btn-primary btn-gold" id="btnConfirmarDuplicarSim">Sim, duplicar</button>
     </div>
   </div>
@@ -1197,9 +1205,9 @@
 
 <div class="portal-layout" id="portalLayout">
   <nav class="portal-sidebar" id="portalSidebar">
-    <button class="sidebar-link active" type="button" data-area="siteHome">InÃ­cio (site)</button>
+    <button class="sidebar-link active" type="button" data-area="siteHome">Início (site)</button>
 
-    <div class="sidebar-category">AdministraÃ§Ã£o</div>
+    <div class="sidebar-category">Administração</div>
     <button class="sidebar-link" type="button" data-area="areaGerenciarPerfis">Gerenciar Perfis</button>
     <button class="sidebar-link" type="button" data-area="areaAgenda">Agenda de Cultos e Eventos</button>
     <button class="sidebar-link" type="button" data-area="areaPostsSite">Post's do Site!</button>
@@ -1209,7 +1217,7 @@
     <button class="sidebar-link" type="button" data-area="areaProfessor">Sala do Professor</button>
     <button class="sidebar-link" type="button" data-area="areaAdministrativo">Sala da Secretaria</button>
     <button class="sidebar-link" type="button" data-area="areaCadastroSalas">Gerenciar Salas</button>
-    <button class="sidebar-link" type="button" data-area="areaGerenciarLicoes">Gerenciar LiÃ§Ãµes</button>
+    <button class="sidebar-link" type="button" data-area="areaGerenciarLicoes">Gerenciar Lições</button>
   </nav>
   <div class="portal-main-wrap" id="portalMainWrap">
   <div class="site-home-conteudo ativo" id="siteHome">
@@ -1221,18 +1229,18 @@
   </div>
   <div class="vignette" aria-hidden="true"></div>
   <div class="wrap hero-inner reveal">
-    <span class="pill eyebrow"><span class="dot"></span>JaguariÃºna Â· SP</span>
-    <h1>Assembleia de Deus BelÃ©m<br><span class="grad-text">Pq FlorianÃ³polis</span></h1>
-    <p class="hero-sub">Uma congregaÃ§Ã£o que ensina a Palavra, fÃ©, comunhÃ£o para toda a familia!</p>
+    <span class="pill eyebrow"><span class="dot"></span>Jaguariúna · SP</span>
+    <h1>Assembleia de Deus Belém<br><span class="grad-text">Pq Florianópolis</span></h1>
+    <p class="hero-sub">Uma congregação que ensina a Palavra, fé, comunhão para toda a familia!</p>
     <div class="hero-actions">
-      <a class="btn btn-primary" href="#cultos">HorÃ¡rios de cultos</a>
-      <a class="btn btn-ghost" href="#ebd">ConheÃ§a a EBD</a>
+      <a class="btn btn-primary" href="#cultos">Horários de cultos</a>
+      <a class="btn btn-ghost" href="#ebd">Conheça a EBD</a>
     </div>
     <div class="quicklinks">
       <a class="qlink c-azul" href="#sobre">Quem somos</a>
-      <a class="qlink c-vermelho" href="#ebd">Escola BÃ­blica</a>
-      <a class="qlink c-laranja" href="#cultos">ProgramaÃ§Ã£o</a>
-      <a class="qlink c-azul" href="#contato">LocalizaÃ§Ã£o</a>
+      <a class="qlink c-vermelho" href="#ebd">Escola Bíblica</a>
+      <a class="qlink c-laranja" href="#cultos">Programação</a>
+      <a class="qlink c-azul" href="#contato">Localização</a>
     </div>
     <div class="emblem-row">
       <div class="emblem-social" id="emblemSocial">
@@ -1241,7 +1249,7 @@
         </a>
         <div class="emblem-ring" id="emblemRing">
           <div class="emblem-inner">
-            <img src="logo_new.webp" alt="BrasÃ£o da Assembleia de Deus MinistÃ©rio do BelÃ©m" />
+            <img src="logo_new.webp" alt="Brasão da Assembleia de Deus Ministério do Belém" />
           </div>
         </div>
         <a class="social-side fb" href="#" target="_blank" rel="noopener" aria-label="Facebook">
@@ -1258,44 +1266,44 @@
   <div class="wrap">
     <div class="section-head reveal">
       <span class="pill eyebrow"><span class="dot"></span>Comunicados</span>
-      <h2>Principais NotÃ­cias</h2>
+      <h2>Principais Notícias</h2>
       <p>Fique por dentro dos avisos e novidades da nossa igreja.</p>
     </div>
     <div class="noticias-coverflow reveal" id="cfCarousel">
-      <button class="carousel-btn" id="cfPrev" type="button" aria-label="NotÃ­cia anterior">â¹</button>
+      <button class="carousel-btn" id="cfPrev" type="button" aria-label="Notícia anterior">‹</button>
       <div class="cf-stage" id="cfStage"></div>
-      <button class="carousel-btn" id="cfNext" type="button" aria-label="PrÃ³xima notÃ­cia">âº</button>
+      <button class="carousel-btn" id="cfNext" type="button" aria-label="Próxima notícia">›</button>
     </div>
     <div class="cf-dots" id="cfDots"></div>
   </div>
 </section>
-<script type="application/json" id="noticias-data">[{"id": "n1", "tag": "Homenagem", "title": "Feliz Dia do Pastor", "desc": "14 de junho â homenagem da congregaÃ§Ã£o do FlorianÃ³polis ao Pr. Pedro Nascimento.", "link": "", "image": "noticia-dia-do-pastor.jpg"}, {"id": "n2", "tag": "Evento", "title": "PrÃ©-Congresso Renascer em Cristo 2026", "desc": "01 e 02 de agosto, Ã s 18h â Pecado, JustiÃ§a e JuÃ­zo.", "link": "", "image": "noticia-pre-congresso-renascer.jpg"}, {"id": "n3", "tag": "Adolescentes", "title": "Cristo em Mim", "desc": "PrÃ©-congresso de adolescentes do Grupo Manancial â 11 e 12 de abril, Ã s 18h.", "link": "", "image": "noticia-cristo-em-mim.jpg"}, {"id": "n4", "tag": "Culto especial", "title": "Culto da GratidÃ£o", "desc": "28 de dezembro, Ã s 18h.", "link": "", "image": "noticia-culto-gratidao.jpg"}]</script>
+<script type="application/json" id="noticias-data">[{"id": "n1", "tag": "Homenagem", "title": "Feliz Dia do Pastor", "desc": "14 de junho — homenagem da congregação do Florianópolis ao Pr. Pedro Nascimento.", "link": "", "image": "noticia-dia-do-pastor.jpg"}, {"id": "n2", "tag": "Evento", "title": "Pré-Congresso Renascer em Cristo 2026", "desc": "01 e 02 de agosto, às 18h — Pecado, Justiça e Juízo.", "link": "", "image": "noticia-pre-congresso-renascer.jpg"}, {"id": "n3", "tag": "Adolescentes", "title": "Cristo em Mim", "desc": "Pré-congresso de adolescentes do Grupo Manancial — 11 e 12 de abril, às 18h.", "link": "", "image": "noticia-cristo-em-mim.jpg"}, {"id": "n4", "tag": "Culto especial", "title": "Culto da Gratidão", "desc": "28 de dezembro, às 18h.", "link": "", "image": "noticia-culto-gratidao.jpg"}]</script>
 
 <section id="cultos">
   <div class="wrap">
     <div class="section-head reveal">
-      <span class="pill eyebrow"><span class="dot"></span>ProgramaÃ§Ã£o semanal</span>
-      <h2>PrÃ³ximos Cultos e Eventos</h2>
-      <p>Nossa programaÃ§Ã£o regular de cultos e estudos ao longo da semana.</p>
+      <span class="pill eyebrow"><span class="dot"></span>Programação semanal</span>
+      <h2>Próximos Cultos e Eventos</h2>
+      <p>Nossa programação regular de cultos e estudos ao longo da semana.</p>
     </div>
     <div class="cultos-grid reveal">
       <div class="culto-card">
-        <span class="culto-tag" id="cultoCardCultoTag" style="background:rgba(59,130,255,0.14); color:var(--azul)">Domingo Â· 18h</span>
-        <h3 id="cultoCardCultoTitulo">Culto de CelebraÃ§Ã£o</h3>
-        <p id="cultoCardCultoDesc">Louvor, ministraÃ§Ã£o da Palavra e comunhÃ£o com toda a igreja. O tema roda a cada domingo (Infantil, Jovens, VarÃµes, IrmÃ£s, MissÃµes, Adolescentes, FamÃ­lia) â confira o mÃªs na Agenda logo abaixo.</p>
+        <span class="culto-tag" id="cultoCardCultoTag" style="background:rgba(59,130,255,0.14); color:var(--azul)">Domingo · 18h</span>
+        <h3 id="cultoCardCultoTitulo">Culto de Celebração</h3>
+        <p id="cultoCardCultoDesc">Louvor, ministração da Palavra e comunhão com toda a igreja. O tema roda a cada domingo (Infantil, Jovens, Varões, Irmãs, Missões, Adolescentes, Família) — confira o mês na Agenda logo abaixo.</p>
       </div>
       <div class="culto-card">
         <span class="culto-tag" id="cultoCardEventoTag" style="background:rgba(255,122,51,0.14); color:var(--laranja)">Carregando...</span>
-        <h3 id="cultoCardEventoTitulo">PrÃ³ximo evento</h3>
+        <h3 id="cultoCardEventoTitulo">Próximo evento</h3>
         <p id="cultoCardEventoDesc">Buscando a agenda...</p>
       </div>
       <div class="culto-card">
-        <span class="culto-tag" style="background:rgba(255,59,82,0.14); color:var(--vermelho)">Sexta-feira Â· 19h</span>
-        <h3>Campanha de OraÃ§Ã£o</h3>
-        <p>Encontro de oraÃ§Ã£o e intercessÃ£o, toda semana.</p>
+        <span class="culto-tag" style="background:rgba(255,59,82,0.14); color:var(--vermelho)">Sexta-feira · 19h</span>
+        <h3>Campanha de Oração</h3>
+        <p>Encontro de oração e intercessão, toda semana.</p>
       </div>
     </div>
-    <p class="cultos-note reveal">AlÃ©m destes cultos fixos, temos consagraÃ§Ã£o aos sÃ¡bados (uma vez por mÃªs, 08h) e Escola BÃ­blica Dominical â veja os horÃ¡rios das turmas na seÃ§Ã£o EBD.</p>
+    <p class="cultos-note reveal">Além destes cultos fixos, temos consagração aos sábados (uma vez por mês, 08h) e Escola Bíblica Dominical — veja os horários das turmas na seção EBD.</p>
   </div>
 </section>
 
@@ -1303,19 +1311,19 @@
   <div class="wrap">
     <div class="section-head reveal">
       <span class="pill eyebrow"><span class="dot"></span>Agenda 2026</span>
-      <h2>CalendÃ¡rio de cultos e eventos</h2>
-      <p>A programaÃ§Ã£o especial de cada mÃªs, da nossa congregaÃ§Ã£o e tambÃ©m do Setor.</p>
+      <h2>Calendário de cultos e eventos</h2>
+      <p>A programação especial de cada mês, da nossa congregação e também do Setor.</p>
     </div>
 
     <div class="agenda-mes-seletor reveal">
-      <button id="agendaMesAnterior" type="button" aria-label="MÃªs anterior">â¹</button>
+      <button id="agendaMesAnterior" type="button" aria-label="Mês anterior">‹</button>
       <span id="agendaMesAtual">Carregando...</span>
-      <button id="agendaMesProximo" type="button" aria-label="PrÃ³ximo mÃªs">âº</button>
+      <button id="agendaMesProximo" type="button" aria-label="Próximo mês">›</button>
     </div>
 
     <div class="agenda-colunas reveal">
       <div class="agenda-bloco">
-        <h3 class="agenda-bloco-titulo">Agenda Pq FlorianÃ³polis</h3>
+        <h3 class="agenda-bloco-titulo">Agenda Pq Florianópolis</h3>
         <ul id="agendaCongregacaoLista" class="agenda-lista">
           <li class="agenda-vazio">Carregando...</li>
         </ul>
@@ -1335,11 +1343,11 @@
   <div class="wrap">
     <div class="section-head reveal">
       <span class="pill eyebrow"><span class="dot"></span>Quem somos</span>
-      <p class="sobre-intro">Somos a congregaÃ§Ã£o do Parque FlorianÃ³polis, vinculada Ã  Assembleia de Deus do MinistÃ©rio do BelÃ©m em JaguariÃºna-SP, sob a cobertura do nosso Templo Sede (Rua Alfredo Bueno, 1235 â Centro). Fazemos parte dessa histÃ³ria com a mesma vocaÃ§Ã£o: pregar a Palavra com fidelidade, viver o agir do EspÃ­rito Santo e formar discÃ­pulos comprometidos com as Escrituras.</p>
+      <p class="sobre-intro">Somos a congregação do Parque Florianópolis, vinculada à Assembleia de Deus do Ministério do Belém em Jaguariúna-SP, sob a cobertura do nosso Templo Sede (Rua Alfredo Bueno, 1235 – Centro). Fazemos parte dessa história com a mesma vocação: pregar a Palavra com fidelidade, viver o agir do Espírito Santo e formar discípulos comprometidos com as Escrituras.</p>
     </div>
 
     <div class="section-head reveal section-divider">
-      <h2 class="compact">Cada sÃ­mbolo do nosso brasÃ£o conta uma parte da nossa fÃ©</h2>
+      <h2 class="compact">Cada símbolo do nosso brasão conta uma parte da nossa fé</h2>
     </div>
     <div class="simbolos-grid reveal">
       <div class="simbolo-card">
@@ -1347,45 +1355,45 @@
           <img src="tocha.webp" alt="Tocha com chama" style="width:48px;height:auto;" />
         </span>
         <h3>Tocha com chama</h3>
-        <p>O fogo do EspÃ­rito Santo e a vocaÃ§Ã£o pentecostal que nos move.</p>
+        <p>O fogo do Espírito Santo e a vocação pentecostal que nos move.</p>
       </div>
       <div class="simbolo-card">
         <span class="simbolo-icon" style="background:transparent; width:64px; height:64px;">
           <img src="pomba2.webp" alt="Pomba branca" style="width:52px;height:auto;" />
         </span>
         <h3>Pomba branca</h3>
-        <p>A presenÃ§a e a operaÃ§Ã£o do EspÃ­rito Santo em nossa igreja.</p>
+        <p>A presença e a operação do Espírito Santo em nossa igreja.</p>
       </div>
       <div class="simbolo-card">
         <span class="simbolo-icon" style="background:transparent; width:64px; height:64px;">
           <img src="templo.webp" alt="Templo-sede" style="width:44px;height:auto;" />
         </span>
         <h3>Templo-sede</h3>
-        <p>A fachada do nosso templo sede na cidade de JaguariÃºna.</p>
+        <p>A fachada do nosso templo sede na cidade de Jaguariúna.</p>
       </div>
       <div class="simbolo-card">
         <span class="simbolo-icon" style="background:transparent; width:64px; height:64px;">
           <img src="espada2.webp" alt="Espada com as letras AD" style="width:52px;height:auto;" />
         </span>
         <h3>Espada com "AD"</h3>
-        <p>A Palavra de Deus, espada do EspÃ­rito, unida Ã  sigla Assembleia de Deus.</p>
+        <p>A Palavra de Deus, espada do Espírito, unida à sigla Assembleia de Deus.</p>
       </div>
       <div class="simbolo-card">
         <span class="simbolo-icon" style="background:transparent; width:64px; height:64px;">
           <img src="faixa.webp" alt="Faixa inferior" style="width:56px;height:auto;" />
         </span>
         <h3>Faixa inferior</h3>
-        <p>MinistÃ©rio do BelÃ©m em SÃ£o Paulo â nossa filiaÃ§Ã£o a matriz.</p>
+        <p>Ministério do Belém em São Paulo — nossa filiação a matriz.</p>
       </div>
     </div>
     <div class="credo-block reveal section-divider">
       <span class="pill eyebrow"><span class="dot"></span>Nosso Credo</span>
-      <p style="margin-top:20px;">Cremos na BÃ­blia Sagrada como Ãºnica regra infalÃ­vel de fÃ© e prÃ¡tica; em um sÃ³ Deus eterno, em trÃªs pessoas â Pai, Filho e EspÃ­rito Santo; em Jesus Cristo, nascido de virgem, morto e ressuscitado para a nossa salvaÃ§Ã£o; na necessidade do novo nascimento pela fÃ©; no batismo em Ã¡guas por imersÃ£o; no batismo com o EspÃ­rito Santo, evidenciado pelo falar em outras lÃ­nguas; nos dons espirituais para a edificaÃ§Ã£o da Igreja; e na volta gloriosa de Jesus Cristo.</p>
-      <a class="credo-link" href="https://ad.org.br/nosso-credo/" target="_blank" rel="noopener noreferrer">Clique aqui e leia o nosso credo completo oficial pela CGADB â</a>
+      <p style="margin-top:20px;">Cremos na Bíblia Sagrada como única regra infalível de fé e prática; em um só Deus eterno, em três pessoas — Pai, Filho e Espírito Santo; em Jesus Cristo, nascido de virgem, morto e ressuscitado para a nossa salvação; na necessidade do novo nascimento pela fé; no batismo em águas por imersão; no batismo com o Espírito Santo, evidenciado pelo falar em outras línguas; nos dons espirituais para a edificação da Igreja; e na volta gloriosa de Jesus Cristo.</p>
+      <a class="credo-link" href="https://ad.org.br/nosso-credo/" target="_blank" rel="noopener noreferrer">Clique aqui e leia o nosso credo completo oficial pela CGADB →</a>
     </div>
 
     <div class="pastores-head reveal section-divider">
-      <span class="pill eyebrow"><span class="dot"></span>LideranÃ§a</span>
+      <span class="pill eyebrow"><span class="dot"></span>Liderança</span>
       <h2 class="compact" style="margin-top:14px;">Nossos pastores</h2>
     </div>
     <div class="pastores-panel reveal">
@@ -1412,43 +1420,43 @@
     <div class="section-head reveal">
       <span class="pill eyebrow"><span class="dot"></span>Nossos Departamentos</span>
       <h2>Encontre seu lugar para servir</h2>
-      <p>ConheÃ§a os departamentos da nossa congregaÃ§Ã£o e saiba mais sobre cada um deles.</p>
+      <p>Conheça os departamentos da nossa congregação e saiba mais sobre cada um deles.</p>
     </div>
     <div class="departamentos-grid reveal">
       <a class="dept-card" href="https://claude.ai/code/artifact/22615238-e343-4d66-aede-89d93b99b00f">
-        <span class="dept-icon">ð§¸</span>
+        <span class="dept-icon">🧸</span>
         <h3>Infantil</h3>
-        <span class="dept-arrow">â</span>
+        <span class="dept-arrow">→</span>
       </a>
       <a class="dept-card" href="https://claude.ai/code/artifact/1525bff6-5361-4a41-aa4e-9c5197b5f63c">
-        <span class="dept-icon">ð§</span>
+        <span class="dept-icon">🎧</span>
         <h3>Adolescentes</h3>
-        <span class="dept-arrow">â</span>
+        <span class="dept-arrow">→</span>
       </a>
       <a class="dept-card" href="https://claude.ai/code/artifact/6fb57abb-e021-4a62-b57c-ed5f1e35c0dd">
-        <span class="dept-icon">ð¥</span>
+        <span class="dept-icon">🔥</span>
         <h3>Jovens</h3>
-        <span class="dept-arrow">â</span>
+        <span class="dept-arrow">→</span>
       </a>
       <a class="dept-card" href="https://claude.ai/code/artifact/233d317f-e13f-4999-a814-48e61db1f40c">
-        <span class="dept-icon">ð¡ï¸</span>
-        <h3>VarÃµes</h3>
-        <span class="dept-arrow">â</span>
+        <span class="dept-icon">🛡️</span>
+        <h3>Varões</h3>
+        <span class="dept-arrow">→</span>
       </a>
       <a class="dept-card" href="https://claude.ai/code/artifact/3a6b0bda-55c6-4185-9c57-d2f9ce5b8be6">
-        <span class="dept-icon">ð¸</span>
+        <span class="dept-icon">🌸</span>
         <h3>Feminina</h3>
-        <span class="dept-arrow">â</span>
+        <span class="dept-arrow">→</span>
       </a>
       <a class="dept-card" href="https://claude.ai/code/artifact/2908094b-92f3-441a-a7e2-e4e6c39604c3">
-        <span class="dept-icon">ð</span>
-        <h3>MissÃµes</h3>
-        <span class="dept-arrow">â</span>
+        <span class="dept-icon">🌍</span>
+        <h3>Missões</h3>
+        <span class="dept-arrow">→</span>
       </a>
       <a class="dept-card" href="#ebd">
-        <span class="dept-icon">ð</span>
+        <span class="dept-icon">📖</span>
         <h3>EBD</h3>
-        <span class="dept-arrow">â</span>
+        <span class="dept-arrow">→</span>
       </a>
     </div>
   </div>
@@ -1457,9 +1465,9 @@
 <section id="ebd">
   <div class="wrap">
     <div class="section-head reveal">
-      <span class="pill eyebrow"><span class="dot"></span>Escola BÃ­blica Dominical</span>
+      <span class="pill eyebrow"><span class="dot"></span>Escola Bíblica Dominical</span>
       <h2>Ensino da Palavra para cada fase da vida</h2>
-      <p>CurrÃ­culo trimestral oficial da CPAD, com estudos teolÃ³gicos sistemÃ¡ticos, livros bÃ­blicos e Ã©tica cristÃ£ â preservando as diretrizes pentecostais clÃ¡ssicas da denominaÃ§Ã£o.</p>
+      <p>Currículo trimestral oficial da CPAD, com estudos teológicos sistemáticos, livros bíblicos e ética cristã — preservando as diretrizes pentecostais clássicas da denominação.</p>
     </div>
     <div class="ebd-grid reveal">
       <div class="turma">
@@ -1467,53 +1475,53 @@
           <span class="turma-badge" style="background:rgba(255,59,82,0.14); color:var(--vermelho)">I1</span>
           <h3>Infantil 1</h3>
         </div>
-        <p>Primeiros passos na fÃ©, com canÃ§Ãµes, gestos e as primeiras histÃ³rias da BÃ­blia.</p>
+        <p>Primeiros passos na fé, com canções, gestos e as primeiras histórias da Bíblia.</p>
       </div>
       <div class="turma">
         <div class="turma-head">
           <span class="turma-badge" style="background:rgba(255,59,82,0.14); color:var(--vermelho)">I2</span>
           <h3>Infantil 2</h3>
         </div>
-        <p>Descoberta das grandes narrativas bÃ­blicas de forma lÃºdica e participativa.</p>
+        <p>Descoberta das grandes narrativas bíblicas de forma lúdica e participativa.</p>
       </div>
       <div class="turma">
         <div class="turma-head">
           <span class="turma-badge" style="background:rgba(255,122,51,0.14); color:var(--laranja)">A</span>
           <h3>Adolescentes</h3>
         </div>
-        <p>Identidade, escolhas e fÃ© em diÃ¡logo com os desafios da idade.</p>
+        <p>Identidade, escolhas e fé em diálogo com os desafios da idade.</p>
       </div>
       <div class="turma">
         <div class="turma-head">
           <span class="turma-badge" style="background:rgba(162,241,213,0.18); color:var(--jovens)">J</span>
           <h3>Jovens</h3>
         </div>
-        <p>VocaÃ§Ã£o, relacionamentos e vida cristÃ£ em tempos de decisÃ£o.</p>
+        <p>Vocação, relacionamentos e vida cristã em tempos de decisão.</p>
       </div>
       <div class="turma">
         <div class="turma-head">
           <span class="turma-badge" style="background:rgba(59,91,255,0.18); color:var(--azul-royal)">V</span>
-          <h3>Adulto VarÃµes</h3>
+          <h3>Adulto Varões</h3>
         </div>
-        <p>Estudo sistemÃ¡tico da teologia e da Ã©tica cristÃ£ Ã  luz das Escrituras para Homens.</p>
+        <p>Estudo sistemático da teologia e da ética cristã à luz das Escrituras para Homens.</p>
       </div>
       <div class="turma">
         <div class="turma-head">
           <span class="turma-badge" style="background:rgba(255,158,200,0.18); color:var(--rosa-claro)">F</span>
           <h3>Adulto Feminino</h3>
         </div>
-        <p>Estudo sistemÃ¡tico da teologia e da Ã©tica cristÃ£ Ã  luz das Escrituras para Mulheres.</p>
+        <p>Estudo sistemático da teologia e da ética cristã à luz das Escrituras para Mulheres.</p>
       </div>
       <div class="turma">
         <div class="turma-head">
           <span class="turma-badge" style="background:rgba(201,205,211,0.18); color:var(--prata)">N</span>
           <h3>Novos Convertidos</h3>
         </div>
-        <p>Fundamentos da fÃ© para quem inicia a caminhada com Cristo.</p>
+        <p>Fundamentos da fé para quem inicia a caminhada com Cristo.</p>
       </div>
     </div>
     <div class="ebd-note reveal">
-      <strong>Discipulado contÃ­nuo!</strong> Nosso propÃ³sito na EBD e nos Cultos de Ensino Ã© mergulhar nas Escrituras e caminhar lado a lado com cada aluno. Das crianÃ§as aos adultos, passando pelos novos convertidos, nosso foco Ã© o seu crescimento espiritual.
+      <strong>Discipulado contínuo!</strong> Nosso propósito na EBD e nos Cultos de Ensino é mergulhar nas Escrituras e caminhar lado a lado com cada aluno. Das crianças aos adultos, passando pelos novos convertidos, nosso foco é o seu crescimento espiritual.
     </div>
   </div>
 </section>
@@ -1524,9 +1532,9 @@
       <div class="contato-inner">
         <span class="pill eyebrow"><span class="dot"></span>Visite-nos</span>
         <h2>Venha adorar com a gente!</h2>
-        <p class="lead">Sua famÃ­lia Ã© muito importante para nÃ³s. Junte-se Ã  nossa comunidade para adorar, aprender e servir. Consulte abaixo nossos horÃ¡rios de cultos, EBD e programaÃ§Ãµes.</p>
+        <p class="lead">Sua família é muito importante para nós. Junte-se à nossa comunidade para adorar, aprender e servir. Consulte abaixo nossos horários de cultos, EBD e programações.</p>
         <div class="info-box">
-          <strong>EndereÃ§o: Rua Bruna Laurita Massoti de Almeida, 193B â Pq FlorianÃ³polis, JaguariÃºna - SP.</strong>
+          <strong>Endereço: Rua Bruna Laurita Massoti de Almeida, 193B — Pq Florianópolis, Jaguariúna - SP.</strong>
         </div>
         <div class="maps-links">
           <a class="map-btn gmaps" href="https://www.google.com/maps/search/?api=1&query=Rua%20Bruna%20Laurita%20Massoti%20de%20Almeida%2C%20193B%2C%20Pq%20Florian%C3%B3polis%2C%20Jaguari%C3%BAna%20-%20SP" target="_blank" rel="noopener">
@@ -1545,8 +1553,8 @@
 
 <footer>
   <div class="wrap footer-inner">
-    <span>Â© <span id="ano"></span> Igreja Assembleia de Deus Parque FlorianÃ³polis â MinistÃ©rio do BelÃ©m</span>
-    <span>JaguariÃºna, SP</span>
+    <span>© <span id="ano"></span> Igreja Assembleia de Deus Parque Florianópolis — Ministério do Belém</span>
+    <span>Jaguariúna, SP</span>
   </div>
 </footer>
 
@@ -1554,14 +1562,14 @@
 
   <section id="areaGerenciarPerfis" class="portal-section">
     <h2>Gerenciar Perfis</h2>
-    <p class="admin-agenda-info">Defina o perfil de acesso de cada pessoa cadastrada no site. Contas novas entram como "Convidado" atÃ© serem revisadas aqui.</p>
+    <p class="admin-agenda-info">Defina o perfil de acesso de cada pessoa cadastrada no site. Contas novas entram como "Convidado" até serem revisadas aqui.</p>
     <p id="gerenciarPerfisStatus" class="admin-agenda-status"></p>
     <div id="gerenciarPerfisLista" class="admin-perfis-lista">Carregando...</div>
   </section>
 
   <section id="areaGerenciarLicoes" class="portal-section">
-    <h2>Gerenciar LiÃ§Ãµes</h2>
-    <p class="admin-agenda-info">Cadastre os tÃ­tulos das liÃ§Ãµes da revista trimestral de cada Sala. O Professor escolhe entre esses tÃ­tulos ao lanÃ§ar a chamada, mas pode editar o texto depois de escolher.</p>
+    <h2>Gerenciar Lições</h2>
+    <p class="admin-agenda-info">Cadastre os títulos das lições da revista trimestral de cada Sala. O Professor escolhe entre esses títulos ao lançar a chamada, mas pode editar o texto depois de escolher.</p>
     <div class="admin-form">
       <label>Sala
         <select id="licoesSalaSeletor">
@@ -1577,22 +1585,22 @@
           </label>
           <label style="flex:1;">Trimestre
             <select id="licoesTrimestreSelect">
-              <option value="1">1Âº Trimestre (Jan-Mar)</option>
-              <option value="2">2Âº Trimestre (Abr-Jun)</option>
-              <option value="3">3Âº Trimestre (Jul-Set)</option>
-              <option value="4">4Âº Trimestre (Out-Dez)</option>
+              <option value="1">1º Trimestre (Jan-Mar)</option>
+              <option value="2">2º Trimestre (Abr-Jun)</option>
+              <option value="3">3º Trimestre (Jul-Set)</option>
+              <option value="4">4º Trimestre (Out-Dez)</option>
             </select>
           </label>
         </div>
         <p id="licoesMigracaoAviso" class="admin-agenda-info" hidden></p>
         <div id="licoesCamposLista"></div>
         <div class="admin-form-botoes">
-          <button type="button" id="btnSalvarLicoes" class="btn-admin">Salvar LiÃ§Ãµes</button>
+          <button type="button" id="btnSalvarLicoes" class="btn-admin">Salvar Lições</button>
         </div>
         <p id="licoesStatus" class="admin-agenda-status"></p>
 
         <div class="perfil-secao-titulo">Revista em PDF</div>
-        <p class="admin-agenda-info" style="margin-top:-6px;">Envie o PDF da revista trimestral desta Sala â vai aparecer para o Professor (e, quando a Sala do Aluno tiver conteÃºdo, para os Alunos tambÃ©m).</p>
+        <p class="admin-agenda-info" style="margin-top:-6px;">Envie o PDF da revista trimestral desta Sala — vai aparecer para o Professor (e, quando a Sala do Aluno tiver conteúdo, para os Alunos também).</p>
         <p id="licoesPdfAtual" class="admin-agenda-info" hidden></p>
         <div class="admin-form-linha">
           <input type="file" id="licoesPdfInput" accept="application/pdf">
@@ -1606,9 +1614,9 @@
 
     <section id="areaAgenda" class="portal-section">
     <h2>Agenda de Cultos e Eventos</h2>
-    <p class="admin-agenda-info">Cadastre, edite ou remova os eventos que aparecem na seÃ§Ã£o "Agenda" do site â tanto da nossa CongregaÃ§Ã£o quanto do Setor.</p>
+    <p class="admin-agenda-info">Cadastre, edite ou remova os eventos que aparecem na seção "Agenda" do site — tanto da nossa Congregação quanto do Setor.</p>
 
-    <button id="btnImportarAgenda" type="button" class="btn-admin" hidden>Importar agenda 2026 (uma vez sÃ³)</button>
+    <button id="btnImportarAgenda" type="button" class="btn-admin" hidden>Importar agenda 2026 (uma vez só)</button>
     <p id="importarAgendaStatus" class="admin-agenda-status"></p>
 
     <form id="formAgendaEvento" class="admin-form">
@@ -1616,7 +1624,7 @@
       <div class="admin-form-linha">
         <label>Agenda
           <select id="eventoEscopo" required>
-            <option value="congregacao">Nossa congregaÃ§Ã£o</option>
+            <option value="congregacao">Nossa congregação</option>
             <option value="setor">Setor</option>
           </select>
         </label>
@@ -1626,9 +1634,9 @@
             <option value="Infantil">Infantil</option>
             <option value="Adolescentes">Adolescentes</option>
             <option value="Jovens">Jovens</option>
-            <option value="VarÃµes">VarÃµes</option>
+            <option value="Varões">Varões</option>
             <option value="Feminino">Feminino</option>
-            <option value="MissÃµes">MissÃµes</option>
+            <option value="Missões">Missões</option>
             <option value="Culto">Culto</option>
             <option value="_novo">+ Criar novo...</option>
           </select>
@@ -1640,15 +1648,15 @@
         </label>
       </div>
       <div class="admin-congregacoes-grupo" id="linhaCongregacoesSetor" hidden>
-        <span>CongregaÃ§Ãµes envolvidas (Setor)</span>
+        <span>Congregações envolvidas (Setor)</span>
         <div class="admin-congregacoes-opcoes" id="opcoesCongregacoes"></div>
-        <input type="text" id="eventoCongregacaoOutra" placeholder="Nome da nova congregaÃ§Ã£o" hidden>
+        <input type="text" id="eventoCongregacaoOutra" placeholder="Nome da nova congregação" hidden>
       </div>
       <div class="admin-form-linha">
-        <label>Data inÃ­cio
+        <label>Data início
           <input type="date" id="eventoDataInicio" required>
         </label>
-        <label>HorÃ¡rio (opcional)
+        <label>Horário (opcional)
           <input type="text" id="eventoHora" placeholder="Ex: 18h">
         </label>
       </div>
@@ -1659,15 +1667,15 @@
       <div id="blocoOutrasDatas" class="admin-outras-datas" hidden>
         <div id="listaOutrasDatas"></div>
       </div>
-      <label>TÃ­tulo
-        <input type="text" id="eventoTitulo" required placeholder="Ex: Culto de MissÃµes">
+      <label>Título
+        <input type="text" id="eventoTitulo" required placeholder="Ex: Culto de Missões">
       </label>
-      <label>ObservaÃ§Ã£o (opcional)
-        <input type="text" id="eventoObservacao" placeholder="Ex: confirmar data com a lideranÃ§a">
+      <label>Observação (opcional)
+        <input type="text" id="eventoObservacao" placeholder="Ex: confirmar data com a liderança">
       </label>
       <div class="admin-form-botoes">
         <button type="submit" class="btn-admin btn-admin-primario">Salvar Evento</button>
-        <button type="button" id="btnCancelarEdicao" class="btn-admin" hidden>Cancelar ediÃ§Ã£o</button>
+        <button type="button" id="btnCancelarEdicao" class="btn-admin" hidden>Cancelar edição</button>
       </div>
     </form>
 
@@ -1676,15 +1684,15 @@
       <div class="admin-agenda-filtro">
         <select id="filtroEscopo">
           <option value="todos">Todos os escopos</option>
-          <option value="congregacao">SÃ³ CongregaÃ§Ã£o</option>
-          <option value="setor">SÃ³ Setor</option>
+          <option value="congregacao">Só Congregação</option>
+          <option value="setor">Só Setor</option>
         </select>
         <select id="filtroDepartamento">
           <option value="todos">Todos os departamentos</option>
         </select>
         <input type="date" id="filtroDataInicio" title="De">
-        <input type="date" id="filtroDataFim" title="AtÃ©">
-        <input type="text" id="filtroTitulo" placeholder="Buscar por tÃ­tulo...">
+        <input type="date" id="filtroDataFim" title="Até">
+        <input type="text" id="filtroTitulo" placeholder="Buscar por título...">
       </div>
       <div id="adminAgendaLista" class="admin-agenda-lista">Carregando...</div>
     </div>
@@ -1692,7 +1700,7 @@
 
   <section id="areaProfessor" class="portal-section">
     <h2>Sala do Professor</h2>
-    <p class="admin-agenda-info">FaÃ§a a chamada da sua Sala e lance a oferta dos alunos e suba arquivos que considere ser apoio para a sala de aula.</p>
+    <p class="admin-agenda-info">Faça a chamada da sua Sala e lance a oferta dos alunos e suba arquivos que considere ser apoio para a sala de aula.</p>
 
     <div id="professorSalaSeletorWrap" class="admin-form-linha" style="margin-top:14px;" hidden>
       <label>Sala
@@ -1702,18 +1710,18 @@
 
     <p id="professorRevistaPdf" class="admin-agenda-info" hidden></p>
 
-    <p id="professorSemSalaAviso" class="admin-agenda-vazio" hidden>VocÃª ainda nÃ£o estÃ¡ escalado em nenhuma Sala. PeÃ§a para o Administrador Master te atribuir em "Gerenciar Salas" (Professores por Turma).</p>
+    <p id="professorSemSalaAviso" class="admin-agenda-vazio" hidden>Você ainda não está escalado em nenhuma Sala. Peça para o Administrador Master te atribuir em "Gerenciar Salas" (Professores por Turma).</p>
 
     <div id="professorConteudo" hidden>
 
       <div class="professor-canvas-grid">
         <button type="button" class="professor-canvas-card" data-canvas="alunos">
           <span class="professor-canvas-titulo">Alunos Matriculados</span>
-          <span class="professor-canvas-sub">Ver e gerenciar quem estÃ¡ na Sala</span>
+          <span class="professor-canvas-sub">Ver e gerenciar quem está na Sala</span>
         </button>
         <button type="button" class="professor-canvas-card" data-canvas="chamada">
           <span class="professor-canvas-titulo">Chamada</span>
-          <span class="professor-canvas-sub">PresenÃ§a e ofertas da aula</span>
+          <span class="professor-canvas-sub">Presença e ofertas da aula</span>
         </button>
         <button type="button" class="professor-canvas-card" data-canvas="arquivos">
           <span class="professor-canvas-titulo">Arquivos e documentos</span>
@@ -1728,17 +1736,17 @@
         <div id="salaAlunosLista" class="admin-perfis-lista"></div>
 
         <div class="admin-form-linha" style="margin-top:10px;">
-          <label style="flex:2;">Vincular cadastro jÃ¡ existente no site
+          <label style="flex:2;">Vincular cadastro já existente no site
             <select id="salaAlunoCandidato" class="admin-perfis-item-select"></select>
           </label>
           <div style="display:flex; align-items:flex-end;">
-            <button type="button" id="btnAdicionarAlunoConta" class="btn-admin">+ Vincular Ã  Sala</button>
+            <button type="button" id="btnAdicionarAlunoConta" class="btn-admin">+ Vincular à Sala</button>
           </div>
         </div>
 
         <div class="admin-form" style="margin-top:6px;">
           <div class="admin-form-linha">
-            <label style="flex:2;">Adicionar sem login (crianÃ§as, etc.)
+            <label style="flex:2;">Adicionar sem login (crianças, etc.)
               <input type="text" id="salaAlunoAvulsoNome" placeholder="Nome do aluno">
             </label>
             <label style="flex:1;">Data de nascimento
@@ -1748,15 +1756,15 @@
           <div class="admin-form-linha" style="align-items:center;">
             <label style="display:flex; align-items:center; gap:6px; flex:1;">
               <input type="checkbox" id="salaAlunoAvulsoCrianca" style="width:auto;">
-              Ã uma crianÃ§a!
+              É uma criança!
             </label>
           </div>
           <div id="salaAlunoAvulsoResponsaveisWrap" class="admin-form-linha" hidden>
-            <label style="flex:1;">Pai/ResponsÃ¡vel
-              <input type="text" id="salaAlunoAvulsoPai" placeholder="Nome do pai ou responsÃ¡vel">
+            <label style="flex:1;">Pai/Responsável
+              <input type="text" id="salaAlunoAvulsoPai" placeholder="Nome do pai ou responsável">
             </label>
-            <label style="flex:1;">MÃ£e/ResponsÃ¡vel
-              <input type="text" id="salaAlunoAvulsoMae" placeholder="Nome da mÃ£e ou responsÃ¡vel">
+            <label style="flex:1;">Mãe/Responsável
+              <input type="text" id="salaAlunoAvulsoMae" placeholder="Nome da mãe ou responsável">
             </label>
           </div>
           <div class="admin-form-botoes">
@@ -1776,11 +1784,11 @@
               <input type="date" id="relatorioData" required>
             </label>
           </div>
-          <label>Tema da aula (LiÃ§Ã£o)
+          <label>Tema da aula (Lição)
             <select id="relatorioTemaSeletor" class="admin-perfis-item-select"></select>
           </label>
-          <label>TÃ­tulo da liÃ§Ã£o (pode editar)
-            <input type="text" id="relatorioTema" placeholder="Ex.: A parÃ¡bola do semeador">
+          <label>Título da lição (pode editar)
+            <input type="text" id="relatorioTema" placeholder="Ex.: A parábola do semeador">
           </label>
 
           <div class="admin-form-linha" style="margin-top:10px;">
@@ -1810,7 +1818,7 @@
           </div>
 
           <div class="admin-form-botoes">
-            <button type="submit" class="btn-admin">Salvar RelatÃ³rio</button>
+            <button type="submit" class="btn-admin">Salvar Relatório</button>
           </div>
           <p id="relatorioStatus" class="admin-agenda-status"></p>
         </form>
@@ -1842,12 +1850,12 @@
 
   <section id="areaPostsSite" class="portal-section">
     <h2>Post's do Site!</h2>
-    <p>Gerencie aqui os posts do carrossel de notÃ­cias principais da home do site. (conteÃºdo a definir)</p>
+    <p>Gerencie aqui os posts do carrossel de notícias principais da home do site. (conteúdo a definir)</p>
   </section>
 
       <section id="areaCadastroSalas" class="portal-section">
     <h2>Gerenciar Salas</h2>
-    <p class="admin-agenda-info">Organize as Salas da Escola BÃ­blica Dominical: crie e edite as Turmas e monte o pool de Professores de cada uma para o rodÃ­zio de Escala.</p>
+    <p class="admin-agenda-info">Organize as Salas da Escola Bíblica Dominical: crie e edite as Turmas e monte o pool de Professores de cada uma para o rodízio de Escala.</p>
 
     <div class="professor-canvas-grid">
       <button type="button" class="professor-canvas-card" data-canvasala="turma">
@@ -1860,12 +1868,12 @@
       </button>
       <button type="button" class="professor-canvas-card" data-canvasala="extra">
         <span class="professor-canvas-titulo">Gerenciar Escala</span>
-        <span class="professor-canvas-sub">Monte o rodÃ­zio de professores por Domingo</span>
+        <span class="professor-canvas-sub">Monte o rodízio de professores por Domingo</span>
       </button>
     </div>
 
     <div id="canvaSalaTurma" class="canva-sanfona-conteudo">
-      <button id="btnImportarSalas" type="button" class="btn-admin" hidden>Cadastrar as 6 Salas padrÃ£o (uma vez sÃ³)</button>
+      <button id="btnImportarSalas" type="button" class="btn-admin" hidden>Cadastrar as 6 Salas padrão (uma vez só)</button>
 
       <div class="admin-form" style="margin-top:6px;">
         <div class="admin-form-linha">
@@ -1878,9 +1886,9 @@
               <option value="Infantil">Infantil</option>
               <option value="Adolescentes">Adolescentes</option>
               <option value="Jovens">Jovens</option>
-              <option value="VarÃµes">VarÃµes</option>
+              <option value="Varões">Varões</option>
               <option value="Feminino">Feminino</option>
-              <option value="MissÃµes">MissÃµes</option>
+              <option value="Missões">Missões</option>
               <option value="Culto">Culto</option>
               <option value="__novo__">+ Criar novo...</option>
             </select>
@@ -1902,26 +1910,26 @@
     </div>
 
     <div id="canvaSalaProfessores" class="canva-sanfona-conteudo">
-      <p class="admin-agenda-info">Cadastre todos os Professores que podem dar aula em cada Sala. Esse grupo (pool) serÃ¡ usado para montar o rodÃ­zio de Escala, Domingo a Domingo.</p>
+      <p class="admin-agenda-info">Cadastre todos os Professores que podem dar aula em cada Sala. Esse grupo (pool) será usado para montar o rodízio de Escala, Domingo a Domingo.</p>
       <p id="gerenciarSalasStatus" class="admin-agenda-status"></p>
       <div id="gerenciarSalasLista" class="admin-perfis-lista">Carregando...</div>
     </div>
 
     <div id="canvaSalaExtra" class="canva-sanfona-conteudo">
-      <p class="admin-agenda-info">Monte o rodÃ­zio de professores: escolha o Trimestre e o MÃªs, e defina quem dÃ¡ aula em cada Sala, Domingo a Domingo.</p>
+      <p class="admin-agenda-info">Monte o rodízio de professores: escolha o Trimestre e o Mês, e defina quem dá aula em cada Sala, Domingo a Domingo.</p>
       <div class="admin-form-linha">
         <label style="flex:1;">Ano
           <select id="escalaAnoSelect"></select>
         </label>
         <label style="flex:1;">Trimestre
           <select id="escalaTrimestreSelect">
-            <option value="1">1Âº Trimestre (Jan-Mar)</option>
-            <option value="2">2Âº Trimestre (Abr-Jun)</option>
-            <option value="3">3Âº Trimestre (Jul-Set)</option>
-            <option value="4">4Âº Trimestre (Out-Dez)</option>
+            <option value="1">1º Trimestre (Jan-Mar)</option>
+            <option value="2">2º Trimestre (Abr-Jun)</option>
+            <option value="3">3º Trimestre (Jul-Set)</option>
+            <option value="4">4º Trimestre (Out-Dez)</option>
           </select>
         </label>
-        <label style="flex:1;">MÃªs
+        <label style="flex:1;">Mês
           <select id="escalaMesSelect"></select>
         </label>
       </div>
@@ -2004,7 +2012,7 @@
     form.addEventListener('submit', function (e) { e.preventDefault(); });
   })(); (function () { var toggleBtn = document.getElementById('toggleSenha'); var senhaInput = document.getElementById('loginSenha'); var iconAberto = document.getElementById('iconOlhoAberto'); var iconFechado = document.getElementById('iconOlhoFechado'); if (!toggleBtn || !senhaInput) return; toggleBtn.addEventListener('click', function () { var mostrando = senhaInput.type === 'text'; senhaInput.type = mostrando ? 'password' : 'text'; toggleBtn.setAttribute('aria-label', mostrando ? 'Mostrar senha' : 'Ocultar senha'); if (iconAberto) iconAberto.style.display = mostrando ? '' : 'none'; if (iconFechado) iconFechado.style.display = mostrando ? 'none' : ''; }); })();
 
-  // Menu suspenso do usuÃ¡rio logado ("OlÃ¡ <Nome>" -> Perfil / EndereÃ§o / Ajuda / Sair)
+  // Menu suspenso do usuário logado ("Olá <Nome>" -> Perfil / Endereço / Ajuda / Sair)
   (function () {
     var wrap = document.getElementById('navLoginWrap');
     var btn = document.getElementById('loginBtn');
@@ -2036,8 +2044,8 @@
     });
 
     // Perfil abre o formulario de perfil (definido no script principal, mais
-    // abaixo). EndereÃ§o e Ajuda ainda nÃ£o tÃªm conteÃºdo prÃ³prio - por enquanto
-    // sÃ³ fecham o menu.
+    // abaixo). Endereço e Ajuda ainda não têm conteúdo próprio - por enquanto
+    // só fecham o menu.
     menu.querySelectorAll('.nav-user-menu-item:not(#btnSairMenu)').forEach(function (item) {
       item.addEventListener('click', function () {
         fecharMenu();
@@ -2072,7 +2080,7 @@
       link.addEventListener('click', function () { setActive(link.dataset.nav); });
     });
 
-    // Ao rolar a pÃ¡gina, o item ativo acompanha a seÃ§Ã£o visÃ­vel na tela.
+    // Ao rolar a página, o item ativo acompanha a seção visível na tela.
     var sections = navLinks
       .map(function (link) { return document.getElementById(link.dataset.nav); })
       .filter(Boolean);
@@ -2188,7 +2196,7 @@
         var dot = document.createElement('button');
         dot.type = 'button';
         dot.className = 'cf-dot';
-        dot.setAttribute('aria-label', 'Ir para notÃ­cia ' + (i + 1));
+        dot.setAttribute('aria-label', 'Ir para notícia ' + (i + 1));
         dot.addEventListener('click', function () { goTo(i); });
         dotsEl.appendChild(dot);
         dotEls.push(dot);
@@ -2308,7 +2316,7 @@
         return;
       }
       if (!window.google || !window.google.accounts || !window.google.accounts.oauth2) {
-        reject(new Error("NÃ£o foi possÃ­vel carregar o login do Google. Recarregue a pÃ¡gina e tente novamente."));
+        reject(new Error("Não foi possível carregar o login do Google. Recarregue a página e tente novamente."));
         return;
       }
       if (!googleDriveTokenClient) {
@@ -2324,7 +2332,7 @@
           googleDriveTokenExpira = Date.now() + (Number(resposta.expires_in || 3500) * 1000);
           resolve(googleDriveAccessToken);
         } else {
-          reject(new Error("NÃ£o foi possÃ­vel autorizar o acesso ao Google Drive."));
+          reject(new Error("Não foi possível autorizar o acesso ao Google Drive."));
         }
       };
       googleDriveTokenClient.requestAccessToken({ prompt: "" });
@@ -2333,7 +2341,7 @@
 
   async function enviarArquivoParaDrive(arquivo, salaId) {
     const pastaId = SALA_DRIVE_FOLDERS[salaId];
-    if (!pastaId) throw new Error("Esta sala ainda nÃ£o tem uma pasta do Google Drive configurada.");
+    if (!pastaId) throw new Error("Esta sala ainda não tem uma pasta do Google Drive configurada.");
     const token = await obterTokenDrive();
     const metadata = { name: arquivo.name, parents: [pastaId] };
     const initResp = await fetch("https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable", {
@@ -2344,14 +2352,14 @@
       },
       body: JSON.stringify(metadata)
     });
-    if (!initResp.ok) throw new Error("NÃ£o foi possÃ­vel iniciar o envio para o Google Drive.");
+    if (!initResp.ok) throw new Error("Não foi possível iniciar o envio para o Google Drive.");
     const uploadUrl = initResp.headers.get("Location");
     const uploadResp = await fetch(uploadUrl, {
       method: "PUT",
       headers: { "Content-Type": arquivo.type || "application/octet-stream" },
       body: arquivo
     });
-    if (!uploadResp.ok) throw new Error("NÃ£o foi possÃ­vel enviar o arquivo para o Google Drive.");
+    if (!uploadResp.ok) throw new Error("Não foi possível enviar o arquivo para o Google Drive.");
     const arquivoDrive = await uploadResp.json();
     await fetch("https://www.googleapis.com/drive/v3/files/" + arquivoDrive.id + "/permissions", {
       method: "POST",
@@ -2376,9 +2384,9 @@
     });
   }
 
-  const DEPARTAMENTOS = ["Infantil", "Adolescentes", "Jovens", "VarÃµes", "Feminino", "MissÃµes", "Culto"];
-  const CONGREGACOES_SETOR = ["Sede", "Roseira", "Cruzeiro", "Bananal", "JaguariÃºna", "Primavera", "Pq FlorianÃ³polis"];
-  const CONGREGACAO_LOCAL = "Pq FlorianÃ³polis";
+  const DEPARTAMENTOS = ["Infantil", "Adolescentes", "Jovens", "Varões", "Feminino", "Missões", "Culto"];
+  const CONGREGACOES_SETOR = ["Sede", "Roseira", "Cruzeiro", "Bananal", "Jaguariúna", "Primavera", "Pq Florianópolis"];
+  const CONGREGACAO_LOCAL = "Pq Florianópolis";
 
   const AREAS_POR_PERFIL = {
     admin: ["siteHome", "areaGerenciarPerfis", "areaGerenciarLicoes", "areaAgenda", "areaProfessor", "areaAluno", "areaAdministrativo", "areaPostsSite", "areaCadastroSalas"],
@@ -2400,8 +2408,8 @@
       link.classList.toggle("active", link.dataset.area === areaId);
     });
     // Recarrega listas que dependem de outros cadastros (ex: perfil de
-    // usuÃ¡rios) toda vez que a Ã¡rea Ã© reaberta, para nÃ£o mostrar dados
-    // desatualizados de quando a Ã¡rea foi carregada pela primeira vez.
+    // usuários) toda vez que a área é reaberta, para não mostrar dados
+    // desatualizados de quando a área foi carregada pela primeira vez.
     if (areaId === "areaGerenciarPerfis" && window.__recarregarGerenciarPerfis) window.__recarregarGerenciarPerfis();
     if (areaId === "areaCadastroSalas" && window.__recarregarGerenciarSalas) window.__recarregarGerenciarSalas();
     if (areaId === "areaGerenciarLicoes" && window.__recarregarGerenciarLicoesSalas) window.__recarregarGerenciarLicoesSalas();
@@ -2439,19 +2447,19 @@
     }
 
     if (dadosUsuario.ativo === false) {
-      // Conta excluÃ­da (desativada) - ver "Excluir Conta" no modal de Perfil.
-      // Em vez de apagar o cadastro do banco, sÃ³ marcamos ativo:false e
+      // Conta excluída (desativada) - ver "Excluir Conta" no modal de Perfil.
+      // Em vez de apagar o cadastro do banco, só marcamos ativo:false e
       // bloqueamos o acesso aqui, na hora do login.
       await signOut(auth);
-      alert("Esta conta foi excluÃ­da e nÃ£o pode mais ser usada para entrar.");
+      alert("Esta conta foi excluída e não pode mais ser usada para entrar.");
       return;
     }
 
     const perfil = dadosUsuario.perfil || "convidado";
-    const nome = dadosUsuario.nome || (user.email ? user.email.split("@")[0] : "UsuÃ¡rio");
+    const nome = dadosUsuario.nome || (user.email ? user.email.split("@")[0] : "Usuário");
     usuarioAtualCache = Object.assign({ uid: user.uid, email: user.email }, dadosUsuario);
 
-    loginLabel.textContent = "OlÃ¡ " + nome;
+    loginLabel.textContent = "Olá " + nome;
     window.__loginBtnAcao = () => { if (window.__toggleUserMenu) window.__toggleUserMenu(); };
     window.__logoutAcao = () => signOut(auth);
 
@@ -2495,7 +2503,7 @@
   });
 
   // =================================================================
-  // Gerenciar Perfis (sÃ³ admin) - lista todos os usuarios cadastrados e
+  // Gerenciar Perfis (só admin) - lista todos os usuarios cadastrados e
   // deixa escolher o perfil de cada um (Convidado, Aluno, Professor,
   // Administrativo, Administrador).
   // =================================================================
@@ -2512,13 +2520,13 @@
         const snap = await getDocs(collection(db, "usuarios"));
         const usuarios = [];
         snap.forEach((d) => usuarios.push(Object.assign({ uid: d.id }, d.data())));
-        // Contas com ativo:false foram excluÃ­das pela prÃ³pria pessoa (ver
-        // "Excluir Conta" no modal de Perfil) - nÃ£o aparecem aqui.
+        // Contas com ativo:false foram excluídas pela própria pessoa (ver
+        // "Excluir Conta" no modal de Perfil) - não aparecem aqui.
         const usuariosAtivos = usuarios.filter((u) => u.ativo !== false);
         usuariosAtivos.sort((a, b) => (a.nome || a.email || "").localeCompare(b.nome || b.email || ""));
 
         if (!usuariosAtivos.length) {
-          listaEl.innerHTML = '<div class="admin-agenda-vazio">Nenhum usuÃ¡rio cadastrado ainda.</div>';
+          listaEl.innerHTML = '<div class="admin-agenda-vazio">Nenhum usuário cadastrado ainda.</div>';
           return;
         }
 
@@ -2557,12 +2565,12 @@
               await updateDoc(doc(db, "usuarios", u.uid), { perfil: select.value });
               statusEl.textContent = "Perfil de " + (u.nome || u.email || u.uid) + " atualizado para " + ROTULOS_GERENCIAR[select.value] + ".";
               statusEl.className = "admin-agenda-status ok";
-              statusItemEl.textContent = "â Salvo: " + ROTULOS_GERENCIAR[select.value];
+              statusItemEl.textContent = "✓ Salvo: " + ROTULOS_GERENCIAR[select.value];
               statusItemEl.className = "admin-perfis-item-status ok";
             } catch (err) {
-              statusEl.textContent = "NÃ£o foi possÃ­vel salvar. " + (err.message || "");
+              statusEl.textContent = "Não foi possível salvar. " + (err.message || "");
               statusEl.className = "admin-agenda-status erro";
-              statusItemEl.textContent = "â NÃ£o foi possÃ­vel salvar";
+              statusItemEl.textContent = "✗ Não foi possível salvar";
               statusItemEl.className = "admin-perfis-item-status erro";
               console.error(err);
             } finally {
@@ -2577,8 +2585,8 @@
           const btnEditar = document.createElement("button");
           btnEditar.type = "button";
           btnEditar.className = "admin-perfis-item-editar";
-          btnEditar.setAttribute("aria-label", "Editar perfil, endereÃ§o e status de " + (u.nome || u.email || u.uid));
-          btnEditar.textContent = "âï¸";
+          btnEditar.setAttribute("aria-label", "Editar perfil, endereço e status de " + (u.nome || u.email || u.uid));
+          btnEditar.textContent = "✏️";
           btnEditar.addEventListener("click", () => {
             if (window.__abrirGerenciarPerfilEdit) window.__abrirGerenciarPerfilEdit(u);
           });
@@ -2589,12 +2597,12 @@
           listaEl.appendChild(item);
         });
       } catch (err) {
-        listaEl.innerHTML = '<div class="admin-agenda-vazio">NÃ£o foi possÃ­vel carregar a lista de usuÃ¡rios.</div>';
+        listaEl.innerHTML = '<div class="admin-agenda-vazio">Não foi possível carregar a lista de usuários.</div>';
         console.error(err);
       }
     }
 
-    // Modal de ediÃ§Ã£o avanÃ§ada (Perfil, EndereÃ§o, Ativo) - aberto pelo botÃ£o de lÃ¡pis.
+    // Modal de edição avançada (Perfil, Endereço, Ativo) - aberto pelo botão de lápis.
     const modalEditar = document.getElementById("gerenciarPerfilEditModal");
     if (modalEditar && !modalEditar.__wired) {
       modalEditar.__wired = true;
@@ -2743,7 +2751,7 @@
           editarMensagem.className = "login-note ok";
           setTimeout(() => { fecharEditar(); carregar(); }, 700);
         } catch (err) {
-          editarMensagem.textContent = "NÃ£o foi possÃ­vel salvar. " + (err.message || "");
+          editarMensagem.textContent = "Não foi possível salvar. " + (err.message || "");
           editarMensagem.className = "login-note erro";
           console.error(err);
         } finally {
@@ -2784,9 +2792,9 @@
   }
 
   // =================================================================
-  // Gerenciar Professores por Salas (sÃ³ admin) - cadastra as Salas da
-  // Escola BÃ­blica Dominical e escolhe o Professor responsÃ¡vel por cada
-  // uma. A atribuiÃ§Ã£o fica valendo atÃ© ser trocada manualmente aqui.
+  // Gerenciar Professores por Salas (só admin) - cadastra as Salas da
+  // Escola Bíblica Dominical e escolhe o Professor responsável por cada
+  // uma. A atribuição fica valendo até ser trocada manualmente aqui.
   // =================================================================
   function iniciarGerenciarSalas() {
     const grid = document.querySelector("#areaCadastroSalas .professor-canvas-grid");
@@ -2815,10 +2823,10 @@
 
     const SALAS_PADRAO = [
       { id: "cordeirinhos-de-cristo", nome: "Cordeirinhos de Cristo", departamento: "Infantil 1" },
-      { id: "estrela-da-manha", nome: "Estrela da ManhÃ£", departamento: "Infantil 2" },
+      { id: "estrela-da-manha", nome: "Estrela da Manhã", departamento: "Infantil 2" },
       { id: "manancial", nome: "Manancial", departamento: "Adolescentes" },
       { id: "renacer-em-cristo", nome: "Renacer em Cristo", departamento: "Jovens" },
-      { id: "sacerdotes-de-cristo", nome: "Sacerdotes de Cristo", departamento: "VarÃµes" },
+      { id: "sacerdotes-de-cristo", nome: "Sacerdotes de Cristo", departamento: "Varões" },
       { id: "colunas-da-verdade", nome: "Colunas da Verdade", departamento: "Feminino" }
     ];
 
@@ -2890,15 +2898,15 @@
         renderProfessores();
         if (renderGradeEscala) renderGradeEscala();
       } catch (err) {
-        listaTurmaEl.innerHTML = '<div class="admin-agenda-vazio">NÃ£o foi possÃ­vel carregar as Salas.</div>';
-        listaProfEl.innerHTML = '<div class="admin-agenda-vazio">NÃ£o foi possÃ­vel carregar as Salas.</div>';
+        listaTurmaEl.innerHTML = '<div class="admin-agenda-vazio">Não foi possível carregar as Salas.</div>';
+        listaProfEl.innerHTML = '<div class="admin-agenda-vazio">Não foi possível carregar as Salas.</div>';
         console.error(err);
       }
     }
 
     function renderTurma() {
       if (!salasCache.length) {
-        listaTurmaEl.innerHTML = '<div class="admin-agenda-vazio">Nenhuma Sala cadastrada ainda. Use o botÃ£o acima para cadastrar as 6 Salas padrÃ£o, ou adicione uma nova no formulÃ¡rio acima.</div>';
+        listaTurmaEl.innerHTML = '<div class="admin-agenda-vazio">Nenhuma Sala cadastrada ainda. Use o botão acima para cadastrar as 6 Salas padrão, ou adicione uma nova no formulário acima.</div>';
         return;
       }
       listaTurmaEl.innerHTML = "";
@@ -2923,14 +2931,14 @@
         const btnEditar = document.createElement("button");
         btnEditar.type = "button";
         btnEditar.className = "admin-perfis-item-editar";
-        btnEditar.textContent = "âï¸";
+        btnEditar.textContent = "✏️";
         btnEditar.title = "Editar Sala";
         btnEditar.addEventListener("click", () => abrirEdicaoTurma(item, sala));
 
         const btnExcluir = document.createElement("button");
         btnExcluir.type = "button";
         btnExcluir.className = "admin-perfis-item-editar btn-danger";
-        btnExcluir.textContent = "ðï¸";
+        btnExcluir.textContent = "🗑️";
         btnExcluir.title = "Excluir Sala";
         btnExcluir.addEventListener("click", () => excluirSala(sala, statusItemEl));
 
@@ -3026,7 +3034,7 @@
           statusTurmaEl.className = "admin-agenda-status ok";
           await carregarSalas();
         } catch (err) {
-          statusTurmaEl.textContent = "NÃ£o foi possÃ­vel salvar. " + (err.message || "");
+          statusTurmaEl.textContent = "Não foi possível salvar. " + (err.message || "");
           statusTurmaEl.className = "admin-agenda-status erro";
           console.error(err);
           btnSalvarEdicao.disabled = false;
@@ -3061,24 +3069,24 @@
         const temVinculos = await salaTemVinculos(sala);
         if (temVinculos) {
           alert(
-            'Esta Sala nÃ£o pode ser excluÃ­da porque jÃ¡ tem dados vinculados ' +
-            '(professor escalado, alunos matriculados, liÃ§Ãµes cadastradas ou arquivos enviados). ' +
-            'Remova esses vÃ­nculos antes de excluir a Sala.'
+            'Esta Sala não pode ser excluída porque já tem dados vinculados ' +
+            '(professor escalado, alunos matriculados, lições cadastradas ou arquivos enviados). ' +
+            'Remova esses vínculos antes de excluir a Sala.'
           );
           statusItemEl.textContent = "";
           return;
         }
-        if (!window.confirm('Excluir a Sala "' + sala.nome + '"? Essa aÃ§Ã£o nÃ£o pode ser desfeita.')) {
+        if (!window.confirm('Excluir a Sala "' + sala.nome + '"? Essa ação não pode ser desfeita.')) {
           statusItemEl.textContent = "";
           return;
         }
         await deleteDoc(doc(db, "salas", sala.id));
-        statusTurmaEl.textContent = 'Sala "' + sala.nome + '" excluÃ­da.';
+        statusTurmaEl.textContent = 'Sala "' + sala.nome + '" excluída.';
         statusTurmaEl.className = "admin-agenda-status ok";
         await carregarSalas();
       } catch (err) {
         statusItemEl.textContent = "";
-        statusTurmaEl.textContent = "NÃ£o foi possÃ­vel excluir. " + (err.message || "");
+        statusTurmaEl.textContent = "Não foi possível excluir. " + (err.message || "");
         statusTurmaEl.className = "admin-agenda-status erro";
         console.error(err);
       }
@@ -3116,7 +3124,7 @@
           formStatusEl.className = "admin-agenda-status ok";
           await carregarSalas();
         } catch (err) {
-          formStatusEl.textContent = "NÃ£o foi possÃ­vel cadastrar a Sala. " + (err.message || "");
+          formStatusEl.textContent = "Não foi possível cadastrar a Sala. " + (err.message || "");
           formStatusEl.className = "admin-agenda-status erro";
           console.error(err);
         } finally {
@@ -3150,7 +3158,7 @@
         renderListaProfessoresAtuais(containerLista, sala);
         if (renderGradeEscala) renderGradeEscala();
       } catch (err) {
-        statusProfEl.textContent = "NÃ£o foi possÃ­vel remover. " + (err.message || "");
+        statusProfEl.textContent = "Não foi possível remover. " + (err.message || "");
         statusProfEl.className = "admin-agenda-status erro";
         console.error(err);
       }
@@ -3172,7 +3180,7 @@
         const btnRemover = document.createElement("button");
         btnRemover.type = "button";
         btnRemover.className = "sala-professores-remover";
-        btnRemover.textContent = "â";
+        btnRemover.textContent = "✕";
         btnRemover.title = "Remover";
         btnRemover.addEventListener("click", () => removerProfessorDaSala(sala, p.uid, container));
         linha.appendChild(nome);
@@ -3240,7 +3248,7 @@
           renderListaProfessoresAtuais(containerLista, sala);
           if (renderGradeEscala) renderGradeEscala();
         } catch (err) {
-          statusProfEl.textContent = "NÃ£o foi possÃ­vel salvar. " + (err.message || "");
+          statusProfEl.textContent = "Não foi possível salvar. " + (err.message || "");
           statusProfEl.className = "admin-agenda-status erro";
           console.error(err);
           btnSalvar.disabled = false;
@@ -3283,7 +3291,7 @@
         const btnAdicionar = document.createElement("button");
         btnAdicionar.type = "button";
         btnAdicionar.className = "btn-admin";
-        btnAdicionar.textContent = "ð + Adicionar Professor";
+        btnAdicionar.textContent = "📋 + Adicionar Professor";
 
         const listaAtuais = document.createElement("div");
         listaAtuais.className = "sala-professores-lista";
@@ -3323,7 +3331,7 @@
       const trimestreAtual = Math.floor(hoje.getMonth() / 3) + 1;
       trimestreSelect.value = String(trimestreAtual);
 
-      const NOMES_MES = ["Janeiro", "Fevereiro", "MarÃ§o", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+      const NOMES_MES = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
 
       function mesesDoTrimestre(trimestre) {
         const inicio = (trimestre - 1) * 3;
@@ -3385,7 +3393,7 @@
             return;
           }
           if (!domingosMes.length) {
-            gradeEl.innerHTML = '<div class="admin-agenda-vazio">Nenhum domingo neste mÃªs.</div>';
+            gradeEl.innerHTML = '<div class="admin-agenda-vazio">Nenhum domingo neste mês.</div>';
             return;
           }
 
@@ -3411,7 +3419,7 @@
           gradeEl.innerHTML = "";
           const header = document.createElement("div");
           header.className = "escala-linha escala-header";
-          ["Data", "Turma", "LiÃ§Ã£o", "Professor"].forEach((t) => {
+          ["Data", "Turma", "Lição", "Professor"].forEach((t) => {
             const span = document.createElement("span");
             span.textContent = t;
             header.appendChild(span);
@@ -3435,7 +3443,7 @@
               const licaoEl = document.createElement("span");
               const licoesDaSalaPorData = licoesPorSala[sala.id] || {};
               const titulo = licoesDaSalaPorData[dataISO];
-              licaoEl.textContent = titulo || "â";
+              licaoEl.textContent = titulo || "—";
 
               const chave = sala.id + "_" + dataISO;
               const atribuicaoAtual = escalaPorChave[chave];
@@ -3476,7 +3484,7 @@
                   statusEl.textContent = "Escala de " + sala.nome + " (" + dataFormatada + ") salva.";
                   statusEl.className = "admin-agenda-status ok";
                 } catch (err) {
-                  statusEl.textContent = "NÃ£o foi possÃ­vel salvar a escala. " + (err.message || "");
+                  statusEl.textContent = "Não foi possível salvar a escala. " + (err.message || "");
                   statusEl.className = "admin-agenda-status erro";
                   console.error(err);
                 } finally {
@@ -3492,8 +3500,8 @@
             });
           });
         } catch (err) {
-          gradeEl.innerHTML = '<div class="admin-agenda-vazio">NÃ£o foi possÃ­vel carregar a escala.</div>';
-          statusEl.textContent = "NÃ£o foi possÃ­vel carregar a escala. " + (err.message || "");
+          gradeEl.innerHTML = '<div class="admin-agenda-vazio">Não foi possível carregar a escala.</div>';
+          statusEl.textContent = "Não foi possível carregar a escala. " + (err.message || "");
           statusEl.className = "admin-agenda-status erro";
           console.error(err);
         }
@@ -3522,7 +3530,7 @@
           btnImportar.hidden = true;
           await carregarSalas();
         } catch (err) {
-          statusTurmaEl.textContent = "NÃ£o foi possÃ­vel cadastrar as Salas padrÃ£o. " + (err.message || "");
+          statusTurmaEl.textContent = "Não foi possível cadastrar as Salas padrão. " + (err.message || "");
           statusTurmaEl.className = "admin-agenda-status erro";
           console.error(err);
         } finally {
@@ -3537,9 +3545,9 @@
   }
 
   // =================================================================
-  // Gerenciar LiÃ§Ãµes (sÃ³ admin) - cadastra os tÃ­tulos das liÃ§Ãµes da
+  // Gerenciar Lições (só admin) - cadastra os títulos das lições da
   // revista trimestral. O Professor usa essa lista para escolher o tema
-  // da aula na Ãrea do Professor, mas ainda pode editar o texto depois.
+  // da aula na Área do Professor, mas ainda pode editar o texto depois.
   // =================================================================
   function iniciarGerenciarLicoes() {
     const seletorSala = document.getElementById("licoesSalaSeletor");
@@ -3602,10 +3610,10 @@
       domingos.forEach((d, idx) => {
         const label = document.createElement("label");
         const dataFormatada = d.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" });
-        label.textContent = "LiÃ§Ã£o " + (idx + 1) + " â Domingo " + dataFormatada;
+        label.textContent = "Lição " + (idx + 1) + " — Domingo " + dataFormatada;
         const input = document.createElement("input");
         input.type = "text";
-        input.placeholder = "TÃ­tulo da liÃ§Ã£o " + (idx + 1);
+        input.placeholder = "Título da lição " + (idx + 1);
         label.appendChild(input);
         camposLista.appendChild(label);
         campos.push(input);
@@ -3658,7 +3666,7 @@
           if (titulosLegado.some((t) => t)) {
             campos.forEach((c, idx) => { c.value = titulosLegado[idx] || ""; });
             migracaoAvisoEl.hidden = false;
-            migracaoAvisoEl.textContent = "Dados encontrados no cadastro anterior (" + (legado.trimestre || "sem trimestre definido") + ") â jÃ¡ preenchidos abaixo. Clique em \"Salvar LiÃ§Ãµes\" para confirmar a migraÃ§Ã£o para este Trimestre.";
+            migracaoAvisoEl.textContent = "Dados encontrados no cadastro anterior (" + (legado.trimestre || "sem trimestre definido") + ") — já preenchidos abaixo. Clique em \"Salvar Lições\" para confirmar a migração para este Trimestre.";
             if (legado.revistaPdfUrl) {
               licaoAtualDados = { revistaPdfNome: legado.revistaPdfNome, revistaPdfUrl: legado.revistaPdfUrl, revistaPdfDriveId: legado.revistaPdfDriveId, migradoDoLegado: true };
               atualizarPdfUI();
@@ -3667,7 +3675,7 @@
         }
       } catch (err) {
         if (meuToken !== carregandoToken || seletorSala.value !== salaId) return;
-        statusEl.textContent = "NÃ£o foi possÃ­vel carregar as liÃ§Ãµes. " + (err.message || "");
+        statusEl.textContent = "Não foi possível carregar as lições. " + (err.message || "");
         statusEl.className = "admin-agenda-status erro";
         console.error(err);
       }
@@ -3731,11 +3739,11 @@
         await setDoc(doc(db, "licoes", docId), dadosSalvar, { merge: true });
         await updateDoc(doc(db, "salas", salaId), { temLicoes: true });
         migracaoAvisoEl.hidden = true;
-        statusEl.textContent = "LiÃ§Ãµes salvas com sucesso.";
+        statusEl.textContent = "Lições salvas com sucesso.";
         statusEl.className = "admin-agenda-status ok";
         await carregar();
       } catch (err) {
-        statusEl.textContent = "NÃ£o foi possÃ­vel salvar. " + (err.message || "");
+        statusEl.textContent = "Não foi possível salvar. " + (err.message || "");
         statusEl.className = "admin-agenda-status erro";
         console.error(err);
       } finally {
@@ -3780,7 +3788,7 @@
         pdfStatusEl.textContent = "PDF enviado com sucesso.";
         pdfStatusEl.className = "admin-agenda-status ok";
       } catch (err) {
-        pdfStatusEl.textContent = "NÃ£o foi possÃ­vel enviar o PDF. " + (err.message || "");
+        pdfStatusEl.textContent = "Não foi possível enviar o PDF. " + (err.message || "");
         pdfStatusEl.className = "admin-agenda-status erro";
         console.error(err);
       } finally {
@@ -3810,7 +3818,7 @@
         pdfStatusEl.textContent = "PDF removido.";
         pdfStatusEl.className = "admin-agenda-status ok";
       } catch (err) {
-        pdfStatusEl.textContent = "NÃ£o foi possÃ­vel remover o PDF. " + (err.message || "");
+        pdfStatusEl.textContent = "Não foi possível remover o PDF. " + (err.message || "");
         pdfStatusEl.className = "admin-agenda-status erro";
         console.error(err);
       } finally {
@@ -3823,11 +3831,11 @@
   }
 
   // =================================================================
-  // Ãrea do Professor - lanÃ§a o relatÃ³rio da aula (tema, matriculados,
-  // presentes, ausentes, visitantes, ofertas). O Professor sÃ³ vÃª as
-  // Salas em que estÃ¡ escalado; Administrativo e Admin veem todas
+  // Área do Professor - lança o relatório da aula (tema, matriculados,
+  // presentes, ausentes, visitantes, ofertas). O Professor só vê as
+  // Salas em que está escalado; Administrativo e Admin veem todas
   // (mesma autonomia do Professor, para casos de professor leigo ou
-  // visitante que nÃ£o consiga usar o site).
+  // visitante que não consiga usar o site).
   // =================================================================
   function iniciarAreaProfessor() {
     const seletorWrap = document.getElementById("professorSalaSeletorWrap");
@@ -3962,13 +3970,13 @@
     function atualizarCabecalhoChamada() {
       const sala = minhasSalas.find((s) => s.id === seletor.value);
       const partes = [];
-      if (campoTema.value) partes.push('LiÃ§Ã£o: "' + campoTema.value + '"');
+      if (campoTema.value) partes.push('Lição: "' + campoTema.value + '"');
       if (campoData.value) {
         const d = new Date(campoData.value + "T00:00:00");
         partes.push("Data: " + d.toLocaleDateString("pt-BR"));
       }
-      partes.push("Professor(es): " + ((sala && Array.isArray(sala.professores) && sala.professores.length) ? sala.professores.map((p) => p.nome).join(", ") : ((sala && sala.professorNome) ? sala.professorNome : "â")));
-      chamadaSubinfo.textContent = partes.join(" Â· ");
+      partes.push("Professor(es): " + ((sala && Array.isArray(sala.professores) && sala.professores.length) ? sala.professores.map((p) => p.nome).join(", ") : ((sala && sala.professorNome) ? sala.professorNome : "—")));
+      chamadaSubinfo.textContent = partes.join(" · ");
     }
 
     function renderOuvintes() {
@@ -3993,7 +4001,7 @@
 
         const btnRemover = document.createElement("button");
         btnRemover.type = "button";
-        btnRemover.textContent = "Ã";
+        btnRemover.textContent = "×";
         btnRemover.title = "Remover visitante";
         btnRemover.className = "btn-admin";
         btnRemover.addEventListener("click", () => {
@@ -4040,7 +4048,7 @@
         nomeWrap.appendChild(document.createElement("br"));
         const subEl = document.createElement("span");
         subEl.className = "admin-perfis-item-sub";
-        subEl.textContent = "Idade: " + (aluno.idade != null ? aluno.idade : "â");
+        subEl.textContent = "Idade: " + (aluno.idade != null ? aluno.idade : "—");
         nomeWrap.appendChild(subEl);
 
         info.appendChild(checkbox);
@@ -4099,13 +4107,13 @@
             nomeEl.textContent = aluno.nome;
             info.appendChild(nomeEl);
 
-            const subPartes = ["Idade: " + (aluno.idade != null ? aluno.idade : "â")];
+            const subPartes = ["Idade: " + (aluno.idade != null ? aluno.idade : "—")];
             if (aluno.paiResponsavel || aluno.maeResponsavel) {
-              subPartes.push("Pai/MÃ£e: " + (aluno.paiResponsavel || "â") + " / " + (aluno.maeResponsavel || "â"));
+              subPartes.push("Pai/Mãe: " + (aluno.paiResponsavel || "—") + " / " + (aluno.maeResponsavel || "—"));
             }
             const subEl = document.createElement("span");
             subEl.className = "admin-perfis-item-sub";
-            subEl.textContent = subPartes.join(" Â· ");
+            subEl.textContent = subPartes.join(" · ");
             info.appendChild(subEl);
 
             const btnRemover = document.createElement("button");
@@ -4120,7 +4128,7 @@
                 salaAlunosStatus.className = "admin-agenda-status ok";
                 await recarregarTudo();
               } catch (err) {
-                salaAlunosStatus.textContent = "NÃ£o foi possÃ­vel remover. " + (err.message || "");
+                salaAlunosStatus.textContent = "Não foi possível remover. " + (err.message || "");
                 salaAlunosStatus.className = "admin-agenda-status erro";
                 console.error(err);
                 btnRemover.disabled = false;
@@ -4145,7 +4153,7 @@
         if (!candidatos.length) {
           const opt = document.createElement("option");
           opt.value = "";
-          opt.textContent = "Nenhum cadastro disponÃ­vel";
+          opt.textContent = "Nenhum cadastro disponível";
           salaAlunoCandidato.appendChild(opt);
           btnAdicionarAlunoConta.disabled = true;
         } else {
@@ -4163,7 +4171,7 @@
         renderChamada();
         renderOuvintes();
       } catch (err) {
-        salaAlunosLista.innerHTML = '<div class="admin-agenda-vazio">NÃ£o foi possÃ­vel carregar os alunos desta Sala.</div>';
+        salaAlunosLista.innerHTML = '<div class="admin-agenda-vazio">Não foi possível carregar os alunos desta Sala.</div>';
         console.error(err);
       }
     }
@@ -4172,7 +4180,7 @@
       relatorioTemaSeletor.innerHTML = "";
       const optVazia = document.createElement("option");
       optVazia.value = "";
-      optVazia.textContent = "Selecione uma liÃ§Ã£o...";
+      optVazia.textContent = "Selecione uma lição...";
       relatorioTemaSeletor.appendChild(optVazia);
       const salaId = seletor.value;
       if (revistaPdfEl) { revistaPdfEl.hidden = true; revistaPdfEl.innerHTML = ""; }
@@ -4192,7 +4200,7 @@
         });
         if (revistaPdfEl && dados && dados.revistaPdfUrl) {
           revistaPdfEl.hidden = false;
-          revistaPdfEl.innerHTML = "ð Revista trimestral (" + trimestre + "Âº Trimestre " + ano + "): <a href=\"" + dados.revistaPdfUrl + "\" target=\"_blank\" rel=\"noopener\">" + (dados.revistaPdfNome || "abrir PDF") + "</a>";
+          revistaPdfEl.innerHTML = "📘 Revista trimestral (" + trimestre + "º Trimestre " + ano + "): <a href=\"" + dados.revistaPdfUrl + "\" target=\"_blank\" rel=\"noopener\">" + (dados.revistaPdfNome || "abrir PDF") + "</a>";
         }
       } catch (err) {
         console.error(err);
@@ -4244,7 +4252,7 @@
                 await updateDoc(doc(db, "arquivosSala", a.id), { ativo: false });
                 await carregarArquivosSala();
               } catch (err) {
-                arquivoSalaStatus.textContent = "NÃ£o foi possÃ­vel remover. " + (err.message || "");
+                arquivoSalaStatus.textContent = "Não foi possível remover. " + (err.message || "");
                 arquivoSalaStatus.className = "admin-agenda-status erro";
                 console.error(err);
                 btnRemover.disabled = false;
@@ -4256,7 +4264,7 @@
           });
         }
       } catch (err) {
-        arquivosSalaLista.innerHTML = '<div class="admin-agenda-vazio">NÃ£o foi possÃ­vel carregar os arquivos.</div>';
+        arquivosSalaLista.innerHTML = '<div class="admin-agenda-vazio">Não foi possível carregar os arquivos.</div>';
         console.error(err);
       }
     }
@@ -4287,7 +4295,7 @@
         arquivoSalaStatus.className = "admin-agenda-status ok";
         await carregarArquivosSala();
       } catch (err) {
-        arquivoSalaStatus.textContent = "NÃ£o foi possÃ­vel enviar. " + (err.message || "");
+        arquivoSalaStatus.textContent = "Não foi possível enviar. " + (err.message || "");
         arquivoSalaStatus.className = "admin-agenda-status erro";
         console.error(err);
       } finally {
@@ -4313,7 +4321,7 @@
           ouvintes = (r.ouvintes || []).map((o) => Object.assign({}, o));
         }
       } catch (err) {
-        statusEl.textContent = "NÃ£o foi possÃ­vel carregar o relatÃ³rio dessa data. " + (err.message || "");
+        statusEl.textContent = "Não foi possível carregar o relatório dessa data. " + (err.message || "");
         statusEl.className = "admin-agenda-status erro";
         console.error(err);
       }
@@ -4366,7 +4374,7 @@
         await carregarLicoes();
       } catch (err) {
         semSalaAviso.hidden = false;
-        semSalaAviso.textContent = "NÃ£o foi possÃ­vel carregar suas Salas.";
+        semSalaAviso.textContent = "Não foi possível carregar suas Salas.";
         conteudo.hidden = true;
         console.error(err);
       }
@@ -4394,11 +4402,11 @@
           criadoEm: serverTimestamp(),
           criadoPorUid: usuarioAtualCache.uid
         });
-        salaAlunosStatus.textContent = "Aluno vinculado Ã  Sala.";
+        salaAlunosStatus.textContent = "Aluno vinculado à Sala.";
         salaAlunosStatus.className = "admin-agenda-status ok";
         await recarregarTudo();
       } catch (err) {
-        salaAlunosStatus.textContent = "NÃ£o foi possÃ­vel adicionar. " + (err.message || "");
+        salaAlunosStatus.textContent = "Não foi possível adicionar. " + (err.message || "");
         salaAlunosStatus.className = "admin-agenda-status erro";
         console.error(err);
       } finally {
@@ -4431,11 +4439,11 @@
         salaAlunoAvulsoResponsaveisWrap.hidden = true;
         salaAlunoAvulsoPai.value = "";
         salaAlunoAvulsoMae.value = "";
-        salaAlunosStatus.textContent = "Aluno adicionado Ã  Sala.";
+        salaAlunosStatus.textContent = "Aluno adicionado à Sala.";
         salaAlunosStatus.className = "admin-agenda-status ok";
         await recarregarTudo();
       } catch (err) {
-        salaAlunosStatus.textContent = "NÃ£o foi possÃ­vel adicionar. " + (err.message || "");
+        salaAlunosStatus.textContent = "Não foi possível adicionar. " + (err.message || "");
         salaAlunosStatus.className = "admin-agenda-status erro";
         console.error(err);
       } finally {
@@ -4488,10 +4496,10 @@
           lancadoPorNome: usuarioAtualCache.nome || usuarioAtualCache.email || "",
           atualizadoEm: serverTimestamp()
         }, { merge: true });
-        statusEl.textContent = "RelatÃ³rio salvo com sucesso.";
+        statusEl.textContent = "Relatório salvo com sucesso.";
         statusEl.className = "admin-agenda-status ok";
       } catch (err) {
-        statusEl.textContent = "NÃ£o foi possÃ­vel salvar o relatÃ³rio. " + (err.message || "");
+        statusEl.textContent = "Não foi possível salvar o relatório. " + (err.message || "");
         statusEl.className = "admin-agenda-status erro";
         console.error(err);
       } finally {
@@ -4502,8 +4510,8 @@
     montarSeletor();
   }
   // =================================================================
-  // Modal de Perfil - serve tanto para editar o cadastro de quem jÃ¡
-  // estÃ¡ logado quanto para Criar Conta (chamado pelo auth.js) e para
+  // Modal de Perfil - serve tanto para editar o cadastro de quem já
+  // está logado quanto para Criar Conta (chamado pelo auth.js) e para
   // completar o cadastro de quem entrou pela primeira vez com Google.
   // =================================================================
   (function () {
@@ -4572,9 +4580,9 @@
       return digitos.slice(4, 8) + "-" + digitos.slice(2, 4) + "-" + digitos.slice(0, 2);
     }
 
-    // O modo "editar" mostra tudo de uma vez, no formulÃ¡rio Ãºnico de sempre.
-    // Os modos "criar" e "completar-google" mostram sÃ³ o passo atual do
-    // assistente (1, 2 ou 3) - cada campo/bloco do formulÃ¡rio tem um atributo
+    // O modo "editar" mostra tudo de uma vez, no formulário único de sempre.
+    // Os modos "criar" e "completar-google" mostram só o passo atual do
+    // assistente (1, 2 ou 3) - cada campo/bloco do formulário tem um atributo
     // data-show dizendo em quais contextos ele aparece.
     function contextoAtual() {
       return modoAtual === "editar" ? "editar" : ("step" + wizardPasso);
@@ -4747,14 +4755,14 @@
         await sendPasswordResetEmail(auth, usuarioAtualCache.email);
         mensagemEl.textContent = "Enviamos um link para trocar sua senha em " + usuarioAtualCache.email + ".";
       } catch (err) {
-        mensagemEl.textContent = "NÃ£o foi possÃ­vel enviar o e-mail de troca de senha.";
+        mensagemEl.textContent = "Não foi possível enviar o e-mail de troca de senha.";
         console.error(err);
       }
     });
 
     function confirmarExclusaoConta() {
       return new Promise((resolve) => {
-        if (!modalExcluir) { resolve(window.confirm("Excluir sua conta? Essa aÃ§Ã£o nÃ£o pode ser desfeita.")); return; }
+        if (!modalExcluir) { resolve(window.confirm("Excluir sua conta? Essa ação não pode ser desfeita.")); return; }
         modalExcluir.hidden = false;
         requestAnimationFrame(() => modalExcluir.classList.add("is-open"));
         function fechar(resultado) {
@@ -4776,19 +4784,19 @@
       if (!confirmar) return;
       try {
         const uid = auth.currentUser.uid;
-        // "Excluir Conta" nÃ£o apaga o cadastro do banco de dados - sÃ³ marca
-        // ativo:false. A pessoa nÃ£o consegue mais entrar (ver onAuthStateChanged),
+        // "Excluir Conta" não apaga o cadastro do banco de dados - só marca
+        // ativo:false. A pessoa não consegue mais entrar (ver onAuthStateChanged),
         // e o cadastro deixa de aparecer nas listagens (ex.: Gerenciar Perfis).
         await updateDoc(doc(db, "usuarios", uid), { ativo: false });
         await signOut(auth);
         fecharModal();
       } catch (err) {
-        alert("NÃ£o foi possÃ­vel excluir a conta. " + (err.message || ""));
+        alert("Não foi possível excluir a conta. " + (err.message || ""));
         console.error(err);
       }
     });
 
-    // ---------- Modo "editar" (jÃ¡ logado): salva tudo de uma vez ----------
+    // ---------- Modo "editar" (já logado): salva tudo de uma vez ----------
     btnSalvar.addEventListener("click", async () => {
       mensagemEl.textContent = "";
       const dadosPerfil = coletarDadosPessoais();
@@ -4804,10 +4812,10 @@
         await setDoc(doc(db, "usuarios", auth.currentUser.uid), dadosPerfil, { merge: true });
         const perfilFinal = (usuarioAtualCache && usuarioAtualCache.perfil) || "convidado";
         usuarioAtualCache = Object.assign({}, usuarioAtualCache, dadosPerfil, { perfil: perfilFinal });
-        loginLabel.textContent = "OlÃ¡ " + (dadosPerfil.nome || (usuarioAtualCache.email || "").split("@")[0]);
+        loginLabel.textContent = "Olá " + (dadosPerfil.nome || (usuarioAtualCache.email || "").split("@")[0]);
         fecharModal();
       } catch (err) {
-        mensagemEl.textContent = "NÃ£o foi possÃ­vel salvar. " + (err.message || "");
+        mensagemEl.textContent = "Não foi possível salvar. " + (err.message || "");
         console.error(err);
       } finally {
         btnSalvar.disabled = false;
@@ -4815,12 +4823,12 @@
     });
 
     // ---------- Assistente de Criar Conta / Completar cadastro (3 passos) ----------
-    // Contas novas entram sempre com perfil "convidado" - sÃ³ um administrador,
+    // Contas novas entram sempre com perfil "convidado" - só um administrador,
     // em "Gerenciar Perfis", pode promover a pessoa para Aluno/Professor/
     // Administrativo/Administrador depois.
 
     // Passo 1: e-mail + senha + confirmar senha (ou "Usar dados do Google",
-    // que jÃ¡ autentica e pula direto para o passo 2 - ver auth.js).
+    // que já autentica e pula direto para o passo 2 - ver auth.js).
     btnAvancar1.addEventListener("click", async () => {
       mensagemEl.textContent = "";
       const email = campoEmail.value.trim();
@@ -4836,7 +4844,7 @@
         return;
       }
       if (senha !== confirmar) {
-        mensagemEl.textContent = "As senhas digitadas sÃ£o diferentes.";
+        mensagemEl.textContent = "As senhas digitadas são diferentes.";
         return;
       }
 
@@ -4854,13 +4862,13 @@
         campoNome.focus();
       } catch (err) {
         if (err.code === "auth/email-already-in-use") {
-          mensagemEl.textContent = "Esse e-mail jÃ¡ tem uma conta. Tente entrar em vez de criar uma nova.";
+          mensagemEl.textContent = "Esse e-mail já tem uma conta. Tente entrar em vez de criar uma nova.";
         } else if (err.code === "auth/invalid-email") {
-          mensagemEl.textContent = "Digite um e-mail vÃ¡lido.";
+          mensagemEl.textContent = "Digite um e-mail válido.";
         } else if (err.code === "auth/weak-password") {
           mensagemEl.textContent = "Escolha uma senha mais forte (pelo menos 6 caracteres).";
         } else {
-          mensagemEl.textContent = "NÃ£o foi possÃ­vel criar a conta. " + (err.message || "");
+          mensagemEl.textContent = "Não foi possível criar a conta. " + (err.message || "");
         }
         console.error(err);
       } finally {
@@ -4868,7 +4876,7 @@
       }
     });
 
-    // Passo 2: dados pessoais (Nome, Sobrenome, Telefone, EndereÃ§o).
+    // Passo 2: dados pessoais (Nome, Sobrenome, Telefone, Endereço).
     btnVoltar2.addEventListener("click", () => {
       wizardPasso = 1;
       aplicarVisibilidade();
@@ -4887,7 +4895,7 @@
         wizardPasso = 3;
         aplicarVisibilidade();
       } catch (err) {
-        mensagemEl.textContent = "NÃ£o foi possÃ­vel salvar. " + (err.message || "");
+        mensagemEl.textContent = "Não foi possível salvar. " + (err.message || "");
         console.error(err);
       } finally {
         btnAvancar2.disabled = false;
@@ -4906,10 +4914,10 @@
         usuarioAtualCache = Object.assign({}, usuarioAtualCache, coletarDadosPessoais(), {
           email: emailFinal, foto: fotoBase64Atual || "", perfil: "convidado"
         });
-        loginLabel.textContent = "OlÃ¡ " + (nomeFinal || emailFinal.split("@")[0]);
+        loginLabel.textContent = "Olá " + (nomeFinal || emailFinal.split("@")[0]);
         fecharModal();
       } catch (err) {
-        mensagemEl.textContent = "NÃ£o foi possÃ­vel salvar a foto. " + (err.message || "");
+        mensagemEl.textContent = "Não foi possível salvar a foto. " + (err.message || "");
         console.error(err);
       }
     }
@@ -4918,8 +4926,8 @@
   })();
 
   // =================================================================
-  // Modal de EndereÃ§o - separado do Meu Perfil, aberto pelo item
-  // "EndereÃ§o" do menu da conta.
+  // Modal de Endereço - separado do Meu Perfil, aberto pelo item
+  // "Endereço" do menu da conta.
   // =================================================================
   (function () {
     const modal = document.getElementById("enderecoModal");
@@ -5001,7 +5009,7 @@
         usuarioAtualCache = Object.assign({}, usuarioAtualCache, dadosEndereco);
         fecharModal();
       } catch (err) {
-        mensagemEl.textContent = "NÃ£o foi possÃ­vel salvar. " + (err.message || "");
+        mensagemEl.textContent = "Não foi possível salvar. " + (err.message || "");
         console.error(err);
       } finally {
         btnSalvar.disabled = false;
@@ -5010,7 +5018,7 @@
   })();
 
   // =================================================================
-  // Painel de administraÃ§Ã£o da Agenda (sÃ³ roda se o perfil for admin)
+  // Painel de administração da Agenda (só roda se o perfil for admin)
   // =================================================================
   function iniciarPainelAgenda() {
     const btnImportar = document.getElementById("btnImportarAgenda");
@@ -5046,7 +5054,7 @@
     let outrasDatasState = [];
     let eventosCache = [];
 
-    // Monta o checkbox "Todas", os checkboxes de congregaÃ§Ãµes (uma vez) e o checkbox "Outra..."
+    // Monta o checkbox "Todas", os checkboxes de congregações (uma vez) e o checkbox "Outra..."
     const labelTodas = document.createElement("label");
     labelTodas.className = "admin-check";
     const checkCongregacaoTodas = document.createElement("input");
@@ -5118,7 +5126,7 @@
       if (!ehSetor) limparCongregacoesSetor();
     });
 
-    /** Mostra o popup de confirmaÃ§Ã£o; resolve true (duplicar) ou false (sÃ³ Setor). */
+    /** Mostra o popup de confirmação; resolve true (duplicar) ou false (só Setor). */
     function confirmarDuplicarNaCongregacao(mensagem) {
       return new Promise((resolve) => {
         confirmarDuplicarTexto.textContent = mensagem;
@@ -5153,7 +5161,7 @@
         const botao = document.createElement("button");
         botao.type = "button";
         botao.className = "btn-admin-mini";
-        botao.textContent = ultima ? "+" : "Ã";
+        botao.textContent = ultima ? "+" : "×";
         botao.title = ultima ? "Adicionar outra data" : "Remover esta data";
         botao.addEventListener("click", () => {
           if (ultima) {
@@ -5322,10 +5330,10 @@
 
         const tag = document.createElement("span");
         tag.className = `admin-agenda-item-tag ${ev.escopo}`;
-        tag.textContent = ev.escopo === "congregacao" ? "CongregaÃ§Ã£o" : "Setor";
+        tag.textContent = ev.escopo === "congregacao" ? "Congregação" : "Setor";
 
         const titulo = document.createElement("span");
-        titulo.textContent = ev.titulo + (ev.hora ? ` â ${ev.hora}` : "");
+        titulo.textContent = ev.titulo + (ev.hora ? ` — ${ev.hora}` : "");
 
         corpo.appendChild(tag);
         corpo.appendChild(titulo);
@@ -5340,14 +5348,14 @@
         if (ev.escopo === "setor" && ev.congregacoesSetor && ev.congregacoesSetor.length > 0) {
           const congs = document.createElement("span");
           congs.className = "admin-agenda-item-dept";
-          congs.textContent = "CongregaÃ§Ãµes: " + ev.congregacoesSetor.join(", ");
+          congs.textContent = "Congregações: " + ev.congregacoesSetor.join(", ");
           corpo.appendChild(congs);
         }
 
         if (ev.duplicadoDoSetor) {
           const dup = document.createElement("span");
           dup.className = "admin-agenda-item-dup";
-          dup.textContent = "ð Adicionado automaticamente a partir de um evento do Setor";
+          dup.textContent = "🔗 Adicionado automaticamente a partir de um evento do Setor";
           corpo.appendChild(dup);
         }
 
@@ -5389,7 +5397,7 @@
       try {
         eventosCache = await buscarTodosEventos(true);
       } catch (err) {
-        listaEl.textContent = "NÃ£o foi possÃ­vel carregar os eventos.";
+        listaEl.textContent = "Não foi possível carregar os eventos.";
         console.error(err);
         return;
       }
@@ -5412,7 +5420,7 @@
       if (ehSetor) {
         congregacoesSetor = lerCongregacoesSetorSelecionadas();
         if (congregacoesSetor.length === 0) {
-          alert("Selecione ao menos uma congregaÃ§Ã£o envolvida no evento do Setor.");
+          alert("Selecione ao menos uma congregação envolvida no evento do Setor.");
           return;
         }
       }
@@ -5426,7 +5434,7 @@
       let duplicarNaCongregacao = false;
       if (ehEventoNovo && envolvePqFlorianopolis) {
         duplicarNaCongregacao = await confirmarDuplicarNaCongregacao(
-          `Este evento do Setor envolve a CongregaÃ§Ã£o ${CONGREGACAO_LOCAL}. Deseja adicionÃ¡-lo tambÃ©m na Agenda da nossa CongregaÃ§Ã£o?`
+          `Este evento do Setor envolve a Congregação ${CONGREGACAO_LOCAL}. Deseja adicioná-lo também na Agenda da nossa Congregação?`
         );
       }
 
@@ -5463,7 +5471,7 @@
         limparFormulario();
         recarregarLista();
       } catch (err) {
-        alert("NÃ£o foi possÃ­vel salvar o evento. Tente novamente.");
+        alert("Não foi possível salvar o evento. Tente novamente.");
         console.error(err);
       }
     });
@@ -5490,7 +5498,7 @@
         }
         recarregarLista();
       } catch (err) {
-        statusImportar.textContent = "NÃ£o foi possÃ­vel importar. Tente novamente.";
+        statusImportar.textContent = "Não foi possível importar. Tente novamente.";
         statusImportar.className = "admin-agenda-status erro";
         console.error(err);
       } finally {
