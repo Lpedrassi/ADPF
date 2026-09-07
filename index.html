@@ -243,6 +243,17 @@
   .licoes-conteudo.aberto { max-height: 2400px; }
   .canva-sanfona-conteudo { overflow: hidden; max-height: 0; transition: max-height 0.35s ease; }
   .canva-sanfona-conteudo.aberto { max-height: 3000px; }
+  #areaCadastroSalas .professor-canvas-card { border-color: var(--azul); }
+  #areaCadastroSalas .professor-canvas-card.is-ativo { border-color: var(--laranja); background: var(--surface); }
+  .sala-professores-lista { margin-top: 8px; }
+  .sala-professores-titulo { font-size: 12px; font-weight: 700; color: var(--muted); margin-bottom: 4px; }
+  .sala-professores-item { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 6px 10px; background: var(--surface-2); border: 1px solid var(--border-strong); border-radius: 8px; margin-bottom: 4px; font-size: 13px; }
+  .sala-professores-remover { background: transparent; border: none; color: var(--vermelho); cursor: pointer; font-size: 14px; line-height: 1; }
+  .sala-professores-checklist { margin-top: 10px; padding: 10px; background: var(--surface-2); border: 1px solid var(--border-strong); border-radius: 8px; }
+  .sala-professores-checkbox-linha { display: flex; align-items: center; gap: 6px; padding: 4px 0; font-size: 13px; }
+  .sala-professores-checkbox-linha input { width: auto; }
+  .escala-linha { display: grid; grid-template-columns: 100px 1fr 1fr 190px; gap: 8px; align-items: center; padding: 8px 10px; border-bottom: 1px solid var(--border-strong); font-size: 13px; }
+  .escala-linha.escala-header { font-weight: 700; color: var(--muted); font-size: 11px; text-transform: uppercase; }
   .perfil-readonly { opacity: 0.65; cursor: not-allowed; }
   .perfil-header-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
   .perfil-tipo-label { font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; white-space: nowrap; }
@@ -1197,7 +1208,6 @@
     <button class="sidebar-link" type="button" data-area="areaAluno">Sala do Aluno</button>
     <button class="sidebar-link" type="button" data-area="areaProfessor">Sala do Professor</button>
     <button class="sidebar-link" type="button" data-area="areaAdministrativo">Sala da Secretaria</button>
-    <button class="sidebar-link" type="button" data-area="areaGerenciarEscala">Gerenciar Escala EBD</button>
     <button class="sidebar-link" type="button" data-area="areaCadastroSalas">Gerenciar Salas</button>
     <button class="sidebar-link" type="button" data-area="areaGerenciarLicoes">Gerenciar Lições</button>
   </nav>
@@ -1824,12 +1834,7 @@
     <p>Gerencie aqui os posts do carrossel de notícias principais da home do site. (conteúdo a definir)</p>
   </section>
 
-  <section id="areaGerenciarEscala" class="portal-section">
-    <h2>Gerenciar Escala EBD</h2>
-    <p>Escala de professores e responsáveis da Escola Bíblica Dominical. (conteúdo a definir)</p>
-  </section>
-
-    <section id="areaCadastroSalas" class="portal-section">
+      <section id="areaCadastroSalas" class="portal-section">
     <h2>Gerenciar Salas</h2>
     <p class="admin-agenda-info">Organize as Salas da Escola Bíblica Dominical: crie e edite as Turmas e escale quem é o Professor (e o Auxiliar) de cada uma.</p>
 
@@ -1843,8 +1848,8 @@
         <span class="professor-canvas-sub">Escale o Professor e o Auxiliar de cada Sala</span>
       </button>
       <button type="button" class="professor-canvas-card" data-canvasala="extra">
-        <span class="professor-canvas-titulo">Em breve</span>
-        <span class="professor-canvas-sub">Novidades a caminho</span>
+        <span class="professor-canvas-titulo">Gerenciar Escala</span>
+        <span class="professor-canvas-sub">Monte o rodízio de professores por Domingo</span>
       </button>
     </div>
 
@@ -1892,7 +1897,25 @@
     </div>
 
     <div id="canvaSalaExtra" class="canva-sanfona-conteudo">
-      <p class="admin-agenda-info">🌱 Em breve, novas ferramentas para organizar suas Salas por aqui. Continue firme — cada etapa constrói a próxima!</p>
+      <p class="admin-agenda-info">Monte o rodízio de professores: escolha o Trimestre e o Mês, e defina quem dá aula em cada Sala, Domingo a Domingo.</p>
+      <div class="admin-form-linha">
+        <label style="flex:1;">Ano
+          <select id="escalaAnoSelect"></select>
+        </label>
+        <label style="flex:1;">Trimestre
+          <select id="escalaTrimestreSelect">
+            <option value="1">1º Trimestre (Jan-Mar)</option>
+            <option value="2">2º Trimestre (Abr-Jun)</option>
+            <option value="3">3º Trimestre (Jul-Set)</option>
+            <option value="4">4º Trimestre (Out-Dez)</option>
+          </select>
+        </label>
+        <label style="flex:1;">Mês
+          <select id="escalaMesSelect"></select>
+        </label>
+      </div>
+      <p id="escalaStatus" class="admin-agenda-status"></p>
+      <div id="escalaGrade" class="admin-agenda-lista-wrap"></div>
     </div>
   </section>
 
@@ -2347,7 +2370,7 @@
   const CONGREGACAO_LOCAL = "Pq Florianópolis";
 
   const AREAS_POR_PERFIL = {
-    admin: ["siteHome", "areaGerenciarPerfis", "areaGerenciarLicoes", "areaAgenda", "areaProfessor", "areaAluno", "areaAdministrativo", "areaPostsSite", "areaGerenciarEscala", "areaCadastroSalas"],
+    admin: ["siteHome", "areaGerenciarPerfis", "areaGerenciarLicoes", "areaAgenda", "areaProfessor", "areaAluno", "areaAdministrativo", "areaPostsSite", "areaCadastroSalas"],
     professor: ["siteHome", "areaProfessor"],
     aluno: ["siteHome", "areaAluno"],
     administrativo: ["siteHome", "areaAdministrativo", "areaProfessor"],
@@ -2818,8 +2841,15 @@
         .replace(/(^-+|-+$)/g, "");
     }
 
+    function nomesProfessoresDaSala(sala) {
+      if (Array.isArray(sala.professores) && sala.professores.length) return sala.professores;
+      if (sala.professorUid) return [{ uid: sala.professorUid, nome: sala.professorNome || sala.professorUid }];
+      return [];
+    }
+
     let professoresCache = [];
     let salasCache = [];
+    let renderGradeEscala = null;
 
     async function carregarSalas() {
       listaTurmaEl.innerHTML = "Carregando...";
@@ -2847,6 +2877,7 @@
 
         renderTurma();
         renderProfessores();
+        if (renderGradeEscala) renderGradeEscala();
       } catch (err) {
         listaTurmaEl.innerHTML = '<div class="admin-agenda-vazio">Não foi possível carregar as Salas.</div>';
         listaProfEl.innerHTML = '<div class="admin-agenda-vazio">Não foi possível carregar as Salas.</div>';
@@ -2995,7 +3026,7 @@
     }
 
     async function salaTemVinculos(sala) {
-      if (sala.professorUid || sala.professorAuxiliarUid) return true;
+      if (nomesProfessoresDaSala(sala).length) return true;
       const [matriculasSnap, relatoriosSnap, arquivosSnap, licaoSnap] = await Promise.all([
         getDocs(query(collection(db, "matriculas"), where("salaId", "==", sala.id), limit(1))),
         getDocs(query(collection(db, "relatoriosAula"), where("salaId", "==", sala.id), limit(1))),
@@ -3061,8 +3092,7 @@
             departamento: departamento,
             professorUid: null,
             professorNome: "",
-            professorAuxiliarUid: null,
-            professorAuxiliarNome: "",
+            professores: [],
             criadoEm: serverTimestamp()
           });
           nomeInput.value = "";
@@ -3082,29 +3112,126 @@
       });
     }
 
-    function montarSelectProfessor(valorAtual, nomeAtualCache, rotuloNenhum) {
-      const select = document.createElement("select");
-      select.className = "admin-perfis-item-select";
-      const optNenhum = document.createElement("option");
-      optNenhum.value = "";
-      optNenhum.textContent = rotuloNenhum;
-      if (!valorAtual) optNenhum.selected = true;
-      select.appendChild(optNenhum);
-      professoresCache.forEach((p) => {
-        const opt = document.createElement("option");
-        opt.value = p.uid;
-        opt.textContent = p.nome;
-        if (valorAtual === p.uid) opt.selected = true;
-        select.appendChild(opt);
+    async function salvarPoolProfessores(sala, novaLista) {
+      await updateDoc(doc(db, "salas", sala.id), {
+        professores: novaLista,
+        professorUid: novaLista[0] ? novaLista[0].uid : null,
+        professorNome: novaLista[0] ? novaLista[0].nome : ""
       });
-      if (valorAtual && !professoresCache.some((p) => p.uid === valorAtual)) {
-        const optAtual = document.createElement("option");
-        optAtual.value = valorAtual;
-        optAtual.textContent = (nomeAtualCache || valorAtual) + " (perfil não é mais Professor)";
-        optAtual.selected = true;
-        select.appendChild(optAtual);
+      sala.professores = novaLista;
+      sala.professorUid = novaLista[0] ? novaLista[0].uid : null;
+      sala.professorNome = novaLista[0] ? novaLista[0].nome : "";
+    }
+
+    async function removerProfessorDaSala(sala, uid, containerLista) {
+      const atual = nomesProfessoresDaSala(sala);
+      const nova = atual.filter((p) => p.uid !== uid);
+      statusProfEl.textContent = "Removendo...";
+      try {
+        await salvarPoolProfessores(sala, nova);
+        statusProfEl.textContent = "Professor removido de " + sala.nome + ".";
+        statusProfEl.className = "admin-agenda-status ok";
+        renderListaProfessoresAtuais(containerLista, sala);
+        if (renderGradeEscala) renderGradeEscala();
+      } catch (err) {
+        statusProfEl.textContent = "Não foi possível remover. " + (err.message || "");
+        statusProfEl.className = "admin-agenda-status erro";
+        console.error(err);
       }
-      return select;
+    }
+
+    function renderListaProfessoresAtuais(container, sala) {
+      const professores = nomesProfessoresDaSala(sala);
+      container.innerHTML = "";
+      if (!professores.length) return;
+      const titulo = document.createElement("div");
+      titulo.className = "sala-professores-titulo";
+      titulo.textContent = "Professores:";
+      container.appendChild(titulo);
+      professores.forEach((p) => {
+        const linha = document.createElement("div");
+        linha.className = "sala-professores-item";
+        const nome = document.createElement("span");
+        nome.textContent = p.nome;
+        const btnRemover = document.createElement("button");
+        btnRemover.type = "button";
+        btnRemover.className = "sala-professores-remover";
+        btnRemover.textContent = "✕";
+        btnRemover.title = "Remover";
+        btnRemover.addEventListener("click", () => removerProfessorDaSala(sala, p.uid, container));
+        linha.appendChild(nome);
+        linha.appendChild(btnRemover);
+        container.appendChild(linha);
+      });
+    }
+
+    function abrirChecklistProfessores(item, sala, containerLista) {
+      const existente = item.querySelector(".sala-professores-checklist");
+      if (existente) { existente.remove(); return; }
+
+      const atuaisUids = nomesProfessoresDaSala(sala).map((p) => p.uid);
+
+      const painel = document.createElement("div");
+      painel.className = "sala-professores-checklist";
+
+      if (!professoresCache.length) {
+        const aviso = document.createElement("p");
+        aviso.className = "admin-agenda-vazio";
+        aviso.textContent = 'Nenhum Professor cadastrado ainda (atribua o perfil "Professor" em Gerenciar Perfis).';
+        painel.appendChild(aviso);
+      } else {
+        professoresCache.forEach((p) => {
+          const label = document.createElement("label");
+          label.className = "sala-professores-checkbox-linha";
+          const checkbox = document.createElement("input");
+          checkbox.type = "checkbox";
+          checkbox.value = p.uid;
+          checkbox.checked = atuaisUids.includes(p.uid);
+          label.appendChild(checkbox);
+          label.appendChild(document.createTextNode(" " + p.nome));
+          painel.appendChild(label);
+        });
+      }
+
+      const botoes = document.createElement("div");
+      botoes.className = "admin-form-botoes";
+      const btnSalvar = document.createElement("button");
+      btnSalvar.type = "button";
+      btnSalvar.className = "btn-admin";
+      btnSalvar.textContent = "Salvar";
+      const btnCancelar = document.createElement("button");
+      btnCancelar.type = "button";
+      btnCancelar.className = "btn-admin";
+      btnCancelar.textContent = "Cancelar";
+      botoes.appendChild(btnSalvar);
+      botoes.appendChild(btnCancelar);
+      painel.appendChild(botoes);
+
+      btnCancelar.addEventListener("click", () => painel.remove());
+
+      btnSalvar.addEventListener("click", async () => {
+        const marcados = Array.from(painel.querySelectorAll('input[type="checkbox"]:checked')).map((c) => c.value);
+        const novaLista = marcados.map((uid) => {
+          const p = professoresCache.find((pp) => pp.uid === uid);
+          return { uid: uid, nome: p ? p.nome : uid };
+        });
+        btnSalvar.disabled = true;
+        try {
+          await salvarPoolProfessores(sala, novaLista);
+          statusProfEl.textContent = "Professores de " + sala.nome + " atualizados.";
+          statusProfEl.className = "admin-agenda-status ok";
+          painel.remove();
+          renderListaProfessoresAtuais(containerLista, sala);
+          if (renderGradeEscala) renderGradeEscala();
+        } catch (err) {
+          statusProfEl.textContent = "Não foi possível salvar. " + (err.message || "");
+          statusProfEl.className = "admin-agenda-status erro";
+          console.error(err);
+          btnSalvar.disabled = false;
+        }
+      });
+
+      item.appendChild(painel);
     }
 
     function renderProfessores() {
@@ -3116,6 +3243,15 @@
       salasCache.forEach((sala) => {
         const item = document.createElement("div");
         item.className = "admin-perfis-item";
+        item.style.flexDirection = "column";
+        item.style.alignItems = "stretch";
+
+        const linhaTopo = document.createElement("div");
+        linhaTopo.style.display = "flex";
+        linhaTopo.style.justifyContent = "space-between";
+        linhaTopo.style.alignItems = "center";
+        linhaTopo.style.gap = "10px";
+        linhaTopo.style.width = "100%";
 
         const info = document.createElement("div");
         info.className = "admin-perfis-item-info";
@@ -3125,72 +3261,232 @@
         const depEl = document.createElement("span");
         depEl.className = "admin-perfis-item-email";
         depEl.textContent = sala.departamento || "";
-        const statusItemEl = document.createElement("span");
-        statusItemEl.className = "admin-perfis-item-status";
         info.appendChild(nomeEl);
         info.appendChild(depEl);
-        info.appendChild(statusItemEl);
 
-        const selectsWrap = document.createElement("div");
-        selectsWrap.style.display = "flex";
-        selectsWrap.style.gap = "8px";
-        selectsWrap.style.flexWrap = "wrap";
+        const btnAdicionar = document.createElement("button");
+        btnAdicionar.type = "button";
+        btnAdicionar.className = "btn-admin";
+        btnAdicionar.textContent = "📋 + Adicionar Professor";
 
-        const wrapPrincipal = document.createElement("label");
-        wrapPrincipal.style.fontSize = "11px";
-        wrapPrincipal.style.color = "var(--muted)";
-        wrapPrincipal.textContent = "Professor";
-        const selectPrincipal = montarSelectProfessor(sala.professorUid, sala.professorNome, "Sem professor definido");
-        wrapPrincipal.appendChild(document.createElement("br"));
-        wrapPrincipal.appendChild(selectPrincipal);
+        const listaAtuais = document.createElement("div");
+        listaAtuais.className = "sala-professores-lista";
 
-        const wrapAuxiliar = document.createElement("label");
-        wrapAuxiliar.style.fontSize = "11px";
-        wrapAuxiliar.style.color = "var(--muted)";
-        wrapAuxiliar.textContent = "Professor Auxiliar";
-        const selectAuxiliar = montarSelectProfessor(sala.professorAuxiliarUid, sala.professorAuxiliarNome, "Sem auxiliar definido");
-        wrapAuxiliar.appendChild(document.createElement("br"));
-        wrapAuxiliar.appendChild(selectAuxiliar);
+        btnAdicionar.addEventListener("click", () => abrirChecklistProfessores(item, sala, listaAtuais));
 
-        function ligarSalvarSelecao(select, campoUid, campoNome) {
-          select.addEventListener("change", async () => {
-            select.disabled = true;
-            if (statusItemEl.__timeout) clearTimeout(statusItemEl.__timeout);
-            const professor = professoresCache.find((p) => p.uid === select.value);
-            const dados = {};
-            dados[campoUid] = select.value || null;
-            dados[campoNome] = professor ? professor.nome : "";
-            try {
-              await updateDoc(doc(db, "salas", sala.id), dados);
-              statusProfEl.textContent = "Sala " + sala.nome + " atualizada.";
-              statusProfEl.className = "admin-agenda-status ok";
-              statusItemEl.textContent = "✓ Salvo";
-              statusItemEl.className = "admin-perfis-item-status ok";
-            } catch (err) {
-              statusProfEl.textContent = "Não foi possível salvar. " + (err.message || "");
-              statusProfEl.className = "admin-agenda-status erro";
-              statusItemEl.textContent = "✗ Não foi possível salvar";
-              statusItemEl.className = "admin-perfis-item-status erro";
-              console.error(err);
-            } finally {
-              select.disabled = false;
-              statusItemEl.__timeout = setTimeout(() => {
-                statusItemEl.textContent = "";
-                statusItemEl.className = "admin-perfis-item-status";
-              }, 4000);
-            }
-          });
-        }
-        ligarSalvarSelecao(selectPrincipal, "professorUid", "professorNome");
-        ligarSalvarSelecao(selectAuxiliar, "professorAuxiliarUid", "professorAuxiliarNome");
+        linhaTopo.appendChild(info);
+        linhaTopo.appendChild(btnAdicionar);
 
-        selectsWrap.appendChild(wrapPrincipal);
-        selectsWrap.appendChild(wrapAuxiliar);
+        renderListaProfessoresAtuais(listaAtuais, sala);
 
-        item.appendChild(info);
-        item.appendChild(selectsWrap);
+        item.appendChild(linhaTopo);
+        item.appendChild(listaAtuais);
         listaProfEl.appendChild(item);
       });
+    }
+
+    function inicializarEscala() {
+      const anoSelect = document.getElementById("escalaAnoSelect");
+      const trimestreSelect = document.getElementById("escalaTrimestreSelect");
+      const mesSelect = document.getElementById("escalaMesSelect");
+      const statusEl = document.getElementById("escalaStatus");
+      const gradeEl = document.getElementById("escalaGrade");
+      if (!anoSelect || !trimestreSelect || !mesSelect || !gradeEl) return;
+
+      const hoje = new Date();
+      const anoAtual = hoje.getFullYear();
+      anoSelect.innerHTML = "";
+      [anoAtual - 1, anoAtual, anoAtual + 1].forEach((ano) => {
+        const opt = document.createElement("option");
+        opt.value = String(ano);
+        opt.textContent = String(ano);
+        if (ano === anoAtual) opt.selected = true;
+        anoSelect.appendChild(opt);
+      });
+
+      const trimestreAtual = Math.floor(hoje.getMonth() / 3) + 1;
+      trimestreSelect.value = String(trimestreAtual);
+
+      const NOMES_MES = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+
+      function mesesDoTrimestre(trimestre) {
+        const inicio = (trimestre - 1) * 3;
+        return [inicio, inicio + 1, inicio + 2];
+      }
+
+      function popularMeses() {
+        const trimestre = parseInt(trimestreSelect.value, 10);
+        const mesesIdx = mesesDoTrimestre(trimestre);
+        const valorAtual = parseInt(mesSelect.value, 10);
+        mesSelect.innerHTML = "";
+        mesesIdx.forEach((m) => {
+          const opt = document.createElement("option");
+          opt.value = String(m);
+          opt.textContent = NOMES_MES[m];
+          mesSelect.appendChild(opt);
+        });
+        if (mesesIdx.includes(valorAtual)) {
+          mesSelect.value = String(valorAtual);
+        } else if (mesesIdx.includes(hoje.getMonth())) {
+          mesSelect.value = String(hoje.getMonth());
+        } else {
+          mesSelect.value = String(mesesIdx[0]);
+        }
+      }
+      popularMeses();
+
+      function todosDomingosDoTrimestre(ano, trimestre) {
+        const mesesIdx = mesesDoTrimestre(trimestre);
+        const inicio = new Date(ano, mesesIdx[0], 1);
+        const fim = new Date(ano, mesesIdx[2] + 1, 0);
+        const domingos = [];
+        const d = new Date(inicio);
+        d.setDate(d.getDate() + ((7 - d.getDay()) % 7));
+        while (d <= fim) {
+          domingos.push(new Date(d));
+          d.setDate(d.getDate() + 7);
+        }
+        return domingos;
+      }
+
+      function paraISO(data) {
+        return data.getFullYear() + "-" + String(data.getMonth() + 1).padStart(2, "0") + "-" + String(data.getDate()).padStart(2, "0");
+      }
+
+      async function renderGrade() {
+        const ano = parseInt(anoSelect.value, 10);
+        const trimestre = parseInt(trimestreSelect.value, 10);
+        const mes = parseInt(mesSelect.value, 10);
+
+        gradeEl.innerHTML = "Carregando...";
+
+        try {
+          const domingosTrimestre = todosDomingosDoTrimestre(ano, trimestre);
+          const domingosMes = domingosTrimestre.filter((d) => d.getMonth() === mes);
+
+          if (!salasCache.length) {
+            gradeEl.innerHTML = '<div class="admin-agenda-vazio">Cadastre Salas em "Gerenciar Turma" primeiro.</div>';
+            return;
+          }
+          if (!domingosMes.length) {
+            gradeEl.innerHTML = '<div class="admin-agenda-vazio">Nenhum domingo neste mês.</div>';
+            return;
+          }
+
+          const licoesSnaps = await Promise.all(salasCache.map((s) => getDoc(doc(db, "licoes", s.id))));
+          const licoesPorSala = {};
+          salasCache.forEach((s, idx) => {
+            licoesPorSala[s.id] = licoesSnaps[idx].exists() ? licoesSnaps[idx].data() : null;
+          });
+
+          const primeiroDia = paraISO(domingosMes[0]);
+          const ultimoDia = paraISO(domingosMes[domingosMes.length - 1]);
+          const escalaSnap = await getDocs(query(
+            collection(db, "escalaEbd"),
+            where("data", ">=", primeiroDia),
+            where("data", "<=", ultimoDia)
+          ));
+          const escalaPorChave = {};
+          escalaSnap.forEach((d) => { escalaPorChave[d.id] = d.data(); });
+
+          gradeEl.innerHTML = "";
+          const header = document.createElement("div");
+          header.className = "escala-linha escala-header";
+          ["Data", "Turma", "Lição", "Professor"].forEach((t) => {
+            const span = document.createElement("span");
+            span.textContent = t;
+            header.appendChild(span);
+          });
+          gradeEl.appendChild(header);
+
+          domingosMes.forEach((domingo) => {
+            const indiceNoTrimestre = domingosTrimestre.findIndex((d) => d.getTime() === domingo.getTime());
+            const dataISO = paraISO(domingo);
+            const dataFormatada = domingo.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" }) + " (dom)";
+
+            salasCache.forEach((sala) => {
+              const linha = document.createElement("div");
+              linha.className = "escala-linha";
+
+              const dataEl = document.createElement("span");
+              dataEl.textContent = dataFormatada;
+
+              const turmaEl = document.createElement("span");
+              turmaEl.textContent = sala.nome;
+
+              const licaoEl = document.createElement("span");
+              const dadosLicao = licoesPorSala[sala.id];
+              const titulo = dadosLicao && Array.isArray(dadosLicao.titulos) ? dadosLicao.titulos[indiceNoTrimestre] : null;
+              licaoEl.textContent = titulo || "—";
+
+              const chave = sala.id + "_" + dataISO;
+              const atribuicaoAtual = escalaPorChave[chave];
+              const professoresDaSala = nomesProfessoresDaSala(sala);
+              const select = document.createElement("select");
+              select.className = "admin-perfis-item-select";
+              const optNenhum = document.createElement("option");
+              optNenhum.value = "";
+              optNenhum.textContent = "Sem professor definido";
+              select.appendChild(optNenhum);
+              professoresDaSala.forEach((p) => {
+                const opt = document.createElement("option");
+                opt.value = p.uid;
+                opt.textContent = p.nome;
+                select.appendChild(opt);
+              });
+              const uidSelecionado = atribuicaoAtual ? atribuicaoAtual.professorUid : "";
+              if (uidSelecionado && !professoresDaSala.some((p) => p.uid === uidSelecionado)) {
+                const optAtual = document.createElement("option");
+                optAtual.value = uidSelecionado;
+                optAtual.textContent = (atribuicaoAtual.professorNome || uidSelecionado) + " (fora da lista atual)";
+                select.appendChild(optAtual);
+              }
+              select.value = uidSelecionado || "";
+
+              select.addEventListener("change", async () => {
+                select.disabled = true;
+                const professor = professoresDaSala.find((p) => p.uid === select.value);
+                try {
+                  await setDoc(doc(db, "escalaEbd", chave), {
+                    salaId: sala.id,
+                    salaNome: sala.nome,
+                    data: dataISO,
+                    professorUid: select.value || null,
+                    professorNome: professor ? professor.nome : "",
+                    atualizadoEm: serverTimestamp()
+                  });
+                  statusEl.textContent = "Escala de " + sala.nome + " (" + dataFormatada + ") salva.";
+                  statusEl.className = "admin-agenda-status ok";
+                } catch (err) {
+                  statusEl.textContent = "Não foi possível salvar a escala. " + (err.message || "");
+                  statusEl.className = "admin-agenda-status erro";
+                  console.error(err);
+                } finally {
+                  select.disabled = false;
+                }
+              });
+
+              linha.appendChild(dataEl);
+              linha.appendChild(turmaEl);
+              linha.appendChild(licaoEl);
+              linha.appendChild(select);
+              gradeEl.appendChild(linha);
+            });
+          });
+        } catch (err) {
+          gradeEl.innerHTML = '<div class="admin-agenda-vazio">Não foi possível carregar a escala.</div>';
+          statusEl.textContent = "Não foi possível carregar a escala. " + (err.message || "");
+          statusEl.className = "admin-agenda-status erro";
+          console.error(err);
+        }
+      }
+
+      anoSelect.addEventListener("change", renderGrade);
+      trimestreSelect.addEventListener("change", () => { popularMeses(); renderGrade(); });
+      mesSelect.addEventListener("change", renderGrade);
+
+      renderGradeEscala = renderGrade;
+      renderGrade();
     }
 
     if (btnImportar) {
@@ -3202,10 +3498,7 @@
               nome: sala.nome,
               departamento: sala.departamento,
               professorUid: null,
-              professorNome: "",
-              professorAuxiliarUid: null,
-              professorAuxiliarNome: "",
-              criadoEm: serverTimestamp()
+              professorNome: ""
             }, { merge: true });
           }
           btnImportar.hidden = true;
@@ -3220,6 +3513,7 @@
       });
     }
 
+    inicializarEscala();
     window.__recarregarGerenciarSalas = carregarSalas;
     carregarSalas();
   }
@@ -3561,7 +3855,7 @@
         const d = new Date(campoData.value + "T00:00:00");
         partes.push("Data: " + d.toLocaleDateString("pt-BR"));
       }
-      partes.push("Professor: " + (sala && sala.professorNome ? sala.professorNome : "—"));
+      partes.push("Professor(es): " + ((sala && Array.isArray(sala.professores) && sala.professores.length) ? sala.professores.map((p) => p.nome).join(", ") : ((sala && sala.professorNome) ? sala.professorNome : "—")));
       chamadaSubinfo.textContent = partes.join(" · ");
     }
 
@@ -3932,7 +4226,7 @@
         const podeVerTodas = perfilAtual === "administrativo" || perfilAtual === "admin";
         const uidAtual = usuarioAtualCache && usuarioAtualCache.uid;
 
-        minhasSalas = podeVerTodas ? todasSalas : todasSalas.filter((s) => s.professorUid === uidAtual);
+        minhasSalas = podeVerTodas ? todasSalas : todasSalas.filter((s) => (Array.isArray(s.professores) && s.professores.some((p) => p.uid === uidAtual)) || s.professorUid === uidAtual);
 
         if (!minhasSalas.length) {
           seletorWrap.hidden = true;
