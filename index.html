@@ -794,6 +794,12 @@
   .professor-canvas-card:hover { border-color: var(--azul); }
   .professor-canvas-card.is-ativo { border-color: var(--azul); background: var(--surface); }
   .professor-canvas-titulo { font-weight: 700; font-size: 15px; }
+  #areaProfessor .professor-canvas-card { border-color: var(--azul); }
+  #areaProfessor .professor-canvas-card.is-ativo { border-color: var(--laranja); background: var(--surface); }
+  .chamada-cabecalho-aula { text-align: center; margin: 6px 0 20px; padding: 14px 10px; border-bottom: 1px solid var(--border-strong); }
+  .chamada-titulo-grande { font-family: "Unbounded", sans-serif; font-weight: 700; font-size: 19px; line-height: 1.4; color: var(--laranja); }
+  .chamada-professor-escalado { margin-top: 8px; font-weight: 700; font-size: 15px; color: var(--dourado); }
+  @media (max-width: 560px) { .chamada-titulo-grande { font-size: 16px; } }
 
   .escala-filtro-linha { align-items: flex-end; flex-wrap: wrap; }
   .escala-filtro { display: flex; flex-direction: column; gap: 8px; flex: 1; min-width: 140px; }
@@ -1789,20 +1795,15 @@
 
       <div id="canvasPainelChamada" class="professor-canvas-painel" hidden>
         <form id="formRelatorioAula" class="admin-form">
-          <h4>Chamada</h4>
-          <p id="chamadaSubinfo" class="admin-agenda-info"></p>
+          <h4>RELATÓRIO DA TURMA: <span id="chamadaNomeTurma"></span></h4>
 
-          <div class="admin-form-linha">
-            <label>Data da aula
-              <input type="date" id="relatorioData" required>
-            </label>
+          <div class="chamada-cabecalho-aula">
+            <div id="chamadaTituloGrande" class="chamada-titulo-grande"></div>
+            <div id="chamadaProfessorEscalado" class="chamada-professor-escalado"></div>
           </div>
-          <label>Tema da aula (Lição)
-            <select id="relatorioTemaSeletor" class="admin-perfis-item-select"></select>
-          </label>
-          <label>Título da lição (pode editar)
-            <input type="text" id="relatorioTema" placeholder="Ex.: A parábola do semeador">
-          </label>
+
+          <input type="hidden" id="relatorioData">
+          <input type="hidden" id="relatorioTema">
 
           <div class="admin-form-linha" style="margin-top:10px;">
             <label style="flex:2;">Adicionar visitante (avulso do dia)
@@ -3902,9 +3903,9 @@
 
     const campoData = document.getElementById("relatorioData");
     const campoTema = document.getElementById("relatorioTema");
-    const relatorioTemaSeletor = document.getElementById("relatorioTemaSeletor");
-    const chamadaSubinfo = document.getElementById("chamadaSubinfo");
-
+    const chamadaNomeTurma = document.getElementById("chamadaNomeTurma");
+    const chamadaTituloGrande = document.getElementById("chamadaTituloGrande");
+    const chamadaProfessorEscalado = document.getElementById("chamadaProfessorEscalado");
     const salaAlunosLista = document.getElementById("salaAlunosLista");
     const salaAlunoCandidato = document.getElementById("salaAlunoCandidato");
     const btnAdicionarAlunoConta = document.getElementById("btnAdicionarAlunoConta");
@@ -4020,16 +4021,59 @@
       return { matriculados, presentes, ausentes, visitantes, ofertas };
     }
 
-    function atualizarCabecalhoChamada() {
-      const sala = minhasSalas.find((s) => s.id === seletor.value);
-      const partes = [];
-      if (campoTema.value) partes.push('Lição: "' + campoTema.value + '"');
-      if (campoData.value) {
-        const d = new Date(campoData.value + "T00:00:00");
-        partes.push("Data: " + d.toLocaleDateString("pt-BR"));
+    const NOMES_TRIMESTRE = { 1: "1º Trimestre", 2: "2º Trimestre", 3: "3º Trimestre", 4: "4º Trimestre" };
+
+    // Monta o cabeçalho da Chamada automaticamente: data de hoje, título da
+    // lição do dia (buscado em "licoes" pela data exata do Domingo) e o
+    // Trimestre - e busca em "escalaEbd" qual Professor está escalado para
+    // esta Sala nesta data exata, para mostrar em destaque (dourado).
+    async function carregarInfoAulaHoje() {
+      const salaId = seletor.value;
+      const sala = minhasSalas.find((s) => s.id === salaId);
+      const dataISO = hojeISO();
+      const hoje = new Date();
+      const ano = hoje.getFullYear();
+      const trimestre = Math.floor(hoje.getMonth() / 3) + 1;
+
+      campoData.value = dataISO;
+      if (chamadaNomeTurma) chamadaNomeTurma.textContent = sala ? sala.nome : "";
+
+      campoTema.value = "";
+      if (revistaPdfEl) { revistaPdfEl.hidden = true; revistaPdfEl.innerHTML = ""; }
+      if (salaId) {
+        try {
+          const snap = await getDoc(doc(db, "licoes", salaId + "_" + ano + "_" + trimestre));
+          const dados = snap.exists() ? snap.data() : null;
+          const licaoHoje = dados && Array.isArray(dados.licoes) ? dados.licoes.find((l) => l.data === dataISO) : null;
+          campoTema.value = (licaoHoje && licaoHoje.titulo) ? licaoHoje.titulo : "";
+          if (revistaPdfEl && dados && dados.revistaPdfUrl) {
+            revistaPdfEl.hidden = false;
+            revistaPdfEl.innerHTML = "📘 Revista trimestral (" + trimestre + "º Trimestre " + ano + "): <a href=\"" + dados.revistaPdfUrl + "\" target=\"_blank\" rel=\"noopener\">" + (dados.revistaPdfNome || "abrir PDF") + "</a>";
+          }
+        } catch (err) { console.error(err); }
       }
-      partes.push("Professor(es): " + ((sala && Array.isArray(sala.professores) && sala.professores.length) ? sala.professores.map((p) => p.nome).join(", ") : ((sala && sala.professorNome) ? sala.professorNome : "—")));
-      chamadaSubinfo.textContent = partes.join(" · ");
+
+      let professorEscaladoNome = "";
+      if (salaId) {
+        try {
+          const escSnap = await getDoc(doc(db, "escalaEbd", salaId + "_" + dataISO));
+          if (escSnap.exists()) professorEscaladoNome = escSnap.data().professorNome || "";
+        } catch (err) { console.error(err); }
+      }
+      if (!professorEscaladoNome && sala) {
+        professorEscaladoNome = (Array.isArray(sala.professores) && sala.professores.length) ? sala.professores.map((p) => p.nome).join(", ") : (sala.professorNome || "");
+      }
+
+      if (chamadaTituloGrande) {
+        const dataFormatada = new Date(dataISO + "T00:00:00").toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" });
+        const partesTitulo = [dataFormatada];
+        if (campoTema.value) partesTitulo.push(campoTema.value);
+        partesTitulo.push((NOMES_TRIMESTRE[trimestre] || (trimestre + "º Trimestre")) + " de " + ano);
+        chamadaTituloGrande.textContent = partesTitulo.join(" · ");
+      }
+      if (chamadaProfessorEscalado) {
+        chamadaProfessorEscalado.textContent = professorEscaladoNome ? ("Professor(a): " + professorEscaladoNome) : "Nenhum professor escalado para hoje";
+      }
     }
 
     function renderOuvintes() {
@@ -4229,43 +4273,6 @@
       }
     }
 
-    async function carregarLicoes() {
-      relatorioTemaSeletor.innerHTML = "";
-      const optVazia = document.createElement("option");
-      optVazia.value = "";
-      optVazia.textContent = "Selecione uma lição...";
-      relatorioTemaSeletor.appendChild(optVazia);
-      const salaId = seletor.value;
-      if (revistaPdfEl) { revistaPdfEl.hidden = true; revistaPdfEl.innerHTML = ""; }
-      if (!salaId) return;
-      try {
-        const hoje = new Date();
-        const ano = hoje.getFullYear();
-        const trimestre = Math.floor(hoje.getMonth() / 3) + 1;
-        const snap = await getDoc(doc(db, "licoes", salaId + "_" + ano + "_" + trimestre));
-        const dados = snap.exists() ? snap.data() : null;
-        const titulos = dados && Array.isArray(dados.licoes) ? dados.licoes.map((l) => l.titulo).filter(Boolean) : [];
-        titulos.forEach((titulo) => {
-          const opt = document.createElement("option");
-          opt.value = titulo;
-          opt.textContent = titulo;
-          relatorioTemaSeletor.appendChild(opt);
-        });
-        if (revistaPdfEl && dados && dados.revistaPdfUrl) {
-          revistaPdfEl.hidden = false;
-          revistaPdfEl.innerHTML = "📘 Revista trimestral (" + trimestre + "º Trimestre " + ano + "): <a href=\"" + dados.revistaPdfUrl + "\" target=\"_blank\" rel=\"noopener\">" + (dados.revistaPdfNome || "abrir PDF") + "</a>";
-        }
-      } catch (err) {
-        console.error(err);
-      }
-    }
-    relatorioTemaSeletor.addEventListener("change", () => {
-      if (relatorioTemaSeletor.value) {
-        campoTema.value = relatorioTemaSeletor.value;
-        atualizarCabecalhoChamada();
-      }
-    });
-    campoTema.addEventListener("input", atualizarCabecalhoChamada);
 
     async function carregarArquivosSala() {
       const salaId = seletor.value;
@@ -4380,14 +4387,14 @@
       }
       renderChamada();
       renderOuvintes();
-      atualizarCabecalhoChamada();
     }
 
     async function recarregarTudo() {
       const salaId = seletor.value;
+      campoData.value = hojeISO();
       await carregarAlunosDaSala(salaId);
       await carregarRelatorio(salaId, campoData.value);
-      await carregarLicoes();
+      await carregarInfoAulaHoje();
       if (!canvasPaineis.arquivos.hidden) await carregarArquivosSala();
     }
 
@@ -4424,7 +4431,6 @@
 
         campoData.value = hojeISO();
         mostrarCanvas("alunos");
-        await carregarLicoes();
       } catch (err) {
         semSalaAviso.hidden = false;
         semSalaAviso.textContent = "Não foi possível carregar suas Salas.";
@@ -4434,7 +4440,6 @@
     }
 
     seletor.addEventListener("change", recarregarTudo);
-    campoData.addEventListener("change", () => carregarRelatorio(seletor.value, campoData.value));
 
     salaAlunoAvulsoCrianca.addEventListener("change", () => {
       salaAlunoAvulsoResponsaveisWrap.hidden = !salaAlunoAvulsoCrianca.checked;
