@@ -799,9 +799,13 @@
   #areaProfessor .professor-canvas-card { border-color: var(--azul); }
   #areaProfessor .professor-canvas-card.is-ativo { border-color: var(--laranja); background: var(--surface); }
   .chamada-cabecalho-aula { text-align: center; margin: 6px 0 20px; padding: 14px 10px; border-bottom: 1px solid var(--border-strong); }
-  .chamada-titulo-grande { font-family: "Unbounded", sans-serif; font-weight: 700; font-size: 19px; line-height: 1.4; color: var(--laranja); }
+  .chamada-nome-sala { font-family: "Unbounded", sans-serif; font-weight: 700; font-size: 16px; line-height: 1.4; color: var(--laranja); text-transform: uppercase; }
+  .chamada-espaco { height: 12px; }
+  .chamada-data { font-size: 13px; color: var(--ink); }
+  .chamada-revista { margin-top: 10px; font-weight: 700; font-size: 18px; color: #7CD992; }
+  .chamada-licao-titulo { margin-top: 4px; font-weight: 700; font-size: 18px; color: #7CD992; }
   .chamada-professor-escalado { margin-top: 8px; font-weight: 700; font-size: 15px; color: var(--dourado); }
-  @media (max-width: 560px) { .chamada-titulo-grande { font-size: 16px; } }
+  @media (max-width: 560px) { .chamada-nome-sala { font-size: 14px; } .chamada-revista, .chamada-licao-titulo { font-size: 16px; } }
 
   .escala-filtro-linha { align-items: flex-end; flex-wrap: wrap; }
   .escala-filtro { display: flex; flex-direction: column; gap: 8px; flex: 1; min-width: 140px; }
@@ -1802,10 +1806,12 @@
 
       <div id="canvasPainelChamada" class="professor-canvas-painel" hidden>
         <form id="formRelatorioAula" class="admin-form">
-          <h4>RELATÓRIO DA TURMA: <span id="chamadaNomeTurma"></span></h4>
-
           <div class="chamada-cabecalho-aula">
-            <div id="chamadaTituloGrande" class="chamada-titulo-grande"></div>
+            <div id="chamadaNomeTurma" class="chamada-nome-sala"></div>
+            <div class="chamada-espaco"></div>
+            <div id="chamadaData" class="chamada-data"></div>
+            <div id="chamadaRevista" class="chamada-revista" hidden></div>
+            <div id="chamadaLicaoTitulo" class="chamada-licao-titulo" hidden></div>
             <div id="chamadaProfessorEscalado" class="chamada-professor-escalado"></div>
           </div>
 
@@ -3921,7 +3927,9 @@
     const campoData = document.getElementById("relatorioData");
     const campoTema = document.getElementById("relatorioTema");
     const chamadaNomeTurma = document.getElementById("chamadaNomeTurma");
-    const chamadaTituloGrande = document.getElementById("chamadaTituloGrande");
+    const chamadaData = document.getElementById("chamadaData");
+    const chamadaRevista = document.getElementById("chamadaRevista");
+    const chamadaLicaoTitulo = document.getElementById("chamadaLicaoTitulo");
     const chamadaProfessorEscalado = document.getElementById("chamadaProfessorEscalado");
     const salaAlunosLista = document.getElementById("salaAlunosLista");
     const salaAlunoCandidato = document.getElementById("salaAlunoCandidato");
@@ -4057,12 +4065,18 @@
 
       campoTema.value = "";
       if (revistaPdfEl) { revistaPdfEl.hidden = true; revistaPdfEl.innerHTML = ""; }
+      let revistaNomeAtual = "";
+      let licaoNumeroAtual = null;
       if (salaId) {
         try {
           const snap = await getDoc(doc(db, "licoes", salaId + "_" + ano + "_" + trimestre));
           const dados = snap.exists() ? snap.data() : null;
-          const licaoHoje = dados && Array.isArray(dados.licoes) ? dados.licoes.find((l) => l.data === dataISO) : null;
+          revistaNomeAtual = (dados && dados.revistaNome) ? dados.revistaNome : "";
+          const licoesArr = dados && Array.isArray(dados.licoes) ? dados.licoes : [];
+          const licaoIndex = licoesArr.findIndex((l) => l.data === dataISO);
+          const licaoHoje = licaoIndex >= 0 ? licoesArr[licaoIndex] : null;
           campoTema.value = (licaoHoje && licaoHoje.titulo) ? licaoHoje.titulo : "";
+          licaoNumeroAtual = licaoIndex >= 0 ? (licaoIndex + 1) : null;
           if (revistaPdfEl && dados && dados.revistaPdfUrl) {
             revistaPdfEl.hidden = false;
             revistaPdfEl.innerHTML = "📘 Revista trimestral (" + trimestre + "º Trimestre " + ano + "): <a href=\"" + dados.revistaPdfUrl + "\" target=\"_blank\" rel=\"noopener\">" + (dados.revistaPdfNome || "abrir PDF") + "</a>";
@@ -4077,16 +4091,18 @@
           if (escSnap.exists()) professorEscaladoNome = escSnap.data().professorNome || "";
         } catch (err) { console.error(err); }
       }
-      if (!professorEscaladoNome && sala) {
-        professorEscaladoNome = (Array.isArray(sala.professores) && sala.professores.length) ? sala.professores.map((p) => p.nome).join(", ") : (sala.professorNome || "");
-      }
 
-      if (chamadaTituloGrande) {
-        const dataFormatada = new Date(dataISO + "T00:00:00").toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" });
-        const partesTitulo = [dataFormatada];
-        if (campoTema.value) partesTitulo.push(campoTema.value);
-        partesTitulo.push((NOMES_TRIMESTRE[trimestre] || (trimestre + "º Trimestre")) + " de " + ano);
-        chamadaTituloGrande.textContent = partesTitulo.join(" · ");
+      if (chamadaData) {
+        chamadaData.textContent = new Date(dataISO + "T00:00:00").toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" });
+      }
+      if (chamadaRevista) {
+        chamadaRevista.hidden = !revistaNomeAtual;
+        chamadaRevista.textContent = revistaNomeAtual ? ("Revista: " + revistaNomeAtual) : "";
+      }
+      if (chamadaLicaoTitulo) {
+        const temLicao = !!campoTema.value;
+        chamadaLicaoTitulo.hidden = !temLicao;
+        chamadaLicaoTitulo.textContent = temLicao ? ("Lição: " + (licaoNumeroAtual ? (licaoNumeroAtual + " — ") : "") + campoTema.value) : "";
       }
       if (chamadaProfessorEscalado) {
         chamadaProfessorEscalado.textContent = professorEscaladoNome ? ("Professor(a): " + professorEscaladoNome) : "Nenhum professor escalado para hoje";
