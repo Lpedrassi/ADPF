@@ -716,6 +716,8 @@
   }
   .admin-form input:focus, .admin-form select:focus { outline: none; border-color: var(--azul); }
   .admin-form-botoes { display: flex; gap: 10px; margin-top: 4px; }
+  .admin-file-input { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+  .admin-file-btn { display: inline-flex; align-items: center; cursor: pointer; }
 
   .admin-agenda-lista-wrap { margin-top: 26px; }
   .admin-agenda-lista-wrap h4 { font-size: 13px; margin: 0 0 4px; }
@@ -1597,9 +1599,6 @@
       </label>
     </div>
     <div id="licoesConteudo" class="licoes-conteudo">
-        <label>Nome da revista
-          <input type="text" id="licoesRevistaNome" placeholder="Ex.: Adultos, Jovens, Adolescentes...">
-        </label>
       <div class="admin-form">
         <div class="admin-form-linha">
           <label style="flex:1;">Ano
@@ -1614,6 +1613,9 @@
             </select>
           </label>
         </div>
+        <label>Nome da revista
+          <input type="text" id="licoesRevistaNome" placeholder="Ex.: Adultos, Jovens, Adolescentes...">
+        </label>
         <p id="licoesMigracaoAviso" class="admin-agenda-info" hidden></p>
         <div id="licoesCamposLista"></div>
         <div class="admin-form-botoes">
@@ -1625,7 +1627,9 @@
         <p class="admin-agenda-info" style="margin-top:-6px;">Envie o PDF da revista trimestral desta Sala — vai aparecer para o Professor (e, quando a Sala do Aluno tiver conteúdo, para os Alunos também).</p>
         <p id="licoesPdfAtual" class="admin-agenda-info" hidden></p>
         <div class="admin-form-linha">
-          <input type="file" id="licoesPdfInput" accept="application/pdf">
+          <label for="licoesPdfInput" class="btn-admin admin-file-btn">Adicionar arquivo</label>
+          <input type="file" id="licoesPdfInput" accept="application/pdf" class="admin-file-input">
+          <span id="licoesPdfNomeEscolhido" class="admin-agenda-status"></span>
           <button type="button" id="btnEnviarPdfLicoes" class="btn-admin">Enviar PDF</button>
           <button type="button" id="btnRemoverPdfLicoes" class="btn-ghost" hidden>Remover PDF</button>
         </div>
@@ -3618,6 +3622,11 @@
     const statusEl = document.getElementById("licoesStatus");
     const pdfAtualEl = document.getElementById("licoesPdfAtual");
     const pdfInput = document.getElementById("licoesPdfInput");
+    const pdfNomeEscolhidoEl = document.getElementById("licoesPdfNomeEscolhido");
+    pdfInput.addEventListener("change", () => {
+      const f = pdfInput.files && pdfInput.files[0];
+      pdfNomeEscolhidoEl.textContent = f ? f.name : "";
+    });
     const btnEnviarPdf = document.getElementById("btnEnviarPdfLicoes");
     const btnRemoverPdf = document.getElementById("btnRemoverPdfLicoes");
     const pdfStatusEl = document.getElementById("licoesPdfStatus");
@@ -3846,6 +3855,7 @@
         });
         atualizarPdfUI();
         pdfInput.value = "";
+        pdfNomeEscolhidoEl.textContent = "";
         pdfStatusEl.textContent = "PDF enviado com sucesso.";
         pdfStatusEl.className = "admin-agenda-status ok";
       } catch (err) {
