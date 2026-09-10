@@ -1597,6 +1597,9 @@
       </label>
     </div>
     <div id="licoesConteudo" class="licoes-conteudo">
+        <label>Nome da revista
+          <input type="text" id="licoesRevistaNome" placeholder="Ex.: Adultos, Jovens, Adolescentes...">
+        </label>
       <div class="admin-form">
         <div class="admin-form-linha">
           <label style="flex:1;">Ano
@@ -3606,6 +3609,7 @@
   function iniciarGerenciarLicoes() {
     const seletorSala = document.getElementById("licoesSalaSeletor");
     const conteudoWrap = document.getElementById("licoesConteudo");
+    const revistaNomeInput = document.getElementById("licoesRevistaNome");
     const anoSelect = document.getElementById("licoesAnoSelect");
     const trimestreSelect = document.getElementById("licoesTrimestreSelect");
     const migracaoAvisoEl = document.getElementById("licoesMigracaoAviso");
@@ -3699,6 +3703,7 @@
       const domingos = domingosDoTrimestre(ano, trimestre);
       montarCampos(domingos);
       licaoAtualDados = null;
+      revistaNomeInput.value = "";
       atualizarPdfUI();
       try {
         const snap = await getDoc(doc(db, "licoes", docId));
@@ -3706,6 +3711,7 @@
         if (snap.exists()) {
           const d = snap.data();
           licaoAtualDados = d;
+          revistaNomeInput.value = d.revistaNome || "";
           const porData = {};
           (d.licoes || []).forEach((l) => { porData[l.data] = l.titulo; });
           campos.forEach((c, idx) => { c.value = porData[paraISO(domingos[idx])] || ""; });
@@ -3779,6 +3785,7 @@
       try {
         const licoesArr = campos.map((c, idx) => ({ data: paraISO(domingos[idx]), titulo: c.value.trim() }));
         const dadosSalvar = {
+          revistaNome: revistaNomeInput.value.trim(),
           salaId: salaId,
           ano: ano,
           trimestre: trimestre,
