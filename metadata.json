@@ -1,0 +1,8 @@
+{
+  "name": "ADB Floripa",
+  "description": "Portal e site oficial da Assembleia de Deus Belém em Parque Florianópolis",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

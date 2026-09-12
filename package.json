@@ -1,0 +1,14 @@
+{
+  "name": "adb-floripa",
+  "version": "1.0.0",
+  "description": "Portal e site oficial da Assembleia de Deus Belém em Parque Florianópolis",
+  "type": "module",
+  "scripts": {
+    "dev": "node server.js",
+    "build": "node -e \"console.log('Build ready')\"",
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}
