@@ -807,14 +807,17 @@
   .professor-canvas-titulo { font-weight: 700; font-size: 15px; }
   #areaProfessor .professor-canvas-card { border-color: var(--azul); }
   #areaProfessor .professor-canvas-card.is-ativo { border-color: var(--laranja); background: var(--surface); }
-  .chamada-cabecalho-aula { text-align: center; margin: 6px 0 20px; padding: 14px 10px; border-bottom: 1px solid var(--border-strong); }
+  .chamada-cabecalho-aula { text-align: center; margin: 6px 0 20px; padding: 20px 16px; border: 1px solid var(--border-strong); border-radius: 14px; background: var(--surface); }
   .chamada-nome-sala { font-family: "Unbounded", sans-serif; font-weight: 700; font-size: 16px; line-height: 1.4; color: var(--laranja); text-transform: uppercase; }
-  .chamada-espaco { height: 12px; }
-  .chamada-data { font-size: 13px; color: var(--ink); }
-  .chamada-revista { margin-top: 10px; font-weight: 700; font-size: 18px; color: #7CD992; }
-  .chamada-licao-titulo { margin-top: 4px; font-weight: 700; font-size: 18px; color: #7CD992; }
-  .chamada-professor-escalado { margin-top: 8px; font-weight: 700; font-size: 15px; color: var(--dourado); }
-  @media (max-width: 560px) { .chamada-nome-sala { font-size: 14px; } .chamada-revista, .chamada-licao-titulo { font-size: 16px; } }
+  .chamada-data { margin-top: 4px; font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+  .chamada-divisor { width: 40px; height: 2px; background: var(--laranja); border: none; margin: 14px auto; }
+  .chamada-info-bloco { margin-top: 10px; }
+  .chamada-info-label { font-size: 12px; font-weight: 700; color: var(--azul); text-transform: uppercase; letter-spacing: .03em; }
+  .chamada-info-titulo { margin-top: 2px; font-weight: 700; font-size: 18px; color: var(--dourado); line-height: 1.35; }
+  .chamada-info-sub { margin-top: 4px; font-size: 13px; color: var(--muted); line-height: 1.4; }
+  .chamada-professor-pill { display: inline-flex; align-items: center; gap: 6px; margin-top: 14px; padding: 8px 14px; border: 1px solid var(--dourado); border-radius: 999px; font-size: 13px; font-weight: 700; color: var(--dourado); }
+  .chamada-professor-pill svg { flex-shrink: 0; width: 15px; height: 15px; }
+  @media (max-width: 560px) { .chamada-nome-sala { font-size: 14px; } .chamada-info-titulo { font-size: 16px; } }
 
   .escala-filtro-linha { align-items: flex-end; flex-wrap: wrap; }
   .escala-filtro { display: flex; flex-direction: column; gap: 8px; flex: 1; min-width: 140px; }
@@ -1824,11 +1827,18 @@
         <form id="formRelatorioAula" class="admin-form">
           <div class="chamada-cabecalho-aula">
             <div id="chamadaNomeTurma" class="chamada-nome-sala"></div>
-            <div class="chamada-espaco"></div>
             <div id="chamadaData" class="chamada-data"></div>
-            <div id="chamadaRevista" class="chamada-revista" hidden></div>
-            <div id="chamadaLicaoTitulo" class="chamada-licao-titulo" hidden></div>
-            <div id="chamadaProfessorEscalado" class="chamada-professor-escalado"></div>
+            <hr class="chamada-divisor">
+            <div id="chamadaRevistaBloco" class="chamada-info-bloco" hidden>
+              <div class="chamada-info-label">Revista:</div>
+              <div id="chamadaRevistaTitulo" class="chamada-info-titulo"></div>
+              <div id="chamadaRevistaSub" class="chamada-info-sub" hidden></div>
+            </div>
+            <div id="chamadaLicaoBloco" class="chamada-info-bloco" hidden>
+              <div id="chamadaLicaoLabel" class="chamada-info-label"></div>
+              <div id="chamadaLicaoTitulo" class="chamada-info-titulo"></div>
+            </div>
+            <div id="chamadaProfessorEscalado" class="chamada-professor-pill"></div>
           </div>
 
           <input type="hidden" id="relatorioData">
@@ -3944,7 +3954,11 @@
     const campoTema = document.getElementById("relatorioTema");
     const chamadaNomeTurma = document.getElementById("chamadaNomeTurma");
     const chamadaData = document.getElementById("chamadaData");
-    const chamadaRevista = document.getElementById("chamadaRevista");
+    const chamadaRevistaBloco = document.getElementById("chamadaRevistaBloco");
+    const chamadaRevistaTitulo = document.getElementById("chamadaRevistaTitulo");
+    const chamadaRevistaSub = document.getElementById("chamadaRevistaSub");
+    const chamadaLicaoBloco = document.getElementById("chamadaLicaoBloco");
+    const chamadaLicaoLabel = document.getElementById("chamadaLicaoLabel");
     const chamadaLicaoTitulo = document.getElementById("chamadaLicaoTitulo");
     const chamadaProfessorEscalado = document.getElementById("chamadaProfessorEscalado");
     const salaAlunosLista = document.getElementById("salaAlunosLista");
@@ -4083,16 +4097,18 @@
       if (revistaPdfEl) { revistaPdfEl.hidden = true; revistaPdfEl.innerHTML = ""; }
       let revistaNomeAtual = "";
       let licaoNumeroAtual = null;
+      let dataAulaISO = dataISO;
       if (salaId) {
         try {
           const snap = await getDoc(doc(db, "licoes", salaId + "_" + ano + "_" + trimestre));
           const dados = snap.exists() ? snap.data() : null;
           revistaNomeAtual = (dados && dados.revistaNome) ? dados.revistaNome : "";
           const licoesArr = dados && Array.isArray(dados.licoes) ? dados.licoes : [];
-          const licaoIndex = licoesArr.findIndex((l) => l.data === dataISO);
+          const licaoIndex = licoesArr.findIndex((l) => l.data >= dataISO);
           const licaoHoje = licaoIndex >= 0 ? licoesArr[licaoIndex] : null;
           campoTema.value = (licaoHoje && licaoHoje.titulo) ? licaoHoje.titulo : "";
           licaoNumeroAtual = licaoIndex >= 0 ? (licaoIndex + 1) : null;
+          if (licaoHoje && licaoHoje.data) dataAulaISO = licaoHoje.data;
           if (revistaPdfEl && dados && dados.revistaPdfUrl) {
             revistaPdfEl.hidden = false;
             revistaPdfEl.innerHTML = "📘 Revista trimestral (" + trimestre + "º Trimestre " + ano + "): <a href=\"" + dados.revistaPdfUrl + "\" target=\"_blank\" rel=\"noopener\">" + (dados.revistaPdfNome || "abrir PDF") + "</a>";
@@ -4103,25 +4119,36 @@
       let professorEscaladoNome = "";
       if (salaId) {
         try {
-          const escSnap = await getDoc(doc(db, "escalaEbd", salaId + "_" + dataISO));
+          const escSnap = await getDoc(doc(db, "escalaEbd", salaId + "_" + dataAulaISO));
           if (escSnap.exists()) professorEscaladoNome = escSnap.data().professorNome || "";
         } catch (err) { console.error(err); }
       }
 
       if (chamadaData) {
-        chamadaData.textContent = new Date(dataISO + "T00:00:00").toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" });
+        const dObj = new Date(dataISO + "T00:00:00");
+        const meses = ["JAN","FEV","MAR","ABR","MAI","JUN","JUL","AGO","SET","OUT","NOV","DEZ"];
+        chamadaData.textContent = dObj.getDate() + " " + meses[dObj.getMonth()] + " " + dObj.getFullYear();
       }
-      if (chamadaRevista) {
-        chamadaRevista.hidden = !revistaNomeAtual;
-        chamadaRevista.textContent = revistaNomeAtual ? ("Revista: " + revistaNomeAtual) : "";
+      if (chamadaRevistaBloco) {
+        let revistaTitulo = revistaNomeAtual;
+        let revistaSub = "";
+        if (revistaNomeAtual) {
+          const m = revistaNomeAtual.match(/^(.*?)\s[–—-]\s(.*)$/);
+          if (m) { revistaTitulo = m[1].trim(); revistaSub = m[2].trim(); }
+        }
+        chamadaRevistaBloco.hidden = !revistaNomeAtual;
+        if (chamadaRevistaTitulo) chamadaRevistaTitulo.textContent = revistaTitulo;
+        if (chamadaRevistaSub) { chamadaRevistaSub.hidden = !revistaSub; chamadaRevistaSub.textContent = revistaSub; }
       }
-      if (chamadaLicaoTitulo) {
+      if (chamadaLicaoBloco) {
         const temLicao = !!campoTema.value;
-        chamadaLicaoTitulo.hidden = !temLicao;
-        chamadaLicaoTitulo.textContent = temLicao ? ("Lição: " + (licaoNumeroAtual ? (licaoNumeroAtual + " — ") : "") + campoTema.value) : "";
+        chamadaLicaoBloco.hidden = !temLicao;
+        if (chamadaLicaoLabel) chamadaLicaoLabel.textContent = licaoNumeroAtual ? ("Lição " + licaoNumeroAtual) : "Lição";
+        if (chamadaLicaoTitulo) chamadaLicaoTitulo.textContent = campoTema.value;
       }
       if (chamadaProfessorEscalado) {
-        chamadaProfessorEscalado.textContent = professorEscaladoNome ? ("Professor(a): " + professorEscaladoNome) : "Nenhum professor escalado para hoje";
+        const textoProfessor = professorEscaladoNome ? ("Professor(a): " + professorEscaladoNome) : "Nenhum professor escalado para hoje";
+        chamadaProfessorEscalado.innerHTML = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line><line x1="12" y1="14" x2="12" y2="17"></line><circle cx="12" cy="19.5" r="0.6" fill="currentColor"></circle></svg><span>' + textoProfessor + '</span>';
       }
     }
 
