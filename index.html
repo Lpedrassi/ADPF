@@ -687,6 +687,11 @@
   .portal-section { display: none; max-width: 900px; margin: 40px auto; padding: 26px; background: var(--surface); border: 1px solid var(--border); border-radius: 20px; }
   .portal-section.ativo { display: block; }
   .portal-section h2 { margin-top: 0; font-size: 18px; }
+  #areaProfessor h2 { text-align: center; text-transform: uppercase; margin-bottom: 24px; }
+  .professor-boas-vindas { margin: 0 0 20px; font-size: 14px; color: var(--muted); line-height: 1.7; }
+  .professor-boas-vindas p { margin: 0 0 12px; }
+  .professor-boas-vindas p:last-child { margin-bottom: 0; }
+  .professor-boas-vindas-versiculo { font-style: italic; color: var(--ink); }
 
   @media (max-width: 760px) {
     .portal-layout.logado { flex-direction: column; }
@@ -1734,7 +1739,14 @@
 
   <section id="areaProfessor" class="portal-section">
     <h2>Sala do Professor</h2>
-    <p class="admin-agenda-info">Faça a chamada da sua Sala e lance a oferta dos alunos e suba arquivos que considere ser apoio para a sala de aula.</p>
+    <div class="professor-boas-vindas">
+      <p>Sejam muito bem-vindos, professores!</p>
+      <p>É uma grande alegria receber cada um de vocês neste espaço preparado com carinho para apoiar essa preciosa missão de ensinar.</p>
+      <p class="professor-boas-vindas-versiculo">“Tudo quanto fizerdes, fazei-o de todo o coração, como ao Senhor.” (Colossenses 3:23)</p>
+      <p>Que esta página seja uma ferramenta de comunhão, aprendizado e crescimento. Aqui, vocês poderão acompanhar suas turmas, registrar informações, compartilhar materiais e encontrar recursos que contribuam para aulas ainda mais edificantes.</p>
+      <p>Cremos que ensinar a Palavra é mais do que transmitir conhecimento: é plantar sementes eternas em cada coração. Que Deus renove diariamente suas forças, conceda sabedoria e abençoe abundantemente este lindo ministério.</p>
+      <p>Contem conosco nessa jornada. Sejam muito bem-vindos ao seu espaço!</p>
+    </div>
 
     <div id="professorSalaSeletorWrap" class="admin-form-linha" style="margin-top:14px;" hidden>
       <label>Sala
