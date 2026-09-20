@@ -688,7 +688,8 @@
   .portal-section.ativo { display: block; }
   .portal-section h2 { margin-top: 0; font-size: 18px; }
   #areaProfessor h2 { text-align: center; text-transform: uppercase; margin-bottom: 24px; }
-  .professor-boas-vindas { margin: 0 0 20px; font-size: 14px; color: var(--muted); line-height: 1.7; }
+  .professor-boas-vindas { margin: 0 0 20px; font-size: 14px; color: var(--muted); line-height: 1.7; overflow: hidden; max-height: 900px; transition: max-height 0.35s ease, opacity 0.3s ease, margin 0.3s ease; }
+  .professor-boas-vindas.recolhido { max-height: 0; opacity: 0; margin-bottom: 0; }
   .professor-boas-vindas p { margin: 0 0 12px; }
   .professor-boas-vindas p:last-child { margin-bottom: 0; }
   .professor-boas-vindas-versiculo { font-style: italic; color: var(--ink); }
@@ -2496,6 +2497,7 @@
     if (areaId === "areaGerenciarPerfis" && window.__recarregarGerenciarPerfis) window.__recarregarGerenciarPerfis();
     if (areaId === "areaCadastroSalas" && window.__recarregarGerenciarSalas) window.__recarregarGerenciarSalas();
     if (areaId === "areaGerenciarLicoes" && window.__recarregarGerenciarLicoesSalas) window.__recarregarGerenciarLicoesSalas();
+    if (areaId === "areaProfessor" && window.__recolherAreaProfessor) window.__recolherAreaProfessor();
   }
 
   document.querySelectorAll(".sidebar-link").forEach((link) => {
@@ -4006,6 +4008,7 @@
       chamada: document.getElementById("canvasPainelChamada"),
       arquivos: document.getElementById("canvasPainelArquivos")
     };
+    const professorBoasVindas = document.querySelector("#areaProfessor .professor-boas-vindas");
     const arquivoSalaInput = document.getElementById("arquivoSalaInput");
     const btnEnviarArquivo = document.getElementById("btnEnviarArquivo");
     const arquivoSalaStatus = document.getElementById("arquivoSalaStatus");
@@ -4045,10 +4048,17 @@
     function mostrarCanvas(nome) {
       canvasBotoes.forEach((b) => b.classList.toggle("is-ativo", b.dataset.canvas === nome));
       Object.keys(canvasPaineis).forEach((k) => { if (canvasPaineis[k]) canvasPaineis[k].hidden = k !== nome; });
+      if (professorBoasVindas) professorBoasVindas.classList.add("recolhido");
       if (nome === "arquivos") carregarArquivosSala();
       if (nome === "alunos") recarregarTudo();
     }
     canvasBotoes.forEach((b) => b.addEventListener("click", () => mostrarCanvas(b.dataset.canvas)));
+
+    window.__recolherAreaProfessor = function () {
+      canvasBotoes.forEach((b) => b.classList.remove("is-ativo"));
+      Object.keys(canvasPaineis).forEach((k) => { if (canvasPaineis[k]) canvasPaineis[k].hidden = true; });
+      if (professorBoasVindas) professorBoasVindas.classList.remove("recolhido");
+    };
 
     function novoSeletorMetodo(valorAtual, onChange) {
       const select = document.createElement("select");
@@ -4529,7 +4539,7 @@
         });
 
         campoData.value = hojeISO();
-        mostrarCanvas("alunos");
+        await recarregarTudo();
       } catch (err) {
         semSalaAviso.hidden = false;
         semSalaAviso.textContent = "Não foi possível carregar suas Salas.";
