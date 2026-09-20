@@ -711,6 +711,8 @@
   }
   .btn-admin:hover { border-color: var(--laranja); }
   .btn-admin-primario { background: var(--laranja); color: var(--laranja-ink); border-color: transparent; }
+  .btn-admin-icon { display: inline-flex; align-items: center; gap: 8px; }
+  .btn-admin-icon svg { flex-shrink: 0; }
   .admin-agenda-status { font-size: 13px; margin: 10px 0 0; color: var(--muted); }
   .admin-agenda-status.ok { color: #7CD992; }
   .admin-agenda-status.erro { color: var(--vermelho); }
@@ -795,6 +797,11 @@
     padding: 6px 10px; font-size: 14px; font-family: inherit; flex-shrink: 0; cursor: pointer; line-height: 1;
   }
   .admin-perfis-item-editar:hover { border-color: var(--azul); }
+  .admin-perfis-item-remover {
+    background: transparent; border: 1px solid var(--border-strong); color: var(--muted); border-radius: 8px;
+    width: 30px; height: 30px; flex-shrink: 0; font-size: 18px; font-weight: 700; line-height: 1; cursor: pointer;
+  }
+  .admin-perfis-item-remover:hover { color: var(--vermelho); border-color: var(--vermelho); }
 
   .professor-canvas-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin: 16px 0; }
   .professor-canvas-card {
@@ -1881,8 +1888,16 @@
         <h4>Arquivos e documentos</h4>
         <p class="admin-agenda-info">Suba aqui documentos PDF, slides ou imagens que seus alunos podem usar antes ou durante as aulas.</p>
         <div class="admin-form-linha">
-          <input type="file" id="arquivoSalaInput" accept=".pdf,.ppt,.pptx,.doc,.docx,image/*" style="flex:2;">
-          <button type="button" id="btnEnviarArquivo" class="btn-admin">Enviar arquivo</button>
+          <label for="arquivoSalaInput" class="btn-admin admin-file-btn btn-admin-icon">
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 8 5-5 5 5"/><path d="M5 21h14"/></svg>
+            Escolher arquivo
+          </label>
+          <input type="file" id="arquivoSalaInput" accept=".pdf,.ppt,.pptx,.doc,.docx,image/*" class="admin-file-input">
+          <span id="arquivoSalaNomeEscolhido" class="admin-agenda-status"></span>
+          <button type="button" id="btnEnviarArquivo" class="btn-admin btn-admin-primario btn-admin-icon">
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
+            Enviar arquivo
+          </button>
         </div>
         <p id="arquivoSalaStatus" class="admin-agenda-status"></p>
         <div id="arquivosSalaLista" class="admin-perfis-lista"></div>
@@ -3995,6 +4010,11 @@
     const btnEnviarArquivo = document.getElementById("btnEnviarArquivo");
     const arquivoSalaStatus = document.getElementById("arquivoSalaStatus");
     const arquivosSalaLista = document.getElementById("arquivosSalaLista");
+    const arquivoSalaNomeEscolhido = document.getElementById("arquivoSalaNomeEscolhido");
+    if (arquivoSalaInput) arquivoSalaInput.addEventListener("change", () => {
+      const f = arquivoSalaInput.files && arquivoSalaInput.files[0];
+      arquivoSalaNomeEscolhido.textContent = f ? f.name : "";
+    });
 
     let minhasSalas = [];
     let alunosDaSala = []; // { matriculaId, nome, idade, paiResponsavel, maeResponsavel }
@@ -4377,8 +4397,10 @@
             info.appendChild(link);
             const btnRemover = document.createElement("button");
             btnRemover.type = "button";
-            btnRemover.className = "btn-admin";
-            btnRemover.textContent = "Remover";
+            btnRemover.className = "admin-perfis-item-remover";
+            btnRemover.textContent = "×";
+            btnRemover.title = "Remover arquivo";
+
             btnRemover.addEventListener("click", async () => {
               btnRemover.disabled = true;
               try {
@@ -4394,8 +4416,8 @@
                 btnRemover.disabled = false;
               }
             });
-            item.appendChild(info);
             item.appendChild(btnRemover);
+            item.appendChild(info);
             arquivosSalaLista.appendChild(item);
           });
         }
@@ -4427,6 +4449,7 @@
           criadoEmMs: Date.now()
         });
         arquivoSalaInput.value = "";
+        if (arquivoSalaNomeEscolhido) arquivoSalaNomeEscolhido.textContent = "";
         arquivoSalaStatus.textContent = "Arquivo enviado com sucesso.";
         arquivoSalaStatus.className = "admin-agenda-status ok";
         await carregarArquivosSala();
