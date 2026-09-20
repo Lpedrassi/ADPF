@@ -816,16 +816,21 @@
   #areaProfessor .professor-canvas-card { border-color: var(--azul); }
   #areaProfessor .professor-canvas-card.is-ativo { border-color: var(--laranja); background: var(--surface); }
   .chamada-cabecalho-aula { text-align: center; margin: 6px 0 20px; padding: 20px 16px; border: 1px solid var(--border-strong); border-radius: 14px; background: var(--surface); }
+  .chamada-cabecalho-topo { display: flex; align-items: flex-start; gap: 16px; text-align: center; }
+  .chamada-cabecalho-aula.com-capa .chamada-cabecalho-topo { text-align: left; }
+  .chamada-cabecalho-conteudo { flex: 1; min-width: 0; }
+  .chamada-capa-img { width: 84px; height: auto; border-radius: 8px; flex-shrink: 0; border: 1px solid var(--border-strong); box-shadow: 0 10px 22px -10px rgba(0,0,0,0.65); }
   .chamada-nome-sala { font-family: "Unbounded", sans-serif; font-weight: 700; font-size: 16px; line-height: 1.4; color: var(--laranja); text-transform: uppercase; }
   .chamada-data { margin-top: 4px; font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
   .chamada-divisor { width: 40px; height: 2px; background: var(--laranja); border: none; margin: 14px auto; }
+  .chamada-cabecalho-aula.com-capa .chamada-divisor { display: none; }
   .chamada-info-bloco { margin-top: 10px; }
-  .chamada-info-label { font-size: 12px; font-weight: 700; color: var(--azul); text-transform: uppercase; letter-spacing: .03em; }
+  .chamada-info-label { font-size: 11.5px; font-weight: 600; color: var(--muted); }
   .chamada-info-titulo { margin-top: 2px; font-weight: 700; font-size: 18px; color: var(--dourado); line-height: 1.35; }
   .chamada-info-sub { margin-top: 4px; font-size: 13px; color: var(--muted); line-height: 1.4; }
   .chamada-professor-pill { display: inline-flex; align-items: center; gap: 6px; margin-top: 14px; padding: 8px 14px; border: 1px solid var(--dourado); border-radius: 999px; font-size: 13px; font-weight: 700; color: var(--dourado); }
   .chamada-professor-pill svg { flex-shrink: 0; width: 15px; height: 15px; }
-  @media (max-width: 560px) { .chamada-nome-sala { font-size: 14px; } .chamada-info-titulo { font-size: 16px; } }
+  @media (max-width: 560px) { .chamada-nome-sala { font-size: 14px; } .chamada-info-titulo { font-size: 16px; } .chamada-capa-img { width: 64px; } }
 
   .escala-filtro-linha { align-items: flex-end; flex-wrap: wrap; }
   .escala-filtro { display: flex; flex-direction: column; gap: 8px; flex: 1; min-width: 140px; }
@@ -1647,6 +1652,18 @@
         </div>
         <p id="licoesStatus" class="admin-agenda-status"></p>
 
+        <div class="perfil-secao-titulo">Capa da revista</div>
+        <p class="admin-agenda-info" style="margin-top:-6px;">Envie a imagem da capa da revista trimestral — ela aparece ao lado do título na tela de Chamada do Professor.</p>
+        <p id="licoesCapaAtual" class="admin-agenda-info" hidden></p>
+        <div class="admin-form-linha">
+          <label for="licoesCapaInput" class="btn-admin admin-file-btn">Adicionar imagem</label>
+          <input type="file" id="licoesCapaInput" accept="image/*" class="admin-file-input">
+          <span id="licoesCapaNomeEscolhido" class="admin-agenda-status"></span>
+          <button type="button" id="btnEnviarCapaLicoes" class="btn-admin">Enviar capa</button>
+          <button type="button" id="btnRemoverCapaLicoes" class="btn-ghost" hidden>Remover capa</button>
+        </div>
+        <p id="licoesCapaStatus" class="admin-agenda-status"></p>
+
         <div class="perfil-secao-titulo">Revista em PDF</div>
         <p class="admin-agenda-info" style="margin-top:-6px;">Envie o PDF da revista trimestral desta Sala — vai aparecer para o Professor (e, quando a Sala do Aluno tiver conteúdo, para os Alunos também).</p>
         <p id="licoesPdfAtual" class="admin-agenda-info" hidden></p>
@@ -1833,18 +1850,22 @@
 
       <div id="canvasPainelChamada" class="professor-canvas-painel" hidden>
         <form id="formRelatorioAula" class="admin-form">
-          <div class="chamada-cabecalho-aula">
-            <div id="chamadaNomeTurma" class="chamada-nome-sala"></div>
-            <div id="chamadaData" class="chamada-data"></div>
-            <hr class="chamada-divisor">
-            <div id="chamadaRevistaBloco" class="chamada-info-bloco" hidden>
-              <div class="chamada-info-label">Revista:</div>
-              <div id="chamadaRevistaTitulo" class="chamada-info-titulo"></div>
-              <div id="chamadaRevistaSub" class="chamada-info-sub" hidden></div>
-            </div>
-            <div id="chamadaLicaoBloco" class="chamada-info-bloco" hidden>
-              <div id="chamadaLicaoLabel" class="chamada-info-label"></div>
-              <div id="chamadaLicaoTitulo" class="chamada-info-titulo"></div>
+          <div class="chamada-cabecalho-aula" id="chamadaCabecalhoAula">
+            <div class="chamada-cabecalho-topo">
+              <img id="chamadaCapaImg" class="chamada-capa-img" alt="Capa da revista" hidden>
+              <div class="chamada-cabecalho-conteudo">
+                <div id="chamadaNomeTurma" class="chamada-nome-sala"></div>
+                <div id="chamadaData" class="chamada-data"></div>
+                <hr class="chamada-divisor">
+                <div id="chamadaRevistaBloco" class="chamada-info-bloco" hidden>
+                  <div id="chamadaRevistaTitulo" class="chamada-info-titulo"></div>
+                  <div id="chamadaRevistaSub" class="chamada-info-sub" hidden></div>
+                </div>
+                <div id="chamadaLicaoBloco" class="chamada-info-bloco" hidden>
+                  <div id="chamadaLicaoLabel" class="chamada-info-label"></div>
+                  <div id="chamadaLicaoTitulo" class="chamada-info-titulo"></div>
+                </div>
+              </div>
             </div>
             <div id="chamadaProfessorEscalado" class="chamada-professor-pill"></div>
           </div>
@@ -3679,6 +3700,16 @@
     const btnEnviarPdf = document.getElementById("btnEnviarPdfLicoes");
     const btnRemoverPdf = document.getElementById("btnRemoverPdfLicoes");
     const pdfStatusEl = document.getElementById("licoesPdfStatus");
+    const capaAtualEl = document.getElementById("licoesCapaAtual");
+    const capaInput = document.getElementById("licoesCapaInput");
+    const capaNomeEscolhidoEl = document.getElementById("licoesCapaNomeEscolhido");
+    capaInput.addEventListener("change", () => {
+      const f = capaInput.files && capaInput.files[0];
+      capaNomeEscolhidoEl.textContent = f ? f.name : "";
+    });
+    const btnEnviarCapa = document.getElementById("btnEnviarCapaLicoes");
+    const btnRemoverCapa = document.getElementById("btnRemoverCapaLicoes");
+    const capaStatusEl = document.getElementById("licoesCapaStatus");
     if (!seletorSala || !camposLista || !btnSalvar || !anoSelect || !trimestreSelect) return;
 
     const hoje = new Date();
@@ -3748,6 +3779,18 @@
       }
     }
 
+    function atualizarCapaUI() {
+      if (licaoAtualDados && licaoAtualDados.revistaCapaUrl) {
+        capaAtualEl.hidden = false;
+        capaAtualEl.innerHTML = "Capa atual: <a href=\"" + licaoAtualDados.revistaCapaUrl + "\" target=\"_blank\" rel=\"noopener\">" + (licaoAtualDados.revistaCapaNome || "capa da revista") + "</a>";
+        btnRemoverCapa.hidden = false;
+      } else {
+        capaAtualEl.hidden = true;
+        capaAtualEl.textContent = "";
+        btnRemoverCapa.hidden = true;
+      }
+    }
+
     async function carregar() {
       const salaId = seletorSala.value;
       if (!salaId) return;
@@ -3763,6 +3806,7 @@
       licaoAtualDados = null;
       revistaNomeInput.value = "";
       atualizarPdfUI();
+      atualizarCapaUI();
       try {
         const snap = await getDoc(doc(db, "licoes", docId));
         if (meuToken !== carregandoToken || seletorSala.value !== salaId) return;
@@ -3774,6 +3818,7 @@
           (d.licoes || []).forEach((l) => { porData[l.data] = l.titulo; });
           campos.forEach((c, idx) => { c.value = porData[paraISO(domingos[idx])] || ""; });
           atualizarPdfUI();
+          atualizarCapaUI();
           return;
         }
         const legadoSnap = await getDoc(doc(db, "licoes", salaId));
@@ -3946,6 +3991,81 @@
       }
     });
 
+    btnEnviarCapa.addEventListener("click", async () => {
+      const salaId = seletorSala.value;
+      const arquivo = capaInput.files && capaInput.files[0];
+      if (!salaId || !arquivo) return;
+      const ano = parseInt(anoSelect.value, 10);
+      const trimestre = parseInt(trimestreSelect.value, 10);
+      const docId = salaId + "_" + ano + "_" + trimestre;
+      btnEnviarCapa.disabled = true;
+      capaStatusEl.textContent = "Conectando ao Google Drive...";
+      capaStatusEl.className = "admin-agenda-status";
+      try {
+        if (licaoAtualDados && licaoAtualDados.revistaCapaDriveId) {
+          try { await removerArquivoDoDrive(licaoAtualDados.revistaCapaDriveId); } catch (e) { console.error(e); }
+        }
+        capaStatusEl.textContent = "Enviando...";
+        const resultado = await enviarArquivoParaDrive(arquivo, salaId);
+        await setDoc(doc(db, "licoes", docId), {
+          salaId: salaId,
+          ano: ano,
+          trimestre: trimestre,
+          revistaCapaNome: arquivo.name,
+          revistaCapaUrl: resultado.url,
+          revistaCapaDriveId: resultado.driveFileId,
+          atualizadoEm: serverTimestamp()
+        }, { merge: true });
+        await updateDoc(doc(db, "salas", salaId), { temLicoes: true });
+        licaoAtualDados = Object.assign({}, licaoAtualDados, {
+          revistaCapaNome: arquivo.name,
+          revistaCapaUrl: resultado.url,
+          revistaCapaDriveId: resultado.driveFileId
+        });
+        atualizarCapaUI();
+        capaInput.value = "";
+        capaNomeEscolhidoEl.textContent = "";
+        capaStatusEl.textContent = "Capa enviada com sucesso.";
+        capaStatusEl.className = "admin-agenda-status ok";
+      } catch (err) {
+        capaStatusEl.textContent = "Não foi possível enviar a capa. " + (err.message || "");
+        capaStatusEl.className = "admin-agenda-status erro";
+        console.error(err);
+      } finally {
+        btnEnviarCapa.disabled = false;
+      }
+    });
+
+    btnRemoverCapa.addEventListener("click", async () => {
+      const salaId = seletorSala.value;
+      if (!salaId) return;
+      const ano = parseInt(anoSelect.value, 10);
+      const trimestre = parseInt(trimestreSelect.value, 10);
+      const docId = salaId + "_" + ano + "_" + trimestre;
+      btnRemoverCapa.disabled = true;
+      capaStatusEl.textContent = "";
+      try {
+        if (licaoAtualDados && licaoAtualDados.revistaCapaDriveId) {
+          try { await removerArquivoDoDrive(licaoAtualDados.revistaCapaDriveId); } catch (e) { console.error(e); }
+        }
+        await setDoc(doc(db, "licoes", docId), {
+          revistaCapaNome: "",
+          revistaCapaUrl: "",
+          revistaCapaDriveId: ""
+        }, { merge: true });
+        licaoAtualDados = Object.assign({}, licaoAtualDados, { revistaCapaNome: "", revistaCapaUrl: "", revistaCapaDriveId: "" });
+        atualizarCapaUI();
+        capaStatusEl.textContent = "Capa removida.";
+        capaStatusEl.className = "admin-agenda-status ok";
+      } catch (err) {
+        capaStatusEl.textContent = "Não foi possível remover a capa. " + (err.message || "");
+        capaStatusEl.className = "admin-agenda-status erro";
+        console.error(err);
+      } finally {
+        btnRemoverCapa.disabled = false;
+      }
+    });
+
     window.__recarregarGerenciarLicoesSalas = popularSalas;
     popularSalas();
   }
@@ -3978,6 +4098,8 @@
     const chamadaLicaoLabel = document.getElementById("chamadaLicaoLabel");
     const chamadaLicaoTitulo = document.getElementById("chamadaLicaoTitulo");
     const chamadaProfessorEscalado = document.getElementById("chamadaProfessorEscalado");
+    const chamadaCabecalhoAula = document.getElementById("chamadaCabecalhoAula");
+    const chamadaCapaImg = document.getElementById("chamadaCapaImg");
     const salaAlunosLista = document.getElementById("salaAlunosLista");
     const salaAlunoCandidato = document.getElementById("salaAlunoCandidato");
     const btnAdicionarAlunoConta = document.getElementById("btnAdicionarAlunoConta");
@@ -4126,6 +4248,7 @@
       campoTema.value = "";
       if (revistaPdfEl) { revistaPdfEl.hidden = true; revistaPdfEl.innerHTML = ""; }
       let revistaNomeAtual = "";
+      let revistaCapaUrlAtual = "";
       let licaoNumeroAtual = null;
       let dataAulaISO = dataISO;
       if (salaId) {
@@ -4133,6 +4256,7 @@
           const snap = await getDoc(doc(db, "licoes", salaId + "_" + ano + "_" + trimestre));
           const dados = snap.exists() ? snap.data() : null;
           revistaNomeAtual = (dados && dados.revistaNome) ? dados.revistaNome : "";
+          revistaCapaUrlAtual = (dados && dados.revistaCapaUrl) ? dados.revistaCapaUrl : "";
           const licoesArr = dados && Array.isArray(dados.licoes) ? dados.licoes : [];
           const licaoIndex = licoesArr.findIndex((l) => l.data >= dataISO);
           const licaoHoje = licaoIndex >= 0 ? licoesArr[licaoIndex] : null;
@@ -4176,6 +4300,16 @@
         if (chamadaLicaoLabel) chamadaLicaoLabel.textContent = licaoNumeroAtual ? ("Lição " + licaoNumeroAtual) : "Lição";
         if (chamadaLicaoTitulo) chamadaLicaoTitulo.textContent = campoTema.value;
       }
+      if (chamadaCapaImg) {
+        if (revistaCapaUrlAtual) {
+          chamadaCapaImg.src = revistaCapaUrlAtual;
+          chamadaCapaImg.hidden = false;
+        } else {
+          chamadaCapaImg.src = "";
+          chamadaCapaImg.hidden = true;
+        }
+      }
+      if (chamadaCabecalhoAula) chamadaCabecalhoAula.classList.toggle("com-capa", !!revistaCapaUrlAtual);
       if (chamadaProfessorEscalado) {
         const textoProfessor = professorEscaladoNome ? ("Professor(a): " + professorEscaladoNome) : "Nenhum professor escalado para hoje";
         chamadaProfessorEscalado.innerHTML = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line><line x1="12" y1="14" x2="12" y2="17"></line><circle cx="12" cy="19.5" r="0.6" fill="currentColor"></circle></svg><span>' + textoProfessor + '</span>';
