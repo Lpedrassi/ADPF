@@ -4249,6 +4249,7 @@
       if (revistaPdfEl) { revistaPdfEl.hidden = true; revistaPdfEl.innerHTML = ""; }
       let revistaNomeAtual = "";
       let revistaCapaUrlAtual = "";
+      let revistaCapaIdAtual = "";
       let licaoNumeroAtual = null;
       let dataAulaISO = dataISO;
       if (salaId) {
@@ -4257,6 +4258,7 @@
           const dados = snap.exists() ? snap.data() : null;
           revistaNomeAtual = (dados && dados.revistaNome) ? dados.revistaNome : "";
           revistaCapaUrlAtual = (dados && dados.revistaCapaUrl) ? dados.revistaCapaUrl : "";
+          revistaCapaIdAtual = (dados && dados.revistaCapaDriveId) ? dados.revistaCapaDriveId : "";
           const licoesArr = dados && Array.isArray(dados.licoes) ? dados.licoes : [];
           const licaoIndex = licoesArr.findIndex((l) => l.data >= dataISO);
           const licaoHoje = licaoIndex >= 0 ? licoesArr[licaoIndex] : null;
@@ -4301,7 +4303,10 @@
         if (chamadaLicaoTitulo) chamadaLicaoTitulo.textContent = campoTema.value;
       }
       if (chamadaCapaImg) {
-        if (revistaCapaUrlAtual) {
+        if (revistaCapaIdAtual) {
+          chamadaCapaImg.src = "https://drive.google.com/thumbnail?id=" + revistaCapaIdAtual + "&sz=w400";
+          chamadaCapaImg.hidden = false;
+        } else if (revistaCapaUrlAtual) {
           chamadaCapaImg.src = revistaCapaUrlAtual;
           chamadaCapaImg.hidden = false;
         } else {
@@ -4309,7 +4314,7 @@
           chamadaCapaImg.hidden = true;
         }
       }
-      if (chamadaCabecalhoAula) chamadaCabecalhoAula.classList.toggle("com-capa", !!revistaCapaUrlAtual);
+      if (chamadaCabecalhoAula) chamadaCabecalhoAula.classList.toggle("com-capa", !!(revistaCapaIdAtual || revistaCapaUrlAtual));
       if (chamadaProfessorEscalado) {
         const textoProfessor = professorEscaladoNome ? ("Professor(a): " + professorEscaladoNome) : "Nenhum professor escalado para hoje";
         chamadaProfessorEscalado.innerHTML = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line><line x1="12" y1="14" x2="12" y2="17"></line><circle cx="12" cy="19.5" r="0.6" fill="currentColor"></circle></svg><span>' + textoProfessor + '</span>';
