@@ -803,6 +803,13 @@
     width: 30px; height: 30px; flex-shrink: 0; font-size: 18px; font-weight: 700; line-height: 1; cursor: pointer;
   }
   .admin-perfis-item-remover:hover { color: var(--vermelho); border-color: var(--vermelho); }
+  .admin-perfis-item-reordenar { display: flex; flex-direction: column; gap: 3px; flex-shrink: 0; }
+  .admin-perfis-item-seta {
+    background: var(--surface-2); border: 1px solid var(--border-strong); border-radius: 6px; color: var(--ink);
+    width: 26px; height: 19px; font-size: 10px; line-height: 1; font-family: inherit; cursor: pointer; padding: 0;
+  }
+  .admin-perfis-item-seta:hover:not(:disabled) { border-color: var(--laranja); }
+  .admin-perfis-item-seta:disabled { opacity: .3; cursor: default; }
 
   .professor-canvas-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin: 16px 0; }
   .professor-canvas-card {
@@ -2987,7 +2994,11 @@
 
         salasCache = [];
         salasSnap.forEach((d) => salasCache.push(Object.assign({ id: d.id }, d.data())));
-        salasCache.sort((a, b) => (a.nome || "").localeCompare(b.nome || ""));
+        salasCache.sort((a, b) => {
+          const oa = Number.isFinite(a.ordem) ? a.ordem : Infinity;
+          const ob = Number.isFinite(b.ordem) ? b.ordem : Infinity;
+          return oa !== ob ? oa - ob : (a.nome || "").localeCompare(b.nome || "");
+        });
 
         professoresCache = [];
         usuariosSnap.forEach((d) => {
@@ -3016,9 +3027,28 @@
         return;
       }
       listaTurmaEl.innerHTML = "";
-      salasCache.forEach((sala) => {
+      salasCache.forEach((sala, idx) => {
         const item = document.createElement("div");
         item.className = "admin-perfis-item";
+
+        const reordenar = document.createElement("div");
+        reordenar.className = "admin-perfis-item-reordenar";
+        const btnSubir = document.createElement("button");
+        btnSubir.type = "button";
+        btnSubir.className = "admin-perfis-item-seta";
+        btnSubir.textContent = "▲";
+        btnSubir.title = "Mover para cima";
+        btnSubir.disabled = idx === 0;
+        btnSubir.addEventListener("click", () => moverSala(idx, -1));
+        const btnDescer = document.createElement("button");
+        btnDescer.type = "button";
+        btnDescer.className = "admin-perfis-item-seta";
+        btnDescer.textContent = "▼";
+        btnDescer.title = "Mover para baixo";
+        btnDescer.disabled = idx === salasCache.length - 1;
+        btnDescer.addEventListener("click", () => moverSala(idx, 1));
+        reordenar.appendChild(btnSubir);
+        reordenar.appendChild(btnDescer);
 
         const info = document.createElement("div");
         info.className = "admin-perfis-item-info";
@@ -3048,11 +3078,37 @@
         btnExcluir.title = "Excluir Sala";
         btnExcluir.addEventListener("click", () => excluirSala(sala, statusItemEl));
 
+        item.appendChild(reordenar);
         item.appendChild(info);
         item.appendChild(btnEditar);
         item.appendChild(btnExcluir);
         listaTurmaEl.appendChild(item);
       });
+    }
+
+    async function moverSala(idx, delta) {
+      const novoIdx = idx + delta;
+      if (novoIdx < 0 || novoIdx >= salasCache.length) return;
+      const nova = salasCache.slice();
+      const tmp = nova[idx];
+      nova[idx] = nova[novoIdx];
+      nova[novoIdx] = tmp;
+      statusTurmaEl.textContent = "Salvando nova ordem...";
+      statusTurmaEl.className = "admin-agenda-status";
+      try {
+        await Promise.all(nova.map((s, i) => updateDoc(doc(db, "salas", s.id), { ordem: i })));
+        nova.forEach((s, i) => { s.ordem = i; });
+        salasCache = nova;
+        statusTurmaEl.textContent = "Ordem atualizada.";
+        statusTurmaEl.className = "admin-agenda-status ok";
+        renderTurma();
+        renderProfessores();
+        if (renderGradeEscala) renderGradeEscala();
+      } catch (err) {
+        statusTurmaEl.textContent = "Não foi possível salvar a nova ordem. " + (err.message || "");
+        statusTurmaEl.className = "admin-agenda-status erro";
+        console.error(err);
+      }
     }
 
     function abrirEdicaoTurma(item, sala) {
@@ -3849,7 +3905,11 @@
         const snap = await getDocs(collection(db, "salas"));
         const salas = [];
         snap.forEach((d) => salas.push(Object.assign({ id: d.id }, d.data())));
-        salas.sort((a, b) => (a.nome || "").localeCompare(b.nome || ""));
+        salas.sort((a, b) => {
+          const oa = Number.isFinite(a.ordem) ? a.ordem : Infinity;
+          const ob = Number.isFinite(b.ordem) ? b.ordem : Infinity;
+          return oa !== ob ? oa - ob : (a.nome || "").localeCompare(b.nome || "");
+        });
         const valorAtual = seletorSala.value;
         seletorSala.innerHTML = '<option value="">Selecione uma Sala...</option>';
         salas.forEach((s) => {
@@ -4651,7 +4711,11 @@
         const snap = await getDocs(collection(db, "salas"));
         const todasSalas = [];
         snap.forEach((d) => todasSalas.push(Object.assign({ id: d.id }, d.data())));
-        todasSalas.sort((a, b) => (a.nome || "").localeCompare(b.nome || ""));
+        todasSalas.sort((a, b) => {
+          const oa = Number.isFinite(a.ordem) ? a.ordem : Infinity;
+          const ob = Number.isFinite(b.ordem) ? b.ordem : Infinity;
+          return oa !== ob ? oa - ob : (a.nome || "").localeCompare(b.nome || "");
+        });
 
         const perfilAtual = (usuarioAtualCache && usuarioAtualCache.perfil) || "convidado";
         const podeVerTodas = perfilAtual === "administrativo" || perfilAtual === "admin";
