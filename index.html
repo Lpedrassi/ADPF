@@ -1274,7 +1274,6 @@
     <button class="sidebar-link" type="button" data-area="areaProfessor">Sala do Professor</button>
     <button class="sidebar-link" type="button" data-area="areaAdministrativo">Sala da Secretaria</button>
     <button class="sidebar-link" type="button" data-area="areaCadastroSalas">Gerenciar Salas</button>
-    <button class="sidebar-link" type="button" data-area="areaGerenciarLicoes">Gerenciar Lições</button>
   </nav>
   <div class="portal-main-wrap" id="portalMainWrap">
   <div class="site-home-conteudo ativo" id="siteHome">
@@ -1624,68 +1623,6 @@
     <div id="gerenciarPerfisLista" class="admin-perfis-lista">Carregando...</div>
   </section>
 
-  <section id="areaGerenciarLicoes" class="portal-section">
-    <h2>Gerenciar Lições</h2>
-    <p class="admin-agenda-info">Cadastre os títulos das lições da revista trimestral de cada Sala. O Professor escolhe entre esses títulos ao lançar a chamada, mas pode editar o texto depois de escolher.</p>
-    <div class="admin-form">
-      <label>Sala
-        <select id="licoesSalaSeletor">
-          <option value="">Selecione uma Sala...</option>
-        </select>
-      </label>
-    </div>
-    <div id="licoesConteudo" class="licoes-conteudo">
-      <div class="admin-form">
-        <div class="admin-form-linha">
-          <label style="flex:1;">Ano
-            <select id="licoesAnoSelect"></select>
-          </label>
-          <label style="flex:1;">Trimestre
-            <select id="licoesTrimestreSelect">
-              <option value="1">1º Trimestre (Jan-Mar)</option>
-              <option value="2">2º Trimestre (Abr-Jun)</option>
-              <option value="3">3º Trimestre (Jul-Set)</option>
-              <option value="4">4º Trimestre (Out-Dez)</option>
-            </select>
-          </label>
-        </div>
-        <label>Nome da revista
-          <input type="text" id="licoesRevistaNome" placeholder="Ex.: Adultos, Jovens, Adolescentes...">
-        </label>
-        <p id="licoesMigracaoAviso" class="admin-agenda-info" hidden></p>
-        <div id="licoesCamposLista"></div>
-        <div class="admin-form-botoes">
-          <button type="button" id="btnSalvarLicoes" class="btn-admin">Salvar Lições</button>
-        </div>
-        <p id="licoesStatus" class="admin-agenda-status"></p>
-
-        <div class="perfil-secao-titulo">Capa da revista</div>
-        <p class="admin-agenda-info" style="margin-top:-6px;">Envie a imagem da capa da revista trimestral — ela aparece ao lado do título na tela de Chamada do Professor.</p>
-        <p id="licoesCapaAtual" class="admin-agenda-info" hidden></p>
-        <div class="admin-form-linha">
-          <label for="licoesCapaInput" class="btn-admin admin-file-btn">Adicionar imagem</label>
-          <input type="file" id="licoesCapaInput" accept="image/*" class="admin-file-input">
-          <span id="licoesCapaNomeEscolhido" class="admin-agenda-status"></span>
-          <button type="button" id="btnEnviarCapaLicoes" class="btn-admin">Enviar capa</button>
-          <button type="button" id="btnRemoverCapaLicoes" class="btn-ghost" hidden>Remover capa</button>
-        </div>
-        <p id="licoesCapaStatus" class="admin-agenda-status"></p>
-
-        <div class="perfil-secao-titulo">Revista em PDF</div>
-        <p class="admin-agenda-info" style="margin-top:-6px;">Envie o PDF da revista trimestral desta Sala — vai aparecer para o Professor (e, quando a Sala do Aluno tiver conteúdo, para os Alunos também).</p>
-        <p id="licoesPdfAtual" class="admin-agenda-info" hidden></p>
-        <div class="admin-form-linha">
-          <label for="licoesPdfInput" class="btn-admin admin-file-btn">Adicionar arquivo</label>
-          <input type="file" id="licoesPdfInput" accept="application/pdf" class="admin-file-input">
-          <span id="licoesPdfNomeEscolhido" class="admin-agenda-status"></span>
-          <button type="button" id="btnEnviarPdfLicoes" class="btn-admin">Enviar PDF</button>
-          <button type="button" id="btnRemoverPdfLicoes" class="btn-ghost" hidden>Remover PDF</button>
-        </div>
-        <p id="licoesPdfStatus" class="admin-agenda-status"></p>
-      </div>
-    </div>
-  </section>
-
     <section id="areaAgenda" class="portal-section">
     <h2>Agenda de Cultos e Eventos</h2>
     <p class="admin-agenda-info">Cadastre, edite ou remova os eventos que aparecem na seção "Agenda" do site — tanto da nossa Congregação quanto do Setor.</p>
@@ -1967,6 +1904,10 @@
         <span class="professor-canvas-titulo">Gerenciar Escala</span>
         <span class="professor-canvas-sub">Monte o rodízio de professores por Domingo</span>
       </button>
+      <button type="button" class="professor-canvas-card" data-canvasala="licoes">
+        <span class="professor-canvas-titulo">Gerenciar Lições</span>
+        <span class="professor-canvas-sub">Títulos das lições, revista e capa por Sala/Trimestre</span>
+      </button>
     </div>
 
     <div id="canvaSalaTurma" class="canva-sanfona-conteudo">
@@ -2047,6 +1988,67 @@
       </div>
       <p id="escalaStatus" class="admin-agenda-status"></p>
       <div id="escalaGrade" class="admin-agenda-lista-wrap"></div>
+    </div>
+
+    <div id="canvaSalaLicoes" class="canva-sanfona-conteudo">
+      <p class="admin-agenda-info">Cadastre os títulos das lições da revista trimestral de cada Sala. O Professor escolhe entre esses títulos ao lançar a chamada, mas pode editar o texto depois de escolher.</p>
+      <div class="admin-form">
+        <label>Sala
+          <select id="licoesSalaSeletor">
+            <option value="">Selecione uma Sala...</option>
+          </select>
+        </label>
+      </div>
+      <div id="licoesConteudo" class="licoes-conteudo">
+        <div class="admin-form">
+          <div class="admin-form-linha">
+            <label style="flex:1;">Ano
+              <select id="licoesAnoSelect"></select>
+            </label>
+            <label style="flex:1;">Trimestre
+              <select id="licoesTrimestreSelect">
+                <option value="1">1º Trimestre (Jan-Mar)</option>
+                <option value="2">2º Trimestre (Abr-Jun)</option>
+                <option value="3">3º Trimestre (Jul-Set)</option>
+                <option value="4">4º Trimestre (Out-Dez)</option>
+              </select>
+            </label>
+          </div>
+          <label>Nome da revista
+            <input type="text" id="licoesRevistaNome" placeholder="Ex.: Adultos, Jovens, Adolescentes...">
+          </label>
+          <p id="licoesMigracaoAviso" class="admin-agenda-info" hidden></p>
+          <div id="licoesCamposLista"></div>
+          <div class="admin-form-botoes">
+            <button type="button" id="btnSalvarLicoes" class="btn-admin">Salvar Lições</button>
+          </div>
+          <p id="licoesStatus" class="admin-agenda-status"></p>
+
+          <div class="perfil-secao-titulo">Capa da revista</div>
+          <p class="admin-agenda-info" style="margin-top:-6px;">Envie a imagem da capa da revista trimestral — ela aparece ao lado do título na tela de Chamada do Professor.</p>
+          <p id="licoesCapaAtual" class="admin-agenda-info" hidden></p>
+          <div class="admin-form-linha">
+            <label for="licoesCapaInput" class="btn-admin admin-file-btn">Adicionar imagem</label>
+            <input type="file" id="licoesCapaInput" accept="image/*" class="admin-file-input">
+            <span id="licoesCapaNomeEscolhido" class="admin-agenda-status"></span>
+            <button type="button" id="btnEnviarCapaLicoes" class="btn-admin">Enviar capa</button>
+            <button type="button" id="btnRemoverCapaLicoes" class="btn-ghost" hidden>Remover capa</button>
+          </div>
+          <p id="licoesCapaStatus" class="admin-agenda-status"></p>
+
+          <div class="perfil-secao-titulo">Revista em PDF</div>
+          <p class="admin-agenda-info" style="margin-top:-6px;">Envie o PDF da revista trimestral desta Sala — vai aparecer para o Professor (e, quando a Sala do Aluno tiver conteúdo, para os Alunos também).</p>
+          <p id="licoesPdfAtual" class="admin-agenda-info" hidden></p>
+          <div class="admin-form-linha">
+            <label for="licoesPdfInput" class="btn-admin admin-file-btn">Adicionar arquivo</label>
+            <input type="file" id="licoesPdfInput" accept="application/pdf" class="admin-file-input">
+            <span id="licoesPdfNomeEscolhido" class="admin-agenda-status"></span>
+            <button type="button" id="btnEnviarPdfLicoes" class="btn-admin">Enviar PDF</button>
+            <button type="button" id="btnRemoverPdfLicoes" class="btn-ghost" hidden>Remover PDF</button>
+          </div>
+          <p id="licoesPdfStatus" class="admin-agenda-status"></p>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -2501,7 +2503,7 @@
   const CONGREGACAO_LOCAL = "Pq Florianópolis";
 
   const AREAS_POR_PERFIL = {
-    admin: ["siteHome", "areaGerenciarPerfis", "areaGerenciarLicoes", "areaAgenda", "areaProfessor", "areaAluno", "areaAdministrativo", "areaPostsSite", "areaCadastroSalas"],
+    admin: ["siteHome", "areaGerenciarPerfis", "areaAgenda", "areaProfessor", "areaAluno", "areaAdministrativo", "areaPostsSite", "areaCadastroSalas"],
     professor: ["siteHome", "areaProfessor"],
     aluno: ["siteHome", "areaAluno"],
     administrativo: ["siteHome", "areaAdministrativo", "areaProfessor"],
@@ -2523,8 +2525,10 @@
     // usuários) toda vez que a área é reaberta, para não mostrar dados
     // desatualizados de quando a área foi carregada pela primeira vez.
     if (areaId === "areaGerenciarPerfis" && window.__recarregarGerenciarPerfis) window.__recarregarGerenciarPerfis();
-    if (areaId === "areaCadastroSalas" && window.__recarregarGerenciarSalas) window.__recarregarGerenciarSalas();
-    if (areaId === "areaGerenciarLicoes" && window.__recarregarGerenciarLicoesSalas) window.__recarregarGerenciarLicoesSalas();
+    if (areaId === "areaCadastroSalas") {
+      if (window.__recarregarGerenciarSalas) window.__recarregarGerenciarSalas();
+      if (window.__recarregarGerenciarLicoesSalas) window.__recarregarGerenciarLicoesSalas();
+    }
     if (areaId === "areaProfessor" && window.__recolherAreaProfessor) window.__recolherAreaProfessor();
   }
 
@@ -2916,7 +2920,8 @@
     const CANVA_ALVOS = {
       turma: "canvaSalaTurma",
       professores: "canvaSalaProfessores",
-      extra: "canvaSalaExtra"
+      extra: "canvaSalaExtra",
+      licoes: "canvaSalaLicoes"
     };
     const cards = grid.querySelectorAll(".professor-canvas-card");
     cards.forEach((card) => {
