@@ -826,6 +826,11 @@
   .secretaria-nivel-wrap[hidden] { display: none; }
   .secretaria-nivel-titulo { font-family: "Unbounded", sans-serif; font-size: 16px; font-weight: 700; margin: 18px 0 4px; }
   .secretaria-voltar { margin-bottom: 6px; }
+  .sec-relatorio-grid { margin-top: 8px; }
+  .sec-relatorio-linha { display: flex; justify-content: space-between; gap: 12px; padding: 6px 0; border-bottom: 1px solid var(--border); font-size: 14px; }
+  .sec-relatorio-linha:last-child { border-bottom: none; }
+  .sec-relatorio-linha .rotulo { color: var(--muted); }
+  .sec-relatorio-linha .valor { color: var(--ink); font-weight: 600; text-align: right; }
   #areaProfessor .professor-canvas-card { border-color: var(--azul); }
   #areaProfessor .professor-canvas-card.is-ativo { border-color: var(--laranja); background: var(--surface); }
   .chamada-cabecalho-aula { text-align: center; margin: 6px 0 20px; padding: 20px 16px; border: 1px solid var(--border-strong); border-radius: 14px; background: var(--surface); }
@@ -2744,8 +2749,10 @@
 
     // Efeito sanfona (mesmo padrão de "Gerenciar Salas"): dentro de um
     // container, cada cartão com data-alvo abre/fecha o painel
-    // correspondente, um de cada vez.
-    function ligarSanfona(container) {
+    // correspondente, um de cada vez. "onAbrir", quando informado, roda
+    // só na transição de fechado -> aberto (usado para carregar dados na
+    // hora, sem precisar buscar tudo de uma vez).
+    function ligarSanfona(container, onAbrir) {
       if (!container) return;
       const cards = Array.from(container.querySelectorAll(".professor-canvas-card[data-alvo]"));
       cards.forEach((card) => {
@@ -2761,6 +2768,7 @@
           if (!jaAberto) {
             card.classList.add("is-ativo");
             alvo.classList.add("aberto");
+            if (onAbrir) onAbrir(card, alvo);
           }
         });
       });
@@ -2769,9 +2777,83 @@
     ligarSanfona(document.getElementById("secNivelCaixa"));
     ligarSanfona(document.getElementById("secNivelRevistas"));
 
+    function linhaResumo(rotulo, valor) {
+      return '<div class="sec-relatorio-linha"><span class="rotulo">' + rotulo + '</span><span class="valor">' + valor + "</span></div>";
+    }
+
+    function dataLocalISO(d) {
+      const local = new Date(d.getTime() - d.getTimezoneOffset() * 60000);
+      return local.toISOString().slice(0, 10);
+    }
+
+    // Procura, a partir do Domingo desta semana (ou de hoje, se hoje já
+    // for Domingo), o relatório mais recente já lançado pelo Professor
+    // para esta Sala — volta semana a semana até achar um, ou até 16
+    // semanas (4 meses) no passado.
+    async function buscarUltimoRelatorio(salaId) {
+      const hoje = new Date();
+      const cursor = new Date(hoje.getTime() - hoje.getTimezoneOffset() * 60000);
+      cursor.setDate(cursor.getDate() - cursor.getDay());
+      for (let i = 0; i < 16; i++) {
+        const dataISO = dataLocalISO(cursor);
+        try {
+          const snap = await getDoc(doc(db, "relatoriosAula", salaId + "_" + dataISO));
+          if (snap.exists()) return snap.data();
+        } catch (err) {
+          console.error(err);
+          return null;
+        }
+        cursor.setDate(cursor.getDate() - 7);
+      }
+      return null;
+    }
+
+    // Monta o resumo de uma Turma (Revista, Lição, Professor, Sala,
+    // Matriculados, Presentes, Ofertas), a partir do relatório mais
+    // recente lançado na Chamada do Professor. Roda toda vez que o card
+    // da Turma é aberto, para sempre mostrar o dado mais atual.
+    async function montarResumoTurma(salaId, salaNomeFallback, painel) {
+      painel.innerHTML = '<p class="admin-agenda-info">Carregando...</p>';
+      try {
+        const rel = await buscarUltimoRelatorio(salaId);
+        if (!rel) {
+          painel.innerHTML = '<p class="admin-agenda-info">Nenhum relatório lançado ainda para esta Turma — assim que o Professor fizer a Chamada de um Domingo, o resumo aparece aqui.</p>';
+          return;
+        }
+        let revistaNome = "";
+        try {
+          const dObjRel = new Date(rel.data + "T00:00:00");
+          const ano = dObjRel.getFullYear();
+          const trimestre = Math.floor(dObjRel.getMonth() / 3) + 1;
+          const licSnap = await getDoc(doc(db, "licoes", salaId + "_" + ano + "_" + trimestre));
+          if (licSnap.exists()) revistaNome = licSnap.data().revistaNome || "";
+        } catch (err) { console.error(err); }
+
+        const dObj = new Date(rel.data + "T00:00:00");
+        const dataFmt = dObj.toLocaleDateString("pt-BR");
+        const ofertasFmt = "R$ " + (Number(rel.ofertas) || 0).toFixed(2).replace(".", ",");
+
+        painel.innerHTML =
+          '<p class="admin-agenda-info">Domingo ' + dataFmt + '</p>' +
+          '<div class="sec-relatorio-grid">' +
+          linhaResumo("Revista", revistaNome || "—") +
+          linhaResumo("Lição", rel.tema || "—") +
+          linhaResumo("Professor", rel.lancadoPorNome || "—") +
+          linhaResumo("Sala", rel.salaNome || salaNomeFallback || "—") +
+          linhaResumo("Alunos Matriculados", rel.matriculados != null ? String(rel.matriculados) : "—") +
+          linhaResumo("Presentes", rel.presentes != null ? String(rel.presentes) : "—") +
+          linhaResumo("Ofertas", ofertasFmt) +
+          "</div>";
+      } catch (err) {
+        painel.innerHTML = '<p class="admin-agenda-status erro">Não foi possível carregar o relatório desta Turma.</p>';
+        console.error(err);
+      }
+    }
+
     // Relatório Dominical: uma Turma por Sala cadastrada, na mesma ordem
     // já usada nos outros combolist do site (campo "ordem", com
-    // desempate por nome). Por enquanto cada Turma só mostra "Em breve".
+    // desempate por nome). Cada Turma mostra o resumo do relatório mais
+    // recente lançado pelo Professor na Chamada.
     async function carregarTurmasRelatorio() {
       const grid = document.getElementById("secRelatorioDominicalTurmas");
       const paineisWrap = document.getElementById("secRelatorioDominicalPaineis");
@@ -2797,6 +2879,8 @@
           btn.type = "button";
           btn.className = "professor-canvas-card";
           btn.dataset.alvo = painelId;
+          btn.dataset.salaId = sala.id;
+          btn.dataset.salaNome = sala.nome || "";
           btn.innerHTML =
             '<span class="professor-canvas-icone">🏫</span>' +
             '<span class="professor-canvas-titulo">' + (sala.nome || "") + "</span>" +
@@ -2806,11 +2890,12 @@
           const painel = document.createElement("div");
           painel.id = painelId;
           painel.className = "canva-sanfona-conteudo";
-          painel.innerHTML =
-            '<p class="admin-agenda-info">Em breve: aqui vai aparecer o relatório dominical desta Turma — Revista, Lição, Professor, Sala, Alunos Matriculados, Presentes e Total de Ofertas — conforme o Professor for lançando a Chamada.</p>';
+          painel.innerHTML = '<p class="admin-agenda-info">Clique para ver o resumo desta Turma.</p>';
           paineisWrap.appendChild(painel);
         });
-        ligarSanfona(document.getElementById("secNivelRelatorioDominical"));
+        ligarSanfona(document.getElementById("secNivelRelatorioDominical"), (card, painel) => {
+          montarResumoTurma(card.dataset.salaId, card.dataset.salaNome, painel);
+        });
       } catch (err) {
         grid.innerHTML = '<p class="admin-agenda-status erro">Não foi possível carregar as Salas.</p>';
         console.error(err);
