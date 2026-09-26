@@ -820,6 +820,12 @@
   .professor-canvas-card:hover { border-color: var(--azul); }
   .professor-canvas-card.is-ativo { border-color: var(--azul); background: var(--surface); }
   .professor-canvas-titulo { font-weight: 700; font-size: 15px; }
+  .professor-canvas-icone { font-size: 22px; line-height: 1; }
+  #areaAdministrativo .professor-canvas-card { border-color: var(--azul); }
+  #areaAdministrativo .professor-canvas-card.is-ativo { border-color: var(--laranja); background: var(--surface); }
+  .secretaria-nivel-wrap[hidden] { display: none; }
+  .secretaria-nivel-titulo { font-family: "Unbounded", sans-serif; font-size: 16px; font-weight: 700; margin: 18px 0 4px; }
+  .secretaria-voltar { margin-bottom: 6px; }
   #areaProfessor .professor-canvas-card { border-color: var(--azul); }
   #areaProfessor .professor-canvas-card.is-ativo { border-color: var(--laranja); background: var(--surface); }
   .chamada-cabecalho-aula { text-align: center; margin: 6px 0 20px; padding: 20px 16px; border: 1px solid var(--border-strong); border-radius: 14px; background: var(--surface); }
@@ -1879,7 +1885,96 @@
 
   <section id="areaAdministrativo" class="portal-section">
     <h2>Sala da Secretaria</h2>
-    <p>Cadastros, relatorios, controle administrativo. (conteudo a definir)</p>
+    <p class="admin-agenda-info">Controle de Caixa, de Revistas, Relatórios e Agendas da Secretaria.</p>
+
+    <div id="secNivel0" class="secretaria-nivel-wrap">
+      <div class="professor-canvas-grid">
+        <button type="button" class="professor-canvas-card" data-abrir="secNivelCaixa" data-ocultar="secNivel0">
+          <span class="professor-canvas-icone">💰</span>
+          <span class="professor-canvas-titulo">Caixa</span>
+          <span class="professor-canvas-sub">Controle de movimentações de dinheiro</span>
+        </button>
+        <button type="button" class="professor-canvas-card" data-abrir="secNivelRevistas" data-ocultar="secNivel0">
+          <span class="professor-canvas-icone">📚</span>
+          <span class="professor-canvas-titulo">Controle de Revistas</span>
+          <span class="professor-canvas-sub">Pedidos de revista dos Alunos</span>
+        </button>
+        <button type="button" class="professor-canvas-card" data-abrir="secNivelRelatoriosGrid" data-ocultar="secNivel0">
+          <span class="professor-canvas-icone">📊</span>
+          <span class="professor-canvas-titulo">Relatórios</span>
+          <span class="professor-canvas-sub">Relatório Dominical por Turma</span>
+        </button>
+        <button type="button" class="professor-canvas-card" data-abrir="secNivelAgendas" data-ocultar="secNivel0">
+          <span class="professor-canvas-icone">📅</span>
+          <span class="professor-canvas-titulo">Agendas</span>
+          <span class="professor-canvas-sub">Em breve</span>
+        </button>
+      </div>
+    </div>
+
+    <div id="secNivelCaixa" class="secretaria-nivel-wrap" hidden>
+      <button type="button" class="btn btn-ghost secretaria-voltar" data-abrir="secNivel0" data-ocultar="secNivelCaixa">← Voltar</button>
+      <div class="secretaria-nivel-titulo">Caixa</div>
+      <div class="professor-canvas-grid">
+        <button type="button" class="professor-canvas-card" data-alvo="canvaSecCaixaEntradas">
+          <span class="professor-canvas-icone">💵</span>
+          <span class="professor-canvas-titulo">Controle de Entradas e Saídas de Caixa</span>
+          <span class="professor-canvas-sub">Livro caixa, com o saldo atualizado</span>
+        </button>
+        <button type="button" class="professor-canvas-card" data-alvo="canvaSecCaixaInsumos">
+          <span class="professor-canvas-icone">📦</span>
+          <span class="professor-canvas-titulo">Controle de Insumos</span>
+          <span class="professor-canvas-sub">Material de papelaria e pedidos dos Professores</span>
+        </button>
+      </div>
+      <div id="canvaSecCaixaEntradas" class="canva-sanfona-conteudo">
+        <p class="admin-agenda-info">Em breve: aqui vai ficar o livro caixa — um registro de cada entrada e saída de dinheiro, com o saldo atualizado logo abaixo.</p>
+      </div>
+      <div id="canvaSecCaixaInsumos" class="canva-sanfona-conteudo">
+        <p class="admin-agenda-info">Em breve: aqui vai ficar o controle de estoque de material de papelaria (canetas, papel, folhas, cartolina etc.) e os pedidos feitos pelos Professores pela Área do Professor, com aviso se o item tem ou não em estoque.</p>
+      </div>
+    </div>
+
+    <div id="secNivelRevistas" class="secretaria-nivel-wrap" hidden>
+      <button type="button" class="btn btn-ghost secretaria-voltar" data-abrir="secNivel0" data-ocultar="secNivelRevistas">← Voltar</button>
+      <div class="secretaria-nivel-titulo">Controle de Revistas</div>
+      <div class="professor-canvas-grid">
+        <button type="button" class="professor-canvas-card" data-alvo="canvaSecRevistasPedidos">
+          <span class="professor-canvas-icone">📖</span>
+          <span class="professor-canvas-titulo">Fazer Pedidos das Revistas</span>
+          <span class="professor-canvas-sub">Pedidos dos Alunos e condição de pagamento</span>
+        </button>
+      </div>
+      <div id="canvaSecRevistasPedidos" class="canva-sanfona-conteudo">
+        <p class="admin-agenda-info">Em breve: aqui vai aparecer a lista de pedidos de revista dos Alunos (feitos pela Área do Aluno, ou cadastrados diretamente pelo Secretário), com a condição de pagamento de cada um. Por enquanto o pagamento será marcado manualmente pelo Secretário (Pago / Não pago) — o pagamento de verdade pela internet (Pix/cartão) fica para uma etapa futura.</p>
+      </div>
+    </div>
+
+    <div id="secNivelRelatoriosGrid" class="secretaria-nivel-wrap" hidden>
+      <button type="button" class="btn btn-ghost secretaria-voltar" data-abrir="secNivel0" data-ocultar="secNivelRelatoriosGrid">← Voltar</button>
+      <div class="secretaria-nivel-titulo">Relatórios</div>
+      <div class="professor-canvas-grid">
+        <button type="button" class="professor-canvas-card" data-abrir="secNivelRelatorioDominical" data-ocultar="secNivelRelatoriosGrid">
+          <span class="professor-canvas-icone">🗓️</span>
+          <span class="professor-canvas-titulo">Relatório Dominical</span>
+          <span class="professor-canvas-sub">Resumo de cada Turma, conforme a Chamada do Professor</span>
+        </button>
+      </div>
+    </div>
+
+    <div id="secNivelRelatorioDominical" class="secretaria-nivel-wrap" hidden>
+      <button type="button" class="btn btn-ghost secretaria-voltar" data-abrir="secNivelRelatoriosGrid" data-ocultar="secNivelRelatorioDominical">← Voltar</button>
+      <div class="secretaria-nivel-titulo">Relatório Dominical</div>
+      <p class="admin-agenda-info">Uma Turma por Sala cadastrada — clique numa Turma para ver o resumo dela.</p>
+      <div id="secRelatorioDominicalTurmas" class="professor-canvas-grid">Carregando...</div>
+      <div id="secRelatorioDominicalPaineis"></div>
+    </div>
+
+    <div id="secNivelAgendas" class="secretaria-nivel-wrap" hidden>
+      <button type="button" class="btn btn-ghost secretaria-voltar" data-abrir="secNivel0" data-ocultar="secNivelAgendas">← Voltar</button>
+      <div class="secretaria-nivel-titulo">Agendas</div>
+      <p class="admin-agenda-info">Em breve — Lucas vai detalhar essa área depois.</p>
+    </div>
   </section>
 
   <section id="areaPostsSite" class="portal-section">
@@ -2541,6 +2636,7 @@
   let gerenciarSalasIniciado = false;
   let gerenciarLicoesIniciado = false;
   let areaProfessorIniciado = false;
+  let secretariaIniciada = false;
   let usuarioAtualCache = null;
 
   onAuthStateChanged(auth, async (user) => {
@@ -2617,7 +2713,112 @@
       areaProfessorIniciado = true;
       iniciarAreaProfessor();
     }
+    if ((perfil === "administrativo" || perfil === "admin") && !secretariaIniciada) {
+      secretariaIniciada = true;
+      iniciarSecretaria();
+    }
   });
+
+  // =================================================================
+  // Sala da Secretaria - navegação em "drill-down" (Caixa, Controle de
+  // Revistas, Relatórios, Agendas), cada nível com efeito sanfona e
+  // botão Voltar. Por enquanto só a estrutura de navegação; o conteúdo
+  // de cada tela ("Em breve") vai sendo ligado aos poucos.
+  // =================================================================
+  function iniciarSecretaria() {
+    const raiz = document.getElementById("areaAdministrativo");
+    if (!raiz) return;
+
+    // Qualquer botão com data-abrir + data-ocultar troca de painel: some
+    // o painel de data-ocultar e mostra o de data-abrir. Serve tanto para
+    // os cartões que "entram" num nível quanto para os botões Voltar
+    // (que só invertem os dois IDs).
+    raiz.querySelectorAll("[data-abrir][data-ocultar]").forEach((el) => {
+      el.addEventListener("click", () => {
+        const ocultar = document.getElementById(el.dataset.ocultar);
+        const abrir = document.getElementById(el.dataset.abrir);
+        if (ocultar) ocultar.hidden = true;
+        if (abrir) abrir.hidden = false;
+      });
+    });
+
+    // Efeito sanfona (mesmo padrão de "Gerenciar Salas"): dentro de um
+    // container, cada cartão com data-alvo abre/fecha o painel
+    // correspondente, um de cada vez.
+    function ligarSanfona(container) {
+      if (!container) return;
+      const cards = Array.from(container.querySelectorAll(".professor-canvas-card[data-alvo]"));
+      cards.forEach((card) => {
+        card.addEventListener("click", () => {
+          const alvo = document.getElementById(card.dataset.alvo);
+          if (!alvo) return;
+          const jaAberto = alvo.classList.contains("aberto");
+          cards.forEach((c) => {
+            c.classList.remove("is-ativo");
+            const p = document.getElementById(c.dataset.alvo);
+            if (p) p.classList.remove("aberto");
+          });
+          if (!jaAberto) {
+            card.classList.add("is-ativo");
+            alvo.classList.add("aberto");
+          }
+        });
+      });
+    }
+
+    ligarSanfona(document.getElementById("secNivelCaixa"));
+    ligarSanfona(document.getElementById("secNivelRevistas"));
+
+    // Relatório Dominical: uma Turma por Sala cadastrada, na mesma ordem
+    // já usada nos outros combolist do site (campo "ordem", com
+    // desempate por nome). Por enquanto cada Turma só mostra "Em breve".
+    async function carregarTurmasRelatorio() {
+      const grid = document.getElementById("secRelatorioDominicalTurmas");
+      const paineisWrap = document.getElementById("secRelatorioDominicalPaineis");
+      if (!grid || !paineisWrap) return;
+      try {
+        const snap = await getDocs(collection(db, "salas"));
+        const salas = [];
+        snap.forEach((d) => salas.push(Object.assign({ id: d.id }, d.data())));
+        salas.sort((a, b) => {
+          const oa = Number.isFinite(a.ordem) ? a.ordem : Infinity;
+          const ob = Number.isFinite(b.ordem) ? b.ordem : Infinity;
+          return oa !== ob ? oa - ob : (a.nome || "").localeCompare(b.nome || "");
+        });
+        grid.innerHTML = "";
+        paineisWrap.innerHTML = "";
+        if (!salas.length) {
+          grid.innerHTML = '<p class="admin-agenda-info">Nenhuma Sala cadastrada ainda.</p>';
+          return;
+        }
+        salas.forEach((sala, idx) => {
+          const painelId = "canvaSecTurma" + idx;
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "professor-canvas-card";
+          btn.dataset.alvo = painelId;
+          btn.innerHTML =
+            '<span class="professor-canvas-icone">🏫</span>' +
+            '<span class="professor-canvas-titulo">' + (sala.nome || "") + "</span>" +
+            '<span class="professor-canvas-sub">' + (sala.departamento || "") + "</span>";
+          grid.appendChild(btn);
+
+          const painel = document.createElement("div");
+          painel.id = painelId;
+          painel.className = "canva-sanfona-conteudo";
+          painel.innerHTML =
+            '<p class="admin-agenda-info">Em breve: aqui vai aparecer o relatório dominical desta Turma — Revista, Lição, Professor, Sala, Alunos Matriculados, Presentes e Total de Ofertas — conforme o Professor for lançando a Chamada.</p>';
+          paineisWrap.appendChild(painel);
+        });
+        ligarSanfona(document.getElementById("secNivelRelatorioDominical"));
+      } catch (err) {
+        grid.innerHTML = '<p class="admin-agenda-status erro">Não foi possível carregar as Salas.</p>';
+        console.error(err);
+      }
+    }
+
+    carregarTurmasRelatorio();
+  }
 
   // =================================================================
   // Gerenciar Perfis (só admin) - lista todos os usuarios cadastrados e
