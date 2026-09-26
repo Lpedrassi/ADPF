@@ -2781,31 +2781,23 @@
       return '<div class="sec-relatorio-linha"><span class="rotulo">' + rotulo + '</span><span class="valor">' + valor + "</span></div>";
     }
 
-    function dataLocalISO(d) {
-      const local = new Date(d.getTime() - d.getTimezoneOffset() * 60000);
-      return local.toISOString().slice(0, 10);
-    }
-
-    // Procura, a partir do Domingo desta semana (ou de hoje, se hoje já
-    // for Domingo), o relatório mais recente já lançado pelo Professor
-    // para esta Sala — volta semana a semana até achar um, ou até 16
-    // semanas (4 meses) no passado.
+    // Busca todos os relatórios já lançados para esta Sala e devolve o
+    // mais recente (maior "data"). Não presume que a data seja sempre um
+    // Domingo (o campo é preenchido com a data do dia em que o Professor
+    // salva a Chamada, então cobre também quem lança atrasado).
     async function buscarUltimoRelatorio(salaId) {
-      const hoje = new Date();
-      const cursor = new Date(hoje.getTime() - hoje.getTimezoneOffset() * 60000);
-      cursor.setDate(cursor.getDate() - cursor.getDay());
-      for (let i = 0; i < 16; i++) {
-        const dataISO = dataLocalISO(cursor);
-        try {
-          const snap = await getDoc(doc(db, "relatoriosAula", salaId + "_" + dataISO));
-          if (snap.exists()) return snap.data();
-        } catch (err) {
-          console.error(err);
-          return null;
-        }
-        cursor.setDate(cursor.getDate() - 7);
+      try {
+        const snap = await getDocs(query(collection(db, "relatoriosAula"), where("salaId", "==", salaId)));
+        let maisRecente = null;
+        snap.forEach((d) => {
+          const dados = d.data();
+          if (!maisRecente || (dados.data || "") > (maisRecente.data || "")) maisRecente = dados;
+        });
+        return maisRecente;
+      } catch (err) {
+        console.error(err);
+        return null;
       }
-      return null;
     }
 
     // Monta o resumo de uma Turma (Revista, Lição, Professor, Sala,
