@@ -2817,6 +2817,15 @@
       }
     }
 
+    // Recarrega a lista de Turmas toda vez que "Relatório Dominical" é
+    // aberto, para já refletir Salas criadas/renomeadas/reordenadas depois
+    // do login (mesmo padrão já usado em "Alunos Matriculados" e
+    // "Gerenciar Perfis").
+    const btnAbrirRelatorioDominical = raiz.querySelector('[data-abrir="secNivelRelatorioDominical"]');
+    if (btnAbrirRelatorioDominical) {
+      btnAbrirRelatorioDominical.addEventListener("click", carregarTurmasRelatorio);
+    }
+
     carregarTurmasRelatorio();
   }
 
