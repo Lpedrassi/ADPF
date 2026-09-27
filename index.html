@@ -3081,7 +3081,7 @@
           opt.value = data;
           let label = data;
           try { label = new Date(data + "T00:00:00").toLocaleDateString("pt-BR"); } catch (err) {}
-          opt.textContent = label + (data === domingoAtual ? " (hoje)" : "");
+          opt.textContent = label + (data === domingoAtual ? " (atual)" : "");
           select.appendChild(opt);
         });
         select.value = domingoAtual;
