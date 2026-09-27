@@ -842,6 +842,7 @@
   .sec-caixa-lista { display: flex; flex-direction: column; gap: 8px; margin-top: 18px; }
   .sec-caixa-valor-entrada { color: #7CD992; font-weight: 700; flex-shrink: 0; }
   .sec-caixa-valor-saida { color: var(--vermelho); font-weight: 700; flex-shrink: 0; }
+  .sec-estoque-card-baixo { border-color: var(--vermelho); }
   #areaProfessor .professor-canvas-card { border-color: var(--azul); }
   #areaProfessor .professor-canvas-card.is-ativo { border-color: var(--laranja); background: var(--surface); }
   .chamada-cabecalho-aula { text-align: center; margin: 6px 0 20px; padding: 20px 16px; border: 1px solid var(--border-strong); border-radius: 14px; background: var(--surface); }
@@ -1974,7 +1975,30 @@
         <div id="secCaixaLista" class="sec-caixa-lista">Carregando...</div>
       </div>
       <div id="canvaSecCaixaInsumos" class="canva-sanfona-conteudo">
-        <p class="admin-agenda-info">Em breve: aqui vai ficar o controle de estoque de material de papelaria (canetas, papel, folhas, cartolina etc.) e os pedidos feitos pelos Professores pela Área do Professor, com aviso se o item tem ou não em estoque.</p>
+        <form id="secEstoqueForm" class="admin-form">
+          <div class="admin-form-linha">
+            <label>Material
+              <input type="text" id="secEstoqueNome" maxlength="60" required placeholder="Ex.: Papel sulfite A4">
+            </label>
+            <label>Unidade
+              <input type="text" id="secEstoqueUnidade" maxlength="20" required placeholder="Ex.: resma, caixa, unidade">
+            </label>
+          </div>
+          <div class="admin-form-linha">
+            <label>Quantidade inicial
+              <input type="number" id="secEstoqueQuantidadeInicial" min="0" step="1" required placeholder="0">
+            </label>
+            <label>Estoque mínimo (alerta)
+              <input type="number" id="secEstoqueMinimo" min="0" step="1" required placeholder="0">
+            </label>
+          </div>
+          <div class="admin-form-botoes">
+            <button type="submit" class="btn-admin btn-admin-primario">Cadastrar Material</button>
+          </div>
+          <p id="secEstoqueStatus" class="admin-agenda-status"></p>
+        </form>
+        <div id="secEstoqueGrid" class="professor-canvas-grid">Carregando...</div>
+        <div id="secEstoquePaineis"></div>
       </div>
     </div>
 
@@ -2900,6 +2924,7 @@
     }
 
     let caixaEntradasIniciado = false;
+    let estoqueMateriaisIniciado = false;
 
     // Liga o formulário de lançamento (só uma vez) e carrega a lista.
     function iniciarCaixaEntradas() {
@@ -2967,6 +2992,235 @@
       carregarMovimentacoesCaixa();
     }
 
+    // Estoque de Materiais: quantidade de cada material nunca fica guardada
+    // sozinha (evita dessincronizar) - e sempre a soma de todas as
+    // movimentacoes (entradas - saidas), igual ja funciona no Livro Caixa.
+    async function carregarEstoqueMateriais() {
+      const grid = document.getElementById("secEstoqueGrid");
+      const paineisWrap = document.getElementById("secEstoquePaineis");
+      if (!grid || !paineisWrap) return;
+      grid.innerHTML = "Carregando...";
+      paineisWrap.innerHTML = "";
+      try {
+        const [snapMateriais, snapMovs] = await Promise.all([
+          getDocs(collection(db, "materiaisEstoque")),
+          getDocs(collection(db, "materiaisMovimentacoes"))
+        ]);
+        const materiais = [];
+        snapMateriais.forEach((d) => materiais.push(Object.assign({ id: d.id }, d.data())));
+        materiais.sort((a, b) => (a.nome || "").localeCompare(b.nome || ""));
+
+        const movsPorMaterial = {};
+        snapMovs.forEach((d) => {
+          const m = Object.assign({ id: d.id }, d.data());
+          if (!movsPorMaterial[m.materialId]) movsPorMaterial[m.materialId] = [];
+          movsPorMaterial[m.materialId].push(m);
+        });
+
+        grid.innerHTML = "";
+        if (!materiais.length) {
+          grid.innerHTML = '<p class="admin-agenda-info">Nenhum material cadastrado ainda.</p>';
+          return;
+        }
+
+        materiais.forEach((mat) => {
+          const movs = (movsPorMaterial[mat.id] || []).slice();
+          let quantidadeAtual = 0;
+          movs.forEach((m) => { quantidadeAtual += (m.tipo === "saida" ? -1 : 1) * (Number(m.quantidade) || 0); });
+          const minimo = Number(mat.quantidadeMinima) || 0;
+          const baixo = quantidadeAtual <= minimo;
+          const unidade = mat.unidade || "";
+          const painelId = "canvaEstoqueMat_" + mat.id;
+
+          const card = document.createElement("button");
+          card.type = "button";
+          card.className = "professor-canvas-card" + (baixo ? " sec-estoque-card-baixo" : "");
+          card.dataset.alvo = painelId;
+          card.innerHTML =
+            '<span class="professor-canvas-icone">' + (baixo ? "⚠️" : "📦") + "</span>" +
+            '<span class="professor-canvas-titulo">' + mat.nome + "</span>" +
+            '<span class="professor-canvas-sub">' + quantidadeAtual + " " + unidade + (baixo ? " — Estoque baixo!" : "") + "</span>";
+          grid.appendChild(card);
+
+          movs.sort((a, b) => {
+            const cmp = (b.data || "").localeCompare(a.data || "");
+            return cmp !== 0 ? cmp : (b.criadoEmMs || 0) - (a.criadoEmMs || 0);
+          });
+
+          const painel = document.createElement("div");
+          painel.id = painelId;
+          painel.className = "canva-sanfona-conteudo";
+          painel.innerHTML =
+            '<div class="sec-caixa-saldo">' +
+              '<span class="sec-caixa-saldo-rotulo">Quantidade atual</span>' +
+              '<span class="sec-caixa-saldo-valor' + (baixo ? " negativo" : "") + '">' + quantidadeAtual + " " + unidade + "</span>" +
+            "</div>" +
+            '<p class="admin-agenda-info">Estoque mínimo: ' + minimo + " " + unidade + (baixo ? " — abaixo do mínimo!" : "") + "</p>" +
+            '<form class="admin-form">' +
+              '<div class="admin-form-linha">' +
+                '<label>Tipo<select class="sec-estoque-mov-tipo"><option value="entrada">Entrada</option><option value="saida">Saída</option></select></label>' +
+                '<label>Quantidade<input type="number" class="sec-estoque-mov-quantidade" min="1" step="1" required></label>' +
+                '<label>Data<input type="date" class="sec-estoque-mov-data" required></label>' +
+              "</div>" +
+              '<label>Descrição (opcional)<input type="text" class="sec-estoque-mov-descricao" maxlength="140" placeholder="Ex.: Compra na papelaria, uso na aula..."></label>' +
+              '<div class="admin-form-botoes">' +
+                '<button type="submit" class="btn-admin btn-admin-primario">Lançar</button>' +
+                '<button type="button" class="btn-admin btn-danger sec-estoque-excluir-material">Excluir Material</button>' +
+              "</div>" +
+              '<p class="admin-agenda-status sec-estoque-mov-status"></p>' +
+            "</form>" +
+            '<div class="sec-caixa-lista sec-estoque-mov-lista"></div>';
+          paineisWrap.appendChild(painel);
+
+          const campoData = painel.querySelector(".sec-estoque-mov-data");
+          if (campoData) campoData.value = hojeISOSecretaria();
+
+          const listaMov = painel.querySelector(".sec-estoque-mov-lista");
+          if (!movs.length) {
+            listaMov.innerHTML = '<p class="admin-agenda-info">Nenhuma movimentação lançada ainda.</p>';
+          } else {
+            listaMov.innerHTML = "";
+            movs.forEach((m) => {
+              let dataFmt = m.data || "";
+              try { dataFmt = new Date(m.data + "T00:00:00").toLocaleDateString("pt-BR"); } catch (e) {}
+              const ehSaida = m.tipo === "saida";
+              const sinal = ehSaida ? "− " : "+ ";
+              const classeValor = ehSaida ? "sec-caixa-valor-saida" : "sec-caixa-valor-entrada";
+              const item = document.createElement("div");
+              item.className = "admin-perfis-item";
+              item.innerHTML =
+                '<div class="admin-perfis-item-info">' +
+                  '<span class="admin-perfis-item-nome">' + (m.descricao || "(sem descrição)") + "</span>" +
+                  '<span class="admin-perfis-item-email">' + dataFmt + " · " + (m.lancadoPorNome || "") + "</span>" +
+                "</div>" +
+                '<span class="' + classeValor + '">' + sinal + m.quantidade + " " + unidade + "</span>" +
+                '<button type="button" class="admin-perfis-item-remover" data-id="' + m.id + '" title="Excluir">×</button>';
+              listaMov.appendChild(item);
+            });
+            listaMov.querySelectorAll(".admin-perfis-item-remover").forEach((btn) => {
+              btn.addEventListener("click", async () => {
+                if (!confirm("Excluir esta movimentação? Essa ação não pode ser desfeita.")) return;
+                try {
+                  await deleteDoc(doc(db, "materiaisMovimentacoes", btn.dataset.id));
+                  carregarEstoqueMateriais();
+                } catch (err) {
+                  alert("Não foi possível excluir. " + (err.message || ""));
+                  console.error(err);
+                }
+              });
+            });
+          }
+
+          const formMov = painel.querySelector("form");
+          formMov.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const tipo = painel.querySelector(".sec-estoque-mov-tipo").value;
+            const quantidade = Number(painel.querySelector(".sec-estoque-mov-quantidade").value);
+            const dataMov = painel.querySelector(".sec-estoque-mov-data").value;
+            const descricao = painel.querySelector(".sec-estoque-mov-descricao").value.trim();
+            const status = painel.querySelector(".sec-estoque-mov-status");
+            if (!quantidade || quantidade <= 0 || !dataMov) return;
+            const botao = formMov.querySelector('button[type="submit"]');
+            botao.disabled = true;
+            try {
+              const novoRef = doc(collection(db, "materiaisMovimentacoes"));
+              await setDoc(novoRef, {
+                materialId: mat.id,
+                materialNome: mat.nome,
+                tipo: tipo,
+                quantidade: quantidade,
+                descricao: descricao,
+                data: dataMov,
+                lancadoPorUid: usuarioAtualCache ? usuarioAtualCache.uid : "",
+                lancadoPorNome: usuarioAtualCache ? (usuarioAtualCache.nome || usuarioAtualCache.email || "") : "",
+                criadoEm: serverTimestamp(),
+                criadoEmMs: Date.now()
+              });
+              if (status) { status.textContent = "Lançamento salvo."; status.className = "admin-agenda-status ok"; }
+              carregarEstoqueMateriais();
+            } catch (err) {
+              if (status) { status.textContent = "Não foi possível salvar. " + (err.message || ""); status.className = "admin-agenda-status erro"; }
+              console.error(err);
+            } finally {
+              botao.disabled = false;
+            }
+          });
+
+          const btnExcluirMaterial = painel.querySelector(".sec-estoque-excluir-material");
+          btnExcluirMaterial.addEventListener("click", async () => {
+            if (quantidadeAtual !== 0) {
+              alert('Este material ainda tem ' + quantidadeAtual + " " + unidade + ' em estoque. Lance saídas até zerar antes de excluir.');
+              return;
+            }
+            if (!confirm('Excluir o material "' + mat.nome + '"? O histórico de movimentações não será apagado.')) return;
+            try {
+              await deleteDoc(doc(db, "materiaisEstoque", mat.id));
+              carregarEstoqueMateriais();
+            } catch (err) {
+              alert("Não foi possível excluir. " + (err.message || ""));
+              console.error(err);
+            }
+          });
+        });
+
+        ligarSanfona(document.getElementById("canvaSecCaixaInsumos"));
+      } catch (err) {
+        grid.innerHTML = '<p class="admin-agenda-status erro">Não foi possível carregar o Estoque de Materiais.</p>';
+        console.error(err);
+      }
+    }
+
+    // Liga o formulario de cadastro de material (so uma vez) e carrega a lista.
+    function iniciarEstoqueMateriais() {
+      const form = document.getElementById("secEstoqueForm");
+      if (form) {
+        form.addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const nome = document.getElementById("secEstoqueNome").value.trim();
+          const unidade = document.getElementById("secEstoqueUnidade").value.trim();
+          const quantidadeInicial = Number(document.getElementById("secEstoqueQuantidadeInicial").value);
+          const minimo = Number(document.getElementById("secEstoqueMinimo").value);
+          const status = document.getElementById("secEstoqueStatus");
+          if (!nome || !unidade || isNaN(quantidadeInicial) || quantidadeInicial < 0 || isNaN(minimo) || minimo < 0) return;
+          const botao = form.querySelector('button[type="submit"]');
+          botao.disabled = true;
+          try {
+            const novoMaterialRef = doc(collection(db, "materiaisEstoque"));
+            await setDoc(novoMaterialRef, {
+              nome: nome,
+              unidade: unidade,
+              quantidadeMinima: minimo,
+              criadoEm: serverTimestamp()
+            });
+            if (quantidadeInicial > 0) {
+              const novaMovRef = doc(collection(db, "materiaisMovimentacoes"));
+              await setDoc(novaMovRef, {
+                materialId: novoMaterialRef.id,
+                materialNome: nome,
+                tipo: "entrada",
+                quantidade: quantidadeInicial,
+                descricao: "Cadastro inicial do material",
+                data: hojeISOSecretaria(),
+                lancadoPorUid: usuarioAtualCache ? usuarioAtualCache.uid : "",
+                lancadoPorNome: usuarioAtualCache ? (usuarioAtualCache.nome || usuarioAtualCache.email || "") : "",
+                criadoEm: serverTimestamp(),
+                criadoEmMs: Date.now()
+              });
+            }
+            form.reset();
+            if (status) { status.textContent = "Material cadastrado."; status.className = "admin-agenda-status ok"; }
+            carregarEstoqueMateriais();
+          } catch (err) {
+            if (status) { status.textContent = "Não foi possível cadastrar. " + (err.message || ""); status.className = "admin-agenda-status erro"; }
+            console.error(err);
+          } finally {
+            botao.disabled = false;
+          }
+        });
+      }
+      carregarEstoqueMateriais();
+    }
+
     ligarSanfona(document.getElementById("secNivelCaixa"), (card) => {
       if (card.dataset.alvo === "canvaSecCaixaEntradas") {
         if (!caixaEntradasIniciado) {
@@ -2974,6 +3228,13 @@
           iniciarCaixaEntradas();
         } else {
           carregarMovimentacoesCaixa();
+        }
+      } else if (card.dataset.alvo === "canvaSecCaixaInsumos") {
+        if (!estoqueMateriaisIniciado) {
+          estoqueMateriaisIniciado = true;
+          iniciarEstoqueMateriais();
+        } else {
+          carregarEstoqueMateriais();
         }
       }
     });
