@@ -831,6 +831,13 @@
   .sec-relatorio-linha:last-child { border-bottom: none; }
   .sec-relatorio-linha .rotulo { color: var(--muted); }
   .sec-relatorio-linha .valor { color: var(--ink); font-weight: 600; text-align: right; }
+  .sec-caixa-saldo { display: flex; align-items: baseline; justify-content: space-between; background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; margin-top: 14px; }
+  .sec-caixa-saldo-rotulo { font-size: 13px; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; }
+  .sec-caixa-saldo-valor { font-family: "Unbounded", sans-serif; font-size: 22px; font-weight: 700; color: #7CD992; }
+  .sec-caixa-saldo-valor.negativo { color: var(--vermelho); }
+  .sec-caixa-lista { display: flex; flex-direction: column; gap: 8px; margin-top: 18px; }
+  .sec-caixa-valor-entrada { color: #7CD992; font-weight: 700; flex-shrink: 0; }
+  .sec-caixa-valor-saida { color: var(--vermelho); font-weight: 700; flex-shrink: 0; }
   #areaProfessor .professor-canvas-card { border-color: var(--azul); }
   #areaProfessor .professor-canvas-card.is-ativo { border-color: var(--laranja); background: var(--surface); }
   .chamada-cabecalho-aula { text-align: center; margin: 6px 0 20px; padding: 20px 16px; border: 1px solid var(--border-strong); border-radius: 14px; background: var(--surface); }
@@ -1933,7 +1940,34 @@
         </button>
       </div>
       <div id="canvaSecCaixaEntradas" class="canva-sanfona-conteudo">
-        <p class="admin-agenda-info">Em breve: aqui vai ficar o livro caixa — um registro de cada entrada e saída de dinheiro, com o saldo atualizado logo abaixo.</p>
+        <div class="sec-caixa-saldo">
+          <span class="sec-caixa-saldo-rotulo">Saldo atual</span>
+          <span id="secCaixaSaldoValor" class="sec-caixa-saldo-valor">R$ 0,00</span>
+        </div>
+        <form id="secCaixaForm" class="admin-form">
+          <div class="admin-form-linha">
+            <label>Tipo
+              <select id="secCaixaTipo">
+                <option value="entrada">Entrada</option>
+                <option value="saida">Saída</option>
+              </select>
+            </label>
+            <label>Valor (R$)
+              <input type="number" id="secCaixaValor" min="0.01" step="0.01" required>
+            </label>
+            <label>Data
+              <input type="date" id="secCaixaData" required>
+            </label>
+          </div>
+          <label>Descrição
+            <input type="text" id="secCaixaDescricao" maxlength="140" required placeholder="Ex.: Oferta da EBD, compra de material...">
+          </label>
+          <div class="admin-form-botoes">
+            <button type="submit" class="btn-admin btn-admin-primario">Lançar</button>
+          </div>
+          <p id="secCaixaStatus" class="admin-agenda-status"></p>
+        </form>
+        <div id="secCaixaLista" class="sec-caixa-lista">Carregando...</div>
       </div>
       <div id="canvaSecCaixaInsumos" class="canva-sanfona-conteudo">
         <p class="admin-agenda-info">Em breve: aqui vai ficar o controle de estoque de material de papelaria (canetas, papel, folhas, cartolina etc.) e os pedidos feitos pelos Professores pela Área do Professor, com aviso se o item tem ou não em estoque.</p>
@@ -2774,7 +2808,140 @@
       });
     }
 
-    ligarSanfona(document.getElementById("secNivelCaixa"));
+    function hojeISOSecretaria() {
+      const d = new Date();
+      const local = new Date(d.getTime() - d.getTimezoneOffset() * 60000);
+      return local.toISOString().slice(0, 10);
+    }
+
+    function formatarMoedaCaixa(v) {
+      return (Number(v) || 0).toFixed(2).replace(".", ",");
+    }
+
+    // Recarrega a lista de movimentações do Caixa e recalcula o saldo
+    // (soma de entradas menos saídas). Roda sempre que o painel é aberto,
+    // para refletir lançamentos feitos em outra sessão/dispositivo.
+    async function carregarMovimentacoesCaixa() {
+      const lista = document.getElementById("secCaixaLista");
+      const saldoEl = document.getElementById("secCaixaSaldoValor");
+      if (!lista || !saldoEl) return;
+      lista.innerHTML = "Carregando...";
+      try {
+        const snap = await getDocs(collection(db, "caixaMovimentacoes"));
+        const movs = [];
+        snap.forEach((d) => movs.push(Object.assign({ id: d.id }, d.data())));
+        movs.sort((a, b) => {
+          const cmp = (b.data || "").localeCompare(a.data || "");
+          return cmp !== 0 ? cmp : (b.criadoEmMs || 0) - (a.criadoEmMs || 0);
+        });
+
+        let saldo = 0;
+        movs.forEach((m) => { saldo += (m.tipo === "saida" ? -1 : 1) * (Number(m.valor) || 0); });
+        saldoEl.textContent = "R$ " + formatarMoedaCaixa(saldo);
+        saldoEl.classList.toggle("negativo", saldo < 0);
+
+        lista.innerHTML = "";
+        if (!movs.length) {
+          lista.innerHTML = '<p class="admin-agenda-info">Nenhuma movimentação lançada ainda.</p>';
+          return;
+        }
+        movs.forEach((m) => {
+          const item = document.createElement("div");
+          item.className = "admin-perfis-item";
+          let dataFmt = m.data || "";
+          try { dataFmt = new Date(m.data + "T00:00:00").toLocaleDateString("pt-BR"); } catch (e) {}
+          const ehSaida = m.tipo === "saida";
+          const sinal = ehSaida ? "- " : "+ ";
+          const classeValor = ehSaida ? "sec-caixa-valor-saida" : "sec-caixa-valor-entrada";
+          item.innerHTML =
+            '<div class="admin-perfis-item-info">' +
+              '<span class="admin-perfis-item-nome">' + (m.descricao || "(sem descrição)") + "</span>" +
+              '<span class="admin-perfis-item-email">' + dataFmt + " · " + (m.lancadoPorNome || "") + "</span>" +
+            "</div>" +
+            '<span class="' + classeValor + '">' + sinal + "R$ " + formatarMoedaCaixa(m.valor) + "</span>" +
+            '<button type="button" class="admin-perfis-item-remover" data-id="' + m.id + '" title="Excluir">×</button>';
+          lista.appendChild(item);
+        });
+        lista.querySelectorAll(".admin-perfis-item-remover").forEach((btn) => {
+          btn.addEventListener("click", async () => {
+            if (!confirm("Excluir esta movimentação? Essa ação não pode ser desfeita.")) return;
+            try {
+              await deleteDoc(doc(db, "caixaMovimentacoes", btn.dataset.id));
+              carregarMovimentacoesCaixa();
+            } catch (err) {
+              alert("Não foi possível excluir. " + (err.message || ""));
+              console.error(err);
+            }
+          });
+        });
+      } catch (err) {
+        lista.innerHTML = '<p class="admin-agenda-status erro">Não foi possível carregar as movimentações.</p>';
+        console.error(err);
+      }
+    }
+
+    let caixaEntradasIniciado = false;
+
+    // Liga o formulário de lançamento (só uma vez) e carrega a lista.
+    function iniciarCaixaEntradas() {
+      const form = document.getElementById("secCaixaForm");
+      const campoData = document.getElementById("secCaixaData");
+      const campoTipo = document.getElementById("secCaixaTipo");
+      const status = document.getElementById("secCaixaStatus");
+      if (campoData) campoData.value = hojeISOSecretaria();
+      if (form) {
+        form.addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const valor = Number(document.getElementById("secCaixaValor").value);
+          const descricao = document.getElementById("secCaixaDescricao").value.trim();
+          const data = campoData.value;
+          const tipo = campoTipo.value;
+          if (!valor || valor <= 0 || !descricao || !data) return;
+          const botao = form.querySelector('button[type="submit"]');
+          botao.disabled = true;
+          try {
+            const novoRef = doc(collection(db, "caixaMovimentacoes"));
+            await setDoc(novoRef, {
+              tipo: tipo,
+              valor: valor,
+              descricao: descricao,
+              data: data,
+              lancadoPorUid: usuarioAtualCache ? usuarioAtualCache.uid : "",
+              lancadoPorNome: usuarioAtualCache ? (usuarioAtualCache.nome || usuarioAtualCache.email || "") : "",
+              criadoEm: serverTimestamp(),
+              criadoEmMs: Date.now()
+            });
+            form.reset();
+            campoData.value = hojeISOSecretaria();
+            if (status) {
+              status.textContent = "Lançamento salvo.";
+              status.className = "admin-agenda-status ok";
+            }
+            carregarMovimentacoesCaixa();
+          } catch (err) {
+            if (status) {
+              status.textContent = "Não foi possível salvar. " + (err.message || "");
+              status.className = "admin-agenda-status erro";
+            }
+            console.error(err);
+          } finally {
+            botao.disabled = false;
+          }
+        });
+      }
+      carregarMovimentacoesCaixa();
+    }
+
+    ligarSanfona(document.getElementById("secNivelCaixa"), (card) => {
+      if (card.dataset.alvo === "canvaSecCaixaEntradas") {
+        if (!caixaEntradasIniciado) {
+          caixaEntradasIniciado = true;
+          iniciarCaixaEntradas();
+        } else {
+          carregarMovimentacoesCaixa();
+        }
+      }
+    });
     ligarSanfona(document.getElementById("secNivelRevistas"));
 
     function linhaResumo(rotulo, valor) {
