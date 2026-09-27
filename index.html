@@ -831,6 +831,10 @@
   .sec-relatorio-linha:last-child { border-bottom: none; }
   .sec-relatorio-linha .rotulo { color: var(--muted); }
   .sec-relatorio-linha .valor { color: var(--ink); font-weight: 600; text-align: right; }
+  .sec-relgeral-bloco { background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px; padding: 16px; margin: 16px 0 20px; }
+  .sec-relgeral-cabecalho { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 4px; }
+  .sec-relgeral-titulo { font-family: "Unbounded", sans-serif; font-size: 16px; font-weight: 700; color: var(--laranja); }
+  .sec-relgeral-data-label { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); font-weight: 600; }
   .sec-caixa-saldo { display: flex; align-items: baseline; justify-content: space-between; background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; margin-top: 14px; }
   .sec-caixa-saldo-rotulo { font-size: 13px; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; }
   .sec-caixa-saldo-valor { font-family: "Unbounded", sans-serif; font-size: 22px; font-weight: 700; color: #7CD992; }
@@ -2005,6 +2009,17 @@
       <button type="button" class="btn btn-ghost secretaria-voltar" data-abrir="secNivelRelatoriosGrid" data-ocultar="secNivelRelatorioDominical">← Voltar</button>
       <div class="secretaria-nivel-titulo">Relatório Dominical</div>
       <p class="admin-agenda-info">Uma Turma por Sala cadastrada — clique numa Turma para ver o resumo dela.</p>
+
+      <div class="sec-relgeral-bloco">
+        <div class="sec-relgeral-cabecalho">
+          <span class="sec-relgeral-titulo">Relatório Geral</span>
+          <label class="sec-relgeral-data-label">Domingo
+            <select id="secRelGeralData"></select>
+          </label>
+        </div>
+        <div id="secRelGeralResumo">Carregando...</div>
+      </div>
+
       <div id="secRelatorioDominicalTurmas" class="professor-canvas-grid">Carregando...</div>
       <div id="secRelatorioDominicalPaineis"></div>
     </div>
@@ -2987,6 +3002,96 @@
       }
     }
 
+    // Domingo "atual" para o Relatório Geral: o Domingo desta semana,
+    // contando para trás a partir de hoje (se hoje já for Domingo, é
+    // hoje mesmo).
+    function domingoAtualISO() {
+      const hoje = new Date(hojeISOSecretaria() + "T00:00:00");
+      hoje.setDate(hoje.getDate() - hoje.getDay());
+      const ano = hoje.getFullYear();
+      const mes = String(hoje.getMonth() + 1).padStart(2, "0");
+      const dia = String(hoje.getDate()).padStart(2, "0");
+      return ano + "-" + mes + "-" + dia;
+    }
+
+    // Relatório Geral: soma os relatórios de todas as Salas lançados
+    // para o Domingo escolhido no combobox.
+    async function montarRelatorioGeral(dataSelecionada) {
+      const painel = document.getElementById("secRelGeralResumo");
+      if (!painel) return;
+      painel.innerHTML = '<p class="admin-agenda-info">Carregando...</p>';
+      try {
+        const [snapRelatorios, snapSalas] = await Promise.all([
+          getDocs(query(collection(db, "relatoriosAula"), where("data", "==", dataSelecionada))),
+          getDocs(collection(db, "salas"))
+        ]);
+        const totalSalas = snapSalas.size;
+        const relatorios = [];
+        snapRelatorios.forEach((d) => relatorios.push(d.data()));
+        if (!relatorios.length) {
+          painel.innerHTML = '<p class="admin-agenda-info">Nenhum relatório lançado para este Domingo ainda.</p>';
+          return;
+        }
+        let matriculados = 0, presentes = 0, ausentes = 0, visitantes = 0, ofertas = 0;
+        relatorios.forEach((r) => {
+          matriculados += Number(r.matriculados) || 0;
+          presentes += Number(r.presentes) || 0;
+          ausentes += Number(r.ausentes) || 0;
+          visitantes += Number(r.visitantes) || 0;
+          ofertas += Number(r.ofertas) || 0;
+        });
+        let dataFmt = dataSelecionada;
+        try { dataFmt = new Date(dataSelecionada + "T00:00:00").toLocaleDateString("pt-BR"); } catch (err) {}
+        painel.innerHTML =
+          '<p class="admin-agenda-info">Domingo ' + dataFmt + ' — ' + relatorios.length + ' de ' + totalSalas + ' Salas com relatório lançado</p>' +
+          '<div class="sec-relatorio-grid">' +
+          linhaResumo("Alunos Matriculados", String(matriculados)) +
+          linhaResumo("Presentes", String(presentes)) +
+          linhaResumo("Ausentes", String(ausentes)) +
+          linhaResumo("Visitantes", String(visitantes)) +
+          linhaResumo("Ofertas (Total)", "R$ " + formatarMoedaCaixa(ofertas)) +
+          "</div>";
+      } catch (err) {
+        painel.innerHTML = '<p class="admin-agenda-status erro">Não foi possível carregar o Relatório Geral.</p>';
+        console.error(err);
+      }
+    }
+
+    // Monta a lista de Domingos disponíveis no combobox do Relatório
+    // Geral: todo Domingo que já tem algum relatório lançado (em
+    // qualquer Sala), mais o Domingo atual (mesmo que ainda vazio, para
+    // sempre vir pré-selecionado). Roda toda vez que "Relatório
+    // Dominical" é reaberto, para refletir lançamentos novos.
+    async function carregarDatasRelatorioGeral() {
+      const select = document.getElementById("secRelGeralData");
+      if (!select) return;
+      try {
+        const snap = await getDocs(collection(db, "relatoriosAula"));
+        const datas = new Set();
+        snap.forEach((d) => {
+          const v = d.data().data;
+          if (v) datas.add(v);
+        });
+        const domingoAtual = domingoAtualISO();
+        datas.add(domingoAtual);
+        const lista = Array.from(datas).sort((a, b) => b.localeCompare(a));
+        select.innerHTML = "";
+        lista.forEach((data) => {
+          const opt = document.createElement("option");
+          opt.value = data;
+          let label = data;
+          try { label = new Date(data + "T00:00:00").toLocaleDateString("pt-BR"); } catch (err) {}
+          opt.textContent = label + (data === domingoAtual ? " (hoje)" : "");
+          select.appendChild(opt);
+        });
+        select.value = domingoAtual;
+        select.onchange = () => montarRelatorioGeral(select.value);
+        await montarRelatorioGeral(domingoAtual);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
     // Monta o resumo de uma Turma (Revista, Lição, Professor, Sala,
     // Matriculados, Presentes, Ofertas), a partir do relatório mais
     // recente lançado na Chamada do Professor. Roda toda vez que o card
@@ -3087,10 +3192,14 @@
     // "Gerenciar Perfis").
     const btnAbrirRelatorioDominical = raiz.querySelector('[data-abrir="secNivelRelatorioDominical"]');
     if (btnAbrirRelatorioDominical) {
-      btnAbrirRelatorioDominical.addEventListener("click", carregarTurmasRelatorio);
+      btnAbrirRelatorioDominical.addEventListener("click", () => {
+        carregarTurmasRelatorio();
+        carregarDatasRelatorioGeral();
+      });
     }
 
     carregarTurmasRelatorio();
+    carregarDatasRelatorioGeral();
   }
 
   // =================================================================
