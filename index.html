@@ -2815,7 +2815,11 @@
     }
 
     function formatarMoedaCaixa(v) {
-      return (Number(v) || 0).toFixed(2).replace(".", ",");
+      const num = Number(v) || 0;
+      const sinal = num < 0 ? "-" : "";
+      const partes = Math.abs(num).toFixed(2).split(".");
+      const inteiroFormatado = partes[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+      return sinal + inteiroFormatado + "," + partes[1];
     }
 
     // Recarrega a lista de movimentações do Caixa e recalcula o saldo
