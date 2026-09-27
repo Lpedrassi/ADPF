@@ -1953,7 +1953,7 @@
               </select>
             </label>
             <label>Valor (R$)
-              <input type="number" id="secCaixaValor" min="0.01" step="0.01" required>
+              <input type="text" id="secCaixaValor" inputmode="decimal" placeholder="0,00" required>
             </label>
             <label>Data
               <input type="date" id="secCaixaData" required>
@@ -2887,12 +2887,28 @@
       const form = document.getElementById("secCaixaForm");
       const campoData = document.getElementById("secCaixaData");
       const campoTipo = document.getElementById("secCaixaTipo");
+      const campoValor = document.getElementById("secCaixaValor");
       const status = document.getElementById("secCaixaStatus");
       if (campoData) campoData.value = hojeISOSecretaria();
+
+      // Mascara de dinheiro: digita so numeros, o campo formata sozinho
+      // como "1.234,56" (mesmo padrao dos outros campos com mascara do
+      // site, como Telefone e Data de Nascimento).
+      if (campoValor) {
+        campoValor.addEventListener("input", () => {
+          let digitos = campoValor.value.replace(/\D/g, "");
+          digitos = digitos.replace(/^0+(?=\d)/, "");
+          if (!digitos) { campoValor.value = ""; return; }
+          while (digitos.length < 3) digitos = "0" + digitos;
+          const centavos = digitos.slice(-2);
+          const inteiros = digitos.slice(0, -2).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+          campoValor.value = inteiros + "," + centavos;
+        });
+      }
       if (form) {
         form.addEventListener("submit", async (e) => {
           e.preventDefault();
-          const valor = Number(document.getElementById("secCaixaValor").value);
+          const valor = Number(campoValor.value.replace(/\./g, "").replace(",", "."));
           const descricao = document.getElementById("secCaixaDescricao").value.trim();
           const data = campoData.value;
           const tipo = campoTipo.value;
