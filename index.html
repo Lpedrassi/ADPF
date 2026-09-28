@@ -694,6 +694,42 @@
   .professor-boas-vindas p:last-child { margin-bottom: 0; }
   .professor-boas-vindas-versiculo { font-style: italic; color: var(--ink); }
 
+  /* ---------- Sala do Aluno ---------- */
+  #areaAluno { max-width: 600px; }
+  .aluno-card {
+    display: flex; gap: 16px; align-items: flex-start;
+    padding: 20px; margin-bottom: 16px;
+    background: var(--surface-2); border: 1px solid var(--border-strong);
+    border-radius: 14px; transition: all 0.2s ease;
+  }
+  .aluno-card:hover { border-color: var(--laranja); background: rgba(255, 122, 51, 0.05); }
+  .aluno-card-icon {
+    font-size: 32px; flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+    width: 56px; height: 56px; background: rgba(255, 122, 51, 0.1); border-radius: 12px;
+  }
+  .aluno-card-content { flex: 1; }
+  .aluno-card-titulo {
+    font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 8px;
+    text-transform: uppercase; letter-spacing: 0.05em;
+  }
+  .aluno-card-info { font-size: 14px; color: var(--muted); line-height: 1.6; }
+  .aluno-card-stats {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 8px;
+  }
+  .stat {
+    display: flex; flex-direction: column; align-items: center;
+    padding: 10px; background: var(--surface); border-radius: 8px;
+  }
+  .stat-valor { font-size: 18px; font-weight: 700; color: var(--laranja); }
+  .stat-label { font-size: 12px; color: var(--muted); margin-top: 4px; }
+  .aluno-card-lista { font-size: 13px; }
+  .aluno-card-lista-item {
+    padding: 8px 0; color: var(--muted); border-bottom: 1px solid var(--border);
+    display: flex; gap: 8px; align-items: flex-start;
+  }
+  .aluno-card-lista-item:last-child { border-bottom: none; }
+  .aluno-card-lista-icon { flex-shrink: 0; margin-top: 2px; }
+
   @media (max-width: 760px) {
     .portal-layout.logado { flex-direction: column; }
     .portal-layout.logado .portal-sidebar {
@@ -1897,7 +1933,50 @@
 
   <section id="areaAluno" class="portal-section">
     <h2>Sala do Aluno</h2>
-    <p>Materiais de estudo, avisos da turma. (conteudo a definir)</p>
+
+    <!-- Próxima Aula -->
+    <div class="aluno-card aluno-card-proxima">
+      <div class="aluno-card-icon">📅</div>
+      <div class="aluno-card-content">
+        <div class="aluno-card-titulo">Próxima Aula</div>
+        <div id="alunoProximaAula" class="aluno-card-info">Carregando...</div>
+      </div>
+    </div>
+
+    <!-- Boletim de Presenças -->
+    <div class="aluno-card aluno-card-boletim">
+      <div class="aluno-card-icon">📊</div>
+      <div class="aluno-card-content">
+        <div class="aluno-card-titulo">Seu Boletim</div>
+        <div id="alunoBoletim" class="aluno-card-stats">
+          <div class="stat"><span class="stat-valor">--</span><span class="stat-label">Presenças</span></div>
+          <div class="stat"><span class="stat-valor">--</span><span class="stat-label">Faltas</span></div>
+          <div class="stat"><span class="stat-valor">--%</span><span class="stat-label">Assiduidade</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Avisos da Igreja -->
+    <div class="aluno-card aluno-card-avisos">
+      <div class="aluno-card-icon">🔔</div>
+      <div class="aluno-card-content">
+        <div class="aluno-card-titulo">Avisos Importantes</div>
+        <div id="alunoAvisos" class="aluno-card-lista">
+          <p style="color: var(--muted); font-size: 14px;">Nenhum aviso no momento</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recursos e Lições -->
+    <div class="aluno-card aluno-card-recursos">
+      <div class="aluno-card-icon">📚</div>
+      <div class="aluno-card-content">
+        <div class="aluno-card-titulo">Recursos Disponíveis</div>
+        <div id="alunoRecursos" class="aluno-card-lista">
+          <p style="color: var(--muted); font-size: 14px;">Procurando recursos...</p>
+        </div>
+      </div>
+    </div>
   </section>
 
   <section id="areaAdministrativo" class="portal-section">
@@ -2560,6 +2639,7 @@
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <script type="module" src="auth.js"></script>
 <script type="module" src="agenda.js"></script>
+<script type="module" src="aluno.js"></script>
 
 <script type="module">
   import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
