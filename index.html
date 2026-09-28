@@ -2143,6 +2143,9 @@
     <h2>Gerenciar Posts do Carousel</h2>
     <p class="admin-agenda-info">Adicione, edite ou remova os posts que aparecem no carousel "Principais Notícias" da home.</p>
 
+    <button id="btnImportarNoticias" type="button" class="btn-admin" hidden>Importar notícias iniciais (uma vez só)</button>
+    <p id="importarNoticiasStatus" class="admin-agenda-status"></p>
+
     <form id="formPostSite" class="admin-noticia-form">
       <div>
         <label>Tag/Categoria
@@ -7479,8 +7482,36 @@
     const postId = document.getElementById("postId");
     const listaPostsSite = document.getElementById("listaPostsSite");
     const btnCancelarPostEdicao = document.getElementById("btnCancelarPostEdicao");
+    const btnImportarNoticias = document.getElementById("btnImportarNoticias");
+    const importarNoticiasStatus = document.getElementById("importarNoticiasStatus");
 
     let postEmEdicao = null;
+
+    // Importar notícias iniciais
+    async function importarNoticiasIniciais() {
+      try {
+        importarNoticiasStatus.textContent = "Importando...";
+        const response = await import("./seed-noticias.js");
+        await window.importarSeedNoticias();
+        importarNoticiasStatus.textContent = "✅ Notícias importadas com sucesso!";
+        btnImportarNoticias.hidden = true;
+        setTimeout(() => carregarPostsSite(), 500);
+      } catch (err) {
+        console.error(err);
+        importarNoticiasStatus.textContent = "❌ Erro ao importar.";
+      }
+    }
+
+    // Verificar se é primeira vez
+    async function verificarPrimeiraVez() {
+      try {
+        const postsRef = collection(db, "noticias");
+        const snapshot = await getDocs(query(postsRef, limit(1)));
+        return snapshot.empty;
+      } catch (err) {
+        return true;
+      }
+    }
 
     // Carregar posts do Firestore
     async function carregarPostsSite() {
@@ -7492,10 +7523,15 @@
         snapshot.forEach((doc) => posts.push(Object.assign({ id: doc.id }, doc.data())));
 
         if (posts.length === 0) {
+          const primeiraVez = await verificarPrimeiraVez();
+          if (primeiraVez) {
+            btnImportarNoticias.hidden = false;
+          }
           listaPostsSite.innerHTML = '<p class="admin-agenda-info">Nenhum post cadastrado. Comece adicionando um novo!</p>';
           return;
         }
 
+        btnImportarNoticias.hidden = true;
         listaPostsSite.innerHTML = "";
         posts.forEach((post) => {
           const item = document.createElement("div");
@@ -7602,6 +7638,7 @@
     });
 
     btnCancelarPostEdicao.addEventListener("click", cancelarEdicao);
+    btnImportarNoticias.addEventListener("click", importarNoticiasIniciais);
 
     // Atualizar carousel dinamicamente
     function atualizarCarousel(posts) {
