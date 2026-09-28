@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teste - Escalas de Professores EBD</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+      background: #f5f5f5;
+      color: #333;
+    }
+    .header {
+      background: linear-gradient(135deg, #3b82ff 0%, #00d66d 100%);
+      color: white;
+      padding: 30px;
+      border-radius: 8px;
+      margin-bottom: 30px;
+    }
+    .header h1 { margin: 0 0 10px 0; }
+    .header p { margin: 0; opacity: 0.9; }
+    .section {
+      background: white;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      border-left: 4px solid #3b82ff;
+    }
+    .section h2 {
+      margin-top: 0;
+      color: #3b82ff;
+    }
+    .btn {
+      display: inline-block;
+      padding: 12px 24px;
+      background: #3b82ff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      margin: 5px 5px 5px 0;
+      transition: all 0.3s ease;
+    }
+    .btn:hover {
+      background: #2563eb;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(59, 130, 255, 0.3);
+    }
+    .btn.secondary {
+      background: #6b7280;
+    }
+    .btn.secondary:hover {
+      background: #4b5563;
+    }
+    .btn.success {
+      background: #00d66d;
+    }
+    .btn.success:hover {
+      background: #00b85d;
+    }
+    code {
+      background: #f3f4f6;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-family: 'Courier New', monospace;
+    }
+    .step {
+      margin: 15px 0;
+      padding-left: 30px;
+      position: relative;
+    }
+    .step::before {
+      content: "✓";
+      position: absolute;
+      left: 0;
+      color: #00d66d;
+      font-weight: bold;
+      font-size: 18px;
+    }
+    .warning {
+      background: #fef3c7;
+      border: 1px solid #fcd34d;
+      padding: 15px;
+      border-radius: 6px;
+      margin: 15px 0;
+    }
+    .success-msg {
+      background: #d1fae5;
+      border: 1px solid #6ee7b7;
+      padding: 15px;
+      border-radius: 6px;
+      margin: 15px 0;
+      color: #065f46;
+    }
+    .turmas-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 10px;
+      margin: 15px 0;
+    }
+    .turma-badge {
+      padding: 10px;
+      background: #f3f4f6;
+      border-radius: 6px;
+      font-size: 14px;
+      text-align: center;
+    }
+    .turma-badge strong { display: block; color: #3b82ff; }
+    .turma-badge small { display: block; color: #6b7280; margin-top: 4px; }
+    .console-output {
+      background: #1f2937;
+      color: #10b981;
+      padding: 15px;
+      border-radius: 6px;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      max-height: 300px;
+      overflow-y: auto;
+      margin: 15px 0;
+    }
+    .console-output.success { border-left: 4px solid #10b981; }
+    .console-output.error { border-left: 4px solid #ef4444; color: #fca5a5; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 15px 0;
+    }
+    table th {
+      background: #3b82ff;
+      color: white;
+      padding: 10px;
+      text-align: left;
+      font-size: 14px;
+    }
+    table td {
+      border: 1px solid #e5e7eb;
+      padding: 10px;
+      font-size: 14px;
+    }
+    table tr:nth-child(even) {
+      background: #f9fafb;
+    }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🧪 Teste - Escalas de Professores EBD</h1>
+  <p>Guia completo para testar flip cards, modais e seed data</p>
+</div>
+
+<!-- SEÇÃO 1: IMPORTAR SEED DATA -->
+<div class="section">
+  <h2>1️⃣ Importar Dados de Teste</h2>
+  <p>O arquivo <code>seed-escalas.js</code> contém dados de teste para todas as 7 turmas (13 lições + 12 escalas mensais cada).</p>
+
+  <div class="warning">
+    ⚠️ <strong>Pré-requisito:</strong> Você deve estar logado como <strong>Administrador</strong> para executar a importação.
+  </div>
+
+  <h3>Como Executar:</h3>
+  <div class="step">Abrir a página principal (adjpf.com.br ou localhost)</div>
+  <div class="step">Fazer login como administrador</div>
+  <div class="step">Abrir Console do Navegador (F12 ou Ctrl+Shift+I)</div>
+  <div class="step">Colar e executar: <code>await importarSeedEscalas()</code></div>
+  <div class="step">Aguardar mensagem de conclusão ✅</div>
+
+  <button class="btn success" onclick="copiarComando()">📋 Copiar Comando</button>
+
+  <div id="console-copy" class="console-output success" style="display:none;">
+    <strong>Comando copiado para a área de transferência!</strong><br>
+    Cole no console do navegador (F12) e pressione Enter.
+  </div>
+
+  <h3>O que será importado:</h3>
+  <div class="turmas-grid">
+    <div class="turma-badge">
+      <strong>Infantil 1</strong>
+      <small>Ana • Carlos</small>
+    </div>
+    <div class="turma-badge">
+      <strong>Infantil 2</strong>
+      <small>João • Maria</small>
+    </div>
+    <div class="turma-badge">
+      <strong>Adolescentes</strong>
+      <small>Lucas • Tania</small>
+    </div>
+    <div class="turma-badge">
+      <strong>Jovens</strong>
+      <small>Pastor Felipe • Diácono Pedro</small>
+    </div>
+    <div class="turma-badge">
+      <strong>Adulto Varões</strong>
+      <small>Pastor Mário • Presbítero Douglas</small>
+    </div>
+    <div class="turma-badge">
+      <strong>Adulto Feminino</strong>
+      <small>Pastora Silvia • Missionária Fabíola</small>
+    </div>
+    <div class="turma-badge">
+      <strong>Novos Convertidos</strong>
+      <small>Diácono Paulo • Irmã Gorete</small>
+    </div>
+  </div>
+
+  <p><small>Cada turma receberá: 13 lições + 12 escalas mensais + 2 professores + 1 professor escalado para domingo</small></p>
+</div>
+
+<!-- SEÇÃO 2: TESTAR FLIP CARDS -->
+<div class="section">
+  <h2>2️⃣ Testar Flip Cards</h2>
+  <p>Os cards das turmas na seção EBD agora giram 3D ao serem clicados.</p>
+
+  <h3>Teste Passo a Passo:</h3>
+  <div class="step">Ir para seção <strong>EBD</strong> na página principal</div>
+  <div class="step">Clicar em qualquer card de turma (ex: "Infantil 1")</div>
+  <div class="step">Verificar se o card gira para o verso (animação 3D)</div>
+  <div class="step">Verificar dados do verso:
+    <ul>
+      <li>✅ Lista de 2 professores</li>
+      <li>✅ Professor escalado em cor destacada</li>
+      <li>✅ Botão "Ver Escala" em azul</li>
+    </ul>
+  </div>
+  <div class="step">Clicar novamente para voltar à frente</div>
+
+  <h3>O que Validar:</h3>
+  <table>
+    <tr>
+      <th>Aspecto</th>
+      <th>Esperado</th>
+      <th>Status</th>
+    </tr>
+    <tr>
+      <td>Animação flip</td>
+      <td>Suave, 0.6 segundos</td>
+      <td><input type="checkbox"> ✓</td>
+    </tr>
+    <tr>
+      <td>Verso visível</td>
+      <td>Mostra professores e escala</td>
+      <td><input type="checkbox"> ✓</td>
+    </tr>
+    <tr>
+      <td>Botão "Ver Escala"</td>
+      <td>Clicável e funcional</td>
+      <td><input type="checkbox"> ✓</td>
+    </tr>
+    <tr>
+      <td>Cores combinam</td>
+      <td>Verso mesma cor da frente</td>
+      <td><input type="checkbox"> ✓</td>
+    </tr>
+  </table>
+
+  <button class="btn secondary" onclick="testarFlipCards()">▶️ Ver Demonstração</button>
+</div>
+
+<!-- SEÇÃO 3: TESTAR MODAL LIÇÕES -->
+<div class="section">
+  <h2>3️⃣ Testar Modal de Lições</h2>
+  <p>Ao clicar "Ver Escala" no verso do card, um modal mostra as 13 lições do trimestre.</p>
+
+  <h3>Teste Passo a Passo:</h3>
+  <div class="step">Após importar seed data, ir para EBD</div>
+  <div class="step">Clicar em um card de turma (flip)</div>
+  <div class="step">Clicar no botão "Ver Escala" (no verso)</div>
+  <div class="step">Verificar modal:
+    <ul>
+      <li>✅ Título: "Escala de Lições — [Nome Turma]"</li>
+      <li>✅ Tabela com 13 linhas</li>
+      <li>✅ Colunas: Lição, Título, Data, Professor</li>
+      <li>✅ Dados vêm do Firestore</li>
+    </ul>
+  </div>
+  <div class="step">Clicar "Fechar" ou pressionar Escape</div>
+
+  <h3>Exemplo de Dados:</h3>
+  <table>
+    <tr>
+      <th>Lição</th>
+      <th>Título</th>
+      <th>Data</th>
+      <th>Professor</th>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>Deus criou tudo com amor</td>
+      <td>05/10/2026</td>
+      <td>Professora Ana</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>Adão e Eva no Jardim</td>
+      <td>12/10/2026</td>
+      <td>Professor Carlos</td>
+    </tr>
+    <tr>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <td>13</td>
+      <td>O Espírito Santo nos guia</td>
+      <td>28/12/2026</td>
+      <td>Professora Ana</td>
+    </tr>
+  </table>
+
+  <button class="btn secondary" onclick="testarModalLicoes()">▶️ Ver Demonstração</button>
+</div>
+
+<!-- SEÇÃO 4: TESTAR ESCALA MENSAL -->
+<div class="section">
+  <h2>4️⃣ Testar Escala Mensal (12 Meses)</h2>
+  <p>Na seção "Escalas de Professores", cada turma tem um botão "Ver Escala Completa" que mostra os 12 meses.</p>
+
+  <h3>Teste Passo a Passo:</h3>
+  <div class="step">Na página principal, rolar até "Escalas de Professores"</div>
+  <div class="step">Clicar em "Ver Escala Completa" de uma turma</div>
+  <div class="step">Verificar modal:
+    <ul>
+      <li>✅ Título: "Escala Mensal — [Nome Turma]"</li>
+      <li>✅ Tabela com 12 linhas (Jan-Dez)</li>
+      <li>✅ Colunas: Mês, Professor(a)</li>
+      <li>✅ Dados vêm do Firestore</li>
+    </ul>
+  </div>
+  <div class="step">Verificar que professores alternam mês a mês</div>
+  <div class="step">Fechar com botão ou Escape</div>
+
+  <h3>Exemplo de Dados:</h3>
+  <table>
+    <tr>
+      <th>Mês</th>
+      <th>Professor(a)</th>
+    </tr>
+    <tr>
+      <td>Janeiro</td>
+      <td>Professor João</td>
+    </tr>
+    <tr>
+      <td>Fevereiro</td>
+      <td>Professora Maria</td>
+    </tr>
+    <tr>
+      <td>Março</td>
+      <td>Professor João</td>
+    </tr>
+    <tr>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <td>Dezembro</td>
+      <td>Professora Maria</td>
+    </tr>
+  </table>
+
+  <button class="btn secondary" onclick="testarEscalaMenual()">▶️ Ver Demonstração</button>
+</div>
+
+<!-- SEÇÃO 5: CHECKLIST FINAL -->
+<div class="section">
+  <h2>5️⃣ Checklist de Validação</h2>
+  <p>Use esta checklist para validar se tudo está funcionando corretamente.</p>
+
+  <h3>Flip Cards</h3>
+  <label><input type="checkbox"> Click flip para a direita</label><br>
+  <label><input type="checkbox"> Click flip volta para esquerda</label><br>
+  <label><input type="checkbox"> Transição suave (0.6s)</label><br>
+  <label><input type="checkbox"> Verso mostra professores</label><br>
+  <label><input type="checkbox"> Professor escalado em cor destacada</label><br>
+  <label><input type="checkbox"> Botão "Ver Escala" visível e clicável</label><br>
+  <label><input type="checkbox"> Responsivo em mobile (testar com DevTools)</label><br>
+
+  <h3>Modais</h3>
+  <label><input type="checkbox"> Modal lições abre corretamente</label><br>
+  <label><input type="checkbox"> Modal lições carrega dados do Firestore</label><br>
+  <label><input type="checkbox"> Tabela de 13 linhas renderiza</label><br>
+  <label><input type="checkbox"> Modal escala abre corretamente</label><br>
+  <label><input type="checkbox"> Modal escala carrega dados do Firestore</label><br>
+  <label><input type="checkbox"> Tabela de 12 linhas renderiza</label><br>
+  <label><input type="checkbox"> Fechar com botão funciona</label><br>
+  <label><input type="checkbox"> Fechar com Escape funciona</label><br>
+  <label><input type="checkbox"> Fechar clicando fora funciona</label><br>
+
+  <h3>Dados</h3>
+  <label><input type="checkbox"> Firestore tem coleção "turmas"</label><br>
+  <label><input type="checkbox"> Cada turma tem sub-coleção "licoes"</label><br>
+  <label><input type="checkbox"> Cada turma tem sub-coleção "escalas"</label><br>
+  <label><input type="checkbox"> Professores carregam corretamente</label><br>
+  <label><input type="checkbox"> 13 lições aparecem corretamente</label><br>
+  <label><input type="checkbox"> 12 meses aparecem corretamente</label><br>
+
+  <h3>Navegação</h3>
+  <label><input type="checkbox"> Canvas "Escalas de Professores" aparece na EBD</label><br>
+  <label><input type="checkbox"> Link "Escalas" leva à seção correta</label><br>
+  <label><input type="checkbox"> 7 cards aparecem na seção Escalas</label><br>
+  <label><input type="checkbox"> Cada card tem botão "Ver Escala Completa"</label><br>
+
+  <div class="success-msg" style="margin-top: 20px;">
+    ✅ <strong>Se todos os itens estão marcados, a Etapa 3 está concluída com sucesso!</strong>
+  </div>
+</div>
+
+<!-- SEÇÃO 6: PRÓXIMOS PASSOS -->
+<div class="section">
+  <h2>6️⃣ Próximos Passos</h2>
+  <ul>
+    <li><strong>Etapa 4:</strong> Deploy em produção (adjpf.com.br)</li>
+    <li><strong>Etapa 5:</strong> Testes em produção com dados reais</li>
+    <li><strong>Etapa 6:</strong> Otimização de performance</li>
+    <li><strong>Etapa 7:</strong> Documentação para usuários finais</li>
+  </ul>
+</div>
+
+<script>
+function copiarComando() {
+  const cmd = "await importarSeedEscalas()";
+  navigator.clipboard.writeText(cmd).then(() => {
+    const div = document.getElementById("console-copy");
+    div.style.display = "block";
+    setTimeout(() => { div.style.display = "none"; }, 3000);
+  });
+}
+
+function testarFlipCards() {
+  alert("✅ Para testar:\n\n1. Vá para a seção EBD\n2. Clique em qualquer card de turma\n3. Observe a animação 3D flip\n4. Clique novamente para voltar");
+}
+
+function testarModalLicoes() {
+  alert("✅ Para testar:\n\n1. Flip um card de turma\n2. Clique em 'Ver Escala'\n3. Uma tabela com 13 lições deve aparecer\n4. Pressione Escape para fechar");
+}
+
+function testarEscalaMenual() {
+  alert("✅ Para testar:\n\n1. Role até 'Escalas de Professores'\n2. Clique em 'Ver Escala Completa'\n3. Uma tabela com 12 meses deve aparecer\n4. Pressione Escape para fechar");
+}
+</script>
+
+</body>
+</html>
