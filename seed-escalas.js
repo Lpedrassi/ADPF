@@ -298,3 +298,6 @@ async function importarSeedEscalas() {
   alert(`Importação concluída!\n✅ Sucesso: ${importados}\n❌ Erros: ${erros}`);
   console.log("Seed data importação completa!");
 }
+
+// Expor função globalmente para acesso no console
+window.importarSeedEscalas = importarSeedEscalas;
