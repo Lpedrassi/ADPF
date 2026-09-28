@@ -122,6 +122,10 @@
   .brand-name span { display: block; font-family: "Plus Jakarta Sans", sans-serif; font-weight: 600; font-size: 10px; letter-spacing: 0.09em; text-transform: uppercase; color: var(--muted); margin-top: 2px; }
 
   .nav-links { display: flex; gap: 2px; list-style: none; margin: 0; padding: 0; }
+  .nav-links > li:not(.nav-admin-menu) { display: flex; }
+  .nav-links.logado > li:not(.nav-admin-menu) { display: none; }
+  .nav-links.logado > li.nav-admin-menu { display: flex; }
+
   .nav-links a {
     text-decoration: none; font-size: 12.5px; font-weight: 600; color: var(--muted);
     padding: 9px 13px; border-radius: 999px; transition: background 0.2s ease, color 0.2s ease;
@@ -933,6 +937,56 @@
   .confirm-card h3 { font-size: 19px; font-weight: 800; margin: 0; }
   .confirm-card p { margin-top: 12px; font-size: 14px; color: var(--muted); line-height: 1.5; }
   .confirm-card .login-btn-row { margin-top: 22px; }
+
+  /* Menu dropdown na navbar quando logado */
+  .nav-admin-menu {
+    display: flex; gap: 2px; align-items: center;
+    position: relative;
+  }
+
+  .nav-admin-menu > .nav-home-btn {
+    background: none; border: none; color: var(--muted);
+    padding: 9px 13px; font-size: 12.5px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.02em;
+    cursor: pointer; transition: color 0.2s ease;
+  }
+  .nav-admin-menu > .nav-home-btn:hover { color: var(--ink); }
+
+  .nav-admin-menu-item {
+    position: relative;
+  }
+  .nav-admin-menu-item > .nav-admin-toggle {
+    background: none; border: none; color: var(--muted);
+    padding: 9px 13px; font-size: 12.5px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.02em;
+    cursor: pointer; transition: color 0.2s ease;
+  }
+  .nav-admin-menu-item > .nav-admin-toggle:hover { color: var(--ink); }
+  .nav-admin-menu-item > .nav-admin-toggle.open { color: var(--ink); }
+
+  .nav-admin-dropdown {
+    position: absolute; top: 100%; left: 0; margin-top: 4px;
+    background: var(--surface-2); border: 1px solid var(--border-strong);
+    border-radius: 8px; min-width: 200px; display: none; z-index: 100;
+  }
+  .nav-admin-menu-item > .nav-admin-toggle.open ~ .nav-admin-dropdown { display: block; }
+
+  .nav-admin-dropdown-category {
+    padding: 8px 12px 4px; font-size: 10px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted);
+  }
+  .nav-admin-dropdown-item {
+    background: none; border: none; color: var(--ink);
+    width: 100%; text-align: left; padding: 10px 12px; font-size: 13px;
+    cursor: pointer; transition: background 0.2s ease;
+    display: block;
+  }
+  .nav-admin-dropdown-item:hover { background: var(--surface); }
+
+  /* Esconder sidebar quando logado */
+  .portal-sidebar { display: none; }
+  .portal-layout.logado .portal-sidebar { display: none !important; }
+  .portal-layout.logado .portal-main-wrap { margin-left: 0; }
 </style>
 
 <div class="nav-shell">
@@ -949,6 +1003,30 @@
       <li><a href="#departamentos" data-nav="departamentos">Departamentos</a></li>
       <li><a href="#ebd" data-nav="ebd">EBD</a></li>
       <li><a href="#contato-section" data-nav="contato-section">Como chegar</a></li>
+
+      <!-- Menu quando logado: 3 botões -->
+      <li class="nav-admin-menu" id="navLoggedMenu" style="display: none;">
+        <button class="nav-admin-toggle nav-home-btn" id="navHomeBtn" type="button">Home</button>
+
+        <div class="nav-admin-menu-item">
+          <button class="nav-admin-toggle" id="navAdminToggle" type="button">Administração</button>
+          <div class="nav-admin-dropdown" id="navAdminDropdown">
+            <button class="nav-admin-dropdown-item" data-area="areaGerenciarPerfis">Gerenciar Perfis</button>
+            <button class="nav-admin-dropdown-item" data-area="areaAgenda">Agenda de Cultos</button>
+            <button class="nav-admin-dropdown-item" data-area="areaPostsSite">Posts do Site</button>
+          </div>
+        </div>
+
+        <div class="nav-admin-menu-item">
+          <button class="nav-admin-toggle" id="navEbdToggle" type="button">Portal EBD</button>
+          <div class="nav-admin-dropdown" id="navEbdDropdown">
+            <button class="nav-admin-dropdown-item" data-area="areaAluno">Sala do Aluno</button>
+            <button class="nav-admin-dropdown-item" data-area="areaProfessor">Sala do Professor</button>
+            <button class="nav-admin-dropdown-item" data-area="areaAdministrativo">Sala da Secretaria</button>
+            <button class="nav-admin-dropdown-item" data-area="areaCadastroSalas">Gerenciar Salas</button>
+          </div>
+        </div>
+      </li>
     </ul>
     <div class="nav-login-wrap" id="navLoginWrap">
       <button class="nav-login" id="loginBtn" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="loginModal">
@@ -1403,7 +1481,10 @@
     </div>
     <div class="cultos-grid reveal">
       <div class="culto-card">
-        <span class="culto-tag" id="cultoCardCultoTag" style="background:rgba(59,130,255,0.14); color:var(--azul)">Domingo · 18h</span>
+        <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+          <span class="culto-tag" id="cultoCardCultoTag" style="background:rgba(59,130,255,0.14); color:var(--azul)">Domingo · 18h</span>
+          <span class="culto-tag" style="background:rgba(59,130,255,0.24); color:var(--azul)">NA NOSSA CONGREGAÇÃO</span>
+        </div>
         <h3 id="cultoCardCultoTitulo">Culto de Celebração</h3>
         <p id="cultoCardCultoDesc">Louvor, ministração da Palavra e comunhão com toda a igreja. O tema roda a cada domingo (Infantil, Jovens, Varões, Irmãs, Missões, Adolescentes, Família) — confira o mês na Agenda logo abaixo.</p>
       </div>
@@ -2800,6 +2881,12 @@
   onAuthStateChanged(auth, async (user) => {
     if (!user) {
       portalLayout.classList.remove("logado");
+      document.getElementById("navLinks").classList.remove("logado");
+      document.getElementById("navLoggedMenu").style.display = "none";
+      const navAdminToggle = document.getElementById("navAdminToggle");
+      const navEbdToggle = document.getElementById("navEbdToggle");
+      if (navAdminToggle) navAdminToggle.classList.remove("open");
+      if (navEbdToggle) navEbdToggle.classList.remove("open");
       loginLabel.textContent = "Entrar";
       window.__loginBtnAcao = null;
       window.__logoutAcao = null;
@@ -2849,6 +2936,8 @@
     });
 
     portalLayout.classList.add("logado");
+    document.getElementById("navLinks").classList.add("logado");
+    document.getElementById("navLoggedMenu").style.display = "flex";
     mostrarArea("siteHome");
 
     if (perfil === "admin" && !painelAgendaIniciado) {
@@ -6807,6 +6896,58 @@
 
     recarregarLista();
   }
+
+  // Menu dropdown: 3 botões (Home, Administração, Portal EBD)
+  const navHomeBtn = document.getElementById("navHomeBtn");
+  const navAdminToggle = document.getElementById("navAdminToggle");
+  const navEbdToggle = document.getElementById("navEbdToggle");
+  const navAdminDropdown = document.getElementById("navAdminDropdown");
+  const navEbdDropdown = document.getElementById("navEbdDropdown");
+
+  // Botão Home
+  navHomeBtn.addEventListener("click", () => {
+    mostrarArea("siteHome");
+  });
+
+  // Toggle Administração
+  navAdminToggle.addEventListener("click", () => {
+    navAdminToggle.classList.toggle("open");
+    navEbdToggle.classList.remove("open");
+  });
+
+  // Toggle Portal EBD
+  navEbdToggle.addEventListener("click", () => {
+    navEbdToggle.classList.toggle("open");
+    navAdminToggle.classList.remove("open");
+  });
+
+  // Itens da dropdown Administração
+  const navAdminDropdownItems = navAdminDropdown.querySelectorAll(".nav-admin-dropdown-item");
+  navAdminDropdownItems.forEach((item) => {
+    item.addEventListener("click", () => {
+      const area = item.getAttribute("data-area");
+      navAdminToggle.classList.remove("open");
+      mostrarArea(area);
+    });
+  });
+
+  // Itens da dropdown Portal EBD
+  const navEbdDropdownItems = navEbdDropdown.querySelectorAll(".nav-admin-dropdown-item");
+  navEbdDropdownItems.forEach((item) => {
+    item.addEventListener("click", () => {
+      const area = item.getAttribute("data-area");
+      navEbdToggle.classList.remove("open");
+      mostrarArea(area);
+    });
+  });
+
+  // Fechar dropdowns quando clicar fora do menu
+  document.addEventListener("click", (e) => {
+    if (!e.target.closest(".nav-admin-menu")) {
+      navAdminToggle.classList.remove("open");
+      navEbdToggle.classList.remove("open");
+    }
+  });
 </script>
 
 </html>
