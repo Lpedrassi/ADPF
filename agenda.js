@@ -365,7 +365,30 @@ async function iniciarAgendaPublica() {
     renderizarMesAtual();
   });
 
-  renderizarMesAtual();
+  // Se o próximo evento está no próximo mês, já carrega o calendário do próximo mês
+  async function inicializarComMesCorreto() {
+    try {
+      const todos = await buscarTodosEventos();
+      const hojeStr = hojeISO();
+      const proximoEvento = ordenarProximos(todos, hojeStr)[0];
+      
+      if (proximoEvento) {
+        const [anoEvento, mesEvento, diaEvento] = proximoEvento.dataInicio.split("-");
+        const mesEventoIndex = parseInt(mesEvento) - 1; // converter para índice (0-11)
+        
+        // Se o próximo evento está em um mês diferente do mês atual, pula para esse mês
+        if (mesEventoIndex !== mesIndex || parseInt(anoEvento) !== ano) {
+          mesIndex = mesEventoIndex;
+          ano = parseInt(anoEvento);
+        }
+      }
+    } catch (err) {
+      console.error("Erro ao inicializar com mês correto:", err);
+    }
+    renderizarMesAtual();
+  }
+
+  inicializarComMesCorreto();
 }
 
 // =================================================================
