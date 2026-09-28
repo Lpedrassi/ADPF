@@ -502,10 +502,13 @@
   /* ---------- Cultos ---------- */
   .cultos-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
   @media (max-width: 760px) { .cultos-grid { grid-template-columns: 1fr; } }
-  .culto-card { background: var(--surface); border: 1px solid var(--border); border-radius: 26px; padding: 30px 26px; }
+  .culto-card { background: var(--surface); border: 1px solid var(--border); border-radius: 26px; padding: 30px 26px; position: relative; }
   .cultos-grid .culto-card:nth-child(1) { order: 2; } /* Verde para o centro */
-  .cultos-grid .culto-card:nth-child(2) { order: 1; } /* Laranja para a esquerda */
-  .cultos-grid .culto-card:nth-child(3) { order: 3; } /* Vermelho continua à direita */
+  .cultos-grid .culto-card:nth-child(1)::after { content: ''; position: absolute; bottom: -40px; left: 50%; transform: translateX(-50%); width: 200%; height: 100px; background: radial-gradient(ellipse at center, rgba(0,214,109,0.4) 0%, transparent 70%); border-radius: 50%; pointer-events: none; }
+  .cultos-grid .culto-card:nth-child(2) { order: 1; } /* Azul para a esquerda */
+  .cultos-grid .culto-card:nth-child(2)::after { content: ''; position: absolute; bottom: -40px; left: 50%; transform: translateX(-50%); width: 200%; height: 100px; background: radial-gradient(ellipse at center, rgba(59,130,255,0.4) 0%, transparent 70%); border-radius: 50%; pointer-events: none; }
+  .cultos-grid .culto-card:nth-child(3) { order: 3; } /* Laranja à direita */
+  .cultos-grid .culto-card:nth-child(3)::after { content: ''; position: absolute; bottom: -40px; left: 50%; transform: translateX(-50%); width: 200%; height: 100px; background: radial-gradient(ellipse at center, rgba(255,122,51,0.4) 0%, transparent 70%); border-radius: 50%; pointer-events: none; }
   .culto-tag {
     display: inline-block; padding: 6px 14px; border-radius: 999px; font-size: 12px; font-weight: 700;
     margin-bottom: 16px;
