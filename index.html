@@ -1122,6 +1122,56 @@
   }
   .nav-admin-menu > .nav-home-btn:hover { color: var(--ink); }
 
+  .nav-site-menu-item {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+  .nav-site-dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: -12px;
+    width: 200px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 8px;
+    flex-direction: column;
+    gap: 2px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-6px);
+    transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
+    z-index: 91;
+    display: none;
+  }
+  .nav-site-menu-item.open .nav-site-dropdown {
+    display: flex;
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+  .nav-site-dropdown button {
+    width: 100%;
+    text-align: left;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    color: var(--muted);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+    font-weight: 600;
+    white-space: nowrap;
+    text-transform: none;
+    letter-spacing: normal;
+  }
+  .nav-site-dropdown button:hover {
+    background: rgba(255,255,255,0.06);
+    color: var(--ink);
+  }
+
   .nav-admin-menu-item {
     position: relative;
   }
@@ -1176,7 +1226,18 @@
 
       <!-- Menu quando logado: 3 botões -->
       <li class="nav-admin-menu" id="navLoggedMenu" style="display: none;">
-        <button class="nav-admin-toggle nav-home-btn" id="navHomeBtn" type="button">Home</button>
+        <div class="nav-site-menu-item" id="navSiteMenuWrapper">
+          <button class="nav-admin-toggle nav-home-btn" id="navSiteBtn" type="button">Site</button>
+          <div class="nav-site-dropdown" id="navSiteDropdown">
+            <button data-section="topo" class="nav-site-link">Início</button>
+            <button data-section="noticias" class="nav-site-link">Notícias</button>
+            <button data-section="cultos" class="nav-site-link">Cultos</button>
+            <button data-section="sobre" class="nav-site-link">Quem somos</button>
+            <button data-section="departamentos" class="nav-site-link">Departamentos</button>
+            <button data-section="ebd" class="nav-site-link">EBD</button>
+            <button data-section="contato-section" class="nav-site-link">Como chegar</button>
+          </div>
+        </div>
 
         <div class="nav-admin-menu-item">
           <button class="nav-admin-toggle" id="navAdminToggle" type="button">Administração</button>
@@ -7233,16 +7294,34 @@
     recarregarLista();
   }
 
-  // Menu dropdown: 3 botões (Home, Administração, Portal EBD)
-  const navHomeBtn = document.getElementById("navHomeBtn");
+  // Menu dropdown: Site, Administração, Portal EBD
+  const navSiteBtn = document.getElementById("navSiteBtn");
+  const navSiteMenuWrapper = document.getElementById("navSiteMenuWrapper");
+  const navSiteDropdown = document.getElementById("navSiteDropdown");
   const navAdminToggle = document.getElementById("navAdminToggle");
   const navEbdToggle = document.getElementById("navEbdToggle");
   const navAdminDropdown = document.getElementById("navAdminDropdown");
   const navEbdDropdown = document.getElementById("navEbdDropdown");
 
-  // Botão Home
-  navHomeBtn.addEventListener("click", () => {
-    mostrarArea("siteHome");
+  // Toggle dropdown Site
+  navSiteBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    navSiteMenuWrapper.classList.toggle("open");
+    navAdminToggle.classList.remove("open");
+    navEbdToggle.classList.remove("open");
+  });
+
+  // Itens da dropdown Site
+  const navSiteLinks = navSiteDropdown.querySelectorAll(".nav-site-link");
+  navSiteLinks.forEach((link) => {
+    link.addEventListener("click", () => {
+      const section = link.getAttribute("data-section");
+      const element = document.getElementById(section);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth" });
+      }
+      navSiteMenuWrapper.classList.remove("open");
+    });
   });
 
   // Toggle Administração
@@ -7279,6 +7358,9 @@
 
   // Fechar dropdowns quando clicar fora do menu
   document.addEventListener("click", (e) => {
+    if (!e.target.closest(".nav-site-menu-item")) {
+      navSiteMenuWrapper.classList.remove("open");
+    }
     if (!e.target.closest(".nav-admin-menu")) {
       navAdminToggle.classList.remove("open");
       navEbdToggle.classList.remove("open");
