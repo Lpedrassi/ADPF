@@ -846,6 +846,28 @@
   .professor-boas-vindas p:last-child { margin-bottom: 0; }
   .professor-boas-vindas-versiculo { font-style: italic; color: var(--ink); }
 
+  /* ---------- Admin: Gerenciar Notícias ---------- */
+  .admin-noticia-form { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+  .admin-noticia-form textarea { grid-column: 1 / -1; min-height: 100px; }
+  .admin-noticia-form button { grid-column: 1 / -1; }
+  .admin-noticias-list { margin-top: 24px; }
+  .admin-noticia-item {
+    display: flex; gap: 12px; align-items: flex-start;
+    padding: 16px; background: var(--surface-2); border: 1px solid var(--border);
+    border-radius: 12px; margin-bottom: 12px;
+  }
+  .admin-noticia-item img { width: 80px; height: 80px; object-fit: cover; border-radius: 8px; flex-shrink: 0; }
+  .admin-noticia-body { flex: 1; }
+  .admin-noticia-body h4 { margin: 0 0 4px; font-size: 14px; }
+  .admin-noticia-body p { margin: 0 0 8px; font-size: 12px; color: var(--muted); }
+  .admin-noticia-body .admin-noticia-tag { display: inline-block; padding: 4px 10px; border-radius: 6px; background: rgba(255,122,51,0.2); color: var(--laranja); font-size: 11px; font-weight: 700; margin-bottom: 8px; }
+  .admin-noticia-actions { display: flex; gap: 8px; flex-direction: column; }
+  .admin-noticia-actions button { padding: 6px 12px; font-size: 11px; border-radius: 6px; cursor: pointer; border: none; font-weight: 700; }
+  .admin-noticia-edit { background: var(--azul); color: white; }
+  .admin-noticia-delete { background: var(--vermelho); color: white; }
+  .admin-noticia-edit:hover { background: #2563eb; }
+  .admin-noticia-delete:hover { background: #dc2626; }
+
   /* ---------- Sala do Aluno ---------- */
   #areaAluno { max-width: 600px; }
   .aluno-card {
@@ -2117,6 +2139,47 @@
     </div>
   </section>
 
+  <section id="areaPostsSite" class="portal-section">
+    <h2>Gerenciar Posts do Carousel</h2>
+    <p class="admin-agenda-info">Adicione, edite ou remova os posts que aparecem no carousel "Principais Notícias" da home.</p>
+
+    <form id="formPostSite" class="admin-noticia-form">
+      <div>
+        <label>Tag/Categoria
+          <input type="text" id="postTag" placeholder="Ex: Homenagem, Evento, Culto especial" required>
+        </label>
+      </div>
+      <div>
+        <label>ID do Post (automático)
+          <input type="text" id="postId" placeholder="Será gerado automaticamente" disabled>
+        </label>
+      </div>
+      <div>
+        <label>Título
+          <input type="text" id="postTitle" placeholder="Ex: Feliz Dia do Pastor" required>
+        </label>
+      </div>
+      <div>
+        <label>URL da Imagem
+          <input type="text" id="postImage" placeholder="Ex: noticia-dia-do-pastor.jpg" required>
+        </label>
+      </div>
+      <textarea id="postDesc" placeholder="Descrição do post..." required></textarea>
+      <div>
+        <label>Link (opcional)
+          <input type="text" id="postLink" placeholder="Ex: https://...">
+        </label>
+      </div>
+      <button type="submit" class="btn btn-primary">Adicionar Post</button>
+      <button type="button" id="btnCancelarPostEdicao" hidden class="btn btn-ghost">Cancelar edição</button>
+    </form>
+
+    <div class="admin-noticias-list">
+      <h4>Posts cadastrados</h4>
+      <div id="listaPostsSite" class="admin-noticia-list">Carregando...</div>
+    </div>
+  </section>
+
   <section id="areaProfessor" class="portal-section">
     <h2>Sala do Professor</h2>
     <div class="professor-boas-vindas">
@@ -2999,7 +3062,7 @@
   } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
   import {
     getFirestore, doc, getDoc, setDoc, serverTimestamp,
-    collection, getDocs, updateDoc, deleteDoc, query, where, limit, orderBy
+    collection, getDocs, updateDoc, deleteDoc, addDoc, query, where, limit, orderBy
   } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
   import { firebaseConfig } from "./firebase-config.js";
   import { buscarTodosEventos, salvarEvento, excluirEvento, importarAgendaInicial } from "./agenda.js";
@@ -3132,6 +3195,7 @@
       if (window.__recarregarGerenciarSalas) window.__recarregarGerenciarSalas();
       if (window.__recarregarGerenciarLicoesSalas) window.__recarregarGerenciarLicoesSalas();
     }
+    if (areaId === "areaPostsSite" && window.__recarregarPostsSite) window.__recarregarPostsSite();
     if (areaId === "areaProfessor" && window.__recolherAreaProfessor) window.__recolherAreaProfessor();
   }
 
@@ -7403,6 +7467,166 @@
     document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !modalEscala.hidden) fecharModal(); }, { once: true });
     modalEscala.hidden = false;
   }
+
+  // ===== GERENCIAR POSTS DO CAROUSEL =====
+  (function() {
+    const formPostSite = document.getElementById("formPostSite");
+    const postTag = document.getElementById("postTag");
+    const postTitle = document.getElementById("postTitle");
+    const postImage = document.getElementById("postImage");
+    const postDesc = document.getElementById("postDesc");
+    const postLink = document.getElementById("postLink");
+    const postId = document.getElementById("postId");
+    const listaPostsSite = document.getElementById("listaPostsSite");
+    const btnCancelarPostEdicao = document.getElementById("btnCancelarPostEdicao");
+
+    let postEmEdicao = null;
+
+    // Carregar posts do Firestore
+    async function carregarPostsSite() {
+      listaPostsSite.innerHTML = "Carregando...";
+      try {
+        const postsRef = collection(db, "noticias");
+        const snapshot = await getDocs(query(postsRef, orderBy("criadoEm", "desc")));
+        const posts = [];
+        snapshot.forEach((doc) => posts.push(Object.assign({ id: doc.id }, doc.data())));
+
+        if (posts.length === 0) {
+          listaPostsSite.innerHTML = '<p class="admin-agenda-info">Nenhum post cadastrado. Comece adicionando um novo!</p>';
+          return;
+        }
+
+        listaPostsSite.innerHTML = "";
+        posts.forEach((post) => {
+          const item = document.createElement("div");
+          item.className = "admin-noticia-item";
+          item.innerHTML = `
+            <img src="${post.image || 'placeholder.jpg'}" alt="${post.title}">
+            <div class="admin-noticia-body">
+              <span class="admin-noticia-tag">${post.tag || 'Post'}</span>
+              <h4>${post.title || 'Sem título'}</h4>
+              <p>${post.desc || 'Sem descrição'}</p>
+              ${post.link ? `<p><strong>Link:</strong> <a href="${post.link}" target="_blank">Ver</a></p>` : ''}
+            </div>
+            <div class="admin-noticia-actions">
+              <button class="admin-noticia-edit" data-id="${post.id}">Editar</button>
+              <button class="admin-noticia-delete" data-id="${post.id}">Deletar</button>
+            </div>
+          `;
+          listaPostsSite.appendChild(item);
+        });
+
+        // Adicionar eventos aos botões de editar/deletar
+        document.querySelectorAll(".admin-noticia-edit").forEach((btn) => {
+          btn.addEventListener("click", () => editarPost(posts.find(p => p.id === btn.dataset.id)));
+        });
+        document.querySelectorAll(".admin-noticia-delete").forEach((btn) => {
+          btn.addEventListener("click", () => deletarPost(btn.dataset.id));
+        });
+
+        // Atualizar carousel
+        atualizarCarousel(posts);
+      } catch (err) {
+        console.error("Erro ao carregar posts:", err);
+        listaPostsSite.innerHTML = '<p style="color: red;">Erro ao carregar posts.</p>';
+      }
+    }
+
+    function editarPost(post) {
+      postEmEdicao = post;
+      postId.value = post.id;
+      postTag.value = post.tag || "";
+      postTitle.value = post.title || "";
+      postImage.value = post.image || "";
+      postDesc.value = post.desc || "";
+      postLink.value = post.link || "";
+      btnCancelarPostEdicao.hidden = false;
+      postId.parentElement.style.display = "block";
+      formPostSite.querySelector("button[type='submit']").textContent = "Atualizar Post";
+      window.scrollTo(0, formPostSite.offsetTop - 100);
+    }
+
+    function cancelarEdicao() {
+      postEmEdicao = null;
+      postId.value = "";
+      postTag.value = "";
+      postTitle.value = "";
+      postImage.value = "";
+      postDesc.value = "";
+      postLink.value = "";
+      btnCancelarPostEdicao.hidden = true;
+      postId.parentElement.style.display = "none";
+      formPostSite.querySelector("button[type='submit']").textContent = "Adicionar Post";
+    }
+
+    async function deletarPost(id) {
+      if (!confirm("Tem certeza que deseja deletar este post?")) return;
+      try {
+        await deleteDoc(doc(db, "noticias", id));
+        carregarPostsSite();
+      } catch (err) {
+        console.error("Erro ao deletar post:", err);
+        alert("Erro ao deletar post.");
+      }
+    }
+
+    // Formulário de adicionar/atualizar post
+    formPostSite.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const dados = {
+        tag: postTag.value,
+        title: postTitle.value,
+        image: postImage.value,
+        desc: postDesc.value,
+        link: postLink.value,
+      };
+
+      try {
+        if (postEmEdicao) {
+          // Atualizar
+          await updateDoc(doc(db, "noticias", postEmEdicao.id), dados);
+          alert("Post atualizado com sucesso!");
+          cancelarEdicao();
+        } else {
+          // Criar novo
+          dados.criadoEm = new Date();
+          await addDoc(collection(db, "noticias"), dados);
+          alert("Post adicionado com sucesso!");
+        }
+        formPostSite.reset();
+        carregarPostsSite();
+      } catch (err) {
+        console.error("Erro ao salvar post:", err);
+        alert("Erro ao salvar post.");
+      }
+    });
+
+    btnCancelarPostEdicao.addEventListener("click", cancelarEdicao);
+
+    // Atualizar carousel dinamicamente
+    function atualizarCarousel(posts) {
+      const dataScript = document.getElementById("noticias-data");
+      if (dataScript) {
+        const postsFormatados = posts.map(p => ({
+          id: p.id,
+          tag: p.tag || "Post",
+          title: p.title || "",
+          desc: p.desc || "",
+          link: p.link || "",
+          image: p.image || ""
+        }));
+        dataScript.textContent = JSON.stringify(postsFormatados);
+        // Trigger carousel rebuild
+        if (window.__recarregarCarousel) window.__recarregarCarousel();
+      }
+    }
+
+    // Carregar posts quando abrir a área
+    window.__recarregarPostsSite = carregarPostsSite;
+
+    // Carregar na primeira vez
+    carregarPostsSite();
+  })();
 
 </script>
 
