@@ -430,14 +430,14 @@ async function preencherProximosCultos() {
       const badge1 = document.createElement("span");
       badge1.className = "culto-tag";
       badge1.textContent = "NO NOSSO SETOR";
-      badge1.style.background = "rgba(255,122,51,0.24)";
-      badge1.style.color = "var(--laranja)";
+      badge1.style.background = "rgba(59,130,255,0.24)";
+      badge1.style.color = "var(--azul)";
       
       // Criar badge com dia da semana e data
       const badge2 = document.createElement("span");
       badge2.className = "culto-tag";
-      badge2.style.background = "rgba(255,122,51,0.14)";
-      badge2.style.color = "var(--laranja)";
+      badge2.style.background = "rgba(59,130,255,0.14)";
+      badge2.style.color = "var(--azul)";
       
       // Formatar: "Sábado 03 Outubro"
       const [ano, mes, dia] = proximoEvento.dataInicio.split("-");
