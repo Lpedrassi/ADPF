@@ -2714,17 +2714,25 @@
           </div>
           <p id="licoesCapaStatus" class="admin-agenda-status"></p>
 
-          <div class="perfil-secao-titulo">Revista em PDF</div>
-          <p class="admin-agenda-info" style="margin-top:-6px;">Envie o PDF da revista trimestral desta Sala — vai aparecer para o Professor (e, quando a Sala do Aluno tiver conteúdo, para os Alunos também).</p>
+          <div class="perfil-secao-titulo">Revista em PDF (Aluno)</div>
+          <p class="admin-agenda-info" style="margin-top:-6px;">Cole o link do Google Drive da revista do aluno trimestral desta Sala — vai aparecer para o Professor (e, quando a Sala do Aluno tiver conteúdo, para os Alunos também).</p>
           <p id="licoesPdfAtual" class="admin-agenda-info" hidden></p>
           <div class="admin-form-linha">
-            <label for="licoesPdfInput" class="btn-admin admin-file-btn">Adicionar arquivo</label>
-            <input type="file" id="licoesPdfInput" accept="application/pdf" class="admin-file-input">
-            <span id="licoesPdfNomeEscolhido" class="admin-agenda-status"></span>
-            <button type="button" id="btnEnviarPdfLicoes" class="btn-admin">Enviar PDF</button>
-            <button type="button" id="btnRemoverPdfLicoes" class="btn-ghost" hidden>Remover PDF</button>
+            <input type="text" id="licoesPdfUrlInput" placeholder="Cole o link do Google Drive (ex: https://drive.google.com/file/d/ID/view)" style="flex:1; padding:8px 12px; background:var(--surface-2); border:1px solid var(--border-strong); border-radius:6px; color:var(--ink); font-size:13px;">
+            <button type="button" id="btnEnviarPdfLicoes" class="btn-admin">Salvar link</button>
+            <button type="button" id="btnRemoverPdfLicoes" class="btn-ghost" hidden>Remover</button>
           </div>
           <p id="licoesPdfStatus" class="admin-agenda-status"></p>
+
+          <div class="perfil-secao-titulo">Revista do Professor</div>
+          <p class="admin-agenda-info" style="margin-top:-6px;">Cole o link do Google Drive da revista do professor trimestral desta Sala — aparece apenas para Professores.</p>
+          <p id="licoesProfAtual" class="admin-agenda-info" hidden></p>
+          <div class="admin-form-linha">
+            <input type="text" id="licoesProfUrlInput" placeholder="Cole o link do Google Drive (ex: https://drive.google.com/file/d/ID/view)" style="flex:1; padding:8px 12px; background:var(--surface-2); border:1px solid var(--border-strong); border-radius:6px; color:var(--ink); font-size:13px;">
+            <button type="button" id="btnEnviarProfLicoes" class="btn-admin">Salvar link</button>
+            <button type="button" id="btnRemoverProfLicoes" class="btn-ghost" hidden>Remover</button>
+          </div>
+          <p id="licoesProfStatus" class="admin-agenda-status"></p>
         </div>
       </div>
     </div>
@@ -5112,15 +5120,16 @@
     const btnSalvar = document.getElementById("btnSalvarLicoes");
     const statusEl = document.getElementById("licoesStatus");
     const pdfAtualEl = document.getElementById("licoesPdfAtual");
-    const pdfInput = document.getElementById("licoesPdfInput");
-    const pdfNomeEscolhidoEl = document.getElementById("licoesPdfNomeEscolhido");
-    pdfInput.addEventListener("change", () => {
-      const f = pdfInput.files && pdfInput.files[0];
-      pdfNomeEscolhidoEl.textContent = f ? f.name : "";
-    });
+    const pdfUrlInput = document.getElementById("licoesPdfUrlInput");
     const btnEnviarPdf = document.getElementById("btnEnviarPdfLicoes");
     const btnRemoverPdf = document.getElementById("btnRemoverPdfLicoes");
     const pdfStatusEl = document.getElementById("licoesPdfStatus");
+
+    const profAtualEl = document.getElementById("licoesProfAtual");
+    const profUrlInput = document.getElementById("licoesProfUrlInput");
+    const btnEnviarProf = document.getElementById("btnEnviarProfLicoes");
+    const btnRemoverProf = document.getElementById("btnRemoverProfLicoes");
+    const profStatusEl = document.getElementById("licoesProfStatus");
     const capaAtualEl = document.getElementById("licoesCapaAtual");
     const capaInput = document.getElementById("licoesCapaInput");
     const capaNomeEscolhidoEl = document.getElementById("licoesCapaNomeEscolhido");
@@ -5191,12 +5200,28 @@
     function atualizarPdfUI() {
       if (licaoAtualDados && licaoAtualDados.revistaPdfUrl) {
         pdfAtualEl.hidden = false;
-        pdfAtualEl.innerHTML = "PDF atual: <a href=\"" + licaoAtualDados.revistaPdfUrl + "\" target=\"_blank\" rel=\"noopener\">" + (licaoAtualDados.revistaPdfNome || "revista.pdf") + "</a>";
+        pdfAtualEl.innerHTML = "PDF atual: <a href=\"" + licaoAtualDados.revistaPdfUrl + "\" target=\"_blank\" rel=\"noopener\">Abrir no Google Drive</a>";
+        pdfUrlInput.value = licaoAtualDados.revistaPdfUrl || "";
         btnRemoverPdf.hidden = false;
       } else {
         pdfAtualEl.hidden = true;
         pdfAtualEl.textContent = "";
+        pdfUrlInput.value = "";
         btnRemoverPdf.hidden = true;
+      }
+    }
+
+    function atualizarProfUI() {
+      if (licaoAtualDados && licaoAtualDados.revistaProUrl) {
+        profAtualEl.hidden = false;
+        profAtualEl.innerHTML = "Revista do Professor atual: <a href=\"" + licaoAtualDados.revistaProUrl + "\" target=\"_blank\" rel=\"noopener\">Abrir no Google Drive</a>";
+        profUrlInput.value = licaoAtualDados.revistaProUrl || "";
+        btnRemoverProf.hidden = false;
+      } else {
+        profAtualEl.hidden = true;
+        profAtualEl.textContent = "";
+        profUrlInput.value = "";
+        btnRemoverProf.hidden = true;
       }
     }
 
@@ -5227,6 +5252,7 @@
       licaoAtualDados = null;
       revistaNomeInput.value = "";
       atualizarPdfUI();
+      atualizarProfUI();
       atualizarCapaUI();
       try {
         const snap = await getDoc(doc(db, "licoes", docId));
@@ -5239,6 +5265,7 @@
           (d.licoes || []).forEach((l) => { porData[l.data] = l.titulo; });
           campos.forEach((c, idx) => { c.value = porData[paraISO(domingos[idx])] || ""; });
           atualizarPdfUI();
+          atualizarProfUI();
           atualizarCapaUI();
           return;
         }
@@ -5342,43 +5369,33 @@
 
     btnEnviarPdf.addEventListener("click", async () => {
       const salaId = seletorSala.value;
-      const arquivo = pdfInput.files && pdfInput.files[0];
-      if (!salaId || !arquivo) return;
+      const urlPdf = pdfUrlInput.value.trim();
+      if (!salaId || !urlPdf) {
+        pdfStatusEl.textContent = "Preencha o link do Google Drive.";
+        pdfStatusEl.className = "admin-agenda-status erro";
+        return;
+      }
       const ano = parseInt(anoSelect.value, 10);
       const trimestre = parseInt(trimestreSelect.value, 10);
       const docId = salaId + "_" + ano + "_" + trimestre;
       btnEnviarPdf.disabled = true;
-      pdfStatusEl.textContent = "Conectando ao Google Drive...";
+      pdfStatusEl.textContent = "Salvando...";
       pdfStatusEl.className = "admin-agenda-status";
       try {
-        if (licaoAtualDados && licaoAtualDados.revistaPdfDriveId) {
-          try { await removerArquivoDoDrive(licaoAtualDados.revistaPdfDriveId); } catch (e) { console.error(e); }
-        }
-        pdfStatusEl.textContent = "Enviando...";
-        const resultado = await enviarArquivoParaDrive(arquivo, salaId);
         await setDoc(doc(db, "licoes", docId), {
           salaId: salaId,
           ano: ano,
           trimestre: trimestre,
-          revistaPdfNome: arquivo.name,
-          revistaPdfUrl: resultado.url,
-          revistaPdfDriveId: resultado.driveFileId,
+          revistaPdfUrl: urlPdf,
           atualizadoEm: serverTimestamp()
         }, { merge: true });
         await updateDoc(doc(db, "salas", salaId), { temLicoes: true });
-        licaoAtualDados = Object.assign({}, licaoAtualDados, {
-          revistaPdfNome: arquivo.name,
-          revistaPdfUrl: resultado.url,
-          revistaPdfDriveId: resultado.driveFileId,
-          migradoDoLegado: false
-        });
+        licaoAtualDados = Object.assign({}, licaoAtualDados, { revistaPdfUrl: urlPdf });
         atualizarPdfUI();
-        pdfInput.value = "";
-        pdfNomeEscolhidoEl.textContent = "";
-        pdfStatusEl.textContent = "PDF enviado com sucesso.";
+        pdfStatusEl.textContent = "Link salvo com sucesso.";
         pdfStatusEl.className = "admin-agenda-status ok";
       } catch (err) {
-        pdfStatusEl.textContent = "Não foi possível enviar o PDF. " + (err.message || "");
+        pdfStatusEl.textContent = "Não foi possível salvar. " + (err.message || "");
         pdfStatusEl.className = "admin-agenda-status erro";
         console.error(err);
       } finally {
@@ -5395,24 +5412,80 @@
       btnRemoverPdf.disabled = true;
       pdfStatusEl.textContent = "";
       try {
-        if (licaoAtualDados && licaoAtualDados.revistaPdfDriveId) {
-          try { await removerArquivoDoDrive(licaoAtualDados.revistaPdfDriveId); } catch (e) { console.error(e); }
-        }
         await setDoc(doc(db, "licoes", docId), {
-          revistaPdfNome: "",
-          revistaPdfUrl: "",
-          revistaPdfDriveId: ""
+          revistaPdfUrl: ""
         }, { merge: true });
-        licaoAtualDados = Object.assign({}, licaoAtualDados, { revistaPdfNome: "", revistaPdfUrl: "", revistaPdfDriveId: "" });
+        licaoAtualDados = Object.assign({}, licaoAtualDados, { revistaPdfUrl: "" });
         atualizarPdfUI();
-        pdfStatusEl.textContent = "PDF removido.";
+        pdfStatusEl.textContent = "Link removido.";
         pdfStatusEl.className = "admin-agenda-status ok";
       } catch (err) {
-        pdfStatusEl.textContent = "Não foi possível remover o PDF. " + (err.message || "");
+        pdfStatusEl.textContent = "Não foi possível remover o link. " + (err.message || "");
         pdfStatusEl.className = "admin-agenda-status erro";
         console.error(err);
       } finally {
         btnRemoverPdf.disabled = false;
+      }
+    });
+
+    btnEnviarProf.addEventListener("click", async () => {
+      const salaId = seletorSala.value;
+      const urlProf = profUrlInput.value.trim();
+      if (!salaId || !urlProf) {
+        profStatusEl.textContent = "Preencha o link do Google Drive.";
+        profStatusEl.className = "admin-agenda-status erro";
+        return;
+      }
+      const ano = parseInt(anoSelect.value, 10);
+      const trimestre = parseInt(trimestreSelect.value, 10);
+      const docId = salaId + "_" + ano + "_" + trimestre;
+      btnEnviarProf.disabled = true;
+      profStatusEl.textContent = "Salvando...";
+      profStatusEl.className = "admin-agenda-status";
+      try {
+        await setDoc(doc(db, "licoes", docId), {
+          salaId: salaId,
+          ano: ano,
+          trimestre: trimestre,
+          revistaProUrl: urlProf,
+          atualizadoEm: serverTimestamp()
+        }, { merge: true });
+        await updateDoc(doc(db, "salas", salaId), { temLicoes: true });
+        licaoAtualDados = Object.assign({}, licaoAtualDados, { revistaProUrl: urlProf });
+        atualizarProfUI();
+        profStatusEl.textContent = "Link salvo com sucesso.";
+        profStatusEl.className = "admin-agenda-status ok";
+      } catch (err) {
+        profStatusEl.textContent = "Não foi possível salvar. " + (err.message || "");
+        profStatusEl.className = "admin-agenda-status erro";
+        console.error(err);
+      } finally {
+        btnEnviarProf.disabled = false;
+      }
+    });
+
+    btnRemoverProf.addEventListener("click", async () => {
+      const salaId = seletorSala.value;
+      if (!salaId) return;
+      const ano = parseInt(anoSelect.value, 10);
+      const trimestre = parseInt(trimestreSelect.value, 10);
+      const docId = salaId + "_" + ano + "_" + trimestre;
+      btnRemoverProf.disabled = true;
+      profStatusEl.textContent = "";
+      try {
+        await setDoc(doc(db, "licoes", docId), {
+          revistaProUrl: ""
+        }, { merge: true });
+        licaoAtualDados = Object.assign({}, licaoAtualDados, { revistaProUrl: "" });
+        atualizarProfUI();
+        profStatusEl.textContent = "Link removido.";
+        profStatusEl.className = "admin-agenda-status ok";
+      } catch (err) {
+        profStatusEl.textContent = "Não foi possível remover o link. " + (err.message || "");
+        profStatusEl.className = "admin-agenda-status erro";
+        console.error(err);
+      } finally {
+        btnRemoverProf.disabled = false;
       }
     });
 
