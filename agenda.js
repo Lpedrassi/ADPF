@@ -422,15 +422,54 @@ async function preencherProximosCultos() {
   const proximoEvento = proximosGeral[0] || null;
 
   if (proximoEvento) {
-    const escopoLabel = proximoEvento.escopo === "setor" ? "Setor" : "Congregação";
-    elEventoTag.textContent = `${escopoLabel} · ${formatarPeriodo(proximoEvento)}`;
+    const container = document.getElementById("cultoCardEventoTagContainer");
+    container.innerHTML = ""; // limpa badges anteriores
+    
+    if (proximoEvento.escopo === "setor") {
+      // Criar badge "NO NOSSO SETOR"
+      const badge1 = document.createElement("span");
+      badge1.className = "culto-tag";
+      badge1.textContent = "NO NOSSO SETOR";
+      badge1.style.background = "rgba(255,122,51,0.24)";
+      badge1.style.color = "var(--laranja)";
+      
+      // Criar badge com dia da semana e data
+      const badge2 = document.createElement("span");
+      badge2.className = "culto-tag";
+      badge2.style.background = "rgba(255,122,51,0.14)";
+      badge2.style.color = "var(--laranja)";
+      
+      // Formatar: "Sábado 03 Outubro"
+      const [ano, mes, dia] = proximoEvento.dataInicio.split("-");
+      const dataObj = new Date(`${ano}-${mes}-${dia}T00:00:00`);
+      const diaSemana = nomeDiaDaSemana(proximoEvento.dataInicio);
+      const mesNome = dataObj.toLocaleString("pt-BR", { month: "long" });
+      const dataFormatada = `${diaSemana} ${dia.padStart(2, '0')} ${mesNome.charAt(0).toUpperCase() + mesNome.slice(1)}`;
+      badge2.textContent = dataFormatada;
+      
+      container.appendChild(badge1);
+      container.appendChild(badge2);
+    } else {
+      // Congregação
+      elEventoTag.textContent = `Congregação · ${formatarPeriodo(proximoEvento)}`;
+      container.appendChild(elEventoTag);
+    }
+    
     elEventoTitulo.textContent = proximoEvento.titulo;
     const partes = [];
     if (proximoEvento.hora) partes.push(proximoEvento.hora);
     if (proximoEvento.observacao) partes.push(proximoEvento.observacao);
     elEventoDesc.textContent = partes.length ? partes.join(" — ") : "Confira os detalhes na Agenda logo abaixo.";
   } else {
-    elEventoTag.textContent = "Agenda";
+    const container = document.getElementById("cultoCardEventoTagContainer");
+    container.innerHTML = "";
+    const badge = document.createElement("span");
+    badge.className = "culto-tag";
+    badge.textContent = "Agenda";
+    badge.style.background = "rgba(255,122,51,0.14)";
+    badge.style.color = "var(--laranja)";
+    container.appendChild(badge);
+    
     elEventoTitulo.textContent = "Nenhum evento à vista";
     elEventoDesc.textContent = "Assim que um novo evento for cadastrado, ele aparece aqui.";
   }
