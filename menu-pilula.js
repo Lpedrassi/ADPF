@@ -52,3 +52,21 @@
     });
   });
 })();
+
+(() => {
+  const botao = document.getElementById("navMenuToggle");
+  const menu = document.getElementById("navLinks");
+  if (!botao || !menu) return;
+  const fechar = () => {
+    menu.classList.remove("aberto");
+    botao.setAttribute("aria-expanded", "false");
+  };
+  botao.addEventListener("click", () => {
+    const aberto = menu.classList.toggle("aberto");
+    botao.setAttribute("aria-expanded", String(aberto));
+  });
+  // Qualquer página escolhida (link ou item de submenu) fecha o menu; abrir Site/Administração/Portal EBD não fecha
+  menu.addEventListener("click", (e) => {
+    if (e.target.closest("a, .nav-admin-dropdown-item")) fechar();
+  });
+})();

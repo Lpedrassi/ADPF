@@ -282,15 +282,18 @@ function carregarAvisos() {
   const el = document.getElementById("alunoAvisos");
 
   const avisos = [
-    "🔔 Santa Ceia — Próximo domingo (29/09)",
-    "📢 Congresso UFADEJ — 28 a 30 de Setembro",
-    "📚 Revista da EBD disponível — Pegue com seu professor"
+    { icone: "🔔", titulo: "Santa Ceia", detalhe: "Próximo domingo (29/09)" },
+    { icone: "📢", titulo: "Congresso UFADEJ", detalhe: "28 a 30 de Setembro" },
+    { icone: "📚", titulo: "Revista da EBD disponível", detalhe: "Pegue com seu professor" }
   ];
 
   const html = avisos.map(aviso =>
     `<div class="aluno-card-lista-item">
-      <div class="aluno-card-lista-icon">${aviso.split("—")[0]}</div>
-      <div>${aviso.split("—")[1]?.trim() || aviso}</div>
+      <div class="aluno-card-lista-icon">${aviso.icone}</div>
+      <div class="aluno-aviso-texto">
+        <strong>${aviso.titulo}</strong>
+        <span>${aviso.detalhe}</span>
+      </div>
     </div>`
   ).join("");
 
