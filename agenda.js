@@ -32,6 +32,16 @@ const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 const NOME_COLECAO = "agenda";
+const DEPARTAMENTOS_PADRAO = ["Infantil", "Adolescentes", "Jovens", "Varões", "Feminino", "Missões", "Culto"];
+
+export async function buscarDepartamentosAgenda() {
+  const snap = await getDoc(doc(db, "configAgenda", "departamentos"));
+  return snap.exists() && Array.isArray(snap.data().lista) ? snap.data().lista : DEPARTAMENTOS_PADRAO.slice();
+}
+
+export async function salvarDepartamentosAgenda(lista) {
+  await setDoc(doc(db, "configAgenda", "departamentos"), { lista });
+}
 const DOC_MARCADOR_IMPORT = "agenda_meta/import_2026"; // evita importar 2x
 
 const MESES_PT = [
@@ -74,6 +84,7 @@ export async function buscarTodosEventos(forcarRecarregar = false) {
 export async function salvarEvento(dados) {
   const registro = {
     escopo: dados.escopo,
+    tipo: dados.tipo || null,
     dataInicio: dados.dataInicio,
     dataFim: dados.dataFim || dados.dataInicio,
     outrasDatas: dados.outrasDatas || [],
@@ -95,6 +106,19 @@ export async function salvarEvento(dados) {
 }
 
 /** Remove um evento pelo id do documento. */
+export async function renomearCategoriaEventos(antigo, novo) {
+  const snap = await getDocs(collection(db, NOME_COLECAO));
+  const lote = writeBatch(db);
+  let total = 0;
+  snap.forEach((d) => {
+    if (d.data().categoria === antigo) {
+      lote.update(d.ref, { categoria: novo });
+      total++;
+    }
+  });
+  if (total > 0) await lote.commit();
+}
+
 export async function excluirEvento(id) {
   await deleteDoc(doc(db, NOME_COLECAO, id));
   _cacheEventos = null;
@@ -396,23 +420,20 @@ async function iniciarAgendaPublica() {
 // =================================================================
 
 /**
- * Preenche os 2 primeiros cards da seção "Cultos e encontros" com dados reais
- * da Agenda (o 3º card, "Campanha de Oração", continua fixo no HTML).
- *   - Card 1 (azul): o próximo culto de domingo da nossa congregação (título
- *     começando com "Culto" - ex.: "Culto com os Adolescentes"). Se não achar
- *     nenhum, mantém o texto padrão "Culto de Celebração" que já está no HTML.
- *   - Card 2 (laranja): o próximo evento da Agenda (Setor OU Congregação,
- *     qualquer tipo), sem repetir o mesmo evento do card 1.
+ * Preenche os três cards da seção "Cultos, Encontros e Eventos" com a Agenda:
+ *   - Card azul: próximo culto da Congregação (tipo "culto").
+ *   - Card dourado: próximo evento ou encontro da Congregação (tipo "evento").
+ *   - Card laranja: próximo evento do Setor (escopo "setor").
+ * Eventos antigos sem tipo usam "culto" se o título começar com "Culto".
  */
 async function preencherProximosCultos() {
-  const elCultoTag = document.getElementById("cultoCardCultoTag");
-  const elCultoTitulo = document.getElementById("cultoCardCultoTitulo");
-  const elCultoDesc = document.getElementById("cultoCardCultoDesc");
-  const elEventoTag = document.getElementById("cultoCardEventoTag");
-  const elEventoTitulo = document.getElementById("cultoCardEventoTitulo");
-  const elEventoDesc = document.getElementById("cultoCardEventoDesc");
-
-  if (!elCultoTag || !elEventoTag) return; // não está nesta página
+  const el = (id) => document.getElementById(id);
+  const cards = [
+    { tag: el("cultoCardCultoTag"), titulo: el("cultoCardCultoTitulo"), desc: el("cultoCardCultoDesc") },
+    { tag: el("cultoCardEventoTag"), titulo: el("cultoCardEventoTitulo"), desc: el("cultoCardEventoDesc") },
+    { tag: el("cultoCardSetorTag"), titulo: el("cultoCardSetorTitulo"), desc: el("cultoCardSetorDesc") }
+  ];
+  if (cards.some((c) => !c.tag)) return; // não está nesta página
 
   let todos;
   try {
@@ -423,80 +444,40 @@ async function preencherProximosCultos() {
   }
 
   const hoje = hojeISO();
+  const tipoDe = (ev) => ev.tipo || (/^culto/i.test((ev.titulo || "").trim()) ? "culto" : "evento");
+  const daCongregacao = todos.filter((ev) => ev.escopo !== "setor");
+  const doSetor = todos.filter((ev) => ev.escopo === "setor");
 
-  // Card 1: próximo culto de domingo da nossa congregação
-  const cultosCongregacao = todos.filter(
-    (ev) => ev.escopo === "congregacao" && /^culto/i.test((ev.titulo || "").trim())
-  );
-  const proximoCulto = ordenarProximos(cultosCongregacao, hoje)[0] || null;
+  const proximos = [
+    ordenarProximos(daCongregacao.filter((ev) => tipoDe(ev) === "culto"), hoje)[0] || null,
+    ordenarProximos(daCongregacao.filter((ev) => tipoDe(ev) === "evento"), hoje)[0] || null,
+    ordenarProximos(doSetor, hoje)[0] || null
+  ];
 
-  if (proximoCulto) {
-    elCultoTag.textContent = `${nomeDiaDaSemana(proximoCulto.dataInicio)} · ${proximoCulto.hora || "hora a definir"}`;
-    elCultoTitulo.textContent = proximoCulto.titulo;
-    elCultoDesc.textContent = proximoCulto.categoria
-      ? `Departamento: ${proximoCulto.categoria}`
-      : "Louvor, ministração da Palavra e comunhão com toda a igreja.";
-  }
+  const rotuloData = (ev) => {
+    const [, mes, dia] = ev.dataInicio.split("-");
+    const data = `${nomeDiaDaSemana(ev.dataInicio)} ${dia}/${mes}`;
+    return ev.hora ? `${data} · ${ev.hora}` : data;
+  };
 
-  // Card 2: próximo evento (Setor ou Congregação), sem repetir o do card 1
-  const proximosGeral = ordenarProximos(todos, hoje).filter(
-    (ev) => !proximoCulto || ev.id !== proximoCulto.id
-  );
-  const proximoEvento = proximosGeral[0] || null;
-
-  if (proximoEvento) {
-    const container = document.getElementById("cultoCardEventoTagContainer");
-    container.innerHTML = ""; // limpa badges anteriores
-    
-    if (proximoEvento.escopo === "setor") {
-      // Criar badge "NO NOSSO SETOR"
-      const badge1 = document.createElement("span");
-      badge1.className = "culto-tag";
-      badge1.textContent = "NO NOSSO SETOR";
-      badge1.style.background = "rgba(59,130,255,0.24)";
-      badge1.style.color = "var(--azul)";
-      
-      // Criar badge com dia da semana e data
-      const badge2 = document.createElement("span");
-      badge2.className = "culto-tag";
-      badge2.style.background = "rgba(59,130,255,0.14)";
-      badge2.style.color = "var(--azul)";
-      
-      // Formatar: "Sábado 03 Outubro"
-      const [ano, mes, dia] = proximoEvento.dataInicio.split("-");
-      const dataObj = new Date(`${ano}-${mes}-${dia}T00:00:00`);
-      const diaSemana = nomeDiaDaSemana(proximoEvento.dataInicio);
-      const mesNome = dataObj.toLocaleString("pt-BR", { month: "long" });
-      const dataFormatada = `${diaSemana} ${dia.padStart(2, '0')} ${mesNome.charAt(0).toUpperCase() + mesNome.slice(1)}`;
-      badge2.textContent = dataFormatada;
-      
-      container.appendChild(badge1);
-      container.appendChild(badge2);
-    } else {
-      // Congregação
-      elEventoTag.textContent = `Congregação · ${formatarPeriodo(proximoEvento)}`;
-      container.appendChild(elEventoTag);
-    }
-    
-    elEventoTitulo.textContent = proximoEvento.titulo;
+  const descricao = (ev) => {
     const partes = [];
-    if (proximoEvento.hora) partes.push(proximoEvento.hora);
-    if (proximoEvento.observacao) partes.push(proximoEvento.observacao);
-    elEventoDesc.textContent = partes.length ? partes.join(" — ") : "Confira os detalhes na Agenda logo abaixo.";
-  } else {
-    const container = document.getElementById("cultoCardEventoTagContainer");
-    container.innerHTML = "";
-    const badge = document.createElement("span");
-    badge.className = "culto-tag";
-    badge.textContent = "Agenda";
-    badge.style.background = "rgba(255,122,51,0.14)";
-    badge.style.color = "var(--laranja)";
-    container.appendChild(badge);
-    
-    elEventoTitulo.textContent = "Nenhum evento à vista";
-    elEventoDesc.textContent = "Assim que um novo evento for cadastrado, ele aparece aqui.";
-  }
-}
+    if (ev.categoria) partes.push(`Departamento: ${ev.categoria}`);
+    if (ev.observacao) partes.push(ev.observacao);
+    return partes.length ? partes.join(" — ") : "Confira os detalhes na Agenda.";
+  };
 
-iniciarAgendaPublica();
+  cards.forEach((card, idx) => {
+    const ev = proximos[idx];
+    if (ev) {
+      card.tag.textContent = rotuloData(ev);
+      card.titulo.textContent = ev.titulo;
+      card.desc.textContent = descricao(ev);
+    } else {
+      card.tag.textContent = "Em breve";
+      card.titulo.textContent = "Nenhum agendamento";
+      card.desc.textContent = "Confira a Agenda em breve.";
+    }
+  });
+}
 preencherProximosCultos();

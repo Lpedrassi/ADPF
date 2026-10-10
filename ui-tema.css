@@ -1,0 +1,585 @@
+:root {
+  --bg: #08090D;
+  --surface: rgba(22,22,31,0.42);
+  --muted: #F5F5F8;
+}
+
+body {
+  background-color: var(--bg);
+  background-image:
+    radial-gradient(900px 600px at 8% -10%, rgba(59,130,255,0.13), transparent 60%),
+    radial-gradient(800px 600px at 100% 0%, rgba(249,115,22,0.16), transparent 55%);
+  background-attachment: fixed;
+}
+
+.portal-section {
+  background: rgba(22,22,31,0.42);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  backdrop-filter: blur(20px) saturate(140%);
+  border: 1px solid var(--border-strong);
+  border-radius: 24px;
+  box-shadow: 0 8px 32px 0 rgba(0,0,0,0.37);
+}
+
+.admin-perfis-item {
+  background: rgba(9,9,14,0.5);
+  border-color: var(--border);
+  transition: all .3s ease;
+}
+.admin-perfis-item:hover {
+  background: rgba(14,14,21,0.75);
+  border-color: rgba(255,255,255,0.2);
+  box-shadow: 0 10px 28px rgba(0,0,0,0.35);
+  transform: translateY(-2px);
+}
+
+input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="range"]),
+select,
+textarea {
+  background: rgba(9,9,14,0.6);
+  color: var(--ink);
+  border: 1px solid var(--border-strong);
+  border-radius: 12px;
+  outline: none;
+  transition: border-color .2s, box-shadow .2s;
+}
+input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="range"]):focus,
+select:focus,
+textarea:focus {
+  border-color: rgba(249,115,22,0.8);
+  box-shadow: 0 0 0 1px rgba(249,115,22,0.5);
+}
+::placeholder { color: #5B5B68; opacity: 1; }
+
+.admin-form-linha > label:not(.admin-check),
+.admin-form > label:not(.admin-check) {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--muted);
+}
+
+.btn-admin {
+  background: linear-gradient(135deg, rgba(255,255,255,0.10), rgba(255,255,255,0.03));
+  border: 1px solid var(--border-strong);
+  border-radius: 12px;
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  transition: all .25s ease;
+}
+.btn-admin:hover { filter: brightness(1.15); transform: translateY(-1px); }
+.btn-admin:active { transform: scale(.97); }
+.btn-admin-primario {
+  background: linear-gradient(135deg, #F97316, #FBBF24);
+  color: #1A0F00;
+  border-color: transparent;
+}
+
+.btn-ghost {
+  background: transparent;
+  border: 1px solid var(--border-strong);
+  color: var(--muted);
+  transition: all .25s ease;
+}
+.btn-ghost:hover { color: var(--ink); background: rgba(255,255,255,0.05); }
+
+.admin-perfis-item-remover {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.admin-perfis-item-remover svg { width: 16px; height: 16px; }
+
+.notyf__toast { border-radius: 14px; backdrop-filter: blur(16px); box-shadow: 0 12px 32px rgba(0,0,0,.45); }
+
+.nav,
+.portal-sidebar,
+.nav-admin-dropdown,
+.nav-user-menu {
+  background: rgba(14,14,21,0.55);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid rgba(255,255,255,0.12);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.37), inset 0 1px 0 rgba(255,255,255,0.06);
+}
+
+.professor-canvas-painel,
+.professor-canvas-card,
+.professor-resumo-card,
+.dept-card,
+.culto-card,
+.simbolo-card,
+.aluno-card,
+.login-card,
+.cf-lightbox-card {
+  background: linear-gradient(145deg, rgba(255,255,255,0.07), rgba(255,255,255,0.015));
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  backdrop-filter: blur(18px) saturate(140%);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.37), inset 0 1px 0 rgba(255,255,255,0.08);
+}
+
+.professor-canvas-card:hover,
+.dept-card:hover {
+  border-color: rgba(255,255,255,0.22);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.1);
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  top: -40px;
+  left: 50%;
+  width: min(900px, 120vw);
+  height: 110vh;
+  transform: translateX(-50%);
+  background: radial-gradient(ellipse 50% 60% at 50% 0%,
+    rgba(227,179,65,0.52) 0%,
+    rgba(255,122,51,0.28) 35%,
+    rgba(255,59,82,0.08) 60%,
+    transparent 80%);
+  filter: blur(30px);
+  pointer-events: none;
+  z-index: -1;
+  animation: heroBeam 9s ease-in-out infinite;
+}
+@keyframes heroBeam {
+  0%, 100% { opacity: .85; }
+  50% { opacity: 1; }
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(620px 520px at 0% 45%, rgba(59,130,255,0.17), transparent 70%),
+    radial-gradient(700px 540px at 100% 45%, rgba(255,59,82,0.22), transparent 70%),
+    radial-gradient(560px 440px at 50% 115%, rgba(227,179,65,0.15), transparent 70%),
+    radial-gradient(700px 520px at 30% 100%, rgba(34,197,94,0.26), transparent 72%);
+  pointer-events: none;
+  z-index: -1;
+  animation: luzDeriva 22s ease-in-out infinite alternate;
+}
+@keyframes luzDeriva {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  to { transform: translate3d(-3%, 2%, 0) scale(1.05); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body::before, body::after { animation: none; }
+}
+
+.hero .grad-text {
+  background: linear-gradient(90deg, var(--azul) 0%, var(--laranja) 50%, var(--dourado) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+.professor-canvas-card {
+  position: relative;
+  overflow: hidden;
+  transition: border-color .4s ease, box-shadow .4s ease, transform .3s ease;
+}
+.professor-canvas-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .45s ease;
+  background: radial-gradient(circle at 50% 50%,
+    rgba(59,130,255,0.75) 0%,
+    rgba(59,130,255,0.3) 45%,
+    transparent 85%);
+}
+.professor-canvas-card > * {
+  position: relative;
+  z-index: 1;
+}
+.professor-canvas-card:hover {
+  border-color: rgba(255,122,51,0.4);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.45), 0 0 28px rgba(255,122,51,0.16);
+}
+.professor-canvas-card:hover::before {
+  opacity: 1;
+}
+.professor-canvas-card button,
+.professor-canvas-card .btn {
+  transition: background .35s ease, color .35s ease, border-color .35s ease, filter .25s ease;
+}
+.professor-canvas-card:hover button,
+.professor-canvas-card:hover .btn {
+  background: linear-gradient(135deg, #E3B341 0%, #FF7A33 100%);
+  color: #1F0D04;
+  border-color: transparent;
+}
+
+.turma-badge-icone {
+  width: 60px;
+  height: 60px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+.turma-badge-icone img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.ebd-grid .turma {
+  height: auto;
+  min-height: 200px;
+}
+.ebd-grid .turma-inner {
+  height: auto;
+}
+.ebd-grid .turma-front {
+  position: relative;
+  height: auto;
+  align-items: center;
+  text-align: center;
+  gap: 10px;
+}
+.ebd-grid .turma-head {
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 0;
+}
+.ebd-grid .turma-badge-icone {
+  width: 150px;
+  height: 150px;
+}
+.ebd-grid .turma-head h3,
+.ebd-grid .turma-front > h3 {
+  color: #FFFFFF;
+  font-size: 19px;
+  font-weight: 800;
+}
+.ebd-grid .turma p {
+  color: #F5F5F8;
+  font-size: 14.5px;
+  font-weight: 500;
+  line-height: 1.5;
+  margin-top: 0;
+}
+.turma[data-turma="novos-convertidos"] .turma-inner {
+  height: auto;
+}
+.turma[data-turma="novos-convertidos"] .turma-front {
+  position: relative;
+  height: auto;
+}
+.turma-capa-front {
+  align-items: center;
+  text-align: center;
+  gap: 10px;
+}
+.turma-capa {
+  display: block;
+  width: 100%;
+  max-width: 150px;
+  height: auto;
+  margin: 0 auto;
+}
+.turma-capa-front h3 {
+  color: #FFFFFF;
+  font-size: 19px;
+  font-weight: 800;
+}
+.turma-capa-front p {
+  color: #F5F5F8;
+  font-size: 14.5px;
+  font-weight: 500;
+  line-height: 1.5;
+  margin-top: 0;
+}
+
+#areaAdministrativo .professor-canvas-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 8px;
+}
+#areaAdministrativo .professor-canvas-icone {
+  font-size: 56px;
+  line-height: 1;
+}
+#areaAdministrativo .professor-canvas-icone img {
+  display: block;
+  width: 96px;
+  height: 96px;
+  object-fit: contain;
+}
+#areaAdministrativo .professor-canvas-titulo {
+  color: #FFFFFF;
+  font-size: 17px;
+  font-weight: 800;
+}
+#areaAdministrativo .professor-canvas-sub {
+  color: #FFFFFF;
+  font-size: 13px;
+  line-height: 1.5;
+}
+#secNivel0 .professor-canvas-titulo {
+  text-transform: uppercase;
+}
+
+#secRelatorioDominicalTurmas .professor-canvas-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 10px;
+}
+#secRelatorioDominicalTurmas .professor-canvas-icone img {
+  display: block;
+  width: 130px;
+  height: 130px;
+  object-fit: contain;
+}
+
+.nav-links {
+  position: relative;
+  transform-style: preserve-3d;
+}
+.nav-links > .fundo-movel {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  opacity: 0;
+  z-index: 1;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #E3B341 0%, #FF7A33 45%, #FF3B52 100%);
+  background-size: 100% 220%;
+  box-shadow: 0 0 18px rgba(255,122,51,0.6), 0 0 6px rgba(227,179,65,0.5);
+  pointer-events: none;
+  animation: chamaTremor 1.6s ease-in-out infinite alternate;
+  transition: transform .45s cubic-bezier(.22,1,.36,1), width .45s cubic-bezier(.22,1,.36,1), top .45s cubic-bezier(.22,1,.36,1), height .45s cubic-bezier(.22,1,.36,1), opacity .25s ease;
+}
+@keyframes chamaTremor {
+  0% { background-position: 0% 0%; filter: brightness(1); box-shadow: 0 0 18px rgba(255,122,51,0.6), 0 0 6px rgba(227,179,65,0.5); }
+  50% { background-position: 0% 60%; filter: brightness(1.12); }
+  100% { background-position: 0% 100%; filter: brightness(0.95); box-shadow: 0 0 26px rgba(255,59,82,0.55), 0 0 10px rgba(227,179,65,0.6); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .nav-links > .fundo-movel { animation: none; }
+}
+.nav-links a,
+.nav-links .nav-admin-toggle {
+  position: relative;
+  z-index: 2;
+}
+.nav-links.com-pilula a.is-active {
+  background: transparent;
+}
+.nav-links.com-pilula a:hover {
+  background: transparent;
+}
+.nav-links .is-sobre-fundo {
+  color: #FFFFFF !important;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.35);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,0.22) transparent;
+}
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.18);
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(249,115,22,0.6);
+}
+
+.fade-bottom {
+  background: none;
+}
+
+.hero .vignette {
+  background: radial-gradient(ellipse 70% 55% at 50% 38%, rgba(9,9,14,0.25) 0%, rgba(9,9,14,0.6) 62%, rgba(9,9,14,0) 100%);
+}
+
+.cultos-grid .culto-card::before {
+  content: none;
+  display: none;
+}
+.cultos-grid .culto-card {
+  order: 0 !important;
+}
+.admin-agenda-item-tag.tipo-culto { background: rgba(227,179,65,0.15); color: #E3B341; }
+.admin-agenda-item-tag.tipo-evento { background: rgba(0,214,109,0.15); color: #00D66D; }
+.admin-agenda-item-tag.dept { background: rgba(255,255,255,0.10); color: #F5F5F8; }
+
+.combo-dep {
+  position: relative;
+  margin-top: 6px;
+}
+.combo-dep select[hidden] { display: none; }
+.combo-dep-atual {
+  width: 100%;
+  height: 44px;
+  padding: 0 14px;
+  text-align: left;
+  background: rgba(9,9,14,0.6);
+  color: var(--ink);
+  border: 1px solid var(--border-strong);
+  border-radius: 12px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: border-color .2s, box-shadow .2s;
+}
+.combo-dep-atual:focus,
+.combo-dep-atual[aria-expanded="true"] {
+  outline: none;
+  border-color: rgba(249,115,22,0.8);
+  box-shadow: 0 0 0 1px rgba(249,115,22,0.5);
+}
+.combo-dep-lista {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  z-index: 50;
+  max-height: 280px;
+  overflow-y: auto;
+  padding: 6px;
+  background: rgba(22,22,31,0.96);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--border-strong);
+  border-radius: 12px;
+  box-shadow: 0 12px 32px rgba(0,0,0,0.45);
+}
+.combo-dep-lista[hidden] { display: none; }
+.combo-dep-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.combo-dep-escolher {
+  flex: 1;
+  text-align: left;
+  padding: 9px 10px;
+  background: none;
+  border: none;
+  border-radius: 8px;
+  color: var(--ink);
+  font-size: 13.5px;
+  cursor: pointer;
+}
+.combo-dep-escolher:hover { background: rgba(255,255,255,0.06); }
+.combo-dep-remover {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  background: transparent;
+  border: 1px solid var(--border-strong);
+  border-radius: 8px;
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+}
+.combo-dep-remover:hover { color: var(--vermelho); border-color: var(--vermelho); }
+.combo-dep-editar {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  background: transparent;
+  border: 1px solid var(--border-strong);
+  border-radius: 8px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1;
+  cursor: pointer;
+}
+.combo-dep-editar:hover { color: var(--azul); border-color: var(--azul); }
+.combo-dep-novo {
+  width: 100%;
+  margin-top: 4px;
+  padding: 9px 10px;
+  text-align: left;
+  background: none;
+  border: none;
+  border-top: 1px solid var(--border);
+  border-radius: 0 0 8px 8px;
+  color: var(--laranja);
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.combo-dep-novo:hover { background: rgba(255,122,51,0.08); }
+.culto-tags {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+  flex-direction: column;
+}
+.culto-card-azul { border-color: rgba(59,130,255,0.45); }
+.culto-card-azul .culto-tag { background: rgba(59,130,255,0.14); color: #3B82FF; }
+.culto-card-azul .culto-tag-principal { background: rgba(59,130,255,0.26); }
+.culto-card-dourado { border-color: rgba(227,179,65,0.5); }
+.culto-card-dourado .culto-tag { background: rgba(227,179,65,0.14); color: #E3B341; }
+.culto-card-dourado .culto-tag-principal { background: rgba(227,179,65,0.26); }
+.culto-card-laranja { border-color: rgba(255,122,51,0.45); }
+.culto-card-laranja .culto-tag { background: rgba(255,122,51,0.14); color: var(--laranja); }
+.culto-card-laranja .culto-tag-principal { background: rgba(255,122,51,0.26); }
+
+.pastores-panel {
+  background:
+    radial-gradient(55% 80% at 50% 46%, rgba(59,91,255,0.42) 0%, rgba(59,91,255,0.14) 42%, transparent 72%),
+    rgba(14,14,21,0.35);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  backdrop-filter: blur(20px) saturate(140%);
+  border: 1px solid var(--border-strong);
+  border-radius: 24px;
+  box-shadow: 0 8px 32px 0 rgba(0,0,0,0.37), inset 0 1px 0 rgba(255,255,255,0.06);
+}
+
+#areaAdministrativo {
+  position: relative;
+}
+#areaAdministrativo > h2 {
+  text-align: center;
+  font-size: 30px;
+  margin-bottom: 14px;
+}
+#areaAdministrativo > p.admin-agenda-info {
+  text-align: center;
+  color: #FFFFFF;
+  font-size: 15px;
+  line-height: 1.6;
+  max-width: 70ch;
+  margin: 0 auto 28px;
+}
+#areaAdministrativo .secretaria-voltar {
+  position: absolute;
+  top: 22px;
+  right: 26px;
+  margin: 0;
+}
+
+.sidebar-link.active {
+  background: linear-gradient(90deg, rgba(249,115,22,0.18), rgba(59,130,255,0.08));
+  border-color: rgba(249,115,22,0.45);
+}

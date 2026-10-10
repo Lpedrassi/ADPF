@@ -1021,6 +1021,43 @@
   .admin-perfis-item-seta:hover:not(:disabled) { border-color: var(--laranja); }
   .admin-perfis-item-seta:disabled { opacity: .3; cursor: default; }
 
+  #areaGerenciarPerfis {
+    position: relative; overflow: hidden; isolation: isolate;
+    background: rgba(22,22,31,0.45); -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px);
+    border: 1px solid var(--border-strong); border-radius: 24px;
+    box-shadow: 0 8px 32px 0 rgba(0,0,0,0.37);
+  }
+  #areaGerenciarPerfis::before, #areaGerenciarPerfis::after {
+    content: ""; position: absolute; width: 320px; height: 320px; border-radius: 50%;
+    filter: blur(120px); opacity: .22; pointer-events: none; z-index: -1;
+  }
+  #areaGerenciarPerfis::before { background: var(--azul); top: -140px; right: -100px; }
+  #areaGerenciarPerfis::after { background: var(--laranja); bottom: -140px; left: -100px; }
+  #areaGerenciarPerfis h2 {
+    font-size: 22px; font-weight: 800; letter-spacing: -0.01em;
+    background: linear-gradient(180deg, #FFFFFF 0%, #E4E4EA 55%, #9B9BA8 100%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  #areaGerenciarPerfis .admin-perfis-item {
+    background: rgba(9,9,14,0.55); border: 1px solid var(--border); border-radius: 14px; padding: 12px 16px;
+    transition: all .3s ease;
+  }
+  #areaGerenciarPerfis .admin-perfis-item:hover {
+    background: rgba(14,14,21,0.8); border-color: rgba(255,255,255,0.2);
+    box-shadow: 0 10px 28px rgba(0,0,0,0.35); transform: translateY(-2px);
+  }
+  #areaGerenciarPerfis .admin-perfis-item-nome { font-weight: 600; }
+  #areaGerenciarPerfis .admin-perfis-item-email { font-size: 12px; }
+  #areaGerenciarPerfis .admin-perfis-item-select {
+    background: rgba(9,9,14,0.6); border: 1px solid var(--border-strong); border-radius: 12px;
+    height: 40px; padding: 0 14px; font-size: 13px; outline: none; transition: border-color .2s, box-shadow .2s;
+  }
+  #areaGerenciarPerfis .admin-perfis-item-select:focus { border-color: var(--azul); box-shadow: 0 0 0 1px var(--azul); }
+  #areaGerenciarPerfis .admin-perfis-item-editar, #areaGerenciarPerfis .admin-perfis-item-remover {
+    background: transparent; border: 1px solid var(--border-strong); border-radius: 12px;
+  }
+  #areaGerenciarPerfis .admin-perfis-item-editar:hover { background: rgba(255,255,255,0.05); border-color: var(--azul); }
+
   .professor-canvas-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin: 16px 0; }
   .professor-canvas-card {
     background: var(--surface-2); border: 1px solid var(--border-strong); border-radius: 12px;
@@ -1158,6 +1195,14 @@
   .portal-layout.logado .portal-sidebar { display: none !important; }
   .portal-layout.logado .portal-main-wrap { margin-left: 0; }
 </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>tailwind.config = { corePlugins: { preflight: false } };</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
+<link rel="stylesheet" href="ui-tema.css">
+<script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
+<script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+<script src="ui-kit.js"></script>
+<script src="menu-pilula.js" defer></script>
 
 <div class="nav-shell">
   <nav class="nav">
@@ -1166,6 +1211,7 @@
       <span class="brand-name">AD BELEM<span>Jaguariuna · Pq Florianópolis</span></span>
     </a>
     <ul class="nav-links" id="navLinks">
+      <div class="fundo-movel" aria-hidden="true"></div>
       <li><a class="is-active" href="#topo" data-nav="topo">Início</a></li>
       <li><a href="#noticias" data-nav="noticias">Notícias</a></li>
       <li><a href="#cultos" data-nav="cultos">Cultos</a></li>
@@ -1657,35 +1703,36 @@
   <div class="wrap">
     <div class="section-head reveal">
       <span class="pill eyebrow"><span class="dot"></span>Programação semanal</span>
-      <h2>Próximos Cultos e Eventos</h2>
+      <h2>Cultos, Encontros e Eventos</h2>
       <p>Nossa programação regular de cultos e estudos ao longo da semana.</p>
     </div>
     <div class="cultos-grid reveal">
-      <div class="culto-card">
-        <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: center; flex-direction: column;">
-          <span class="culto-tag" style="background:rgba(162,241,213,0.24); color:#00D66D">NA NOSSA CONGREGAÇÃO</span>
-          <span class="culto-tag" id="cultoCardCultoTag" style="background:rgba(162,241,213,0.14); color:#00D66D">Domingo · 18h</span>
+      <div class="culto-card culto-card-azul">
+        <div class="culto-tags">
+          <span class="culto-tag culto-tag-principal">NA NOSSA CONGREGAÇÃO</span>
+          <span class="culto-tag" id="cultoCardCultoTag">Domingo · 18h</span>
         </div>
         <h3 id="cultoCardCultoTitulo">Culto de Celebração</h3>
-        <p id="cultoCardCultoDesc">Louvor, ministração da Palavra e comunhão com toda a igreja. O tema roda a cada domingo (Infantil, Jovens, Varões, Irmãs, Missões, Adolescentes, Família) — confira o mês na Agenda logo abaixo.</p>
+        <p id="cultoCardCultoDesc">Louvor, ministração da Palavra e comunhão com toda a igreja.</p>
       </div>
-      <div class="culto-card">
-        <div id="cultoCardEventoTagContainer" style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: center; flex-direction: column;">
-          <span class="culto-tag" id="cultoCardEventoTag" style="background:rgba(59,130,255,0.14); color:var(--azul)">Carregando...</span>
+      <div class="culto-card culto-card-dourado">
+        <div class="culto-tags">
+          <span class="culto-tag culto-tag-principal">NA NOSSA CONGREGAÇÃO</span>
+          <span class="culto-tag" id="cultoCardEventoTag">Carregando...</span>
         </div>
         <h3 id="cultoCardEventoTitulo">Próximo evento</h3>
         <p id="cultoCardEventoDesc">Buscando a agenda...</p>
       </div>
-      <div class="culto-card">
-        <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: center; flex-direction: column;">
-          <span class="culto-tag" style="background:rgba(255,122,51,0.24); color:var(--laranja)">NA NOSSA CONGREGAÇÃO</span>
-          <span class="culto-tag" style="background:rgba(255,122,51,0.14); color:var(--laranja)">Sexta-feira · 19h</span>
+      <div class="culto-card culto-card-laranja">
+        <div class="culto-tags">
+          <span class="culto-tag culto-tag-principal">NO NOSSO SETOR</span>
+          <span class="culto-tag" id="cultoCardSetorTag">Carregando...</span>
         </div>
-        <h3>Campanha de Oração</h3>
-        <p>Encontro de oração e intercessão, toda semana.</p>
+        <h3 id="cultoCardSetorTitulo">Próximo evento do Setor</h3>
+        <p id="cultoCardSetorDesc">Buscando a agenda...</p>
       </div>
     </div>
-    <p class="cultos-note reveal">Além destes cultos fixos, temos consagração aos sábados (uma vez por mês, 08h) e Escola Bíblica Dominical — veja os horários das turmas na seção EBD.</p>
+    <p class="cultos-note reveal">A nossa programação vai muito além dos cultos! Temos momentos especiais de consagração ao sábado (uma vez por mês, às 08h) e a Escola Bíblica Dominical para todas as idades. Consulte os horários das turmas na seção EBD e venha fazer parte.</p>
   </div>
 </section>
 
@@ -1857,7 +1904,7 @@
         <div class="turma-inner">
           <div class="turma-front">
             <div class="turma-head">
-              <span class="turma-badge" style="background:rgba(255,59,82,0.14); color:var(--vermelho)">I1</span>
+              <span class="turma-badge turma-badge-icone"><img src="icones-salas/cordeirinhos.png" alt="" width="34" height="34"></span>
               <h3>Infantil 1</h3>
             </div>
             <p>Primeiros passos na fé, com canções, gestos e as primeiras histórias da Bíblia.</p>
@@ -1880,7 +1927,7 @@
         <div class="turma-inner">
           <div class="turma-front">
             <div class="turma-head">
-              <span class="turma-badge" style="background:rgba(255,59,82,0.14); color:var(--vermelho)">I2</span>
+              <span class="turma-badge turma-badge-icone"><img src="icones-salas/estrela-da-manha.png" alt="" width="34" height="34"></span>
               <h3>Infantil 2</h3>
             </div>
             <p>Descoberta das grandes narrativas bíblicas de forma lúdica e participativa.</p>
@@ -1903,7 +1950,7 @@
         <div class="turma-inner">
           <div class="turma-front">
             <div class="turma-head">
-              <span class="turma-badge" style="background:rgba(255,122,51,0.14); color:var(--laranja)">A</span>
+              <span class="turma-badge turma-badge-icone"><img src="icones-salas/manancial.png" alt="" width="34" height="34"></span>
               <h3>Adolescentes</h3>
             </div>
             <p>Identidade, escolhas e fé em diálogo com os desafios da idade.</p>
@@ -1926,7 +1973,7 @@
         <div class="turma-inner">
           <div class="turma-front">
             <div class="turma-head">
-              <span class="turma-badge" style="background:rgba(162,241,213,0.18); color:var(--jovens)">J</span>
+              <span class="turma-badge turma-badge-icone"><img src="icones-salas/renacer-em-cristo.png" alt="" width="34" height="34"></span>
               <h3>Jovens</h3>
             </div>
             <p>Vocação, relacionamentos e vida cristã em tempos de decisão.</p>
@@ -1949,7 +1996,7 @@
         <div class="turma-inner">
           <div class="turma-front">
             <div class="turma-head">
-              <span class="turma-badge" style="background:rgba(59,91,255,0.18); color:var(--azul-royal)">V</span>
+              <span class="turma-badge turma-badge-icone"><img src="icones-salas/sacerdotes-de-cristo.png" alt="" width="34" height="34"></span>
               <h3>Adulto Varões</h3>
             </div>
             <p>Estudo sistemático da teologia e da ética cristã à luz das Escrituras para Homens.</p>
@@ -1972,7 +2019,7 @@
         <div class="turma-inner">
           <div class="turma-front">
             <div class="turma-head">
-              <span class="turma-badge" style="background:rgba(255,158,200,0.18); color:var(--rosa-claro)">F</span>
+              <span class="turma-badge turma-badge-icone"><img src="icones-salas/colunas-da-verdade.png" alt="" width="34" height="34"></span>
               <h3>Adulto Feminino</h3>
             </div>
             <p>Estudo sistemático da teologia e da ética cristã à luz das Escrituras para Mulheres.</p>
@@ -1993,11 +2040,9 @@
       <!-- Novos Convertidos -->
       <div class="turma" data-turma="novos-convertidos">
         <div class="turma-inner">
-          <div class="turma-front">
-            <div class="turma-head">
-              <span class="turma-badge" style="background:rgba(201,205,211,0.18); color:var(--prata)">N</span>
-              <h3>Novos Convertidos</h3>
-            </div>
+          <div class="turma-front turma-capa-front">
+            <img class="turma-capa" src="icones-salas/novos-convertidos.png" alt="Caminho com sol nascendo, cruz e Bíblia">
+            <h3>Novos Convertidos</h3>
             <p>Fundamentos da fé para quem inicia a caminhada com Cristo.</p>
           </div>
           <div class="turma-back">
@@ -2080,18 +2125,18 @@
             <option value="setor">Setor</option>
           </select>
         </label>
-        <label>Departamento
-          <select id="eventoCategoria" required>
-            <option value="" disabled selected>Selecione...</option>
-            <option value="Infantil">Infantil</option>
-            <option value="Adolescentes">Adolescentes</option>
-            <option value="Jovens">Jovens</option>
-            <option value="Varões">Varões</option>
-            <option value="Feminino">Feminino</option>
-            <option value="Missões">Missões</option>
-            <option value="Culto">Culto</option>
-            <option value="_novo">+ Criar novo...</option>
+        <label>Tipo
+          <select id="eventoTipo" required>
+            <option value="culto">Culto (domingo ou sábado)</option>
+            <option value="evento">Evento / Encontro</option>
           </select>
+        </label>
+        <label>Departamento
+          <div class="combo-dep">
+            <select id="eventoCategoria" hidden></select>
+            <button type="button" class="combo-dep-atual" id="comboDepAtual" aria-haspopup="listbox" aria-expanded="false">Selecione...</button>
+            <div class="combo-dep-lista" id="comboDepLista" hidden></div>
+          </div>
         </label>
       </div>
       <div class="admin-form-linha" id="linhaCategoriaNova" hidden>
@@ -2407,27 +2452,27 @@
 
   <section id="areaAdministrativo" class="portal-section">
     <h2>Sala da Secretaria</h2>
-    <p class="admin-agenda-info">Controle de Caixa, de Revistas, Relatórios e Agendas da Secretaria.</p>
+    <p class="admin-agenda-info">Tudo o que você precisa para manter a rotina em dia! Por aqui, você confere a presença de domingo, organiza as finanças, controla as revistas e encontra os dados essenciais da secretaria em poucos cliques.</p>
 
     <div id="secNivel0" class="secretaria-nivel-wrap">
       <div class="professor-canvas-grid">
         <button type="button" class="professor-canvas-card" data-abrir="secNivelCaixa" data-ocultar="secNivel0">
-          <span class="professor-canvas-icone">💰</span>
+          <span class="professor-canvas-icone"><img src="icones-secretaria/caixa-registradora.png" alt=""></span>
           <span class="professor-canvas-titulo">Caixa</span>
           <span class="professor-canvas-sub">Controle de movimentações de dinheiro</span>
         </button>
         <button type="button" class="professor-canvas-card" data-abrir="secNivelRevistas" data-ocultar="secNivel0">
-          <span class="professor-canvas-icone">📚</span>
+          <span class="professor-canvas-icone"><img src="icones-secretaria/revistas-coloridas.png" alt=""></span>
           <span class="professor-canvas-titulo">Controle de Revistas</span>
           <span class="professor-canvas-sub">Pedidos de revista dos Alunos</span>
         </button>
         <button type="button" class="professor-canvas-card" data-abrir="secNivelRelatoriosGrid" data-ocultar="secNivel0">
-          <span class="professor-canvas-icone">📊</span>
+          <span class="professor-canvas-icone"><img src="icones-secretaria/dashboard.png" alt=""></span>
           <span class="professor-canvas-titulo">Relatórios</span>
           <span class="professor-canvas-sub">Relatório Dominical por Turma</span>
         </button>
         <button type="button" class="professor-canvas-card" data-abrir="secNivelAgendas" data-ocultar="secNivel0">
-          <span class="professor-canvas-icone">📅</span>
+          <span class="professor-canvas-icone"><img src="icones-secretaria/calendario.png" alt=""></span>
           <span class="professor-canvas-titulo">Agendas</span>
           <span class="professor-canvas-sub">Em breve</span>
         </button>
@@ -2439,12 +2484,12 @@
       <div class="secretaria-nivel-titulo">Caixa</div>
       <div class="professor-canvas-grid">
         <button type="button" class="professor-canvas-card" data-alvo="canvaSecCaixaEntradas">
-          <span class="professor-canvas-icone">💵</span>
+          <span class="professor-canvas-icone"><img src="icones-secretaria/livro-caixa.png" alt=""></span>
           <span class="professor-canvas-titulo">Livro Caixa</span>
           <span class="professor-canvas-sub">Controle de Entradas e Saídas de Caixa</span>
         </button>
         <button type="button" class="professor-canvas-card" data-alvo="canvaSecCaixaInsumos">
-          <span class="professor-canvas-icone">📦</span>
+          <span class="professor-canvas-icone"><img src="icones-secretaria/estante.png" alt=""></span>
           <span class="professor-canvas-titulo">Estoque de Materiais</span>
           <span class="professor-canvas-sub">Controle de materiais, papelaria e recursos da EBD</span>
         </button>
@@ -2512,7 +2557,7 @@
       <div class="secretaria-nivel-titulo">Controle de Revistas</div>
       <div class="professor-canvas-grid">
         <button type="button" class="professor-canvas-card" data-alvo="canvaSecRevistasPedidos">
-          <span class="professor-canvas-icone">📖</span>
+          <span class="professor-canvas-icone"><img src="icones-secretaria/livro-aberto.png" alt=""></span>
           <span class="professor-canvas-titulo">Fazer Pedidos das Revistas</span>
           <span class="professor-canvas-sub">Pedidos dos Alunos e condição de pagamento</span>
         </button>
@@ -2527,9 +2572,24 @@
       <div class="secretaria-nivel-titulo">Relatórios</div>
       <div class="professor-canvas-grid">
         <button type="button" class="professor-canvas-card" data-abrir="secNivelRelatorioDominical" data-ocultar="secNivelRelatoriosGrid">
-          <span class="professor-canvas-icone">🗓️</span>
+          <span class="professor-canvas-icone"><img src="icones-secretaria/prancheta.png" alt=""></span>
           <span class="professor-canvas-titulo">Relatório Dominical</span>
           <span class="professor-canvas-sub">Resumo de cada Turma, conforme a Chamada do Professor</span>
+        </button>
+        <button type="button" class="professor-canvas-card" data-abrir="secNivelRelatorioCaixa" data-ocultar="secNivelRelatoriosGrid">
+          <span class="professor-canvas-icone"><img src="icones-secretaria/pasta-financeira.png" alt=""></span>
+          <span class="professor-canvas-titulo">Relatório do Caixa</span>
+          <span class="professor-canvas-sub">Entradas e saídas do período</span>
+        </button>
+        <button type="button" class="professor-canvas-card" data-abrir="secNivelRelatorioRevistas" data-ocultar="secNivelRelatoriosGrid">
+          <span class="professor-canvas-icone"><img src="icones-secretaria/revistas-coloridas.png" alt=""></span>
+          <span class="professor-canvas-titulo">Relatório de Revistas</span>
+          <span class="professor-canvas-sub">Pedidos e entregas de revista</span>
+        </button>
+        <button type="button" class="professor-canvas-card" data-abrir="secNivelOutrosRelatorios" data-ocultar="secNivelRelatoriosGrid">
+          <span class="professor-canvas-icone"><img src="icones-secretaria/pasta-amarela.png" alt=""></span>
+          <span class="professor-canvas-titulo">Outros Relatórios</span>
+          <span class="professor-canvas-sub">Demais relatórios da Secretaria</span>
         </button>
       </div>
     </div>
@@ -2551,6 +2611,24 @@
 
       <div id="secRelatorioDominicalTurmas" class="professor-canvas-grid">Carregando...</div>
       <div id="secRelatorioDominicalPaineis"></div>
+    </div>
+
+    <div id="secNivelRelatorioCaixa" class="secretaria-nivel-wrap" hidden>
+      <button type="button" class="btn btn-ghost secretaria-voltar" data-abrir="secNivelRelatoriosGrid" data-ocultar="secNivelRelatorioCaixa">← Voltar</button>
+      <div class="secretaria-nivel-titulo">Relatório do Caixa</div>
+      <p class="admin-agenda-info">Em breve.</p>
+    </div>
+
+    <div id="secNivelRelatorioRevistas" class="secretaria-nivel-wrap" hidden>
+      <button type="button" class="btn btn-ghost secretaria-voltar" data-abrir="secNivelRelatoriosGrid" data-ocultar="secNivelRelatorioRevistas">← Voltar</button>
+      <div class="secretaria-nivel-titulo">Relatório de Revistas</div>
+      <p class="admin-agenda-info">Em breve.</p>
+    </div>
+
+    <div id="secNivelOutrosRelatorios" class="secretaria-nivel-wrap" hidden>
+      <button type="button" class="btn btn-ghost secretaria-voltar" data-abrir="secNivelRelatoriosGrid" data-ocultar="secNivelOutrosRelatorios">← Voltar</button>
+      <div class="secretaria-nivel-titulo">Outros Relatórios</div>
+      <p class="admin-agenda-info">Em breve.</p>
     </div>
 
     <div id="secNivelAgendas" class="secretaria-nivel-wrap" hidden>
@@ -3087,7 +3165,7 @@
     collection, getDocs, updateDoc, deleteDoc, addDoc, query, where, limit, orderBy
   } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
   import { firebaseConfig } from "./firebase-config.js";
-  import { buscarTodosEventos, salvarEvento, excluirEvento, importarAgendaInicial } from "./agenda.js";
+  import { buscarTodosEventos, salvarEvento, excluirEvento, importarAgendaInicial, buscarDepartamentosAgenda, salvarDepartamentosAgenda, renomearCategoriaEventos } from "./agenda.js";
   import { AGENDA_SEED_2026 } from "./agenda-seed-2026.js";
 
   // auth.js e agenda.js (importados acima via <script src>) ja podem ter
@@ -3942,6 +4020,14 @@
           grid.innerHTML = '<p class="admin-agenda-info">Nenhuma Sala cadastrada ainda.</p>';
           return;
         }
+        const ICONES_SALAS = {
+          "cordeirinhos-de-cristo": "icones-salas/cordeirinhos.png",
+          "estrela-da-manha": "icones-salas/estrela-da-manha.png",
+          "manancial": "icones-salas/manancial.png",
+          "renacer-em-cristo": "icones-salas/renacer-em-cristo.png",
+          "colunas-da-verdade": "icones-salas/colunas-da-verdade.png",
+          "sacerdotes-de-cristo": "icones-salas/sacerdotes-de-cristo.png"
+        };
         salas.forEach((sala, idx) => {
           const painelId = "canvaSecTurma" + idx;
           const btn = document.createElement("button");
@@ -3950,10 +4036,10 @@
           btn.dataset.alvo = painelId;
           btn.dataset.salaId = sala.id;
           btn.dataset.salaNome = sala.nome || "";
+          const icone = ICONES_SALAS[sala.id];
           btn.innerHTML =
-            '<span class="professor-canvas-icone">🏫</span>' +
-            '<span class="professor-canvas-titulo">' + (sala.nome || "") + "</span>" +
-            '<span class="professor-canvas-sub">' + (sala.departamento || "") + "</span>";
+            '<span class="professor-canvas-icone">' + (icone ? '<img src="' + icone + '" alt="">' : "🏫") + "</span>" +
+            '<span class="professor-canvas-titulo">' + (sala.nome || "") + "</span>";
           grid.appendChild(btn);
 
           const painel = document.createElement("div");
@@ -6795,6 +6881,7 @@
     const form = document.getElementById("formAgendaEvento");
     const campoId = document.getElementById("eventoId");
     const campoEscopo = document.getElementById("eventoEscopo");
+    const campoTipo = document.getElementById("eventoTipo");
     const campoCategoria = document.getElementById("eventoCategoria");
     const linhaCategoriaNova = document.getElementById("linhaCategoriaNova");
     const campoCategoriaNova = document.getElementById("eventoCategoriaNova");
@@ -6951,7 +7038,143 @@
       const isNovo = campoCategoria.value === "_novo";
       linhaCategoriaNova.hidden = !isNovo;
       if (isNovo) campoCategoriaNova.focus();
+      sincronizarComboDep();
     });
+
+    const comboAtual = document.getElementById("comboDepAtual");
+    const comboLista = document.getElementById("comboDepLista");
+    let departamentosAgenda = [];
+
+    function sincronizarComboDep() {
+      const valor = campoCategoria.value;
+      comboAtual.textContent = valor === "_novo" ? "+ Criar novo..." : (valor || "Selecione...");
+    }
+
+    function abrirComboDep() {
+      comboLista.hidden = false;
+      comboAtual.setAttribute("aria-expanded", "true");
+    }
+
+    function fecharComboDep() {
+      comboLista.hidden = true;
+      comboAtual.setAttribute("aria-expanded", "false");
+    }
+
+    function escolherDep(valor) {
+      campoCategoria.value = valor;
+      campoCategoria.dispatchEvent(new Event("change"));
+      fecharComboDep();
+    }
+
+    function renderizarComboDep() {
+      const atual = campoCategoria.value;
+      campoCategoria.innerHTML = "";
+      const vazio = document.createElement("option");
+      vazio.value = "";
+      vazio.textContent = "Selecione...";
+      campoCategoria.appendChild(vazio);
+      departamentosAgenda.forEach((d) => {
+        const opt = document.createElement("option");
+        opt.value = d;
+        opt.textContent = d;
+        campoCategoria.appendChild(opt);
+      });
+      const optNovo = document.createElement("option");
+      optNovo.value = "_novo";
+      optNovo.textContent = "+ Criar novo...";
+      campoCategoria.appendChild(optNovo);
+      campoCategoria.value = [...campoCategoria.options].some((o) => o.value === atual) ? atual : "";
+
+      comboLista.innerHTML = "";
+      departamentosAgenda.forEach((d) => {
+        const linha = document.createElement("div");
+        linha.className = "combo-dep-item";
+        const escolher = document.createElement("button");
+        escolher.type = "button";
+        escolher.className = "combo-dep-escolher";
+        escolher.textContent = d;
+        escolher.addEventListener("click", () => escolherDep(d));
+        const editar = document.createElement("button");
+        editar.type = "button";
+        editar.className = "combo-dep-editar";
+        editar.title = "Renomear departamento";
+        editar.setAttribute("aria-label", `Renomear ${d}`);
+        editar.textContent = "✎";
+        editar.addEventListener("click", (e) => {
+          e.stopPropagation();
+          renomearDepartamento(d);
+        });
+        const remover = document.createElement("button");
+        remover.type = "button";
+        remover.className = "combo-dep-remover";
+        remover.title = "Remover departamento";
+        remover.setAttribute("aria-label", `Remover ${d}`);
+        remover.textContent = "×";
+        remover.addEventListener("click", (e) => {
+          e.stopPropagation();
+          removerDepartamento(d);
+        });
+        linha.append(escolher, editar, remover);
+        comboLista.appendChild(linha);
+      });
+      const novo = document.createElement("button");
+      novo.type = "button";
+      novo.className = "combo-dep-novo";
+      novo.textContent = "+ Criar novo...";
+      novo.addEventListener("click", () => escolherDep("_novo"));
+      comboLista.appendChild(novo);
+      sincronizarComboDep();
+    }
+
+    async function renomearDepartamento(nome) {
+      const novo = (prompt(`Novo nome para "${nome}":`, nome) || "").trim();
+      if (!novo || novo === nome) return;
+      if (departamentosAgenda.some((d) => d.toLowerCase() === novo.toLowerCase())) {
+        alert("Já existe um departamento com esse nome.");
+        return;
+      }
+      const nova = departamentosAgenda.map((d) => (d === nome ? novo : d));
+      try {
+        await salvarDepartamentosAgenda(nova);
+        await renomearCategoriaEventos(nome, novo);
+        departamentosAgenda = nova;
+        if (campoCategoria.value === nome) campoCategoria.value = novo;
+        renderizarComboDep();
+        await recarregarLista();
+      } catch (err) {
+        alert("Não foi possível renomear o departamento. Verifique as permissões do Firestore.");
+        console.error(err);
+      }
+    }
+
+    async function removerDepartamento(nome) {
+      if (!confirm(`Remover "${nome}" da lista? Os eventos já cadastrados com esse departamento continuam salvos.`)) return;
+      const nova = departamentosAgenda.filter((d) => d !== nome);
+      try {
+        await salvarDepartamentosAgenda(nova);
+        departamentosAgenda = nova;
+        if (campoCategoria.value === nome) campoCategoria.value = "";
+        renderizarComboDep();
+      } catch (err) {
+        alert("Não foi possível remover o departamento. Verifique as permissões do Firestore.");
+        console.error(err);
+      }
+    }
+
+    comboAtual.addEventListener("click", () => (comboLista.hidden ? abrirComboDep() : fecharComboDep()));
+    document.addEventListener("click", (e) => {
+      if (!e.target.closest(".combo-dep")) fecharComboDep();
+    });
+
+    buscarDepartamentosAgenda()
+      .catch((err) => {
+        console.error(err);
+        return DEPARTAMENTOS.slice();
+      })
+      .then((lista) => {
+        departamentosAgenda = lista;
+        renderizarComboDep();
+      });
 
     checkMaisDeUmDia.addEventListener("change", () => {
       if (checkMaisDeUmDia.checked) {
@@ -6966,6 +7189,7 @@
 
     function limparFormulario() {
       form.reset();
+      sincronizarComboDep();
       campoId.value = "";
       btnCancelar.hidden = true;
       linhaCategoriaNova.hidden = true;
@@ -6996,8 +7220,9 @@
     function preencherFormulario(ev, manterId) {
       campoId.value = manterId ? ev.id : "";
       campoEscopo.value = ev.escopo;
+      campoTipo.value = ev.tipo || (/^culto/i.test((ev.titulo || "").trim()) ? "culto" : "evento");
 
-      if (ev.categoria && DEPARTAMENTOS.includes(ev.categoria)) {
+      if (ev.categoria && departamentosAgenda.includes(ev.categoria)) {
         campoCategoria.value = ev.categoria;
         linhaCategoriaNova.hidden = true;
         campoCategoriaNova.value = "";
@@ -7011,6 +7236,7 @@
         campoCategoriaNova.value = "";
       }
 
+      sincronizarComboDep();
       campoDataInicio.value = ev.dataInicio;
       campoHora.value = ev.hora || "";
       campoTitulo.value = ev.titulo;
@@ -7105,11 +7331,18 @@
         titulo.textContent = ev.titulo + (ev.hora ? ` — ${ev.hora}` : "");
 
         corpo.appendChild(tag);
+
+        const tipoEv = ev.tipo || (/^culto/i.test((ev.titulo || "").trim()) ? "culto" : "evento");
+        const tagTipo = document.createElement("span");
+        tagTipo.className = `admin-agenda-item-tag tipo-${tipoEv}`;
+        tagTipo.textContent = tipoEv === "culto" ? "Culto" : "Evento";
+        corpo.appendChild(tagTipo);
+
         corpo.appendChild(titulo);
 
         if (ev.categoria) {
           const dept = document.createElement("span");
-          dept.className = "admin-agenda-item-dept";
+          dept.className = "admin-agenda-item-tag dept";
           dept.textContent = ev.categoria;
           corpo.appendChild(dept);
         }
@@ -7207,10 +7440,17 @@
         );
       }
 
+      if (!departamentosAgenda.includes(categoria)) {
+        departamentosAgenda = [...departamentosAgenda, categoria];
+        salvarDepartamentosAgenda(departamentosAgenda).catch((err) => console.error(err));
+        renderizarComboDep();
+      }
+
       try {
         await salvarEvento({
           id: campoId.value || null,
           escopo: campoEscopo.value,
+          tipo: campoTipo.value,
           categoria: categoria,
           dataInicio: campoDataInicio.value,
           dataFim: dataFimCalculada,
@@ -7225,6 +7465,7 @@
           await salvarEvento({
             id: null,
             escopo: "congregacao",
+            tipo: "evento",
             categoria: categoria,
             dataInicio: campoDataInicio.value,
             dataFim: dataFimCalculada,
@@ -7297,8 +7538,8 @@
   const navSiteDropdownItems = navSiteDropdown.querySelectorAll(".nav-admin-dropdown-item");
   navSiteDropdownItems.forEach((item) => {
     item.addEventListener("click", () => {
-      const section = item.getAttribute("data-section");
-      const element = document.getElementById(section);
+      mostrarArea("siteHome");
+      const element = document.getElementById(item.getAttribute("data-section"));
       if (element) {
         element.scrollIntoView({ behavior: "smooth" });
       }
