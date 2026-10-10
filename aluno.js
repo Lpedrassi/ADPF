@@ -8,7 +8,9 @@ import {
   query,
   where,
   orderBy,
-  limit
+  limit,
+  doc,
+  getDoc
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
 import { firebaseConfig } from "./firebase-config.js";
@@ -26,6 +28,7 @@ onAuthStateChanged(auth, async (user) => {
       await carregarBoletim(user.uid);
       carregarAvisos();
       carregarRecursos();
+      await carregarArquivosAula(user.uid);
     } catch (err) {
       console.error("Erro ao carregar Sala do Aluno:", err);
     }
@@ -184,4 +187,74 @@ function carregarRecursos() {
   ).join("");
 
   el.innerHTML = `<div style="margin-top: 8px;">${html}</div>`;
+}
+
+// 5. Arquivos da aula (matrículas -> sala -> arquivos do trimestre e da aula atual)
+async function carregarArquivosAula(uid) {
+  const el = document.getElementById("alunoArquivos");
+  if (!el) return;
+
+  try {
+    const matriculasSnap = await getDocs(query(collection(db, "matriculas"), where("uid", "==", uid)));
+    const salaIds = [...new Set(
+      matriculasSnap.docs.map((d) => d.data()).filter((m) => m.ativo !== false && m.salaId).map((m) => m.salaId)
+    )];
+
+    if (!salaIds.length) {
+      el.innerHTML = "<p>Você ainda não está matriculado em uma Sala.</p>";
+      return;
+    }
+
+    const hoje = new Date();
+    const hojeISO = `${hoje.getFullYear()}-${String(hoje.getMonth() + 1).padStart(2, "0")}-${String(hoje.getDate()).padStart(2, "0")}`;
+    const ano = hoje.getFullYear();
+    const trimestre = Math.floor(hoje.getMonth() / 3) + 1;
+    const periodo = `${ano}_${trimestre}`;
+
+    const arquivos = [];
+    for (const salaId of salaIds) {
+      const licaoSnap = await getDoc(doc(db, "licoes", `${salaId}_${ano}_${trimestre}`));
+      const licoes = licaoSnap.exists() && Array.isArray(licaoSnap.data().licoes) ? licaoSnap.data().licoes : [];
+      const aulaAtual = (licoes.find((l) => l.data >= hojeISO) || {}).data || null;
+
+      const arquivosSnap = await getDocs(query(collection(db, "arquivosSala"), where("salaId", "==", salaId)));
+      arquivosSnap.forEach((d) => {
+        const a = d.data();
+        if (a.ativo === false) return;
+        if (a.periodo && a.periodo !== periodo) return;
+        const aula = a.aula || "trimestre";
+        if (aula === "trimestre" || (aulaAtual && aula === aulaAtual)) {
+          arquivos.push({ id: d.id, nome: a.nome, url: a.url, aula });
+        }
+      });
+    }
+
+    if (!arquivos.length) {
+      el.innerHTML = "<p>Nenhum arquivo foi enviado para esta aula ainda.</p>";
+      return;
+    }
+
+    el.innerHTML = "";
+    arquivos.forEach((a) => {
+      const linha = document.createElement("div");
+      linha.style.marginTop = "6px";
+      const link = document.createElement("a");
+      link.href = a.url;
+      link.target = "_blank";
+      link.rel = "noopener";
+      link.textContent = a.nome || "arquivo";
+      link.style.color = "var(--ink)";
+      link.style.textDecoration = "underline";
+      const tipo = document.createElement("span");
+      tipo.style.display = "block";
+      tipo.style.fontSize = "12px";
+      tipo.style.color = "var(--muted)";
+      tipo.textContent = a.aula === "trimestre" ? "Material do trimestre" : "Material desta aula";
+      linha.append(link, tipo);
+      el.appendChild(linha);
+    });
+  } catch (err) {
+    console.error("Erro ao carregar arquivos da aula:", err);
+    el.innerHTML = "<p>Não foi possível carregar os arquivos agora.</p>";
+  }
 }

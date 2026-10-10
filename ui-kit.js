@@ -107,11 +107,12 @@ const montarComboSelect = (select) => {
     set(v) { valorOriginal.set.call(this, v); sincronizar(); }
   });
   select.addEventListener("change", sincronizar);
+  new MutationObserver(sincronizar).observe(select, { childList: true });
   sincronizar();
 };
 
 document.addEventListener("DOMContentLoaded", () => {
-  document.querySelectorAll("#areaAgenda select").forEach((select) => {
+  document.querySelectorAll("#areaAgenda select, #professorSalaSeletor, #arquivoSalaAula, #salaAlunoAvulsoCrianca").forEach((select) => {
     if (!select.closest(".combo-dep")) montarComboSelect(select);
   });
 });

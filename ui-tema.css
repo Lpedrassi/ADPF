@@ -332,6 +332,44 @@ body::after {
   text-transform: uppercase;
 }
 
+/* Sala do Professor: mesmo padrão visual da Sala da Secretaria, com cards quadrados */
+#areaProfessor > h2 {
+  text-align: center;
+  font-size: 30px;
+  text-transform: none;
+  margin-bottom: 14px;
+}
+#areaProfessor .professor-canvas-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 8px;
+  aspect-ratio: 1 / 1;
+  padding: 16px;
+}
+#areaProfessor .professor-canvas-icone {
+  font-size: 56px;
+  line-height: 1;
+}
+#areaProfessor .professor-canvas-icone img {
+  display: block;
+  width: 110px;
+  height: 110px;
+  object-fit: contain;
+}
+#areaProfessor .professor-canvas-titulo {
+  color: #FFFFFF;
+  font-size: 17px;
+  font-weight: 800;
+}
+#areaProfessor .professor-canvas-sub {
+  color: #FFFFFF;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
 #secRelatorioDominicalTurmas .professor-canvas-card {
   display: flex;
   flex-direction: column;
@@ -359,20 +397,34 @@ body::after {
   opacity: 0;
   z-index: 1;
   border-radius: 999px;
-  background: linear-gradient(180deg, #E3B341 0%, #FF7A33 45%, #FF3B52 100%);
-  background-size: 100% 220%;
-  box-shadow: 0 0 18px rgba(255,122,51,0.6), 0 0 6px rgba(227,179,65,0.5);
+  background: #FFFFFF;
+  box-shadow: 0 0 18px rgba(255,255,255,0.55), 0 0 6px rgba(255,255,255,0.8);
   pointer-events: none;
-  animation: chamaTremor 1.6s ease-in-out infinite alternate;
   transition: transform .45s cubic-bezier(.22,1,.36,1), width .45s cubic-bezier(.22,1,.36,1), top .45s cubic-bezier(.22,1,.36,1), height .45s cubic-bezier(.22,1,.36,1), opacity .25s ease;
 }
-@keyframes chamaTremor {
-  0% { background-position: 0% 0%; filter: brightness(1); box-shadow: 0 0 18px rgba(255,122,51,0.6), 0 0 6px rgba(227,179,65,0.5); }
-  50% { background-position: 0% 60%; filter: brightness(1.12); }
-  100% { background-position: 0% 100%; filter: brightness(0.95); box-shadow: 0 0 26px rgba(255,59,82,0.55), 0 0 10px rgba(227,179,65,0.6); }
+.nav-admin-dropdown .nav-admin-dropdown-item {
+  position: relative;
+  z-index: 2;
 }
-@media (prefers-reduced-motion: reduce) {
-  .nav-links > .fundo-movel { animation: none; }
+.nav-admin-dropdown .nav-admin-dropdown-item:hover {
+  background: transparent;
+}
+.nav-admin-dropdown .nav-admin-dropdown-item.is-sobre-fundo {
+  color: #0B0B10 !important;
+}
+.fundo-movel-lista {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 0;
+  opacity: 0;
+  z-index: 1;
+  border-radius: 10px;
+  background: #FFFFFF;
+  box-shadow: 0 0 16px rgba(255,255,255,0.45);
+  pointer-events: none;
+  transition: transform .35s cubic-bezier(.22,1,.36,1), height .35s cubic-bezier(.22,1,.36,1), opacity .2s ease;
 }
 .nav-links a,
 .nav-links .nav-admin-toggle {
@@ -386,8 +438,7 @@ body::after {
   background: transparent;
 }
 .nav-links .is-sobre-fundo {
-  color: #FFFFFF !important;
-  text-shadow: 0 1px 4px rgba(0,0,0,0.35);
+  color: #0B0B10 !important;
 }
 
 * {
@@ -415,6 +466,116 @@ body::after {
 
 .hero .vignette {
   background: radial-gradient(ellipse 70% 55% at 50% 38%, rgba(9,9,14,0.25) 0%, rgba(9,9,14,0.6) 62%, rgba(9,9,14,0) 100%);
+}
+
+
+.admin-noticia-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.admin-noticia-form input,
+.admin-noticia-form textarea {
+  font-family: inherit;
+  font-size: 14px;
+  color: var(--ink);
+}
+.admin-noticia-form input {
+  width: 100%;
+  height: 44px;
+  padding: 0 14px;
+}
+.admin-noticia-form textarea {
+  padding: 12px 14px;
+}
+.admin-noticia-acoes {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.admin-noticia-form .admin-noticia-acoes button[hidden] {
+  display: none;
+}
+.admin-noticia-form .admin-noticia-acoes button {
+  width: auto;
+  padding: 10px 22px;
+  font-size: 14px;
+  font-family: inherit;
+}
+
+.agenda-bloco-titulo {
+  justify-content: center;
+  text-align: center;
+}
+
+#btnEnviarArquivo {
+  color: #FFFFFF;
+}
+#canvasPainelArquivos .admin-file-btn {
+  padding: 8px 14px;
+  font-size: 11px;
+  letter-spacing: 0.03em;
+  max-width: 190px;
+  justify-content: center;
+}
+#canvasPainelArquivos .arquivo-aula-rotulo {
+  flex: 1;
+  min-width: 220px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--muted);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+#canvasPainelArquivos .arquivo-aula-rotulo .combo-dep-atual {
+  height: 44px;
+  font-size: 14px;
+}
+
+#professorSalaSeletorWrap label {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink);
+  width: 100%;
+  max-width: 420px;
+}
+#professorSalaSeletorWrap .combo-dep-atual {
+  height: 48px;
+  font-size: 16px;
+  font-weight: 600;
+}
+#professorSalaSeletorWrap .combo-dep-escolher {
+  font-size: 15px;
+}
+
+.emblem-ring {
+  background: transparent;
+}
+.emblem-ring::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 40px;
+  padding: 3px;
+  background: conic-gradient(from 200deg, var(--azul), var(--vermelho), var(--laranja), var(--azul));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+.emblem-inner {
+  background: transparent;
 }
 
 .cultos-grid .culto-card::before {

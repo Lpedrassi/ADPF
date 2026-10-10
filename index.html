@@ -1827,7 +1827,7 @@
     </div>
     <div class="pastores-panel reveal">
       <figure class="pastor-card pastor-lg">
-        <img src="foto2_v2_cutout.webp" alt="Pr. Rubens das Virgens, pastor presidente" />
+        <img src="pastor-rubens.png" alt="Pr. Rubens das Virgens, pastor presidente" />
         <figcaption class="pastor-caption">
           <span class="name">Rubens das Virgens</span>
           <span class="role">Pr. Presidente</span>
@@ -2229,8 +2229,10 @@
           <input type="text" id="postLink" placeholder="Ex: https://...">
         </label>
       </div>
-      <button type="submit" class="btn btn-primary">Adicionar Post</button>
-      <button type="button" id="btnCancelarPostEdicao" hidden class="btn btn-ghost">Cancelar edição</button>
+      <div class="admin-noticia-acoes">
+        <button type="submit" class="btn btn-primary">Adicionar Post</button>
+        <button type="button" id="btnCancelarPostEdicao" hidden class="btn btn-ghost">Cancelar edição</button>
+      </div>
     </form>
 
     <div class="admin-noticias-list">
@@ -2264,47 +2266,52 @@
 
       <div class="professor-canvas-grid">
         <button type="button" class="professor-canvas-card" data-canvas="alunos">
+          <span class="professor-canvas-icone"><img src="icones-professor/aluno-mochila.png" alt=""></span>
           <span class="professor-canvas-titulo">Alunos Matriculados</span>
           <span class="professor-canvas-sub">Ver e gerenciar quem está na Sala</span>
         </button>
         <button type="button" class="professor-canvas-card" data-canvas="chamada">
+          <span class="professor-canvas-icone"><img src="icones-professor/prancheta.png" alt=""></span>
           <span class="professor-canvas-titulo">Chamada</span>
           <span class="professor-canvas-sub">Presença e ofertas da aula</span>
         </button>
         <button type="button" class="professor-canvas-card" data-canvas="arquivos">
+          <span class="professor-canvas-icone"><img src="icones-professor/estante.png" alt=""></span>
           <span class="professor-canvas-titulo">Arquivos e documentos</span>
           <span class="professor-canvas-sub">Materiais de apoio da Sala</span>
         </button>
       </div>
 
       <div id="canvasPainelAlunos" class="professor-canvas-painel" hidden>
-        <h4>Alunos Matriculados</h4>
+        <h4 style="text-align:center;">Alunos Matriculados</h4>
         <p class="admin-agenda-info">Verifique e adicione aqui os alunos matriculados em sua sala.</p>
 
         <div id="salaAlunosLista" class="admin-perfis-lista"></div>
 
         <div class="admin-form-linha" style="margin-top:10px;">
-          <label style="flex:2;">Vincular cadastro já existente no site
+          <label style="flex:2;">Adicionar Aluno
             <select id="salaAlunoCandidato" class="admin-perfis-item-select"></select>
           </label>
           <div style="display:flex; align-items:flex-end;">
-            <button type="button" id="btnAdicionarAlunoConta" class="btn-admin">+ Vincular à Sala</button>
+            <button type="button" id="btnAdicionarAlunoConta" class="btn-admin">+ Adicionar</button>
           </div>
         </div>
 
-        <div class="admin-form" style="margin-top:6px;">
+        <div class="admin-form" style="margin-top:22px;">
           <div class="admin-form-linha">
-            <label style="flex:2;">Adicionar sem login (crianças, etc.)
+            <label style="flex:1;">Adicionar Aluno sem cadastro
               <input type="text" id="salaAlunoAvulsoNome" placeholder="Nome do aluno">
             </label>
-            <label style="flex:1;">Data de nascimento
+          </div>
+          <div class="admin-form-linha" style="align-items:flex-end;">
+            <label style="flex:1;">Data de nascimento (Opcional)
               <input type="date" id="salaAlunoAvulsoNascimento">
             </label>
-          </div>
-          <div class="admin-form-linha" style="align-items:center;">
-            <label style="display:flex; align-items:center; gap:6px; flex:1;">
-              <input type="checkbox" id="salaAlunoAvulsoCrianca" style="width:auto;">
-              É uma criança!
+            <label style="flex:1;">É uma criança?
+              <select id="salaAlunoAvulsoCrianca">
+                <option value="nao">Não</option>
+                <option value="sim">Sim</option>
+              </select>
             </label>
           </div>
           <div id="salaAlunoAvulsoResponsaveisWrap" class="admin-form-linha" hidden>
@@ -2316,7 +2323,7 @@
             </label>
           </div>
           <div class="admin-form-botoes">
-            <button type="button" id="btnAdicionarAlunoAvulso" class="btn-admin">+ Adicionar sem login</button>
+            <button type="button" id="btnAdicionarAlunoAvulso" class="btn-admin btn-admin-primario">+ Adicionar Aluno sem cadastro</button>
           </div>
         </div>
         <p id="salaAlunosStatus" class="admin-agenda-status"></p>
@@ -2384,6 +2391,9 @@
         <h4>Arquivos e documentos</h4>
         <p class="admin-agenda-info">Suba aqui documentos PDF, slides ou imagens que seus alunos podem usar antes ou durante as aulas.</p>
         <div class="admin-form-linha">
+          <label class="arquivo-aula-rotulo">Aula
+            <select id="arquivoSalaAula" required></select>
+          </label>
           <label for="arquivoSalaInput" class="btn-admin admin-file-btn btn-admin-icon">
             <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 8 5-5 5 5"/><path d="M5 21h14"/></svg>
             Escolher arquivo
@@ -2411,6 +2421,15 @@
       <div class="aluno-card-content">
         <div class="aluno-card-titulo">Próxima Aula</div>
         <div id="alunoProximaAula" class="aluno-card-info">Carregando...</div>
+      </div>
+    </div>
+
+    <!-- Arquivos da Aula -->
+    <div class="aluno-card aluno-card-arquivos">
+      <div class="aluno-card-icon">📎</div>
+      <div class="aluno-card-content">
+        <div class="aluno-card-titulo">Arquivos da Aula</div>
+        <div id="alunoArquivos" class="aluno-card-info">Carregando...</div>
       </div>
     </div>
 
@@ -2557,7 +2576,7 @@
       <div class="secretaria-nivel-titulo">Controle de Revistas</div>
       <div class="professor-canvas-grid">
         <button type="button" class="professor-canvas-card" data-alvo="canvaSecRevistasPedidos">
-          <span class="professor-canvas-icone"><img src="icones-secretaria/livro-aberto.png" alt=""></span>
+          <span class="professor-canvas-icone"><img src="icones-secretaria/carrinho.png" alt=""></span>
           <span class="professor-canvas-titulo">Fazer Pedidos das Revistas</span>
           <span class="professor-canvas-sub">Pedidos dos Alunos e condição de pagamento</span>
         </button>
@@ -5810,10 +5829,6 @@
           campoTema.value = (licaoHoje && licaoHoje.titulo) ? licaoHoje.titulo : "";
           licaoNumeroAtual = licaoIndex >= 0 ? (licaoIndex + 1) : null;
           if (licaoHoje && licaoHoje.data) dataAulaISO = licaoHoje.data;
-          if (revistaPdfEl && dados && dados.revistaPdfUrl) {
-            revistaPdfEl.hidden = false;
-            revistaPdfEl.innerHTML = "📘 Revista trimestral (" + trimestre + "º Trimestre " + ano + "): <a href=\"" + dados.revistaPdfUrl + "\" target=\"_blank\" rel=\"noopener\">" + (dados.revistaPdfNome || "abrir PDF") + "</a>";
-          }
         } catch (err) { console.error(err); }
       }
 
@@ -6064,6 +6079,50 @@
     }
 
 
+    function criarItemRevista(dados, salaId, ano, trimestre) {
+      const item = document.createElement("div");
+      item.className = "admin-perfis-item";
+      const info = document.createElement("div");
+      info.className = "admin-perfis-item-info";
+      const link = document.createElement("a");
+      link.href = dados.revistaPdfUrl;
+      link.target = "_blank";
+      link.rel = "noopener";
+      link.className = "admin-perfis-item-nome";
+      link.textContent = `📘 Revista trimestral (${trimestre}º Trimestre ${ano}): ${dados.revistaPdfNome || "abrir PDF"}`;
+      const sub = document.createElement("span");
+      sub.className = "admin-perfis-item-sub";
+      sub.textContent = "Revista da Sala";
+      info.append(link, sub);
+      const btnRemover = document.createElement("button");
+      btnRemover.type = "button";
+      btnRemover.className = "admin-perfis-item-remover";
+      btnRemover.textContent = "×";
+      btnRemover.title = "Excluir revista";
+      btnRemover.addEventListener("click", async () => {
+        if (!confirm("Excluir a revista trimestral desta Sala? O arquivo também será apagado do Google Drive.")) return;
+        btnRemover.disabled = true;
+        try {
+          if (dados.revistaPdfDriveId) {
+            try { await removerArquivoDoDrive(dados.revistaPdfDriveId); } catch (e) { console.error(e); }
+          }
+          await updateDoc(doc(db, "licoes", salaId + "_" + ano + "_" + trimestre), {
+            revistaPdfNome: "",
+            revistaPdfUrl: "",
+            revistaPdfDriveId: ""
+          });
+          await carregarArquivosSala();
+        } catch (err) {
+          alert("Não foi possível excluir a revista. " + (err.message || ""));
+          console.error(err);
+          btnRemover.disabled = false;
+        }
+      });
+      item.appendChild(btnRemover);
+      item.appendChild(info);
+      return item;
+    }
+
     async function carregarArquivosSala() {
       const salaId = seletor.value;
       if (!salaId || !arquivosSalaLista) return;
@@ -6074,7 +6133,33 @@
         snap.forEach((d) => { const a = d.data(); if (a.salaId === salaId && a.ativo !== false) arquivos.push(Object.assign({ id: d.id }, a)); });
         arquivos.sort((a, b) => (b.criadoEmMs || 0) - (a.criadoEmMs || 0));
         arquivosSalaLista.innerHTML = "";
-        if (!arquivos.length) {
+        const agora = new Date();
+        const anoRevista = agora.getFullYear();
+        const trimestreRevista = Math.floor(agora.getMonth() / 3) + 1;
+        const docRevista = await getDoc(doc(db, "licoes", salaId + "_" + anoRevista + "_" + trimestreRevista));
+        const revistaDados = docRevista.exists() ? docRevista.data() : null;
+        const temRevista = !!(revistaDados && revistaDados.revistaPdfUrl);
+        const licoesDoTrimestre = revistaDados && Array.isArray(revistaDados.licoes) ? revistaDados.licoes : [];
+        const aulaSelect = document.getElementById("arquivoSalaAula");
+        if (aulaSelect) {
+          const valorAnterior = aulaSelect.value || "trimestre";
+          aulaSelect.innerHTML = "";
+          aulaSelect.add(new Option("Trimestre inteiro (todas as aulas)", "trimestre"));
+          licoesDoTrimestre.forEach((l, idx) => {
+            const [, mes, dia] = l.data.split("-");
+            aulaSelect.add(new Option(`Lição ${idx + 1} · ${dia}/${mes}${l.titulo ? " · " + l.titulo : ""}`, l.data));
+          });
+          aulaSelect.value = [...aulaSelect.options].some((o) => o.value === valorAnterior) ? valorAnterior : "trimestre";
+        }
+        const rotuloAula = (aula) => {
+          if (!aula || aula === "trimestre") return "Trimestre inteiro";
+          const idx = licoesDoTrimestre.findIndex((l) => l.data === aula);
+          if (idx < 0) return "Aula";
+          const [, mes, dia] = aula.split("-");
+          return `Lição ${idx + 1} · ${dia}/${mes}`;
+        };
+        if (temRevista) arquivosSalaLista.appendChild(criarItemRevista(revistaDados, salaId, anoRevista, trimestreRevista));
+        if (!arquivos.length && !temRevista) {
           arquivosSalaLista.innerHTML = '<div class="admin-agenda-vazio">Nenhum arquivo enviado ainda.</div>';
         } else {
           arquivos.forEach((a) => {
@@ -6089,6 +6174,10 @@
             link.className = "admin-perfis-item-nome";
             link.textContent = a.nome || "arquivo";
             info.appendChild(link);
+            const aulaSub = document.createElement("span");
+            aulaSub.className = "admin-perfis-item-sub";
+            aulaSub.textContent = rotuloAula(a.aula);
+            info.appendChild(aulaSub);
             const btnRemover = document.createElement("button");
             btnRemover.type = "button";
             btnRemover.className = "admin-perfis-item-remover";
@@ -6131,8 +6220,11 @@
       try {
         arquivoSalaStatus.textContent = "Enviando...";
         const resultado = await enviarArquivoParaDrive(arquivo, salaId);
+        const agoraArquivo = new Date();
         await setDoc(doc(collection(db, "arquivosSala")), {
           salaId: salaId,
+          periodo: agoraArquivo.getFullYear() + "_" + (Math.floor(agoraArquivo.getMonth() / 3) + 1),
+          aula: document.getElementById("arquivoSalaAula").value || "trimestre",
           nome: arquivo.name,
           url: resultado.url,
           driveFileId: resultado.driveFileId,
@@ -6239,7 +6331,7 @@
     seletor.addEventListener("change", recarregarTudo);
 
     salaAlunoAvulsoCrianca.addEventListener("change", () => {
-      salaAlunoAvulsoResponsaveisWrap.hidden = !salaAlunoAvulsoCrianca.checked;
+      salaAlunoAvulsoResponsaveisWrap.hidden = salaAlunoAvulsoCrianca.value !== "sim";
     });
 
     btnAdicionarAlunoConta.addEventListener("click", async () => {
@@ -6272,7 +6364,7 @@
     btnAdicionarAlunoAvulso.addEventListener("click", async () => {
       const nome = salaAlunoAvulsoNome.value.trim();
       if (!nome) return;
-      const eCrianca = salaAlunoAvulsoCrianca.checked;
+      const eCrianca = salaAlunoAvulsoCrianca.value === "sim";
       btnAdicionarAlunoAvulso.disabled = true;
       try {
         await setDoc(doc(collection(db, "matriculas")), {
@@ -6290,7 +6382,7 @@
         });
         salaAlunoAvulsoNome.value = "";
         salaAlunoAvulsoNascimento.value = "";
-        salaAlunoAvulsoCrianca.checked = false;
+        salaAlunoAvulsoCrianca.value = "nao";
         salaAlunoAvulsoResponsaveisWrap.hidden = true;
         salaAlunoAvulsoPai.value = "";
         salaAlunoAvulsoMae.value = "";

@@ -26,3 +26,29 @@
   itens().forEach((item) => item.addEventListener("mouseenter", () => mover(item)));
   menu.addEventListener("mouseleave", esconder);
 })();
+
+(() => {
+  document.querySelectorAll(".nav-admin-dropdown").forEach((dropdown) => {
+    const itens = dropdown.querySelectorAll(".nav-admin-dropdown-item");
+    const fundo = document.createElement("div");
+    fundo.className = "fundo-movel-lista";
+    fundo.setAttribute("aria-hidden", "true");
+    dropdown.insertBefore(fundo, dropdown.firstChild);
+
+    itens.forEach((item) => {
+      item.addEventListener("mouseenter", () => {
+        const base = dropdown.getBoundingClientRect();
+        const alvo = item.getBoundingClientRect();
+        fundo.style.transform = `translateY(${alvo.top - base.top}px)`;
+        fundo.style.height = `${alvo.height}px`;
+        fundo.style.opacity = "1";
+        itens.forEach((el) => el.classList.toggle("is-sobre-fundo", el === item));
+      });
+    });
+
+    dropdown.addEventListener("mouseleave", () => {
+      fundo.style.opacity = "0";
+      itens.forEach((el) => el.classList.remove("is-sobre-fundo"));
+    });
+  });
+})();

@@ -480,4 +480,6 @@ async function preencherProximosCultos() {
     }
   });
 }
+
+iniciarAgendaPublica();
 preencherProximosCultos();
