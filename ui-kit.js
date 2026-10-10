@@ -112,7 +112,7 @@ const montarComboSelect = (select) => {
 };
 
 document.addEventListener("DOMContentLoaded", () => {
-  document.querySelectorAll("#areaAgenda select, #professorSalaSeletor, #arquivoSalaAula, #salaAlunoAvulsoCrianca").forEach((select) => {
+  document.querySelectorAll("#areaAgenda select, #professorSalaSeletor, #arquivoSalaAula, #salaAlunoAvulsoCrianca, #alunoTrimestre, #alunoAula").forEach((select) => {
     if (!select.closest(".combo-dep")) montarComboSelect(select);
   });
 });

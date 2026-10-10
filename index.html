@@ -2413,57 +2413,100 @@
   </section>
 
   <section id="areaAluno" class="portal-section">
-    <h2>Sala do Aluno</h2>
+    <h2>Área do Aluno EBD</h2>
 
-    <!-- Próxima Aula -->
-    <div class="aluno-card aluno-card-proxima">
-      <div class="aluno-card-icon">📅</div>
-      <div class="aluno-card-content">
-        <div class="aluno-card-titulo">Próxima Aula</div>
-        <div id="alunoProximaAula" class="aluno-card-info">Carregando...</div>
+    <div id="alunoPainelPrincipal">
+      <!-- Avisos da Igreja (topo da página) -->
+      <div class="aluno-card aluno-card-avisos">
+        <div class="aluno-card-icon">🔔</div>
+        <div class="aluno-card-content">
+          <div class="aluno-card-titulo">Avisos Importantes</div>
+          <div id="alunoAvisos" class="aluno-card-lista">
+            <p style="color: var(--muted); font-size: 14px;">Nenhum aviso no momento</p>
+          </div>
+        </div>
       </div>
-    </div>
 
-    <!-- Arquivos da Aula -->
-    <div class="aluno-card aluno-card-arquivos">
-      <div class="aluno-card-icon">📎</div>
-      <div class="aluno-card-content">
-        <div class="aluno-card-titulo">Arquivos da Aula</div>
-        <div id="alunoArquivos" class="aluno-card-info">Carregando...</div>
+      <!-- Sala de Aula: escolha do trimestre e da aula -->
+      <div class="aluno-card aluno-card-sala">
+        <div class="aluno-card-icon">📅</div>
+        <div class="aluno-card-content">
+          <div class="aluno-card-titulo">Sala de Aula</div>
+          <label class="aluno-campo">Trimestre
+            <select id="alunoTrimestre"></select>
+          </label>
+          <label class="aluno-campo">Aula
+            <select id="alunoAula"></select>
+          </label>
+          <div class="aluno-card-acoes">
+            <button type="button" id="btnAlunoEntrar" class="btn-admin btn-admin-primario">Entrar</button>
+          </div>
+          <div id="alunoSalaStatus" class="aluno-card-info"></div>
+        </div>
       </div>
-    </div>
 
-    <!-- Boletim de Presenças -->
-    <div class="aluno-card aluno-card-boletim">
-      <div class="aluno-card-icon">📊</div>
-      <div class="aluno-card-content">
-        <div class="aluno-card-titulo">Seu Boletim</div>
-        <div id="alunoBoletim" class="aluno-card-stats">
-          <div class="stat"><span class="stat-valor">--</span><span class="stat-label">Presenças</span></div>
-          <div class="stat"><span class="stat-valor">--</span><span class="stat-label">Faltas</span></div>
-          <div class="stat"><span class="stat-valor">--%</span><span class="stat-label">Assiduidade</span></div>
+      <!-- Recursos e Lições -->
+      <div class="aluno-card aluno-card-recursos">
+        <div class="aluno-card-icon">📚</div>
+        <div class="aluno-card-content">
+          <div class="aluno-card-titulo">Recursos Disponíveis</div>
+          <div id="alunoRecursos" class="aluno-card-lista">
+            <p style="color: var(--muted); font-size: 14px;">Procurando recursos...</p>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- Avisos da Igreja -->
-    <div class="aluno-card aluno-card-avisos">
-      <div class="aluno-card-icon">🔔</div>
-      <div class="aluno-card-content">
-        <div class="aluno-card-titulo">Avisos Importantes</div>
-        <div id="alunoAvisos" class="aluno-card-lista">
-          <p style="color: var(--muted); font-size: 14px;">Nenhum aviso no momento</p>
+    <!-- Leitor da revista (PDF, página a página, sem download) -->
+    <div id="alunoLeitorRevista" hidden>
+      <div class="aluno-sala-cabecalho">
+        <span></span>
+        <h3>Revista</h3>
+        <button type="button" id="btnAlunoFecharLeitor" class="btn-admin">← Voltar</button>
+      </div>
+      <div class="aluno-leitor-barra">
+        <button type="button" id="btnPaginaAnterior" class="btn-admin" disabled>‹ Anterior</button>
+        <span id="alunoPaginaInfo"></span>
+        <button type="button" id="btnPaginaProxima" class="btn-admin" disabled>Próxima ›</button>
+      </div>
+      <p id="alunoLeitorStatus" class="aluno-card-info"></p>
+      <div id="alunoLeitorArea" class="aluno-leitor-area">
+        <canvas id="alunoLeitorCanvas"></canvas>
+      </div>
+    </div>
+
+    <!-- Tela Solicitar Revista (formulário a ser implementado) -->
+    <div id="alunoSolicitarRevista" hidden>
+      <div class="aluno-sala-cabecalho">
+        <span></span>
+        <h3>Solicitar Revista</h3>
+        <button type="button" id="btnAlunoVoltarRevista" class="btn-admin">← Voltar</button>
+      </div>
+      <div class="aluno-card">
+        <div class="aluno-card-content">
+          <div class="aluno-card-info">O formulário de solicitação da revista do próximo trimestre será disponibilizado aqui.</div>
         </div>
       </div>
     </div>
 
-    <!-- Recursos e Lições -->
-    <div class="aluno-card aluno-card-recursos">
-      <div class="aluno-card-icon">📚</div>
-      <div class="aluno-card-content">
-        <div class="aluno-card-titulo">Recursos Disponíveis</div>
-        <div id="alunoRecursos" class="aluno-card-lista">
-          <p style="color: var(--muted); font-size: 14px;">Procurando recursos...</p>
+    <!-- Tela Sala de Aula (aberta pelo botão Entrar) -->
+    <div id="alunoSalaAula" hidden>
+      <div class="aluno-sala-cabecalho">
+        <span></span>
+        <h3>Sala de Aula</h3>
+        <button type="button" id="btnAlunoVoltar" class="btn-admin">← Voltar</button>
+      </div>
+      <div id="alunoSalaDetalhe" class="aluno-sala-detalhe"></div>
+
+      <div class="aluno-sala-acoes">
+        <button type="button" id="btnAlunoLerRevista" class="btn-admin btn-admin-primario" hidden>Ler revista</button>
+      </div>
+
+      <div class="aluno-card aluno-card-arquivos">
+        <div class="aluno-card-icon">📎</div>
+        <div class="aluno-card-content">
+          <div class="aluno-card-titulo">Arquivos da Aula</div>
+          <div id="alunoArquivos" class="aluno-card-info">Carregando...</div>
         </div>
       </div>
     </div>
@@ -6340,16 +6383,38 @@
       const opt = salaAlunoCandidato.selectedOptions[0];
       btnAdicionarAlunoConta.disabled = true;
       try {
-        await setDoc(doc(collection(db, "matriculas")), {
-          salaId: seletor.value,
-          tipo: "conta",
-          uid: uid,
-          nome: opt ? opt.textContent : uid,
-          ativo: true,
-          criadoEm: serverTimestamp(),
-          criadoPorUid: usuarioAtualCache.uid
-        });
-        salaAlunosStatus.textContent = "Aluno vinculado à Sala.";
+        // Regra: um aluno só pode estar em 1 Sala. Se já estiver em outra, é transferido.
+        const existentes = await getDocs(query(collection(db, "matriculas"), where("uid", "==", uid)));
+        const ativas = existentes.docs.filter((d) => d.data().ativo !== false);
+
+        if (ativas.some((d) => d.data().salaId === seletor.value)) {
+          salaAlunosStatus.textContent = "Este aluno já está matriculado nesta Sala.";
+          salaAlunosStatus.className = "admin-agenda-status erro";
+          return;
+        }
+
+        if (ativas.length) {
+          await updateDoc(doc(db, "matriculas", ativas[0].id), {
+            salaId: seletor.value,
+            criadoEm: serverTimestamp(),
+            criadoPorUid: usuarioAtualCache.uid
+          });
+          for (const extra of ativas.slice(1)) {
+            await updateDoc(doc(db, "matriculas", extra.id), { ativo: false });
+          }
+          salaAlunosStatus.textContent = "Aluno transferido para esta Sala.";
+        } else {
+          await setDoc(doc(collection(db, "matriculas")), {
+            salaId: seletor.value,
+            tipo: "conta",
+            uid: uid,
+            nome: opt ? opt.textContent : uid,
+            ativo: true,
+            criadoEm: serverTimestamp(),
+            criadoPorUid: usuarioAtualCache.uid
+          });
+          salaAlunosStatus.textContent = "Aluno vinculado à Sala.";
+        }
         salaAlunosStatus.className = "admin-agenda-status ok";
         await recarregarTudo();
       } catch (err) {

@@ -1,4 +1,4 @@
-// aluno.js - Sala do Aluno: Próxima Aula, Boletim, Avisos, Recursos
+// aluno.js - Área do Aluno EBD: Sala de Aula (trimestre + aula), Avisos, Recursos
 
 import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
 import {
@@ -7,227 +7,245 @@ import {
   getDocs,
   query,
   where,
-  orderBy,
-  limit,
   doc,
   getDoc
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
 import { firebaseConfig } from "./firebase-config.js";
+import { baixarRevistaDoDrive, criarLeitor } from "./leitor-revista.js";
 
 // Reaproveita app do Firebase se já foi criado
 const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 
-// Carrega dados da Sala do Aluno quando logado
+const hoje = new Date();
+const ANO = hoje.getFullYear();
+const TRIMESTRE_ATUAL = Math.floor(hoje.getMonth() / 3) + 1;
+const HOJE_ISO = `${ANO}-${String(hoje.getMonth() + 1).padStart(2, "0")}-${String(hoje.getDate()).padStart(2, "0")}`;
+
+let salaIdAluno = null;
+let nomeSalaAluno = "";
+let revistaDriveId = "";
+let leitor = null;
+let controlesLigados = false;
+
+// Carrega a Área do Aluno quando logado
 onAuthStateChanged(auth, async (user) => {
   if (user && document.getElementById("areaAluno")) {
     try {
-      await carregarProximaAula(user.uid);
-      await carregarBoletim(user.uid);
+      await iniciarSalaDeAula(user.uid);
       carregarAvisos();
       carregarRecursos();
-      await carregarArquivosAula(user.uid);
     } catch (err) {
-      console.error("Erro ao carregar Sala do Aluno:", err);
+      console.error("Erro ao carregar Área do Aluno:", err);
     }
   }
 });
 
-// 1. Próxima Aula
-async function carregarProximaAula(uid) {
-  const el = document.getElementById("alunoProximaAula");
+// 1. Sala de Aula: trimestre + aula (13 lições) + botão Entrar
+async function iniciarSalaDeAula(uid) {
+  const status = document.getElementById("alunoSalaStatus");
+  const selTrimestre = document.getElementById("alunoTrimestre");
+  const selAula = document.getElementById("alunoAula");
+  const btnEntrar = document.getElementById("btnAlunoEntrar");
+
+  const matriculasSnap = await getDocs(query(collection(db, "matriculas"), where("uid", "==", uid)));
+  const salaIds = [...new Set(
+    matriculasSnap.docs.map((d) => d.data()).filter((m) => m.ativo !== false && m.salaId).map((m) => m.salaId)
+  )];
+
+  if (!salaIds.length) {
+    status.textContent = "Solicite ao professor ou a Secretaria matricular você.";
+    selTrimestre.innerHTML = "";
+    selAula.innerHTML = "";
+    btnEntrar.disabled = true;
+    salaIdAluno = null;
+    nomeSalaAluno = "";
+    return;
+  }
+
+  // Regra: o aluno só pode estar em 1 Sala (o cadastro já garante isso)
+  salaIdAluno = salaIds[0];
+  btnEntrar.disabled = false;
+  const salaSnap = await getDoc(doc(db, "salas", salaIdAluno));
+  nomeSalaAluno = salaSnap.exists() ? (salaSnap.data().nome || "") : "";
+
+  selTrimestre.innerHTML = "";
+  for (let t = 1; t <= 4; t++) {
+    const opt = document.createElement("option");
+    opt.value = String(t);
+    opt.textContent = `${t}º Trimestre ${ANO}`;
+    selTrimestre.appendChild(opt);
+  }
+  selTrimestre.value = String(TRIMESTRE_ATUAL);
+
+  if (!controlesLigados) {
+    controlesLigados = true;
+    selTrimestre.addEventListener("change", carregarAulasDoTrimestre);
+    btnEntrar.addEventListener("click", abrirSalaDeAula);
+    document.getElementById("btnAlunoVoltar").addEventListener("click", voltarParaPainel);
+    document.getElementById("btnAlunoVoltarRevista").addEventListener("click", voltarDaSolicitacaoRevista);
+    document.getElementById("btnAlunoLerRevista").addEventListener("click", abrirLeitorRevista);
+    document.getElementById("btnAlunoFecharLeitor").addEventListener("click", fecharLeitorRevista);
+    // Ao entrar de novo na Área do Aluno, volta para o trimestre e a aula atuais
+    document.querySelectorAll('[data-area="areaAluno"]').forEach((link) => {
+      link.addEventListener("click", () => {
+        voltarParaPainel();
+        voltarDaSolicitacaoRevista();
+        resetarParaAtual();
+      });
+    });
+  }
+
+  await resetarParaAtual();
+}
+
+// Seleciona o trimestre atual e a aula de hoje
+async function resetarParaAtual() {
+  document.getElementById("alunoTrimestre").value = String(TRIMESTRE_ATUAL);
+  await carregarAulasDoTrimestre();
+}
+
+// Lê as lições do trimestre escolhido e preenche o combo de aulas
+async function carregarAulasDoTrimestre() {
+  const status = document.getElementById("alunoSalaStatus");
+  const selAula = document.getElementById("alunoAula");
+  const trimestre = Number(document.getElementById("alunoTrimestre").value);
+  selAula.innerHTML = "";
+  if (!salaIdAluno) return; // sem turma: a mensagem já está na tela
 
   try {
-    // Buscar dados do aluno
-    const userRef = collection(db, "users");
-    const q = query(userRef, where("uid", "==", uid));
-    const userSnap = await getDocs(q);
+    const licaoSnap = await getDoc(doc(db, "licoes", `${salaIdAluno}_${ANO}_${trimestre}`));
+    const licoes = licaoSnap.exists() && Array.isArray(licaoSnap.data().licoes) ? licaoSnap.data().licoes : [];
+    revistaDriveId = licaoSnap.exists() ? (licaoSnap.data().revistaPdfDriveId || "") : "";
 
-    if (userSnap.empty) {
-      el.innerHTML = "<p>Aluno não encontrado</p>";
+    if (!licoes.length) {
+      const opt = document.createElement("option");
+      opt.value = "";
+      opt.textContent = "Nenhuma lição cadastrada";
+      selAula.appendChild(opt);
+      status.textContent = "As lições deste trimestre ainda não foram cadastradas. Você pode abrir os arquivos do trimestre.";
       return;
     }
 
-    const userData = userSnap.docs[0].data();
-    const turmaId = userData.turmaId;
-
-    if (!turmaId) {
-      el.innerHTML = "<p>Você ainda não está registrado em nenhuma turma</p>";
-      return;
-    }
-
-    // Buscar turma
-    const turmasRef = collection(db, "turmas");
-    const turmaQuery = query(turmasRef, where("id", "==", turmaId));
-    const turmaSnap = await getDocs(turmaQuery);
-
-    if (turmaSnap.empty) {
-      el.innerHTML = "<p>Turma não encontrada</p>";
-      return;
-    }
-
-    const turmaData = turmaSnap.docs[0].data();
-    const nomeTurma = turmaData.nome || "Turma desconhecida";
-    const professor = turmaData.professores ? turmaData.professores[0] : "A definir";
-
-    // Próxima aula é sempre domingo (EBD)
-    const hoje = new Date();
-    const proximoDomingo = new Date(hoje);
-    const diasAteProximoDomingo = (7 - hoje.getDay()) % 7 || 7;
-    proximoDomingo.setDate(hoje.getDate() + diasAteProximoDomingo);
-
-    const dataFormatada = proximoDomingo.toLocaleDateString("pt-BR", {
-      weekday: "long",
-      day: "numeric",
-      month: "long"
+    licoes.forEach((l, i) => {
+      const opt = document.createElement("option");
+      opt.value = l.data || "";
+      const dataBr = l.data ? l.data.split("-").reverse().join("/") : "";
+      opt.textContent = `Lição ${i + 1} · ${dataBr.slice(0, 5)} · ${l.titulo || ""}`;
+      opt.dataset.numero = String(i + 1);
+      opt.dataset.titulo = l.titulo || "";
+      opt.dataset.data = dataBr;
+      selAula.appendChild(opt);
     });
 
-    el.innerHTML = `
-      <div style="font-size: 13px; color: var(--ink);">
-        <strong>EBD - Domingo</strong><br>
-        ${dataFormatada} às 10h<br><br>
-        <span style="color: var(--muted);">Turma:</span> ${nomeTurma}<br>
-        <span style="color: var(--muted);">Professor:</span> ${professor}
-      </div>
-    `;
+    // Seleciona a aula de hoje (ou a próxima) apenas no trimestre atual
+    if (trimestre === TRIMESTRE_ATUAL) {
+      const atual = licoes.find((l) => l.data >= HOJE_ISO) || licoes[licoes.length - 1];
+      if (atual && atual.data) selAula.value = atual.data;
+    }
+    status.textContent = "";
   } catch (err) {
-    console.error("Erro ao carregar próxima aula:", err);
-    el.innerHTML = "<p>Erro ao carregar informações</p>";
+    console.error("Erro ao carregar lições:", err);
+    status.textContent = "Não foi possível carregar as aulas agora.";
   }
 }
 
-// 2. Boletim de Presenças
-async function carregarBoletim(uid) {
-  const el = document.getElementById("alunoBoletim");
+// Botão Entrar: abre a tela Sala de Aula com os arquivos do trimestre e da aula
+function abrirSalaDeAula() {
+  const trimestre = Number(document.getElementById("alunoTrimestre").value);
+  const selAula = document.getElementById("alunoAula");
+  const aulaData = selAula.value || "";
+  const opcao = selAula.selectedIndex >= 0 ? selAula.options[selAula.selectedIndex] : null;
+
+  // Turma, título da lição e data (nesta ordem, centralizados)
+  const detalhe = document.getElementById("alunoSalaDetalhe");
+  detalhe.innerHTML = "";
+  const linhaTurma = document.createElement("strong");
+  linhaTurma.textContent = nomeSalaAluno || "Sua Sala";
+  detalhe.appendChild(linhaTurma);
+  if (opcao && aulaData) {
+    const linhaLicao = document.createElement("div");
+    linhaLicao.textContent = `Lição ${opcao.dataset.numero} · ${opcao.dataset.titulo}`;
+    const linhaData = document.createElement("div");
+    linhaData.textContent = `Data: ${opcao.dataset.data}`;
+    detalhe.append(linhaLicao, linhaData);
+  } else {
+    const linha = document.createElement("div");
+    linha.textContent = `${trimestre}º Trimestre`;
+    detalhe.appendChild(linha);
+  }
+
+  document.getElementById("btnAlunoLerRevista").hidden = !revistaDriveId;
+
+  document.getElementById("alunoPainelPrincipal").hidden = true;
+  document.getElementById("alunoSalaAula").hidden = false;
+  document.getElementById("areaAluno").scrollIntoView({ behavior: "smooth", block: "start" });
+
+  carregarArquivosAula(trimestre, aulaData);
+}
+
+function voltarParaPainel() {
+  document.getElementById("alunoSalaAula").hidden = true;
+  document.getElementById("alunoLeitorRevista").hidden = true;
+  document.getElementById("alunoPainelPrincipal").hidden = false;
+  if (leitor) leitor.fechar();
+}
+
+// Leitor da revista: abre o PDF (carregado em memória) página a página
+async function abrirLeitorRevista() {
+  const status = document.getElementById("alunoLeitorStatus");
+  document.getElementById("alunoSalaAula").hidden = true;
+  document.getElementById("alunoLeitorRevista").hidden = false;
+  document.getElementById("areaAluno").scrollIntoView({ behavior: "smooth", block: "start" });
+
+  if (!leitor) {
+    leitor = criarLeitor({
+      area: document.getElementById("alunoLeitorArea"),
+      canvas: document.getElementById("alunoLeitorCanvas"),
+      status,
+      paginaInfo: document.getElementById("alunoPaginaInfo"),
+      btnAnterior: document.getElementById("btnPaginaAnterior"),
+      btnProxima: document.getElementById("btnPaginaProxima")
+    });
+  }
 
   try {
-    // Buscar relatórios do aluno
-    const relatoriosRef = collection(db, "relatorios");
-    const q = query(relatoriosRef, where("alunoId", "==", uid));
-    const snapshot = await getDocs(q);
-
-    if (snapshot.empty) {
-      el.innerHTML = `
-        <div class="aluno-card-stats">
-          <div class="stat"><span class="stat-valor">0</span><span class="stat-label">Presenças</span></div>
-          <div class="stat"><span class="stat-valor">0</span><span class="stat-label">Faltas</span></div>
-          <div class="stat"><span class="stat-valor">--%</span><span class="stat-label">Assiduidade</span></div>
-        </div>
-        <p style="font-size: 12px; color: var(--muted); margin-top: 8px;">Nenhum registro de presenças ainda</p>
-      `;
-      return;
-    }
-
-    // Contar presenças
-    let presenças = 0;
-    let faltas = 0;
-
-    snapshot.forEach(doc => {
-      const data = doc.data();
-      if (data.presente) presenças++;
-      else faltas++;
-    });
-
-    const total = presenças + faltas;
-    const assiduidade = total > 0 ? Math.round((presenças / total) * 100) : 0;
-
-    el.innerHTML = `
-      <div class="aluno-card-stats">
-        <div class="stat"><span class="stat-valor">${presenças}</span><span class="stat-label">Presenças</span></div>
-        <div class="stat"><span class="stat-valor">${faltas}</span><span class="stat-label">Faltas</span></div>
-        <div class="stat"><span class="stat-valor">${assiduidade}%</span><span class="stat-label">Assiduidade</span></div>
-      </div>
-    `;
+    const bytes = await baixarRevistaDoDrive(revistaDriveId);
+    await leitor.abrir(bytes);
   } catch (err) {
-    console.error("Erro ao carregar boletim:", err);
-    el.innerHTML = "<p>Erro ao carregar boletim</p>";
+    console.error("Erro ao abrir revista:", err);
+    status.textContent = err.message || "Não foi possível abrir a revista agora.";
   }
 }
 
-// 3. Avisos (estático por enquanto)
-function carregarAvisos() {
-  const el = document.getElementById("alunoAvisos");
-
-  const avisos = [
-    "🔔 Santa Ceia — Próximo domingo (29/09)",
-    "📢 Congresso UFADEJ — 28 a 30 de Setembro",
-    "📚 Revista da EBD disponível — Pegue com seu professor"
-  ];
-
-  const html = avisos.map(aviso =>
-    `<div class="aluno-card-lista-item">
-      <div class="aluno-card-lista-icon">${aviso.split("—")[0]}</div>
-      <div>${aviso.split("—")[1]?.trim() || aviso}</div>
-    </div>`
-  ).join("");
-
-  el.innerHTML = `<div style="margin-top: 8px;">${html}</div>`;
+function fecharLeitorRevista() {
+  if (leitor) leitor.fechar();
+  document.getElementById("alunoLeitorRevista").hidden = true;
+  document.getElementById("alunoSalaAula").hidden = false;
 }
 
-// 4. Recursos (links/materiais)
-function carregarRecursos() {
-  const el = document.getElementById("alunoRecursos");
-
-  const recursos = [
-    { icon: "📖", nome: "Revista da EBD", descricao: "Pegue com seu professor" },
-    { icon: "🎥", nome: "Vídeos de Lições", descricao: "Em breve disponível" },
-    { icon: "🙏", nome: "Versículos da Semana", descricao: "Acompanhe as lições" }
-  ];
-
-  const html = recursos.map(r =>
-    `<div class="aluno-card-lista-item">
-      <div class="aluno-card-lista-icon">${r.icon}</div>
-      <div>
-        <strong style="color: var(--ink);">${r.nome}</strong><br>
-        <span style="font-size: 12px;">${r.descricao}</span>
-      </div>
-    </div>`
-  ).join("");
-
-  el.innerHTML = `<div style="margin-top: 8px;">${html}</div>`;
-}
-
-// 5. Arquivos da aula (matrículas -> sala -> arquivos do trimestre e da aula atual)
-async function carregarArquivosAula(uid) {
+// Arquivos da Sala de Aula: trimestre inteiro + a aula escolhida
+async function carregarArquivosAula(trimestre, aulaData) {
   const el = document.getElementById("alunoArquivos");
   if (!el) return;
+  el.textContent = "Carregando...";
 
   try {
-    const matriculasSnap = await getDocs(query(collection(db, "matriculas"), where("uid", "==", uid)));
-    const salaIds = [...new Set(
-      matriculasSnap.docs.map((d) => d.data()).filter((m) => m.ativo !== false && m.salaId).map((m) => m.salaId)
-    )];
-
-    if (!salaIds.length) {
-      el.innerHTML = "<p>Você ainda não está matriculado em uma Sala.</p>";
-      return;
-    }
-
-    const hoje = new Date();
-    const hojeISO = `${hoje.getFullYear()}-${String(hoje.getMonth() + 1).padStart(2, "0")}-${String(hoje.getDate()).padStart(2, "0")}`;
-    const ano = hoje.getFullYear();
-    const trimestre = Math.floor(hoje.getMonth() / 3) + 1;
-    const periodo = `${ano}_${trimestre}`;
+    const periodo = `${ANO}_${trimestre}`;
+    const arquivosSnap = await getDocs(query(collection(db, "arquivosSala"), where("salaId", "==", salaIdAluno)));
 
     const arquivos = [];
-    for (const salaId of salaIds) {
-      const licaoSnap = await getDoc(doc(db, "licoes", `${salaId}_${ano}_${trimestre}`));
-      const licoes = licaoSnap.exists() && Array.isArray(licaoSnap.data().licoes) ? licaoSnap.data().licoes : [];
-      const aulaAtual = (licoes.find((l) => l.data >= hojeISO) || {}).data || null;
-
-      const arquivosSnap = await getDocs(query(collection(db, "arquivosSala"), where("salaId", "==", salaId)));
-      arquivosSnap.forEach((d) => {
-        const a = d.data();
-        if (a.ativo === false) return;
-        if (a.periodo && a.periodo !== periodo) return;
-        const aula = a.aula || "trimestre";
-        if (aula === "trimestre" || (aulaAtual && aula === aulaAtual)) {
-          arquivos.push({ id: d.id, nome: a.nome, url: a.url, aula });
-        }
-      });
-    }
+    arquivosSnap.forEach((d) => {
+      const a = d.data();
+      if (a.ativo === false) return;
+      if (a.periodo && a.periodo !== periodo) return;
+      const aula = a.aula || "trimestre";
+      if (aula === "trimestre" || (aulaData && aula === aulaData)) {
+        arquivos.push({ id: d.id, nome: a.nome, url: a.url, aula });
+      }
+    });
 
     if (!arquivos.length) {
       el.innerHTML = "<p>Nenhum arquivo foi enviado para esta aula ainda.</p>";
@@ -257,4 +275,62 @@ async function carregarArquivosAula(uid) {
     console.error("Erro ao carregar arquivos da aula:", err);
     el.innerHTML = "<p>Não foi possível carregar os arquivos agora.</p>";
   }
+}
+
+// 2. Avisos (estático por enquanto)
+function carregarAvisos() {
+  const el = document.getElementById("alunoAvisos");
+
+  const avisos = [
+    "🔔 Santa Ceia — Próximo domingo (29/09)",
+    "📢 Congresso UFADEJ — 28 a 30 de Setembro",
+    "📚 Revista da EBD disponível — Pegue com seu professor"
+  ];
+
+  const html = avisos.map(aviso =>
+    `<div class="aluno-card-lista-item">
+      <div class="aluno-card-lista-icon">${aviso.split("—")[0]}</div>
+      <div>${aviso.split("—")[1]?.trim() || aviso}</div>
+    </div>`
+  ).join("");
+
+  el.innerHTML = `<div style="margin-top: 8px;">${html}</div>`;
+}
+
+// 3. Recursos (links/materiais)
+function carregarRecursos() {
+  const el = document.getElementById("alunoRecursos");
+
+  el.innerHTML = `
+    <div style="margin-top: 8px;">
+      <button type="button" class="aluno-card-lista-item aluno-recurso-botao" id="btnAlunoSolicitarRevista">
+        <div class="aluno-card-lista-icon">🛒</div>
+        <div>
+          <strong style="color: var(--ink);">Solicitar Revista</strong><br>
+          <span style="font-size: 12px;">Clique aqui para solicitar a revista do próximo trimestre.</span>
+        </div>
+      </button>
+      <div class="aluno-card-lista-item">
+        <div class="aluno-card-lista-icon">🙏</div>
+        <div>
+          <strong style="color: var(--ink);">Versículos da Semana</strong><br>
+          <span style="font-size: 12px;">Acompanhe as lições</span>
+        </div>
+      </div>
+    </div>`;
+
+  document.getElementById("btnAlunoSolicitarRevista").addEventListener("click", abrirSolicitarRevista);
+}
+
+// Tela de solicitação de revista (formulário será implementado depois)
+function abrirSolicitarRevista() {
+  document.getElementById("alunoPainelPrincipal").hidden = true;
+  document.getElementById("alunoSalaAula").hidden = true;
+  document.getElementById("alunoSolicitarRevista").hidden = false;
+  document.getElementById("areaAluno").scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function voltarDaSolicitacaoRevista() {
+  document.getElementById("alunoSolicitarRevista").hidden = true;
+  document.getElementById("alunoPainelPrincipal").hidden = false;
 }
