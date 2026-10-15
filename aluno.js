@@ -65,11 +65,10 @@ async function iniciarSalaDeAula(uid) {
     return;
   }
 
+  // Lista todas as salas; a matriculada vem selecionada, mas o aluno pode escolher outra
+  await preencherSeletorDeSalas();
   // Regra: o aluno só pode estar em 1 Sala (o cadastro já garante isso)
-  salaIdAluno = salaIds[0];
-  btnEntrar.disabled = false;
-  const salaSnap = await getDoc(doc(db, "salas", salaIdAluno));
-  nomeSalaAluno = salaSnap.exists() ? (salaSnap.data().nome || "") : "";
+  selecionarSala(salaIds[0]);
 
   selTrimestre.innerHTML = "";
   for (let t = 1; t <= 4; t++) {
@@ -83,11 +82,10 @@ async function iniciarSalaDeAula(uid) {
   if (!controlesLigados) {
     controlesLigados = true;
     selTrimestre.addEventListener("change", carregarAulasDoTrimestre);
+    document.getElementById("alunoSala").addEventListener("change", (e) => selecionarSala(e.target.value));
     btnEntrar.addEventListener("click", abrirSalaDeAula);
     document.getElementById("btnAlunoVoltar").addEventListener("click", voltarParaPainel);
     document.getElementById("btnAlunoVoltarRevista").addEventListener("click", voltarDaSolicitacaoRevista);
-    document.getElementById("btnAlunoLerRevista").addEventListener("click", abrirLeitorRevista);
-    document.getElementById("btnAlunoFecharLeitor").addEventListener("click", fecharLeitorRevista);
     // Ao entrar de novo na Área do Aluno, volta para o trimestre e a aula atuais
     document.querySelectorAll('[data-area="areaAluno"]').forEach((link) => {
       link.addEventListener("click", () => {
@@ -99,6 +97,32 @@ async function iniciarSalaDeAula(uid) {
   }
 
   await resetarParaAtual();
+}
+
+// Preenche o seletor com todas as salas (ordem do cadastro)
+async function preencherSeletorDeSalas() {
+  const selSala = document.getElementById("alunoSala");
+  const salasSnap = await getDocs(collection(db, "salas"));
+  const salas = salasSnap.docs.map((d) => ({ id: d.id, nome: d.data().nome || "", ordem: d.data().ordem ?? 9999 }));
+  salas.sort((a, b) => a.ordem - b.ordem || a.nome.localeCompare(b.nome));
+  selSala.innerHTML = "";
+  salas.forEach((s) => {
+    const opt = document.createElement("option");
+    opt.value = s.id;
+    opt.textContent = s.nome || "Sala sem nome";
+    selSala.appendChild(opt);
+  });
+}
+
+// Troca a sala exibida: recarrega as lições e libera o botão Entrar
+function selecionarSala(salaId) {
+  const selSala = document.getElementById("alunoSala");
+  salaIdAluno = salaId || null;
+  selSala.value = salaIdAluno || "";
+  const opt = selSala.options[selSala.selectedIndex];
+  nomeSalaAluno = salaIdAluno && opt ? opt.textContent : "";
+  document.getElementById("btnAlunoEntrar").disabled = !salaIdAluno;
+  carregarAulasDoTrimestre();
 }
 
 // Seleciona o trimestre atual e a aula de hoje
@@ -159,46 +183,48 @@ function abrirSalaDeAula() {
   const aulaData = selAula.value || "";
   const opcao = selAula.selectedIndex >= 0 ? selAula.options[selAula.selectedIndex] : null;
 
-  // Turma, título da lição e data (nesta ordem, centralizados)
+  // Sala, lição, trimestre e data (um por linha)
   const detalhe = document.getElementById("alunoSalaDetalhe");
   detalhe.innerHTML = "";
-  const linhaTurma = document.createElement("strong");
-  linhaTurma.textContent = nomeSalaAluno || "Sua Sala";
-  detalhe.appendChild(linhaTurma);
+  const linhas = [["Sala", nomeSalaAluno || "Sua Sala"]];
   if (opcao && aulaData) {
-    const linhaLicao = document.createElement("div");
-    linhaLicao.textContent = `Lição ${opcao.dataset.numero} · ${opcao.dataset.titulo}`;
-    const linhaData = document.createElement("div");
-    linhaData.textContent = `Data: ${opcao.dataset.data}`;
-    detalhe.append(linhaLicao, linhaData);
-  } else {
-    const linha = document.createElement("div");
-    linha.textContent = `${trimestre}º Trimestre`;
-    detalhe.appendChild(linha);
+    linhas.push(["Lição", `${opcao.dataset.numero} · ${opcao.dataset.titulo}`]);
   }
-
-  document.getElementById("btnAlunoLerRevista").hidden = !revistaDriveId;
+  linhas.push(["Trimestre", `${trimestre}º Trimestre ${ANO}`]);
+  if (opcao && aulaData) {
+    linhas.push(["Data", opcao.dataset.data]);
+  }
+  linhas.forEach(([rotulo, valor]) => {
+    const linha = document.createElement("div");
+    const nome = document.createElement("strong");
+    nome.textContent = rotulo + ": ";
+    linha.append(nome, document.createTextNode(valor));
+    detalhe.appendChild(linha);
+  });
 
   document.getElementById("alunoPainelPrincipal").hidden = true;
   document.getElementById("alunoSalaAula").hidden = false;
   document.getElementById("areaAluno").scrollIntoView({ behavior: "smooth", block: "start" });
 
+  carregarRevistaDaLicao();
   carregarArquivosAula(trimestre, aulaData);
 }
 
 function voltarParaPainel() {
   document.getElementById("alunoSalaAula").hidden = true;
-  document.getElementById("alunoLeitorRevista").hidden = true;
   document.getElementById("alunoPainelPrincipal").hidden = false;
   if (leitor) leitor.fechar();
 }
 
-// Leitor da revista: abre o PDF (carregado em memória) página a página
-async function abrirLeitorRevista() {
+// Revista da lição: abre dentro da Sala de Aula, já na primeira página
+async function carregarRevistaDaLicao() {
   const status = document.getElementById("alunoLeitorStatus");
-  document.getElementById("alunoSalaAula").hidden = true;
-  document.getElementById("alunoLeitorRevista").hidden = false;
-  document.getElementById("areaAluno").scrollIntoView({ behavior: "smooth", block: "start" });
+  if (leitor) leitor.fechar();
+  if (!revistaDriveId) {
+    status.textContent = "Esta lição ainda não tem revista disponível.";
+    return;
+  }
+  status.textContent = "Carregando revista...";
 
   if (!leitor) {
     leitor = criarLeitor({
@@ -220,10 +246,19 @@ async function abrirLeitorRevista() {
   }
 }
 
-function fecharLeitorRevista() {
-  if (leitor) leitor.fechar();
-  document.getElementById("alunoLeitorRevista").hidden = true;
-  document.getElementById("alunoSalaAula").hidden = false;
+function extensaoDoArquivo(nome) {
+  const partes = (nome || "").split(".");
+  return partes.length > 1 ? partes.pop().toUpperCase() : "ARQUIVO";
+}
+
+function iconeDoArquivo(nome) {
+  const ext = extensaoDoArquivo(nome);
+  if (ext === "PDF") return "📄";
+  if (["PPT", "PPTX"].includes(ext)) return "📊";
+  if (["DOC", "DOCX"].includes(ext)) return "📝";
+  if (["MP4", "MOV", "AVI", "WEBM"].includes(ext)) return "🎬";
+  if (["JPG", "JPEG", "PNG", "WEBP", "GIF"].includes(ext)) return "🖼️";
+  return "📎";
 }
 
 // Arquivos da Sala de Aula: trimestre inteiro + a aula escolhida
@@ -243,7 +278,7 @@ async function carregarArquivosAula(trimestre, aulaData) {
       if (a.periodo && a.periodo !== periodo) return;
       const aula = a.aula || "trimestre";
       if (aula === "trimestre" || (aulaData && aula === aulaData)) {
-        arquivos.push({ id: d.id, nome: a.nome, url: a.url, aula });
+        arquivos.push({ id: d.id, nome: a.nome, titulo: a.titulo || "", comentario: a.comentario || "", url: a.url, tipo: a.tipo || "", aula });
       }
     });
 
@@ -253,24 +288,40 @@ async function carregarArquivosAula(trimestre, aulaData) {
     }
 
     el.innerHTML = "";
+    const grade = document.createElement("div");
+    grade.className = "aluno-arquivos-grid";
     arquivos.forEach((a) => {
-      const linha = document.createElement("div");
-      linha.style.marginTop = "6px";
-      const link = document.createElement("a");
-      link.href = a.url;
-      link.target = "_blank";
-      link.rel = "noopener";
-      link.textContent = a.nome || "arquivo";
-      link.style.color = "var(--ink)";
-      link.style.textDecoration = "underline";
+      const item = document.createElement("div");
+      item.className = "aluno-arquivo-item";
+
+      const titulo = document.createElement("div");
+      titulo.className = "aluno-arquivo-titulo";
+      titulo.textContent = a.titulo || a.nome || "Arquivo";
+
+      const quadrado = document.createElement("a");
+      quadrado.className = "aluno-arquivo-canvas";
+      quadrado.href = a.url;
+      quadrado.target = "_blank";
+      quadrado.rel = "noopener";
+      quadrado.title = "Abrir arquivo";
+      const icone = document.createElement("span");
+      icone.className = "aluno-arquivo-icone";
+      icone.textContent = a.tipo === "link" ? "🔗" : iconeDoArquivo(a.nome);
       const tipo = document.createElement("span");
-      tipo.style.display = "block";
-      tipo.style.fontSize = "12px";
-      tipo.style.color = "var(--muted)";
-      tipo.textContent = a.aula === "trimestre" ? "Material do trimestre" : "Material desta aula";
-      linha.append(link, tipo);
-      el.appendChild(linha);
+      tipo.className = "aluno-arquivo-tipo";
+      tipo.textContent = a.tipo === "link" ? "LINK" : extensaoDoArquivo(a.nome);
+      quadrado.append(icone, tipo);
+
+      item.append(titulo, quadrado);
+      if (a.comentario) {
+        const comentario = document.createElement("div");
+        comentario.className = "aluno-arquivo-comentario";
+        comentario.textContent = a.comentario;
+        item.appendChild(comentario);
+      }
+      grade.appendChild(item);
     });
+    el.appendChild(grade);
   } catch (err) {
     console.error("Erro ao carregar arquivos da aula:", err);
     el.innerHTML = "<p>Não foi possível carregar os arquivos agora.</p>";

@@ -95,7 +95,8 @@ window.entrarComGoogle = async function () {
       // de Perfil, em modo "completar-google", que comeca direto no passo 2.
       await setDoc(ref, {
         email: cred.user.email,
-        nome: cred.user.displayName || "",
+        nome: (cred.user.displayName || "").trim().split(/\s+/)[0] || "",
+        sobrenome: (cred.user.displayName || "").trim().split(/\s+/).slice(1).join(" "),
         foto: cred.user.photoURL || "",
         perfil: PERFIL_PADRAO,
         ativo: true,
@@ -110,7 +111,8 @@ window.entrarComGoogle = async function () {
       }
     }
   } catch (err) {
-    alert("Nao foi possivel entrar com Google.");
+    // Mostra o codigo do erro (ex.: auth/popup-blocked) para diagnostico
+    alert("Nao foi possivel entrar com Google. (" + (err.code || err.message) + ")");
     console.error(err);
   }
 };

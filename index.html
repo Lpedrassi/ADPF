@@ -1362,7 +1362,7 @@
         <input id="perfilUsuario" type="text" placeholder="nome de usuário">
       </div>
 
-      <div class="perfil-grid-2" data-show="editar step2">
+      <div class="perfil-grid-2" id="perfilNomeGrupo" data-show="editar step1">
         <div>
           <label for="perfilNome">Nome</label>
           <input id="perfilNome" type="text" placeholder="seu nome" required>
@@ -1391,7 +1391,7 @@
         Usar dados do Google
       </button>
 
-      <p class="login-note" id="perfilGoogleNota" hidden style="margin-top:0;">Conectado com o Google — nome e e-mail já preenchidos.</p>
+      <p class="login-note" id="perfilGoogleNota" hidden style="margin-top:0;">Conectado com o Google — nome, e-mail e foto já preenchidos.</p>
 
       <div data-show="editar step2">
         <label for="perfilTelefone">Telefone</label>
@@ -1402,9 +1402,11 @@
         <label for="perfilDataNascimento">Data de nascimento</label>
         <input id="perfilDataNascimento" type="text" placeholder="dd/mm/aaaa" inputmode="numeric" maxlength="10">
       </div>
+      <p class="login-note" id="perfilIdade" data-show="editar step2" hidden style="margin-top:0;"></p>
 
-      <div class="perfil-secao-titulo" data-show="step2">Endereço</div>
-      <div class="perfil-grid-2" data-show="step2">
+      <p class="login-note" data-show="step2" style="margin-top:0;">Endereço: você pode preencher depois, no menu da sua conta.</p>
+      <div class="perfil-secao-titulo" data-show="nenhum">Endereço</div>
+      <div class="perfil-grid-2" data-show="nenhum">
         <div>
           <label for="perfilCep">CEP</label>
           <input id="perfilCep" type="text" placeholder="00000-000" inputmode="numeric" maxlength="9">
@@ -1414,15 +1416,15 @@
           <input id="perfilNumero" type="text" placeholder="nº">
         </div>
       </div>
-      <div data-show="step2">
+      <div data-show="nenhum">
         <label for="perfilRua">Rua</label>
         <input id="perfilRua" type="text" placeholder="rua">
       </div>
-      <div data-show="step2">
+      <div data-show="nenhum">
         <label for="perfilComplemento">Complemento</label>
         <input id="perfilComplemento" type="text" placeholder="apto, bloco, etc.">
       </div>
-      <div class="perfil-grid-2" data-show="step2">
+      <div class="perfil-grid-2" data-show="nenhum">
         <div>
           <label for="perfilBairro">Bairro</label>
           <input id="perfilBairro" type="text" placeholder="bairro">
@@ -2411,19 +2413,24 @@
           <label class="arquivo-aula-rotulo">Aula
             <select id="arquivoSalaAula" required></select>
           </label>
+        </div>
+        <div class="arquivo-acoes">
+          <button type="button" id="btnAdicionarLink" class="btn-admin btn-admin-icon">
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+            Adicionar link
+          </button>
           <label for="arquivoSalaInput" class="btn-admin admin-file-btn btn-admin-icon">
             <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 8 5-5 5 5"/><path d="M5 21h14"/></svg>
             Escolher arquivo
           </label>
           <input type="file" id="arquivoSalaInput" accept=".pdf,.ppt,.pptx,.doc,.docx,image/*" class="admin-file-input">
-          <span id="arquivoSalaNomeEscolhido" class="admin-agenda-status"></span>
           <button type="button" id="btnEnviarArquivo" class="btn-admin btn-admin-primario btn-admin-icon">
             <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
-            Enviar arquivo
+            Guardar
           </button>
         </div>
         <p id="arquivoSalaStatus" class="admin-agenda-status"></p>
-        <div id="arquivosSalaLista" class="admin-perfis-lista"></div>
+        <div id="arquivosSalaLista" class="arquivos-prof-grid"></div>
       </div>
 
     </div>
@@ -2449,6 +2456,9 @@
         <div class="aluno-card-icon">📅</div>
         <div class="aluno-card-content">
           <div class="aluno-card-titulo">Sala de Aula</div>
+          <label class="aluno-campo">Sala de Aula
+            <select id="alunoSala"></select>
+          </label>
           <label class="aluno-campo">Trimestre
             <select id="alunoTrimestre"></select>
           </label>
@@ -2475,23 +2485,6 @@
     </div>
 
     <!-- Leitor da revista (PDF, página a página, sem download) -->
-    <div id="alunoLeitorRevista" hidden>
-      <div class="aluno-sala-cabecalho">
-        <span></span>
-        <h3>Revista</h3>
-        <button type="button" id="btnAlunoFecharLeitor" class="btn-admin">← Voltar</button>
-      </div>
-      <div class="aluno-leitor-barra">
-        <button type="button" id="btnPaginaAnterior" class="btn-admin" disabled>‹ Anterior</button>
-        <span id="alunoPaginaInfo"></span>
-        <button type="button" id="btnPaginaProxima" class="btn-admin" disabled>Próxima ›</button>
-      </div>
-      <p id="alunoLeitorStatus" class="aluno-card-info"></p>
-      <div id="alunoLeitorArea" class="aluno-leitor-area">
-        <canvas id="alunoLeitorCanvas"></canvas>
-      </div>
-    </div>
-
     <!-- Tela Solicitar Revista (formulário a ser implementado) -->
     <div id="alunoSolicitarRevista" hidden>
       <div class="aluno-sala-cabecalho">
@@ -2515,12 +2508,40 @@
       </div>
       <div id="alunoSalaDetalhe" class="aluno-sala-detalhe"></div>
 
-      <div class="aluno-sala-acoes">
-        <button type="button" id="btnAlunoLerRevista" class="btn-admin btn-admin-primario" hidden>Ler revista</button>
+      <div class="aluno-card aluno-card-revista">
+        <div class="aluno-card-content">
+          <div class="aluno-leitor-barra">
+            <span id="alunoPaginaInfo"></span>
+          </div>
+          <p id="alunoLeitorStatus" class="aluno-card-info"></p>
+          <div id="alunoLeitorArea" class="aluno-leitor-area">
+            <canvas id="alunoLeitorCanvas"></canvas>
+            <button type="button" id="btnPaginaAnterior" class="aluno-leitor-zona aluno-leitor-zona-anterior" disabled aria-label="Página anterior"><span>‹ Anterior</span></button>
+            <button type="button" id="btnPaginaProxima" class="aluno-leitor-zona aluno-leitor-zona-proxima" disabled aria-label="Próxima página"><span>Próximo ›</span></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="aluno-card aluno-card-biblia">
+        <div class="aluno-card-content">
+          <div class="biblia-seletores">
+            <label class="aluno-campo">Livro
+              <select id="biblioLivro"></select>
+            </label>
+            <label class="aluno-campo">Capítulo
+              <select id="biblioCapitulo"></select>
+            </label>
+            <label class="aluno-campo">Versículo
+              <select id="biblioVersiculo"></select>
+            </label>
+          </div>
+          <p id="biblioStatus" class="aluno-card-info">Carregando Bíblia...</p>
+          <div id="biblioTexto" class="biblia-texto"></div>
+        </div>
       </div>
 
       <div class="aluno-card aluno-card-arquivos">
-        <div class="aluno-card-icon">📎</div>
+        <div class="aluno-card-icon"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg></div>
         <div class="aluno-card-content">
           <div class="aluno-card-titulo">Arquivos da Aula</div>
           <div id="alunoArquivos" class="aluno-card-info">Carregando...</div>
@@ -2741,7 +2762,7 @@
       </button>
       <button type="button" class="professor-canvas-card" data-canvasala="licoes">
         <span class="professor-canvas-titulo">Gerenciar Lições</span>
-        <span class="professor-canvas-sub">Títulos das lições, revista e capa por Sala/Trimestre</span>
+        <span class="professor-canvas-sub">Títulos das lições e revistas por Sala/Trimestre</span>
       </button>
     </div>
 
@@ -2859,17 +2880,6 @@
           </div>
           <p id="licoesStatus" class="admin-agenda-status"></p>
 
-          <div class="perfil-secao-titulo">Capa da revista</div>
-          <p class="admin-agenda-info" style="margin-top:-6px;">Envie a imagem da capa da revista trimestral — ela aparece ao lado do título na tela de Chamada do Professor.</p>
-          <p id="licoesCapaAtual" class="admin-agenda-info" hidden></p>
-          <div class="admin-form-linha">
-            <label for="licoesCapaInput" class="btn-admin admin-file-btn">Adicionar imagem</label>
-            <input type="file" id="licoesCapaInput" accept="image/*" class="admin-file-input">
-            <span id="licoesCapaNomeEscolhido" class="admin-agenda-status"></span>
-            <button type="button" id="btnEnviarCapaLicoes" class="btn-admin">Enviar capa</button>
-            <button type="button" id="btnRemoverCapaLicoes" class="btn-ghost" hidden>Remover capa</button>
-          </div>
-          <p id="licoesCapaStatus" class="admin-agenda-status"></p>
 
           <div class="perfil-secao-titulo">Revista em PDF (Aluno)</div>
           <p class="admin-agenda-info" style="margin-top:-6px;">Envie o PDF da revista do aluno desta Sala. O arquivo é salvo no Google Drive.</p>
@@ -3230,7 +3240,64 @@
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <script type="module" src="auth.js"></script>
 <script type="module" src="agenda.js"></script>
+<div class="login-overlay" id="arquivoModal" role="dialog" aria-modal="true" aria-labelledby="arquivoModalTitulo" hidden>
+  <div class="login-card">
+    <button class="login-close" id="arquivoModalFechar" type="button" aria-label="Fechar">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+    <span class="pill eyebrow" id="arquivoModalTitulo"><span class="dot"></span>Guardar arquivo</span>
+    <form class="login-form" id="arquivoModalForm">
+      <label for="arquivoSalaTitulo">Nome do arquivo</label>
+      <input id="arquivoSalaTitulo" type="text" maxlength="80" placeholder="Ex.: Vídeo da lição 3">
+      <label for="arquivoSalaComentario">Comentários</label>
+      <textarea id="arquivoSalaComentario" rows="3" maxlength="300" placeholder="Ex.: assistir antes da aula" style="width:100%;"></textarea>
+      <p class="login-note" id="arquivoModalMensagem" style="margin-top:0;"></p>
+      <div class="login-btn-row">
+        <button type="button" class="btn btn-ghost" id="arquivoModalCancelar" style="flex:1;justify-content:center;">Cancelar</button>
+        <button type="submit" class="btn btn-blue-grad" id="arquivoModalSalvar" style="flex:1;justify-content:center;">Salvar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="login-overlay" id="linkModal" role="dialog" aria-modal="true" aria-labelledby="linkModalTitulo" hidden>
+  <div class="login-card">
+    <button class="login-close" id="linkModalFechar" type="button" aria-label="Fechar">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+    <span class="pill eyebrow" id="linkModalTitulo"><span class="dot"></span>Adicionar link</span>
+    <form class="login-form" id="linkModalForm">
+      <label for="linkNome">Nome do link</label>
+      <input id="linkNome" type="text" maxlength="80" placeholder="Ex.: Vídeo da lição 3">
+      <label for="linkEndereco">Endereço (site, YouTube etc.)</label>
+      <input id="linkEndereco" type="url" maxlength="500" placeholder="https://" required>
+      <label for="linkComentario">Comentários</label>
+      <textarea id="linkComentario" rows="3" maxlength="300" placeholder="Ex.: assistir antes da aula" style="width:100%;"></textarea>
+      <p class="login-note" id="linkModalMensagem" style="margin-top:0;"></p>
+      <div class="login-btn-row">
+        <button type="button" class="btn btn-ghost" id="linkModalCancelar" style="flex:1;justify-content:center;">Cancelar</button>
+        <button type="submit" class="btn btn-blue-grad" id="linkModalSalvar" style="flex:1;justify-content:center;">Salvar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="login-overlay" id="arquivoDetalheModal" role="dialog" aria-modal="true" aria-labelledby="arquivoDetalheTitulo" hidden>
+  <div class="login-card">
+    <button class="login-close" id="arquivoDetalheFechar" type="button" aria-label="Fechar">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+    <span class="pill eyebrow" id="arquivoDetalheTitulo"><span class="dot"></span>Detalhes do arquivo</span>
+    <dl class="arquivo-detalhe-lista" id="arquivoDetalheLista"></dl>
+    <div class="login-btn-row">
+      <button type="button" class="btn btn-ghost" id="arquivoDetalheVoltar" style="flex:1;justify-content:center;">Fechar</button>
+      <a class="btn btn-blue-grad" id="arquivoDetalheAbrir" href="#" target="_blank" rel="noopener" style="flex:1;justify-content:center;text-decoration:none;">Abrir arquivo</a>
+    </div>
+  </div>
+</div>
+
 <script type="module" src="aluno.js"></script>
+<script type="module" src="biblia.js"></script>
 <script src="seed-escalas.js"></script>
 
 <script type="module">
@@ -5295,16 +5362,6 @@
     const btnEnviarProf = document.getElementById("btnEnviarProf");
     const btnRemoverProf = document.getElementById("btnRemoverProf");
     const profStatusEl = document.getElementById("licoesProfStatus");
-    const capaAtualEl = document.getElementById("licoesCapaAtual");
-    const capaInput = document.getElementById("licoesCapaInput");
-    const capaNomeEscolhidoEl = document.getElementById("licoesCapaNomeEscolhido");
-    capaInput.addEventListener("change", () => {
-      const f = capaInput.files && capaInput.files[0];
-      capaNomeEscolhidoEl.textContent = f ? f.name : "";
-    });
-    const btnEnviarCapa = document.getElementById("btnEnviarCapaLicoes");
-    const btnRemoverCapa = document.getElementById("btnRemoverCapaLicoes");
-    const capaStatusEl = document.getElementById("licoesCapaStatus");
     if (!seletorSala || !camposLista || !btnSalvar || !anoSelect || !trimestreSelect) return;
 
     const hoje = new Date();
@@ -5395,18 +5452,6 @@
       }
     }
 
-    function atualizarCapaUI() {
-      if (licaoAtualDados && licaoAtualDados.revistaCapaUrl) {
-        capaAtualEl.hidden = false;
-        capaAtualEl.innerHTML = "Capa atual: <a href=\"" + licaoAtualDados.revistaCapaUrl + "\" target=\"_blank\" rel=\"noopener\">" + (licaoAtualDados.revistaCapaNome || "capa da revista") + "</a>";
-        btnRemoverCapa.hidden = false;
-      } else {
-        capaAtualEl.hidden = true;
-        capaAtualEl.textContent = "";
-        btnRemoverCapa.hidden = true;
-      }
-    }
-
     async function carregar() {
       const salaId = seletorSala.value;
       if (!salaId) return;
@@ -5423,7 +5468,6 @@
       revistaNomeInput.value = "";
       atualizarPdfUI();
       atualizarProfUI();
-      atualizarCapaUI();
       try {
         const snap = await getDoc(doc(db, "licoes", docId));
         if (meuToken !== carregandoToken || seletorSala.value !== salaId) return;
@@ -5436,7 +5480,6 @@
           campos.forEach((c, idx) => { c.value = porData[paraISO(domingos[idx])] || ""; });
           atualizarPdfUI();
           atualizarProfUI();
-          atualizarCapaUI();
           return;
         }
         const legadoSnap = await getDoc(doc(db, "licoes", salaId));
@@ -5555,6 +5598,12 @@
         revista[campo + "Nome"] = arquivo.name;
         revista[campo + "Url"] = resultado.url;
         revista[campo + "DriveId"] = resultado.driveFileId;
+        revista[campo + "EnviadoPor"] = {
+          uid: usuarioAtualCache.uid,
+          nome: usuarioAtualCache.nome || usuarioAtualCache.email || "",
+          perfil: usuarioAtualCache.perfil || "convidado",
+          ms: Date.now()
+        };
         await setDoc(doc(db, "licoes", docId), Object.assign({
           salaId: salaId,
           ano: ano,
@@ -5614,81 +5663,6 @@
     btnRemoverPdf.addEventListener("click", () => removerRevista("revistaPdf", btnRemoverPdf, pdfStatusEl, atualizarPdfUI));
     btnEnviarProf.addEventListener("click", () => enviarRevista("revistaPro", profFileInput, btnEnviarProf, profStatusEl, atualizarProfUI));
     btnRemoverProf.addEventListener("click", () => removerRevista("revistaPro", btnRemoverProf, profStatusEl, atualizarProfUI));
-
-    btnEnviarCapa.addEventListener("click", async () => {
-      const salaId = seletorSala.value;
-      const arquivo = capaInput.files && capaInput.files[0];
-      if (!salaId || !arquivo) return;
-      const ano = parseInt(anoSelect.value, 10);
-      const trimestre = parseInt(trimestreSelect.value, 10);
-      const docId = salaId + "_" + ano + "_" + trimestre;
-      btnEnviarCapa.disabled = true;
-      capaStatusEl.textContent = "Conectando ao Google Drive...";
-      capaStatusEl.className = "admin-agenda-status";
-      try {
-        if (licaoAtualDados && licaoAtualDados.revistaCapaDriveId) {
-          try { await removerArquivoDoDrive(licaoAtualDados.revistaCapaDriveId); } catch (e) { console.error(e); }
-        }
-        capaStatusEl.textContent = "Enviando...";
-        const resultado = await enviarArquivoParaDrive(arquivo, salaId);
-        await setDoc(doc(db, "licoes", docId), {
-          salaId: salaId,
-          ano: ano,
-          trimestre: trimestre,
-          revistaCapaNome: arquivo.name,
-          revistaCapaUrl: resultado.url,
-          revistaCapaDriveId: resultado.driveFileId,
-          atualizadoEm: serverTimestamp()
-        }, { merge: true });
-        await updateDoc(doc(db, "salas", salaId), { temLicoes: true });
-        licaoAtualDados = Object.assign({}, licaoAtualDados, {
-          revistaCapaNome: arquivo.name,
-          revistaCapaUrl: resultado.url,
-          revistaCapaDriveId: resultado.driveFileId
-        });
-        atualizarCapaUI();
-        capaInput.value = "";
-        capaNomeEscolhidoEl.textContent = "";
-        capaStatusEl.textContent = "Capa enviada com sucesso.";
-        capaStatusEl.className = "admin-agenda-status ok";
-      } catch (err) {
-        capaStatusEl.textContent = "Não foi possível enviar a capa. " + (err.message || "");
-        capaStatusEl.className = "admin-agenda-status erro";
-        console.error(err);
-      } finally {
-        btnEnviarCapa.disabled = false;
-      }
-    });
-
-    btnRemoverCapa.addEventListener("click", async () => {
-      const salaId = seletorSala.value;
-      if (!salaId) return;
-      const ano = parseInt(anoSelect.value, 10);
-      const trimestre = parseInt(trimestreSelect.value, 10);
-      const docId = salaId + "_" + ano + "_" + trimestre;
-      btnRemoverCapa.disabled = true;
-      capaStatusEl.textContent = "";
-      try {
-        if (licaoAtualDados && licaoAtualDados.revistaCapaDriveId) {
-          try { await removerArquivoDoDrive(licaoAtualDados.revistaCapaDriveId); } catch (e) { console.error(e); }
-        }
-        await setDoc(doc(db, "licoes", docId), {
-          revistaCapaNome: "",
-          revistaCapaUrl: "",
-          revistaCapaDriveId: ""
-        }, { merge: true });
-        licaoAtualDados = Object.assign({}, licaoAtualDados, { revistaCapaNome: "", revistaCapaUrl: "", revistaCapaDriveId: "" });
-        atualizarCapaUI();
-        capaStatusEl.textContent = "Capa removida.";
-        capaStatusEl.className = "admin-agenda-status ok";
-      } catch (err) {
-        capaStatusEl.textContent = "Não foi possível remover a capa. " + (err.message || "");
-        capaStatusEl.className = "admin-agenda-status erro";
-        console.error(err);
-      } finally {
-        btnRemoverCapa.disabled = false;
-      }
-    });
 
     window.__recarregarGerenciarLicoesSalas = popularSalas;
     popularSalas();
@@ -5760,9 +5734,11 @@
     const arquivoSalaStatus = document.getElementById("arquivoSalaStatus");
     const arquivosSalaLista = document.getElementById("arquivosSalaLista");
     const arquivoSalaNomeEscolhido = document.getElementById("arquivoSalaNomeEscolhido");
+    // Nome do arquivo escolhido aparece no mesmo lugar da mensagem de status
     if (arquivoSalaInput) arquivoSalaInput.addEventListener("change", () => {
       const f = arquivoSalaInput.files && arquivoSalaInput.files[0];
-      arquivoSalaNomeEscolhido.textContent = f ? f.name : "";
+      arquivoSalaStatus.textContent = f ? f.name : "";
+      arquivoSalaStatus.className = "admin-agenda-status";
     });
 
     let minhasSalas = [];
@@ -6139,48 +6115,124 @@
     }
 
 
-    function criarItemRevista(dados, salaId, ano, trimestre) {
-      const item = document.createElement("div");
-      item.className = "admin-perfis-item";
-      const info = document.createElement("div");
-      info.className = "admin-perfis-item-info";
-      const link = document.createElement("a");
-      link.href = dados.revistaPdfUrl;
-      link.target = "_blank";
-      link.rel = "noopener";
-      link.className = "admin-perfis-item-nome";
-      link.textContent = `📘 Revista trimestral (${trimestre}º Trimestre ${ano}): ${dados.revistaPdfNome || "abrir PDF"}`;
-      const sub = document.createElement("span");
-      sub.className = "admin-perfis-item-sub";
-      sub.textContent = "Revista da Sala";
-      info.append(link, sub);
-      const btnRemover = document.createElement("button");
-      btnRemover.type = "button";
-      btnRemover.className = "admin-perfis-item-remover";
-      btnRemover.textContent = "×";
-      btnRemover.title = "Excluir revista";
-      btnRemover.addEventListener("click", async () => {
-        if (!confirm("Excluir a revista trimestral desta Sala? O arquivo também será apagado do Google Drive.")) return;
-        btnRemover.disabled = true;
-        try {
-          if (dados.revistaPdfDriveId) {
-            try { await removerArquivoDoDrive(dados.revistaPdfDriveId); } catch (e) { console.error(e); }
-          }
-          await updateDoc(doc(db, "licoes", salaId + "_" + ano + "_" + trimestre), {
-            revistaPdfNome: "",
-            revistaPdfUrl: "",
-            revistaPdfDriveId: ""
-          });
-          await carregarArquivosSala();
-        } catch (err) {
-          alert("Não foi possível excluir a revista. " + (err.message || ""));
-          console.error(err);
-          btnRemover.disabled = false;
-        }
+    // Tipo do arquivo: ícone e rótulo do quadrado (PDF, imagem, vídeo etc.)
+    function infoArquivo(nome, tipoLink) {
+      if (tipoLink === "link") return { icone: "🔗", rotulo: "LINK" };
+      const ext = (nome || "").includes(".") ? nome.split(".").pop().toLowerCase() : "";
+      if (ext === "pdf") return { icone: "PDF", rotulo: "PDF", classe: "is-pdf" };
+      if (["jpg", "jpeg", "png", "webp", "gif", "bmp"].includes(ext)) return { icone: "🖼️", rotulo: "IMAGEM" };
+      if (["mp4", "mov", "avi", "webm", "mkv"].includes(ext)) return { icone: "🎬", rotulo: "VÍDEO" };
+      if (["mp3", "wav", "ogg", "m4a", "aac", "flac"].includes(ext)) return { icone: "🎵", rotulo: "ÁUDIO" };
+      if (["ppt", "pptx"].includes(ext)) return { icone: "📊", rotulo: "SLIDES" };
+      if (["doc", "docx"].includes(ext)) return { icone: "📝", rotulo: "DOCUMENTO" };
+      if (["xls", "xlsx", "csv"].includes(ext)) return { icone: "📈", rotulo: "PLANILHA" };
+      return { icone: "📎", rotulo: "ARQUIVO" };
+    }
+
+    const ROTULOS_PERFIL_ARQUIVO = { admin: "Administrador Master", professor: "Professor", aluno: "Aluno", administrativo: "Administrativo", convidado: "Convidado" };
+
+    // O link de download do Drive baixa o arquivo; a página /view abre no navegador
+    function urlParaAbrir(driveFileId, url) {
+      return driveFileId ? "https://drive.google.com/file/d/" + driveFileId + "/view" : url;
+    }
+
+    function formatarRegistro(ms) {
+      if (!ms) return { data: "Não registrado", hora: "" };
+      const d = new Date(ms);
+      return {
+        data: d.toLocaleDateString("pt-BR"),
+        hora: d.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })
+      };
+    }
+
+    const arquivoDetalheModal = document.getElementById("arquivoDetalheModal");
+
+    function abrirDetalhesArquivo(d) {
+      const lista = document.getElementById("arquivoDetalheLista");
+      lista.innerHTML = "";
+      const registro = formatarRegistro(d.ms);
+      const linhas = [
+        ["Nome", d.titulo],
+        ["Arquivo", d.arquivo],
+        ["Tipo", d.tipo],
+        ["Aula", d.aula],
+        ["Enviado por", d.enviadoPorNome || "Não registrado"],
+        ["Perfil", d.enviadoPorPerfil ? (ROTULOS_PERFIL_ARQUIVO[d.enviadoPorPerfil] || d.enviadoPorPerfil) : "Não registrado"],
+        ["Data", registro.data],
+        ["Horário", registro.hora]
+      ];
+      if (d.comentario) linhas.push(["Comentários", d.comentario]);
+      linhas.forEach(([rotulo, valor]) => {
+        const dt = document.createElement("dt");
+        dt.textContent = rotulo;
+        const dd = document.createElement("dd");
+        dd.textContent = valor || "—";
+        lista.append(dt, dd);
       });
-      item.appendChild(btnRemover);
-      item.appendChild(info);
-      return item;
+      document.getElementById("arquivoDetalheAbrir").href = d.urlAbrir;
+      arquivoDetalheModal.hidden = false;
+      requestAnimationFrame(() => arquivoDetalheModal.classList.add("is-open"));
+    }
+
+    function fecharDetalhesArquivo() {
+      arquivoDetalheModal.classList.remove("is-open");
+      setTimeout(() => { arquivoDetalheModal.hidden = true; }, 200);
+    }
+
+    document.getElementById("arquivoDetalheFechar").addEventListener("click", fecharDetalhesArquivo);
+    document.getElementById("arquivoDetalheVoltar").addEventListener("click", fecharDetalhesArquivo);
+    arquivoDetalheModal.addEventListener("click", (e) => { if (e.target === arquivoDetalheModal) fecharDetalhesArquivo(); });
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !arquivoDetalheModal.hidden) fecharDetalhesArquivo(); });
+
+    // Quadrado: clicar abre o arquivo; ⓘ mostra quem enviou; × só quando a pessoa pode excluir
+    function criarTileArquivo({ titulo, nome, tipoLink, url, driveFileId, detalhes, podeExcluir, onRemover }) {
+      const tile = document.createElement("div");
+      tile.className = "arquivo-tile";
+      const tituloEl = document.createElement("div");
+      tituloEl.className = "arquivo-tile-titulo";
+      tituloEl.textContent = titulo;
+      const abrirUrl = urlParaAbrir(driveFileId, url);
+      const quadrado = document.createElement("a");
+      quadrado.className = "arquivo-tile-quadrado";
+      quadrado.href = abrirUrl;
+      quadrado.target = "_blank";
+      quadrado.rel = "noopener";
+      quadrado.title = titulo;
+      const info = infoArquivo(nome, tipoLink);
+      const icone = document.createElement("span");
+      icone.className = "arquivo-tile-icone" + (info.classe ? " " + info.classe : "");
+      icone.textContent = info.icone;
+      const rotulo = document.createElement("span");
+      rotulo.className = "arquivo-tile-rotulo";
+      rotulo.textContent = nome || info.rotulo;
+      rotulo.title = nome || info.rotulo;
+      quadrado.append(icone, rotulo);
+      tile.append(tituloEl, quadrado);
+
+      const btnInfo = document.createElement("button");
+      btnInfo.type = "button";
+      btnInfo.className = "arquivo-tile-info";
+      btnInfo.textContent = "i";
+      btnInfo.title = "Detalhes do arquivo";
+      btnInfo.setAttribute("aria-label", "Detalhes do arquivo");
+      btnInfo.addEventListener("click", () => abrirDetalhesArquivo(Object.assign({
+        titulo: titulo,
+        arquivo: nome,
+        tipo: info.rotulo,
+        urlAbrir: abrirUrl
+      }, detalhes)));
+      tile.appendChild(btnInfo);
+
+      if (podeExcluir && onRemover) {
+        const btnRemover = document.createElement("button");
+        btnRemover.type = "button";
+        btnRemover.className = "arquivo-tile-remover";
+        btnRemover.textContent = "×";
+        btnRemover.title = "Remover";
+        btnRemover.addEventListener("click", onRemover);
+        tile.appendChild(btnRemover);
+      }
+      return tile;
     }
 
     async function carregarArquivosSala() {
@@ -6198,7 +6250,6 @@
         const trimestreRevista = Math.floor(agora.getMonth() / 3) + 1;
         const docRevista = await getDoc(doc(db, "licoes", salaId + "_" + anoRevista + "_" + trimestreRevista));
         const revistaDados = docRevista.exists() ? docRevista.data() : null;
-        const temRevista = !!(revistaDados && revistaDados.revistaPdfUrl);
         const licoesDoTrimestre = revistaDados && Array.isArray(revistaDados.licoes) ? revistaDados.licoes : [];
         const aulaSelect = document.getElementById("arquivoSalaAula");
         if (aulaSelect) {
@@ -6218,63 +6269,193 @@
           const [, mes, dia] = aula.split("-");
           return `Lição ${idx + 1} · ${dia}/${mes}`;
         };
-        if (temRevista) arquivosSalaLista.appendChild(criarItemRevista(revistaDados, salaId, anoRevista, trimestreRevista));
-        if (!arquivos.length && !temRevista) {
-          arquivosSalaLista.innerHTML = '<div class="admin-agenda-vazio">Nenhum arquivo enviado ainda.</div>';
+
+        // Revistas da Sala (enviadas em Gerenciar Lições): fixas, nunca excluídas aqui
+        if (revistaDados && revistaDados.revistaPdfUrl) {
+          const quem = revistaDados.revistaPdfEnviadoPor || {};
+          arquivosSalaLista.appendChild(criarTileArquivo({
+            titulo: "Revista da Sala", nome: revistaDados.revistaPdfNome || "revista.pdf",
+            url: revistaDados.revistaPdfUrl, driveFileId: revistaDados.revistaPdfDriveId,
+            detalhes: { aula: "Trimestre inteiro", enviadoPorNome: quem.nome, enviadoPorPerfil: quem.perfil, ms: quem.ms },
+            podeExcluir: false
+          }));
+        }
+        if (revistaDados && revistaDados.revistaProUrl) {
+          const quem = revistaDados.revistaProEnviadoPor || {};
+          arquivosSalaLista.appendChild(criarTileArquivo({
+            titulo: "Revista do professor", nome: revistaDados.revistaProNome || "revista.pdf",
+            url: revistaDados.revistaProUrl, driveFileId: revistaDados.revistaProDriveId,
+            detalhes: { aula: "Trimestre inteiro", enviadoPorNome: quem.nome, enviadoPorPerfil: quem.perfil, ms: quem.ms },
+            podeExcluir: false
+          }));
+        }
+
+        // Arquivos da sala: só exclui quem enviou (ou o administrador)
+        const perfilVisor = (usuarioAtualCache && usuarioAtualCache.perfil) || "convidado";
+        const uidVisor = usuarioAtualCache && usuarioAtualCache.uid;
+        const podeExcluirArquivo = (a) => perfilVisor === "admin" || (!!uidVisor && a.enviadoPorUid === uidVisor);
+
+        if (!arquivos.length && !(revistaDados && (revistaDados.revistaPdfUrl || revistaDados.revistaProUrl))) {
+          arquivosSalaLista.innerHTML = '<div class="admin-agenda-vazio arquivos-vazio">Nenhum arquivo enviado ainda.</div>';
         } else {
           arquivos.forEach((a) => {
-            const item = document.createElement("div");
-            item.className = "admin-perfis-item";
-            const info = document.createElement("div");
-            info.className = "admin-perfis-item-info";
-            const link = document.createElement("a");
-            link.href = a.url;
-            link.target = "_blank";
-            link.rel = "noopener";
-            link.className = "admin-perfis-item-nome";
-            link.textContent = a.nome || "arquivo";
-            info.appendChild(link);
-            const aulaSub = document.createElement("span");
-            aulaSub.className = "admin-perfis-item-sub";
-            aulaSub.textContent = rotuloAula(a.aula);
-            info.appendChild(aulaSub);
-            const btnRemover = document.createElement("button");
-            btnRemover.type = "button";
-            btnRemover.className = "admin-perfis-item-remover";
-            btnRemover.textContent = "×";
-            btnRemover.title = "Remover arquivo";
-
-            btnRemover.addEventListener("click", async () => {
-              btnRemover.disabled = true;
-              try {
-                if (a.driveFileId) {
-                  try { await removerArquivoDoDrive(a.driveFileId); } catch (e) { console.error(e); }
+            arquivosSalaLista.appendChild(criarTileArquivo({
+              titulo: a.titulo || a.nome || "Arquivo",
+              nome: a.nome,
+              tipoLink: a.tipo,
+              url: a.url,
+              driveFileId: a.driveFileId,
+              detalhes: {
+                aula: rotuloAula(a.aula),
+                comentario: a.comentario,
+                enviadoPorNome: a.enviadoPorNome,
+                enviadoPorPerfil: a.enviadoPorPerfil,
+                ms: a.criadoEmMs
+              },
+              podeExcluir: podeExcluirArquivo(a),
+              onRemover: async (e) => {
+                const btn = e.currentTarget;
+                btn.disabled = true;
+                try {
+                  if (a.driveFileId) {
+                    try { await removerArquivoDoDrive(a.driveFileId); } catch (err) { console.error(err); }
+                  }
+                  await updateDoc(doc(db, "arquivosSala", a.id), { ativo: false });
+                  await carregarArquivosSala();
+                } catch (err) {
+                  arquivoSalaStatus.textContent = "Não foi possível remover. " + (err.message || "");
+                  arquivoSalaStatus.className = "admin-agenda-status erro";
+                  console.error(err);
+                  btn.disabled = false;
                 }
-                await updateDoc(doc(db, "arquivosSala", a.id), { ativo: false });
-                await carregarArquivosSala();
-              } catch (err) {
-                arquivoSalaStatus.textContent = "Não foi possível remover. " + (err.message || "");
-                arquivoSalaStatus.className = "admin-agenda-status erro";
-                console.error(err);
-                btnRemover.disabled = false;
               }
-            });
-            item.appendChild(btnRemover);
-            item.appendChild(info);
-            arquivosSalaLista.appendChild(item);
+            }));
           });
         }
       } catch (err) {
-        arquivosSalaLista.innerHTML = '<div class="admin-agenda-vazio">Não foi possível carregar os arquivos.</div>';
+        arquivosSalaLista.innerHTML = '<div class="admin-agenda-vazio arquivos-vazio">Não foi possível carregar os arquivos.</div>';
         console.error(err);
       }
     }
 
-    btnEnviarArquivo.addEventListener("click", async () => {
+    const arquivoModal = document.getElementById("arquivoModal");
+    const arquivoModalForm = document.getElementById("arquivoModalForm");
+    const arquivoModalMensagem = document.getElementById("arquivoModalMensagem");
+    const btnArquivoModalSalvar = document.getElementById("arquivoModalSalvar");
+
+    function abrirModalArquivo() {
+      arquivoModalMensagem.textContent = "";
+      arquivoModal.hidden = false;
+      requestAnimationFrame(() => arquivoModal.classList.add("is-open"));
+      document.getElementById("arquivoSalaTitulo").focus();
+    }
+
+    function fecharModalArquivo() {
+      arquivoModal.classList.remove("is-open");
+      setTimeout(() => { arquivoModal.hidden = true; }, 200);
+    }
+
+    // Guardar (botão laranja): só abre a janela se houver arquivo escolhido
+    btnEnviarArquivo.addEventListener("click", () => {
+      arquivoSalaStatus.textContent = "";
+      if (!(arquivoSalaInput.files && arquivoSalaInput.files[0]) || !seletor.value) {
+        arquivoSalaStatus.textContent = "Escolha um arquivo antes de guardar.";
+        arquivoSalaStatus.className = "admin-agenda-status erro";
+        return;
+      }
+      abrirModalArquivo();
+    });
+
+    // Adicionar link: janela com nome, endereço e comentários
+    const linkModal = document.getElementById("linkModal");
+    const linkModalForm = document.getElementById("linkModalForm");
+    const linkModalMensagem = document.getElementById("linkModalMensagem");
+    const btnLinkSalvar = document.getElementById("linkModalSalvar");
+
+    function abrirModalLink() {
+      if (!seletor.value) {
+        arquivoSalaStatus.textContent = "Escolha uma sala antes de adicionar um link.";
+        arquivoSalaStatus.className = "admin-agenda-status erro";
+        return;
+      }
+      ["linkNome", "linkEndereco", "linkComentario"].forEach((id) => { document.getElementById(id).value = ""; });
+      linkModalMensagem.textContent = "";
+      linkModal.hidden = false;
+      requestAnimationFrame(() => linkModal.classList.add("is-open"));
+      document.getElementById("linkEndereco").focus();
+    }
+
+    function fecharModalLink() {
+      linkModal.classList.remove("is-open");
+      setTimeout(() => { linkModal.hidden = true; }, 200);
+    }
+
+    document.getElementById("btnAdicionarLink").addEventListener("click", abrirModalLink);
+    document.getElementById("linkModalFechar").addEventListener("click", fecharModalLink);
+    document.getElementById("linkModalCancelar").addEventListener("click", fecharModalLink);
+    linkModal.addEventListener("click", (e) => { if (e.target === linkModal) fecharModalLink(); });
+
+    linkModalForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      linkModalMensagem.textContent = "";
+      let endereco = document.getElementById("linkEndereco").value.trim();
+      if (!/^https?:\/\//i.test(endereco)) endereco = "https://" + endereco;
+      try { new URL(endereco); } catch (err) {
+        linkModalMensagem.textContent = "Digite um endereço válido, como https://www.exemplo.com.br";
+        return;
+      }
+      const titulo = document.getElementById("linkNome").value.trim();
+      const comentario = document.getElementById("linkComentario").value.trim();
+      const agora = new Date();
+      btnLinkSalvar.disabled = true;
+      try {
+        await setDoc(doc(collection(db, "arquivosSala")), {
+          salaId: seletor.value,
+          periodo: agora.getFullYear() + "_" + (Math.floor(agora.getMonth() / 3) + 1),
+          aula: arquivoSalaAula.value || "trimestre",
+          nome: titulo || endereco,
+          titulo: titulo,
+          comentario: comentario,
+          url: endereco,
+          tipo: "link",
+          driveFileId: "",
+          ativo: true,
+          enviadoPorUid: usuarioAtualCache.uid,
+          enviadoPorNome: usuarioAtualCache.nome || usuarioAtualCache.email || "",
+          enviadoPorPerfil: (usuarioAtualCache && usuarioAtualCache.perfil) || "convidado",
+          criadoEm: serverTimestamp(),
+          criadoEmMs: Date.now()
+        });
+        fecharModalLink();
+        arquivoSalaStatus.textContent = "Link guardado com sucesso.";
+        arquivoSalaStatus.className = "admin-agenda-status ok";
+        await carregarArquivosSala();
+      } catch (err) {
+        linkModalMensagem.textContent = "Não foi possível guardar. " + (err.message || "");
+        console.error(err);
+      } finally {
+        btnLinkSalvar.disabled = false;
+      }
+    });
+
+    document.getElementById("arquivoModalFechar").addEventListener("click", fecharModalArquivo);
+    document.getElementById("arquivoModalCancelar").addEventListener("click", fecharModalArquivo);
+    arquivoModal.addEventListener("click", (e) => { if (e.target === arquivoModal) fecharModalArquivo(); });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && !arquivoModal.hidden) fecharModalArquivo();
+      if (e.key === "Escape" && !linkModal.hidden) fecharModalLink();
+    });
+
+    // Salvar (janela): faz o envio com os campos preenchidos
+    arquivoModalForm.addEventListener("submit", (e) => { e.preventDefault(); guardarArquivo(); });
+
+    async function guardarArquivo() {
       const arquivo = arquivoSalaInput.files && arquivoSalaInput.files[0];
       const salaId = seletor.value;
       if (!arquivo || !salaId) return;
       btnEnviarArquivo.disabled = true;
+      btnArquivoModalSalvar.disabled = true;
+      arquivoModalMensagem.textContent = "";
       arquivoSalaStatus.textContent = "Conectando ao Google Drive...";
       arquivoSalaStatus.className = "admin-agenda-status";
       try {
@@ -6286,27 +6467,33 @@
           periodo: agoraArquivo.getFullYear() + "_" + (Math.floor(agoraArquivo.getMonth() / 3) + 1),
           aula: document.getElementById("arquivoSalaAula").value || "trimestre",
           nome: arquivo.name,
+          titulo: document.getElementById("arquivoSalaTitulo").value.trim(),
+          comentario: document.getElementById("arquivoSalaComentario").value.trim(),
           url: resultado.url,
           driveFileId: resultado.driveFileId,
           ativo: true,
           enviadoPorUid: usuarioAtualCache.uid,
           enviadoPorNome: usuarioAtualCache.nome || usuarioAtualCache.email || "",
+          enviadoPorPerfil: (usuarioAtualCache && usuarioAtualCache.perfil) || "convidado",
           criadoEm: serverTimestamp(),
           criadoEmMs: Date.now()
         });
         arquivoSalaInput.value = "";
+        document.getElementById("arquivoSalaTitulo").value = "";
+        document.getElementById("arquivoSalaComentario").value = "";
         if (arquivoSalaNomeEscolhido) arquivoSalaNomeEscolhido.textContent = "";
-        arquivoSalaStatus.textContent = "Arquivo enviado com sucesso.";
+        arquivoSalaStatus.textContent = "Arquivo guardado com sucesso.";
         arquivoSalaStatus.className = "admin-agenda-status ok";
+        fecharModalArquivo();
         await carregarArquivosSala();
       } catch (err) {
-        arquivoSalaStatus.textContent = "Não foi possível enviar. " + (err.message || "");
-        arquivoSalaStatus.className = "admin-agenda-status erro";
+        arquivoModalMensagem.textContent = "Não foi possível guardar. " + (err.message || "");
         console.error(err);
       } finally {
         btnEnviarArquivo.disabled = false;
+        btnArquivoModalSalvar.disabled = false;
       }
-    });
+    }
 
     async function carregarRelatorio(salaId, data) {
       if (!salaId || !data) return;
@@ -6627,6 +6814,26 @@
       campoEmail.readOnly = modoAtual !== "criar";
       stepIndicador.hidden = modoAtual === "editar";
       if (!stepIndicador.hidden) stepIndicador.textContent = "Passo " + wizardPasso + " de 3";
+      // No Google, o bloco Nome/Sobrenome só aparece se faltar algum dos dois
+      if (modoAtual === "completar-google") {
+        const grupoNome = document.getElementById("perfilNomeGrupo");
+        const completo = campoNome.value.trim() && campoSobrenome.value.trim();
+        grupoNome.hidden = ctx !== "step2" || !!completo;
+      }
+      atualizarIdade();
+    }
+
+    function atualizarIdade() {
+      const elIdade = document.getElementById("perfilIdade");
+      const iso = dataBrParaIso(campoDataNascimento.value);
+      const nasc = iso ? new Date(iso + "T00:00:00") : null;
+      if (!nasc || isNaN(nasc)) { elIdade.hidden = true; return; }
+      const hoje = new Date();
+      let idade = hoje.getFullYear() - nasc.getFullYear();
+      const mes = hoje.getMonth() - nasc.getMonth();
+      if (mes < 0 || (mes === 0 && hoje.getDate() < nasc.getDate())) idade--;
+      elIdade.textContent = "Idade: " + idade + " anos";
+      elIdade.hidden = idade < 0 || !elIdade.dataset.show.split(" ").includes(contextoAtual());
     }
 
     function limparFormulario() {
@@ -6637,21 +6844,24 @@
     }
 
     function coletarDadosPessoais() {
-      return {
+      const endereco = {
+        cep: campoCep.value.trim(),
+        rua: campoRua.value.trim(),
+        numero: campoNumero.value.trim(),
+        complemento: campoComplemento.value.trim(),
+        bairro: campoBairro.value.trim(),
+        cidade: campoCidade.value.trim()
+      };
+      const dados = {
         usuario: campoUsuario.value.trim(),
         nome: campoNome.value.trim(),
         sobrenome: campoSobrenome.value.trim(),
         telefone: campoTelefone.value.trim(),
-        dataNascimento: dataBrParaIso(campoDataNascimento.value),
-        endereco: {
-          cep: campoCep.value.trim(),
-          rua: campoRua.value.trim(),
-          numero: campoNumero.value.trim(),
-          complemento: campoComplemento.value.trim(),
-          bairro: campoBairro.value.trim(),
-          cidade: campoCidade.value.trim()
-        }
+        dataNascimento: dataBrParaIso(campoDataNascimento.value)
       };
+      // Endereço é opcional no cadastro: só grava se algum campo foi preenchido
+      if (Object.values(endereco).some(Boolean)) dados.endereco = endereco;
+      return dados;
     }
 
     function abrirModal(modo, dadosGoogle) {
@@ -6681,7 +6891,9 @@
       } else if (modoAtual === "completar-google") {
         titulo.innerHTML = '<span class="dot"></span>Complete seu Cadastro';
         tipoLabel.hidden = true;
-        campoNome.value = (dadosGoogle && dadosGoogle.nome) || "";
+        const partesNome = ((dadosGoogle && dadosGoogle.nome) || "").trim().split(/\s+/);
+        campoNome.value = partesNome[0] || "";
+        campoSobrenome.value = partesNome.slice(1).join(" ");
         campoEmail.value = (dadosGoogle && dadosGoogle.email) || "";
         fotoBase64Atual = (dadosGoogle && dadosGoogle.foto) || "";
         fotoPreview.src = fotoBase64Atual || FOTO_PADRAO;
@@ -6729,6 +6941,7 @@
       if (digitos.length > 2) formatado += "/" + digitos.slice(2, 4);
       if (digitos.length > 4) formatado += "/" + digitos.slice(4, 8);
       campoDataNascimento.value = formatado;
+      atualizarIdade();
     });
 
     // Foto: comprime a imagem num quadrado pequeno e guarda como base64
@@ -6864,6 +7077,10 @@
       const senha = campoSenha.value;
       const confirmar = campoSenhaConfirmar.value;
 
+      if (!campoNome.value.trim()) {
+        mensagemEl.textContent = "Preencha ao menos o nome.";
+        return;
+      }
       if (!email || !senha) {
         mensagemEl.textContent = "Preencha e-mail e senha.";
         return;
@@ -6882,13 +7099,15 @@
         const cred = await createUserWithEmailAndPassword(auth, email, senha);
         await setDoc(doc(db, "usuarios", cred.user.uid), {
           email: email,
+          nome: campoNome.value.trim(),
+          sobrenome: campoSobrenome.value.trim(),
           perfil: "convidado",
           ativo: true,
           criadoEm: serverTimestamp()
         });
         wizardPasso = 2;
         aplicarVisibilidade();
-        campoNome.focus();
+        campoDataNascimento.focus();
       } catch (err) {
         if (err.code === "auth/email-already-in-use") {
           mensagemEl.textContent = "Esse e-mail já tem uma conta. Tente entrar em vez de criar uma nova.";
@@ -6905,7 +7124,7 @@
       }
     });
 
-    // Passo 2: dados pessoais (Nome, Sobrenome, Telefone, Endereço).
+    // Passo 2: data de nascimento e telefone. Endereço fica em Meu Perfil.
     btnVoltar2.addEventListener("click", () => {
       wizardPasso = 1;
       aplicarVisibilidade();
@@ -6914,10 +7133,6 @@
     btnAvancar2.addEventListener("click", async () => {
       mensagemEl.textContent = "";
       const dadosPerfil = coletarDadosPessoais();
-      if (!dadosPerfil.nome) {
-        mensagemEl.textContent = "Preencha ao menos o nome.";
-        return;
-      }
       btnAvancar2.disabled = true;
       try {
         await setDoc(doc(db, "usuarios", auth.currentUser.uid), dadosPerfil, { merge: true });

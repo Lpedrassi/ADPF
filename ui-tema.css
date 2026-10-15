@@ -916,3 +916,315 @@ body::after {
   .nav-links.aberto .nav-admin-toggle::after { content: "›"; float: right; transition: transform 0.2s ease; }
   .nav-links.aberto .nav-admin-toggle.open::after { transform: rotate(90deg); }
 }
+
+/* Botão Voltar do cadastro some quando o .btn tem display próprio (regra de hidden) */
+#perfilBtnVoltar2[hidden] { display: none !important; }
+
+/* Lista do combobox (Trimestre/Aula) deve aparecer por cima do card seguinte (Recursos Disponíveis).
+   Cada card é um contexto de empilhamento (backdrop-filter), então o card que tem a lista aberta sobe. */
+#areaAluno .aluno-card { position: relative; }
+#areaAluno .aluno-card:focus-within,
+#areaAluno .aluno-card:has(.combo-dep-lista:not([hidden])) { z-index: 20; }
+
+/* ---------- Sala de Aula: revista na mesma tela e arquivos em quadrados ---------- */
+#areaAluno .aluno-sala-detalhe strong {
+  display: inline;
+  font-size: inherit;
+  margin-right: 4px;
+}
+#areaAluno .aluno-sala-cabecalho .btn-admin { white-space: nowrap; }
+#areaAluno .aluno-card-revista .aluno-leitor-barra { margin-top: 10px; }
+#areaAluno .aluno-arquivos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 14px;
+  margin-top: 10px;
+}
+#areaAluno .aluno-arquivo-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+#areaAluno .aluno-arquivo-titulo {
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--ink);
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+#areaAluno .aluno-arquivo-canvas {
+  aspect-ratio: 1 / 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border-radius: 14px;
+  border: 1px solid var(--border-strong);
+  background: rgba(9,9,14,0.6);
+  text-decoration: none;
+  color: var(--ink);
+  transition: border-color .2s, transform .15s;
+}
+#areaAluno .aluno-arquivo-canvas:hover {
+  border-color: var(--laranja);
+  transform: translateY(-2px);
+}
+#areaAluno .aluno-arquivo-icone { font-size: 40px; line-height: 1; }
+#areaAluno .aluno-arquivo-tipo {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+#areaAluno .aluno-arquivo-comentario {
+  font-size: 12px;
+  color: var(--muted);
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+/* Revista: avançar e voltar clicando nas laterais do PDF (sem botões fora da página) */
+#areaAluno .aluno-leitor-area { position: relative; }
+#areaAluno .aluno-leitor-zona {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  margin: 0;
+  padding: 0 12px;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+#areaAluno .aluno-leitor-zona-anterior { left: 0; justify-content: flex-start; }
+#areaAluno .aluno-leitor-zona-proxima { right: 0; justify-content: flex-end; }
+#areaAluno .aluno-leitor-zona span {
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(9,9,14,0.75);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  opacity: 0;
+  transition: opacity .2s ease;
+  pointer-events: none;
+}
+#areaAluno .aluno-leitor-zona:hover:not(:disabled) span,
+#areaAluno .aluno-leitor-zona:focus-visible span { opacity: 1; }
+#areaAluno .aluno-leitor-zona:disabled { cursor: default; }
+#areaAluno .aluno-leitor-zona:disabled span { display: none; }
+@media (hover: none) {
+  #areaAluno .aluno-leitor-zona:not(:disabled) span { opacity: .8; }
+}
+#areaAluno .aluno-card-revista .aluno-leitor-barra { justify-content: center; margin-top: 0; }
+
+/* Todo combobox mostra a seta para baixo, indicando que é um campo de seleção */
+.combo-dep-atual {
+  position: relative;
+  padding-right: 42px;
+}
+.combo-dep-atual::after {
+  content: "";
+  position: absolute;
+  right: 18px;
+  top: 50%;
+  width: 7px;
+  height: 7px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: translateY(-70%) rotate(45deg);
+  opacity: 0.85;
+  pointer-events: none;
+  transition: transform .2s ease;
+}
+.combo-dep-atual[aria-expanded="true"]::after {
+  transform: translateY(-30%) rotate(225deg);
+}
+
+/* ---------- Bíblia na Sala de Aula ---------- */
+#areaAluno .aluno-card-biblia .aluno-card-content { min-width: 0; }
+#areaAluno .biblia-seletores {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 6px 10px;
+}
+@media (min-width: 561px) {
+  #areaAluno .biblia-seletores { grid-template-columns: 2fr 1fr 1fr; }
+}
+#areaAluno .biblia-texto {
+  margin-top: 12px;
+  max-height: 420px;
+  overflow-y: auto;
+  padding: 14px;
+  border-radius: 12px;
+  border: 1px solid var(--border-strong);
+  background: rgba(9,9,14,0.6);
+  color: var(--ink);
+  font-size: 15px;
+  line-height: 1.75;
+}
+#areaAluno .biblia-texto:empty { display: none; }
+#areaAluno .biblia-versiculo { margin: 0 0 8px; border-radius: 8px; padding: 2px 4px; cursor: pointer; }
+#areaAluno .biblia-versiculo sup { font-size: 11px; color: var(--muted); }
+#areaAluno .biblia-versiculo.is-destacado {
+  font-weight: 800;
+  color: var(--ink);
+  background: linear-gradient(90deg, rgba(57,255,20,0.22), rgba(57,255,20,0.08));
+  box-shadow: 0 0 14px rgba(57,255,20,0.18), inset 0 0 0 1px rgba(57,255,20,0.25);
+  text-shadow: 0 0 8px rgba(57,255,20,0.35);
+}
+
+/* Professor: botões de arquivo centralizados abaixo da aula */
+.arquivo-acoes {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin: 10px 0;
+}
+
+/* Professor: mensagens de status dentro de um quadro de vidro */
+#canvasPainelArquivos #arquivoSalaStatus {
+  margin: 10px 0;
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--border-strong);
+  background: rgba(9,9,14,0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  line-height: 1.5;
+}
+#canvasPainelArquivos #arquivoSalaStatus:empty { display: none; }
+
+/* Professor: arquivos e revistas em quadrados pequenos */
+.arquivos-prof-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 16px;
+  margin-top: 12px;
+}
+.arquivos-prof-grid .arquivos-vazio { grid-column: 1 / -1; }
+.arquivo-tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+.arquivo-tile-titulo {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+.arquivo-tile-quadrado {
+  aspect-ratio: 1 / 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border-radius: 14px;
+  border: 1px solid var(--border-strong);
+  background: rgba(9,9,14,0.6);
+  color: var(--ink);
+  text-decoration: none;
+  transition: border-color .2s, transform .15s;
+}
+.arquivo-tile-quadrado:hover { border-color: var(--laranja); transform: translateY(-2px); }
+.arquivo-tile-icone { font-size: 36px; line-height: 1; }
+.arquivo-tile-icone.is-pdf {
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: #E11D2E;
+  color: #fff;
+}
+.arquivo-tile-rotulo {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+.arquivo-tile-remover {
+  position: absolute;
+  top: 26px;
+  right: 6px;
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  border: 1px solid var(--border-strong);
+  background: rgba(9,9,14,0.85);
+  color: var(--ink);
+  cursor: pointer;
+  line-height: 1;
+}
+.arquivo-tile-remover:hover { border-color: var(--vermelho); color: var(--vermelho); }
+
+/* Professor: texto da área de arquivos afastado da borda do quadro */
+#canvasPainelArquivos { padding: 22px 26px; }
+#canvasPainelArquivos > h4,
+#canvasPainelArquivos > .admin-agenda-info,
+#canvasPainelArquivos > .admin-form-linha,
+#canvasPainelArquivos > .arquivo-acoes { margin-left: 0; margin-right: 0; }
+#canvasPainelArquivos .arquivo-aula-rotulo { display: block; margin-top: 8px; }
+
+/* Quadrados alinhados: título com altura fixa (2 linhas), nome do arquivo com até 2 linhas */
+.arquivo-tile-titulo {
+  height: 2.8em;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  text-align: center;
+  line-height: 1.4;
+}
+.arquivo-tile-rotulo {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  max-width: 92%;
+  text-align: center;
+  line-height: 1.3;
+  color: var(--ink);
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  font-size: 11px;
+}
+
+/* Professor: botão ⓘ (detalhes) no canto do quadrado, e lista de detalhes */
+.arquivo-tile-info {
+  position: absolute;
+  top: 26px;
+  left: 6px;
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  border: 1px solid var(--border-strong);
+  background: rgba(9,9,14,0.85);
+  color: var(--ink);
+  font-family: Georgia, serif;
+  font-style: italic;
+  font-weight: 700;
+  cursor: pointer;
+  line-height: 1;
+}
+.arquivo-tile-info:hover { border-color: var(--laranja); color: var(--laranja); }
+.arquivo-detalhe-lista {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: 8px 14px;
+  margin: 12px 0 18px;
+}
+.arquivo-detalhe-lista dt { color: var(--muted); font-size: 13px; font-weight: 700; }
+.arquivo-detalhe-lista dd { margin: 0; color: var(--ink); overflow-wrap: anywhere; font-size: 14px; }
