@@ -12,7 +12,7 @@ const SEED_NOTICIAS = [
     title: "Feliz Dia do Pastor",
     desc: "14 de junho — homenagem da congregação do Florianópolis ao Pr. Pedro Nascimento.",
     link: "",
-    image: "noticia-dia-do-pastor.jpg",
+    image: "noticia-dia-do-pastor.webp",
     criadoEm: new Date("2026-06-14")
   },
   {
@@ -21,7 +21,7 @@ const SEED_NOTICIAS = [
     title: "Pré-Congresso Renascer em Cristo 2026",
     desc: "01 e 02 de agosto, às 18h — Pecado, Justiça e Juízo.",
     link: "",
-    image: "noticia-pre-congresso-renascer.jpg",
+    image: "noticia-pre-congresso-renascer.webp",
     criadoEm: new Date("2026-08-01")
   },
   {
@@ -30,7 +30,7 @@ const SEED_NOTICIAS = [
     title: "Cristo em Mim",
     desc: "Pré-congresso de adolescentes do Grupo Manancial — 11 e 12 de abril, às 18h.",
     link: "",
-    image: "noticia-cristo-em-mim.jpg",
+    image: "noticia-cristo-em-mim.webp",
     criadoEm: new Date("2026-04-11")
   },
   {
@@ -39,7 +39,7 @@ const SEED_NOTICIAS = [
     title: "Culto da Gratidão",
     desc: "28 de dezembro, às 18h.",
     link: "",
-    image: "noticia-culto-gratidao.jpg",
+    image: "noticia-culto-gratidao.webp",
     criadoEm: new Date("2026-12-28")
   }
 ];

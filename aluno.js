@@ -140,7 +140,10 @@ async function carregarAulasDoTrimestre() {
   if (!salaIdAluno) return; // sem turma: a mensagem já está na tela
 
   try {
-    const licaoSnap = await getDoc(doc(db, "licoes", `${salaIdAluno}_${ANO}_${trimestre}`));
+    // Lições e PDFs ficam na revista: a sala aponta para ela (sem revista, usa o documento antigo da sala)
+    const salaSnap = await getDoc(doc(db, "salas", salaIdAluno));
+    const revistaIdAluno = salaSnap.exists() ? (salaSnap.data().revistaId || "") : "";
+    const licaoSnap = await getDoc(doc(db, "licoes", `${revistaIdAluno || salaIdAluno}_${ANO}_${trimestre}`));
     const licoes = licaoSnap.exists() && Array.isArray(licaoSnap.data().licoes) ? licaoSnap.data().licoes : [];
     revistaDriveId = licaoSnap.exists() ? (licaoSnap.data().revistaPdfDriveId || "") : "";
 
@@ -161,6 +164,7 @@ async function carregarAulasDoTrimestre() {
       opt.dataset.numero = String(i + 1);
       opt.dataset.titulo = l.titulo || "";
       opt.dataset.data = dataBr;
+      opt.dataset.pagina = String(l.pagina || 1);
       selAula.appendChild(opt);
     });
 
@@ -206,7 +210,9 @@ function abrirSalaDeAula() {
   document.getElementById("alunoSalaAula").hidden = false;
   document.getElementById("areaAluno").scrollIntoView({ behavior: "smooth", block: "start" });
 
-  carregarRevistaDaLicao();
+  // A revista abre na página cadastrada para a lição (1 se a lição não tiver página)
+  const paginaDaLicao = opcao && aulaData ? Number(opcao.dataset.pagina) || 1 : 1;
+  carregarRevistaDaLicao(paginaDaLicao);
   carregarArquivosAula(trimestre, aulaData);
 }
 
@@ -217,7 +223,7 @@ function voltarParaPainel() {
 }
 
 // Revista da lição: abre dentro da Sala de Aula, já na primeira página
-async function carregarRevistaDaLicao() {
+async function carregarRevistaDaLicao(paginaInicial = 1) {
   const status = document.getElementById("alunoLeitorStatus");
   if (leitor) leitor.fechar();
   if (!revistaDriveId) {
@@ -239,7 +245,7 @@ async function carregarRevistaDaLicao() {
 
   try {
     const bytes = await baixarRevistaDoDrive(revistaDriveId);
-    await leitor.abrir(bytes);
+    await leitor.abrir(bytes, paginaInicial);
   } catch (err) {
     console.error("Erro ao abrir revista:", err);
     status.textContent = err.message || "Não foi possível abrir a revista agora.";
@@ -249,6 +255,12 @@ async function carregarRevistaDaLicao() {
 function extensaoDoArquivo(nome) {
   const partes = (nome || "").split(".");
   return partes.length > 1 ? partes.pop().toUpperCase() : "ARQUIVO";
+}
+
+// Código do vídeo do YouTube (watch, youtu.be, shorts, embed, live); vazio se não for YouTube
+function idDoYoutube(url) {
+  const m = String(url || "").trim().match(/^(?:https?:\/\/)?(?:www\.|m\.)?(?:youtube\.com\/(?:watch\?(?:.*&)?v=|shorts\/|embed\/|live\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/i);
+  return m ? m[1] : "";
 }
 
 function iconeDoArquivo(nome) {
@@ -278,7 +290,7 @@ async function carregarArquivosAula(trimestre, aulaData) {
       if (a.periodo && a.periodo !== periodo) return;
       const aula = a.aula || "trimestre";
       if (aula === "trimestre" || (aulaData && aula === aulaData)) {
-        arquivos.push({ id: d.id, nome: a.nome, titulo: a.titulo || "", comentario: a.comentario || "", url: a.url, tipo: a.tipo || "", aula });
+        arquivos.push({ id: d.id, nome: a.nome, titulo: a.titulo || "", comentario: a.comentario || "", url: a.url, tipo: a.tipo || "", driveFileId: a.driveFileId || "", aula });
       }
     });
 
@@ -310,7 +322,30 @@ async function carregarArquivosAula(trimestre, aulaData) {
       const tipo = document.createElement("span");
       tipo.className = "aluno-arquivo-tipo";
       tipo.textContent = a.tipo === "link" ? "LINK" : extensaoDoArquivo(a.nome);
-      quadrado.append(icone, tipo);
+      // PDF no Drive: a miniatura é a primeira página (a capa); sem imagem, fica o ícone
+      let visual = icone;
+      const ytId = idDoYoutube(a.url);
+      if (ytId && a.tipo === "link") {
+        // Link do YouTube: miniatura do próprio vídeo
+        const miniatura = document.createElement("img");
+        miniatura.className = "aluno-arquivo-miniatura";
+        miniatura.alt = "";
+        miniatura.loading = "lazy";
+        miniatura.decoding = "async";
+        miniatura.src = "https://i.ytimg.com/vi/" + ytId + "/mqdefault.jpg";
+        miniatura.onerror = () => miniatura.replaceWith(icone);
+        visual = miniatura;
+      } else if (a.driveFileId && /\.pdf$/i.test(a.nome || "")) {
+        const miniatura = document.createElement("img");
+        miniatura.className = "aluno-arquivo-miniatura";
+        miniatura.alt = "";
+        miniatura.loading = "lazy";
+        miniatura.decoding = "async";
+        miniatura.src = "https://drive.google.com/thumbnail?id=" + encodeURIComponent(a.driveFileId) + "&sz=w240";
+        miniatura.onerror = () => miniatura.replaceWith(icone);
+        visual = miniatura;
+      }
+      quadrado.append(visual, tipo);
 
       item.append(titulo, quadrado);
       if (a.comentario) {

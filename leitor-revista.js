@@ -67,12 +67,13 @@ export function criarLeitor({ area, canvas, status, paginaInfo, btnAnterior, btn
     btnProxima.disabled = pagina >= pdf.numPages;
   }
 
-  async function abrir(bytes) {
+  // paginaInicial: página cadastrada para a lição (Gerenciar Lições); padrão, a primeira
+  async function abrir(bytes, paginaInicial = 1) {
     status.textContent = "Carregando revista...";
     const lib = await carregarPdfJs();
     pdf = await lib.getDocument({ data: bytes }).promise;
     status.textContent = "";
-    await mostrarPagina(1);
+    await mostrarPagina(paginaInicial);
   }
 
   function fechar() {
