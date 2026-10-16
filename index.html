@@ -313,7 +313,6 @@
   .sala-professores-titulo { font-size: 12px; font-weight: 700; color: var(--muted); margin-bottom: 4px; }
   .sala-professores-item { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 6px 10px; background: var(--surface-2); border: 1px solid var(--border-strong); border-radius: 8px; margin-bottom: 4px; font-size: 13px; }
   .sala-professores-remover { background: transparent; border: none; color: var(--vermelho); cursor: pointer; font-size: 14px; line-height: 1; }
-  .sala-professores-checklist { margin-top: 10px; padding: 10px; background: var(--surface-2); border: 1px solid var(--border-strong); border-radius: 8px; }
   .sala-professores-checkbox-linha { display: flex; align-items: center; gap: 6px; padding: 4px 0; font-size: 13px; }
   .sala-professores-checkbox-linha input { width: auto; }
   .escala-linha { display: grid; grid-template-columns: 100px 1fr 1fr 190px; gap: 8px; align-items: center; padding: 8px 10px; border-bottom: 1px solid var(--border-strong); font-size: 13px; }
@@ -1108,22 +1107,18 @@
   .sec-estoque-card-baixo { border-color: var(--vermelho); }
   #areaProfessor .professor-canvas-card { border-color: var(--azul); }
   #areaProfessor .professor-canvas-card.is-ativo { border-color: var(--laranja); background: var(--surface); }
-  .chamada-cabecalho-aula { text-align: center; margin: 6px 0 20px; padding: 20px 16px; border: 1px solid var(--border-strong); border-radius: 14px; background: var(--surface); }
-  .chamada-cabecalho-topo { display: flex; align-items: flex-start; gap: 16px; text-align: center; }
-  .chamada-cabecalho-aula.com-capa .chamada-cabecalho-topo { text-align: left; }
-  .chamada-cabecalho-conteudo { flex: 1; min-width: 0; }
-  .chamada-capa-img { width: 84px; height: auto; border-radius: 8px; flex-shrink: 0; border: 1px solid var(--border-strong); box-shadow: 0 10px 22px -10px rgba(0,0,0,0.65); }
-  .chamada-nome-sala { font-family: "Unbounded", sans-serif; font-weight: 700; font-size: 16px; line-height: 1.4; color: var(--laranja); text-transform: uppercase; }
-  .chamada-data { margin-top: 4px; font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
-  .chamada-divisor { width: 40px; height: 2px; background: var(--laranja); border: none; margin: 14px auto; }
-  .chamada-cabecalho-aula.com-capa .chamada-divisor { display: none; }
-  .chamada-info-bloco { margin-top: 10px; }
-  .chamada-info-label { font-size: 11.5px; font-weight: 600; color: var(--muted); }
-  .chamada-info-titulo { margin-top: 2px; font-weight: 700; font-size: 18px; color: var(--dourado); line-height: 1.35; }
-  .chamada-info-sub { margin-top: 4px; font-size: 13px; color: var(--muted); line-height: 1.4; }
-  .chamada-professor-pill { display: inline-flex; align-items: center; gap: 6px; margin-top: 14px; padding: 8px 14px; border: 1px solid var(--dourado); border-radius: 999px; font-size: 13px; font-weight: 700; color: var(--dourado); }
-  .chamada-professor-pill svg { flex-shrink: 0; width: 15px; height: 15px; }
-  @media (max-width: 560px) { .chamada-nome-sala { font-size: 14px; } .chamada-info-titulo { font-size: 16px; } .chamada-capa-img { width: 64px; } }
+  /* Cabeçalho da Chamada (modelo: pílulas, título da revista, lição e linha divisória) */
+  .chamada-cabecalho-aula { margin: 6px 0 20px; padding: 22px 24px 20px; border: 1px solid var(--border-strong); border-radius: 18px; background: var(--surface); }
+  .chamada-pills { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+  .chamada-pill { display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; border-radius: 999px; font-size: 13px; font-weight: 600; color: var(--ink); background: var(--surface-2); border: 1px solid var(--border-strong); }
+  .chamada-pill svg { flex-shrink: 0; width: 15px; height: 15px; }
+  .chamada-pill-sala { border-color: var(--laranja); color: var(--laranja); background: transparent; text-transform: uppercase; letter-spacing: .02em; }
+  .chamada-titulo-revista { margin-top: 18px; font-weight: 800; font-size: 32px; line-height: 1.2; color: var(--ink); }
+  .chamada-titulo-revista-sub { margin-top: 4px; font-size: 14px; color: var(--muted); }
+  .chamada-licao-linha { margin-top: 8px; font-size: 18px; line-height: 1.4; color: var(--muted); }
+  .chamada-licao-label { font-weight: 700; color: var(--dourado); }
+  .chamada-divisor { height: 1px; background: var(--border-strong); border: none; margin: 18px 0 0; }
+  @media (max-width: 560px) { .chamada-cabecalho-aula { padding: 18px 16px 16px; } .chamada-titulo-revista { font-size: 24px; } .chamada-licao-linha { font-size: 16px; } }
 
   .escala-filtro-linha { align-items: flex-end; flex-wrap: wrap; }
   .escala-filtro { display: flex; flex-direction: column; gap: 8px; flex: 1; min-width: 140px; }
@@ -1138,7 +1133,10 @@
   .escala-stepper button:hover { background: var(--surface-2); border-color: var(--laranja); }
   .escala-stepper span { min-width: 110px; text-align: center; font-family: "Unbounded", sans-serif; font-size: 14px; font-weight: 700; }
   .professor-canvas-sub { font-size: 12px; color: var(--muted); }
-  .professor-canvas-painel { border-top: 1px solid var(--border-strong); padding-top: 16px; margin-top: 4px; }
+  .professor-canvas-painel { border-top: 1px solid var(--border-strong); padding: 20px 22px 22px; margin-top: 4px; }
+  .alunos-sala-nome { text-align: center; margin: 4px 0 6px; font-weight: 700; font-size: 16px; color: var(--laranja); text-transform: uppercase; letter-spacing: .02em; }
+  .alunos-sala-nome:empty { display: none; }
+  @media (max-width: 560px) { .professor-canvas-painel { padding: 16px 16px 18px; } }
   .professor-resumo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 10px; }
   .professor-resumo-card {
     background: var(--surface-2); border: 1px solid var(--border-strong); border-radius: 10px;
@@ -2272,7 +2270,7 @@
     </div>
 
     <div id="professorSalaSeletorWrap" class="admin-form-linha" style="margin-top:14px;" hidden>
-      <label>Sala
+      <label>Sala:
         <select id="professorSalaSeletor" class="admin-perfis-item-select"></select>
       </label>
     </div>
@@ -2303,6 +2301,7 @@
 
       <div id="canvasPainelAlunos" class="professor-canvas-painel" hidden>
         <h4 style="text-align:center;">Alunos Matriculados</h4>
+        <p id="alunosSalaNome" class="alunos-sala-nome"></p>
         <p class="admin-agenda-info">Verifique e adicione aqui os alunos matriculados em sua sala.</p>
 
         <div id="salaAlunosLista" class="admin-perfis-lista"></div>
@@ -2351,23 +2350,23 @@
       <div id="canvasPainelChamada" class="professor-canvas-painel" hidden>
         <form id="formRelatorioAula" class="admin-form">
           <div class="chamada-cabecalho-aula" id="chamadaCabecalhoAula">
-            <div class="chamada-cabecalho-topo">
-              <img id="chamadaCapaImg" class="chamada-capa-img" alt="Capa da revista" hidden>
-              <div class="chamada-cabecalho-conteudo">
-                <div id="chamadaNomeTurma" class="chamada-nome-sala"></div>
-                <div id="chamadaData" class="chamada-data"></div>
-                <hr class="chamada-divisor">
-                <div id="chamadaRevistaBloco" class="chamada-info-bloco" hidden>
-                  <div id="chamadaRevistaTitulo" class="chamada-info-titulo"></div>
-                  <div id="chamadaRevistaSub" class="chamada-info-sub" hidden></div>
-                </div>
-                <div id="chamadaLicaoBloco" class="chamada-info-bloco" hidden>
-                  <div id="chamadaLicaoLabel" class="chamada-info-label"></div>
-                  <div id="chamadaLicaoTitulo" class="chamada-info-titulo"></div>
-                </div>
-              </div>
+            <div class="chamada-pills">
+              <span id="chamadaNomeTurma" class="chamada-pill chamada-pill-sala"></span>
+              <span class="chamada-pill">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                <span id="chamadaData"></span>
+              </span>
+              <span id="chamadaProfessorEscalado" class="chamada-pill"></span>
             </div>
-            <div id="chamadaProfessorEscalado" class="chamada-professor-pill"></div>
+            <div id="chamadaRevistaBloco" hidden>
+              <div id="chamadaRevistaTitulo" class="chamada-titulo-revista"></div>
+              <div id="chamadaRevistaSub" class="chamada-titulo-revista-sub" hidden></div>
+            </div>
+            <div id="chamadaLicaoBloco" class="chamada-licao-linha" hidden>
+              <span id="chamadaLicaoLabel" class="chamada-licao-label"></span>
+              <span id="chamadaLicaoTitulo"></span>
+            </div>
+            <hr class="chamada-divisor">
           </div>
 
           <input type="hidden" id="relatorioData">
@@ -2399,10 +2398,6 @@
             </div>
           </div>
 
-          <div class="admin-form-botoes">
-            <button type="submit" class="btn-admin">Salvar Relatório</button>
-          </div>
-          <p id="relatorioStatus" class="admin-agenda-status"></p>
         </form>
       </div>
 
@@ -2603,16 +2598,26 @@
                 <option value="saida">Saída</option>
               </select>
             </label>
-            <label>Valor (R$)
-              <input type="text" id="secCaixaValor" inputmode="decimal" placeholder="0,00" required>
+            <label>Tipo do dinheiro
+              <select id="secCaixaMeio" required>
+                <option value="">Escolha...</option>
+                <option value="dinheiro">Dinheiro</option>
+                <option value="pix">Pix</option>
+                <option value="cartao">Cartão</option>
+              </select>
             </label>
             <label>Data
               <input type="date" id="secCaixaData" required>
             </label>
           </div>
-          <label>Descrição
-            <input type="text" id="secCaixaDescricao" maxlength="140" required placeholder="Ex.: Oferta da EBD, compra de material...">
-          </label>
+          <div class="admin-form-linha">
+            <label>Valor (R$)
+              <input type="text" id="secCaixaValor" inputmode="decimal" placeholder="0,00" required>
+            </label>
+            <label>Descrição
+              <input type="text" id="secCaixaDescricao" maxlength="140" required placeholder="Ex.: Oferta da EBD, compra de material...">
+            </label>
+          </div>
           <div class="admin-form-botoes">
             <button type="submit" class="btn-admin btn-admin-primario">Lançar</button>
           </div>
@@ -2698,6 +2703,9 @@
       <div class="sec-relgeral-bloco">
         <div class="sec-relgeral-cabecalho">
           <span class="sec-relgeral-titulo">Relatório Geral</span>
+          <button type="button" id="btnRegistrarCaixa" class="btn-admin btn-admin-primario">Registrar relatório no caixa</button>
+        </div>
+        <div class="sec-relgeral-cabecalho">
           <label class="sec-relgeral-data-label">Domingo
             <select id="secRelGeralData"></select>
           </label>
@@ -2800,7 +2808,21 @@
     </div>
 
     <div id="canvaSalaProfessores" class="canva-sanfona-conteudo">
-      <p class="admin-agenda-info">Cadastre todos os Professores que podem dar aula em cada Sala. Esse grupo (pool) será usado para montar o rodízio de Escala, Domingo a Domingo.</p>
+      <div class="pool-regras">
+        <p class="pool-regras-titulo">REGRAS:</p>
+        <ol>
+          <li>A escala é <strong>cíclica</strong>: os professores se revezam na ordem Professor 1, Professor 2, Professor 3 e, ao chegar ao último, voltam ao Professor 1 (1, 2, 3, 1, 2, 3... e assim por diante).</li>
+          <li>Ao <strong>adicionar</strong> um professor, escolha a partir de qual data a nova escala vale:
+            <ol type="a">
+              <li><strong>Imediato</strong> (padrão): a escala muda a partir do próximo domingo.</li>
+              <li><strong>A partir da data X:</strong> a escala é recalculada a partir do primeiro domingo igual ou posterior a essa data.</li>
+              <li><strong>A partir do próximo trimestre:</strong> a escala é recalculada a partir do primeiro domingo do trimestre seguinte.</li>
+            </ol>
+          </li>
+          <li>Ao <strong>incluir</strong> ou <strong>remover</strong> um professor, informe se haverá substituição. Com substituição, só as aulas do professor substituído mudam de responsável; as aulas dos demais professores continuam como estavam.</li>
+          <li>Ao <strong>remover</strong> um professor sem substituição, a escala é atualizada a partir do próximo domingo.</li>
+        </ol>
+      </div>
       <p id="gerenciarSalasStatus" class="admin-agenda-status"></p>
       <div id="gerenciarSalasLista" class="admin-perfis-lista">Carregando...</div>
     </div>
@@ -2877,11 +2899,12 @@
               <div class="combo-dep-lista" id="licoesSalaLista" hidden></div>
             </div>
           </div>
-          <div id="licoesCamposLista"></div>
+          <div id="licoesCamposSanfona" class="licoes-sanfona">
+            <div id="licoesCamposLista"></div>
+          </div>
 
 
-          <div class="perfil-secao-titulo">Revistas em PDF</div>
-          <p class="admin-agenda-info" style="margin-top:-6px;">Os PDFs são salvos no Google Drive. A revista do professor aparece apenas para usuários com perfil de Professor.</p>
+          <div class="perfil-secao-titulo licoes-revistas-titulo">Revistas em PDF</div>
           <div class="revista-quadros">
             <div class="revista-quadro">
               <div class="revista-quadro-titulo">Revista do aluno</div>
@@ -3316,6 +3339,69 @@
   </div>
 </div>
 
+<div class="login-overlay" id="estoqueCorrigirModal" role="dialog" aria-modal="true" aria-labelledby="estoqueCorrigirTitulo" hidden>
+  <div class="login-card">
+    <span class="pill eyebrow"><span class="dot"></span>Estoque de Materiais</span>
+    <h3 id="estoqueCorrigirTitulo" style="margin:12px 0 0;">Corrigir quantidade</h3>
+    <p id="estoqueCorrigirAtual" class="login-note" style="margin:8px 0 0;"></p>
+    <form id="estoqueCorrigirForm" class="admin-form" style="margin-top:14px;">
+      <label>Quantidade correta
+        <input type="number" id="estoqueCorrigirQuantidade" min="0" step="1" required>
+      </label>
+      <label>Motivo da correção
+        <input type="text" id="estoqueCorrigirMotivo" maxlength="140" required placeholder="Ex.: contagem do estoque, lançamento errado...">
+      </label>
+      <div class="login-btn-row">
+        <button type="button" class="btn btn-ghost" id="estoqueCorrigirCancelar" style="flex:1;justify-content:center;">Cancelar</button>
+        <button type="submit" class="btn btn-blue-grad" style="flex:1;justify-content:center;">Salvar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="login-overlay" id="estoqueDuplicadoModal" role="dialog" aria-modal="true" aria-labelledby="estoqueDuplicadoTitulo" hidden>
+  <div class="login-card">
+    <span class="pill eyebrow"><span class="dot"></span>Estoque de Materiais</span>
+    <h3 id="estoqueDuplicadoTitulo" style="margin:12px 0 0;"></h3>
+    <p id="estoqueDuplicadoTexto" class="login-note" style="margin:10px 0 0;"></p>
+    <div id="estoqueDuplicadoOpcoes" style="display:flex;flex-direction:column;gap:8px;margin-top:14px;"></div>
+    <div class="login-btn-row">
+      <button type="button" class="btn btn-ghost" id="estoqueDuplicadoCancelar" style="flex:1;justify-content:center;">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<div class="login-overlay" id="caixaEditarModal" role="dialog" aria-modal="true" aria-labelledby="caixaEditarTitulo" hidden>
+  <div class="login-card">
+    <span class="pill eyebrow"><span class="dot"></span>Livro Caixa</span>
+    <h3 id="caixaEditarTitulo" style="margin:12px 0 0;">Editar movimentação</h3>
+    <form id="caixaEditarForm" class="admin-form" style="margin-top:14px;">
+      <label>Descrição
+        <input type="text" id="caixaEditarDescricao" maxlength="140" required>
+      </label>
+      <label>Valor (R$)
+        <input type="text" id="caixaEditarValor" inputmode="decimal" required>
+      </label>
+      <div class="login-btn-row">
+        <button type="button" class="btn btn-ghost" id="caixaEditarCancelar" style="flex:1;justify-content:center;">Cancelar</button>
+        <button type="submit" class="btn btn-blue-grad" style="flex:1;justify-content:center;">Salvar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="login-overlay" id="poolModal" role="dialog" aria-modal="true" aria-labelledby="poolModalTitulo" hidden>
+  <div class="login-card">
+    <span class="pill eyebrow"><span class="dot"></span>Professores por Turma</span>
+    <h3 id="poolModalTitulo" style="margin:12px 0 0;"></h3>
+    <div id="poolModalCorpo" style="margin-top:14px;"></div>
+    <div class="login-btn-row">
+      <button type="button" class="btn btn-ghost" id="poolModalCancelar" style="flex:1;justify-content:center;">Cancelar</button>
+      <button type="button" class="btn btn-blue-grad" id="poolModalSalvar" style="flex:1;justify-content:center;">Salvar</button>
+    </div>
+  </div>
+</div>
+
 <div class="login-overlay" id="arquivoDetalheModal" role="dialog" aria-modal="true" aria-labelledby="arquivoDetalheTitulo" hidden>
   <div class="login-card">
     <button class="login-close" id="arquivoDetalheFechar" type="button" aria-label="Fechar">
@@ -3342,7 +3428,7 @@
   } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
   import {
     getFirestore, doc, getDoc, setDoc, serverTimestamp,
-    collection, getDocs, updateDoc, deleteDoc, addDoc, query, where, limit, orderBy
+    collection, getDocs, updateDoc, deleteDoc, addDoc, query, where, limit, orderBy, writeBatch
   } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
   import { firebaseConfig } from "./firebase-config.js";
   import { buscarTodosEventos, salvarEvento, excluirEvento, importarAgendaInicial, buscarDepartamentosAgenda, salvarDepartamentosAgenda, renomearCategoriaEventos } from "./agenda.js";
@@ -3649,6 +3735,9 @@
       return local.toISOString().slice(0, 10);
     }
 
+    // Rótulos do "Tipo do dinheiro" (dinheiro, pix, cartao)
+    const ROTULO_MEIO_CAIXA = { dinheiro: "Dinheiro", pix: "Pix", cartao: "Cartão" };
+
     function formatarMoedaCaixa(v) {
       const num = Number(v) || 0;
       const sinal = num < 0 ? "-" : "";
@@ -3684,7 +3773,9 @@
           lista.innerHTML = '<p class="admin-agenda-info">Nenhuma movimentação lançada ainda.</p>';
           return;
         }
+        const movsPorId = {};
         movs.forEach((m) => {
+          movsPorId[m.id] = m;
           const item = document.createElement("div");
           item.className = "admin-perfis-item";
           let dataFmt = m.data || "";
@@ -3695,11 +3786,22 @@
           item.innerHTML =
             '<div class="admin-perfis-item-info">' +
               '<span class="admin-perfis-item-nome">' + (m.descricao || "(sem descrição)") + "</span>" +
-              '<span class="admin-perfis-item-email">' + dataFmt + " · " + (m.lancadoPorNome || "") + "</span>" +
+              '<span class="admin-perfis-item-email">' + dataFmt + " · " + (ROTULO_MEIO_CAIXA[m.meio] ? ROTULO_MEIO_CAIXA[m.meio] + " · " : "") + escaparTextoCaixa(m.lancadoPorNome || "") + "</span>" +
             "</div>" +
             '<span class="' + classeValor + '">' + sinal + "R$ " + formatarMoedaCaixa(m.valor) + "</span>" +
+            '<button type="button" class="sec-caixa-editar" data-editar="' + m.id + '" title="Editar">✎</button>' +
             '<button type="button" class="admin-perfis-item-remover" data-id="' + m.id + '" title="Excluir">×</button>';
           lista.appendChild(item);
+          const historico = Array.isArray(m.historico) ? m.historico : [];
+          if (historico.length) {
+            const bloco = document.createElement("div");
+            bloco.className = "sec-caixa-historico";
+            bloco.innerHTML = historico.map((h) => linhaHistoricoCaixa(h)).join("");
+            lista.appendChild(bloco);
+          }
+        });
+        lista.querySelectorAll(".sec-caixa-editar").forEach((btn) => {
+          btn.addEventListener("click", () => abrirEdicaoCaixa(movsPorId[btn.dataset.editar]));
         });
         lista.querySelectorAll(".admin-perfis-item-remover").forEach((btn) => {
           btn.addEventListener("click", async () => {
@@ -3719,6 +3821,100 @@
       }
     }
 
+    // Texto seguro para montar HTML (o que o usuário digita não pode virar código)
+    function escaparTextoCaixa(t) {
+      return String(t == null ? "" : t).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+    }
+
+    // Linha do histórico: "Valor anterior era R$ X e foi alterado para R$ Y por fulano em dd/mm/aaaa hh:mm"
+    // Formato: "Valor anterior: 10,00 editado por Lucas em 16/10/26"
+    function linhaHistoricoCaixa(h) {
+      const quando = h.editadoEmMs ? new Date(h.editadoEmMs).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "2-digit" }) : "";
+      const texto = h.campo === "valor"
+        ? "Valor anterior: " + formatarMoedaCaixa(h.anterior) + " editado"
+        : "Descrição anterior: " + escaparTextoCaixa(h.anterior) + " editada";
+      return '<div class="sec-caixa-historico-linha">' + texto + " por " + escaparTextoCaixa(h.editadoPorNome) + (quando ? " em " + quando : "") + "</div>";
+    }
+
+    let caixaEditando = null;
+
+    function abrirEdicaoCaixa(m) {
+      if (!m) return;
+      caixaEditando = m;
+      document.getElementById("caixaEditarDescricao").value = m.descricao || "";
+      document.getElementById("caixaEditarValor").value = formatarMoedaCaixa(m.valor);
+      const modal = document.getElementById("caixaEditarModal");
+      modal.hidden = false;
+      requestAnimationFrame(() => modal.classList.add("is-open"));
+    }
+
+    function fecharEdicaoCaixa() {
+      const modal = document.getElementById("caixaEditarModal");
+      modal.classList.remove("is-open");
+      setTimeout(() => { modal.hidden = true; }, 200);
+      caixaEditando = null;
+    }
+
+    // Liga o pop-up de edição (só uma vez, junto com o formulário do Livro Caixa)
+    function ligarEdicaoCaixa() {
+      const modal = document.getElementById("caixaEditarModal");
+      const form = document.getElementById("caixaEditarForm");
+      const campoValor = document.getElementById("caixaEditarValor");
+      if (!modal || !form) return;
+
+      // Mesma máscara de dinheiro do lançamento: "1.234,56"
+      campoValor.addEventListener("input", () => {
+        let digitos = campoValor.value.replace(/\D/g, "");
+        digitos = digitos.replace(/^0+(?=\d)/, "");
+        if (!digitos) { campoValor.value = ""; return; }
+        while (digitos.length < 3) digitos = "0" + digitos;
+        const centavos = digitos.slice(-2);
+        const inteiros = digitos.slice(0, -2).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        campoValor.value = inteiros + "," + centavos;
+      });
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const m = caixaEditando;
+        if (!m) return;
+        const valorNovo = Number(campoValor.value.replace(/\./g, "").replace(",", "."));
+        const descricaoNova = document.getElementById("caixaEditarDescricao").value.trim();
+        if (!valorNovo || valorNovo <= 0 || !descricaoNova) {
+          window.notificar("Informe o valor e a descrição.", "error");
+          return;
+        }
+        const quem = usuarioAtualCache ? (usuarioAtualCache.nome || usuarioAtualCache.email || "") : "";
+        const agora = Date.now();
+        const mudancas = [];
+        if (Math.round(valorNovo * 100) !== Math.round((Number(m.valor) || 0) * 100)) {
+          mudancas.push({ campo: "valor", anterior: Number(m.valor) || 0, novo: valorNovo, editadoPorUid: usuarioAtualCache ? usuarioAtualCache.uid : "", editadoPorNome: quem, editadoEmMs: agora });
+        }
+        if (descricaoNova !== (m.descricao || "")) {
+          mudancas.push({ campo: "descricao", anterior: m.descricao || "", novo: descricaoNova, editadoPorUid: usuarioAtualCache ? usuarioAtualCache.uid : "", editadoPorNome: quem, editadoEmMs: agora });
+        }
+        if (!mudancas.length) { fecharEdicaoCaixa(); return; }
+        try {
+          await updateDoc(doc(db, "caixaMovimentacoes", m.id), {
+            valor: valorNovo,
+            descricao: descricaoNova,
+            historico: (Array.isArray(m.historico) ? m.historico : []).concat(mudancas)
+          });
+          fecharEdicaoCaixa();
+          window.notificar("Movimentação alterada. A alteração ficou registrada.", "success");
+          carregarMovimentacoesCaixa();
+        } catch (err) {
+          window.notificar("Não foi possível salvar a alteração. " + (err.message || ""), "error");
+          console.error(err);
+        }
+      });
+
+      document.getElementById("caixaEditarCancelar").addEventListener("click", fecharEdicaoCaixa);
+      modal.addEventListener("click", (e) => { if (e.target === modal) fecharEdicaoCaixa(); });
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && !modal.hidden) fecharEdicaoCaixa();
+      });
+    }
+
     let caixaEntradasIniciado = false;
     let estoqueMateriaisIniciado = false;
 
@@ -3729,6 +3925,7 @@
       const campoTipo = document.getElementById("secCaixaTipo");
       const campoValor = document.getElementById("secCaixaValor");
       const status = document.getElementById("secCaixaStatus");
+      ligarEdicaoCaixa();
       if (campoData) campoData.value = hojeISOSecretaria();
 
       // Mascara de dinheiro: digita so numeros, o campo formata sozinho
@@ -3752,13 +3949,15 @@
           const descricao = document.getElementById("secCaixaDescricao").value.trim();
           const data = campoData.value;
           const tipo = campoTipo.value;
-          if (!valor || valor <= 0 || !descricao || !data) return;
+          const meio = document.getElementById("secCaixaMeio").value;
+          if (!valor || valor <= 0 || !descricao || !data || !meio) return;
           const botao = form.querySelector('button[type="submit"]');
           botao.disabled = true;
           try {
             const novoRef = doc(collection(db, "caixaMovimentacoes"));
             await setDoc(novoRef, {
               tipo: tipo,
+              meio: meio,
               valor: valor,
               descricao: descricao,
               data: data,
@@ -3791,6 +3990,60 @@
     // Estoque de Materiais: quantidade de cada material nunca fica guardada
     // sozinha (evita dessincronizar) - e sempre a soma de todas as
     // movimentacoes (entradas - saidas), igual ja funciona no Livro Caixa.
+    // Materiais já cadastrados (para evitar cadastrar o mesmo item duas vezes)
+    let materiaisEstoqueCache = [];
+    const PALAVRAS_IGNORADAS_ESTOQUE = ["de", "da", "do", "das", "dos", "a", "o", "e", "em", "com", "para", "um", "uma"];
+
+    // Palavras que identificam o material (sem acento, sem plural e sem palavras comuns)
+    function palavrasDoMaterial(nome) {
+      return String(nome || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase()
+        .split(/[^a-z0-9]+/)
+        .filter((p) => p.length >= 3 && !PALAVRAS_IGNORADAS_ESTOQUE.includes(p))
+        .map((p) => (p.length > 4 && p.endsWith("s") ? p.slice(0, -1) : p));
+    }
+
+    // Materiais que compartilham alguma palavra com o nome digitado (ex.: "Sulfite" e "Papel sulfite")
+    function materiaisParecidos(nome) {
+      const palavras = palavrasDoMaterial(nome);
+      return materiaisEstoqueCache.filter((m) => palavrasDoMaterial(m.nome).some((p) => palavras.includes(p)));
+    }
+
+    // Pop-up: o material digitado parece com um já cadastrado. Devolve a escolha ou null (cancelado).
+    function perguntarMaterialParecido(nomeNovo, parecidos) {
+      const modal = document.getElementById("estoqueDuplicadoModal");
+      const opcoes = document.getElementById("estoqueDuplicadoOpcoes");
+      const cancelar = document.getElementById("estoqueDuplicadoCancelar");
+      document.getElementById("estoqueDuplicadoTitulo").textContent = "Material parecido já cadastrado";
+      document.getElementById("estoqueDuplicadoTexto").textContent =
+        'Já existe material parecido com "' + nomeNovo + '". Se for o mesmo item, a quantidade é somada a ele.';
+      opcoes.innerHTML = "";
+      return new Promise((resolve) => {
+        const fechar = (valor) => {
+          modal.classList.remove("is-open");
+          setTimeout(() => { modal.hidden = true; }, 200);
+          resolve(valor);
+        };
+        parecidos.forEach((m) => {
+          const b = document.createElement("button");
+          b.type = "button";
+          b.className = "btn-admin btn-admin-primario";
+          b.textContent = 'Somar em "' + m.nome + '"';
+          b.addEventListener("click", () => fechar({ tipo: "somar", material: m }));
+          opcoes.appendChild(b);
+        });
+        const novo = document.createElement("button");
+        novo.type = "button";
+        novo.className = "btn-admin";
+        novo.textContent = "Cadastrar como material novo";
+        novo.addEventListener("click", () => fechar({ tipo: "novo" }));
+        opcoes.appendChild(novo);
+        cancelar.onclick = () => fechar(null);
+        modal.onclick = (e) => { if (e.target === modal) fechar(null); };
+        modal.hidden = false;
+        requestAnimationFrame(() => modal.classList.add("is-open"));
+      });
+    }
+
     async function carregarEstoqueMateriais() {
       const grid = document.getElementById("secEstoqueGrid");
       const paineisWrap = document.getElementById("secEstoquePaineis");
@@ -3805,6 +4058,7 @@
         const materiais = [];
         snapMateriais.forEach((d) => materiais.push(Object.assign({ id: d.id }, d.data())));
         materiais.sort((a, b) => (a.nome || "").localeCompare(b.nome || ""));
+        materiaisEstoqueCache = materiais;
 
         const movsPorMaterial = {};
         snapMovs.forEach((d) => {
@@ -3826,137 +4080,76 @@
           const minimo = Number(mat.quantidadeMinima) || 0;
           const baixo = quantidadeAtual <= minimo;
           const unidade = mat.unidade || "";
-          const painelId = "canvaEstoqueMat_" + mat.id;
 
-          const card = document.createElement("button");
-          card.type = "button";
-          card.className = "professor-canvas-card" + (baixo ? " sec-estoque-card-baixo" : "");
-          card.dataset.alvo = painelId;
-          card.innerHTML =
-            '<span class="professor-canvas-icone">' + (baixo ? "⚠️" : "📦") + "</span>" +
-            '<span class="professor-canvas-titulo">' + mat.nome + "</span>" +
-            '<span class="professor-canvas-sub">' + quantidadeAtual + " " + unidade + (baixo ? " — Estoque baixo!" : "") + "</span>";
-          grid.appendChild(card);
-
-          movs.sort((a, b) => {
-            const cmp = (b.data || "").localeCompare(a.data || "");
-            return cmp !== 0 ? cmp : (b.criadoEmMs || 0) - (a.criadoEmMs || 0);
+          // Inclusões: saldo antes e depois de cada entrada, em ordem cronológica
+          const emOrdem = movs.slice().sort((x, y) => {
+            const cmp = (x.data || "").localeCompare(y.data || "");
+            return cmp !== 0 ? cmp : (x.criadoEmMs || 0) - (y.criadoEmMs || 0);
           });
+          let saldoCorrente = 0;
+          const inclusoes = [];
+          emOrdem.forEach((m) => {
+            const anterior = saldoCorrente;
+            saldoCorrente += (m.tipo === "saida" ? -1 : 1) * (Number(m.quantidade) || 0);
+            if (m.tipo !== "saida") inclusoes.push({ data: m.data || "", anterior: anterior, atual: saldoCorrente });
+          });
+          inclusoes.reverse(); // mais recente primeiro
+          const totalEntradas = movs.filter((m) => m.tipo !== "saida").reduce((t, m) => t + (Number(m.quantidade) || 0), 0);
+          const sufixoUnidade = " " + escaparTextoCaixa(unidade || "und");
+          const listaInclusoes = inclusoes.length
+            ? inclusoes.map((i) => {
+                let dataFmt = i.data;
+                try { dataFmt = new Date(i.data + "T00:00:00").toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "2-digit" }); } catch (e) {}
+                return '<div class="sec-estoque-verso-linha">' + dataFmt + " -<br>Anterior: " + i.anterior + sufixoUnidade +
+                  "<br>Atual: " + i.atual + sufixoUnidade + ".</div>";
+              }).join("")
+            : '<p class="admin-agenda-info">Nenhuma inclusão lançada ainda.</p>';
 
-          const painel = document.createElement("div");
-          painel.id = painelId;
-          painel.className = "canva-sanfona-conteudo";
-          painel.innerHTML =
-            '<div class="sec-caixa-saldo">' +
-              '<span class="sec-caixa-saldo-rotulo">Quantidade atual</span>' +
-              '<span class="sec-caixa-saldo-valor' + (baixo ? " negativo" : "") + '">' + quantidadeAtual + " " + unidade + "</span>" +
+          // Card que vira: frente (saldo) e verso (inclusões)
+          const wrap = document.createElement("div");
+          wrap.className = "sec-estoque-flip";
+          wrap.innerHTML =
+            '<div class="sec-estoque-flip-inner">' +
+              '<button type="button" class="professor-canvas-card sec-estoque-frente' + (baixo ? " sec-estoque-card-baixo" : "") + '">' +
+                '<span class="professor-canvas-icone">' + (baixo ? "⚠️" : "📦") + "</span>" +
+                '<span class="professor-canvas-titulo">' + escaparTextoCaixa(mat.nome) + "</span>" +
+                '<span class="professor-canvas-sub">' + quantidadeAtual + " de " + totalEntradas + " disponíveis" + (baixo ? " — Estoque baixo!" : "") + "</span>" +
+              "</button>" +
+              '<div class="professor-canvas-card sec-estoque-verso">' +
+                '<span class="sec-estoque-verso-titulo">Inclusões</span>' +
+                '<div class="sec-estoque-verso-lista">' + listaInclusoes + "</div>" +
+              "</div>" +
             "</div>" +
-            '<p class="admin-agenda-info">Estoque mínimo: ' + minimo + " " + unidade + (baixo ? " — abaixo do mínimo!" : "") + "</p>" +
-            '<form class="admin-form">' +
-              '<div class="admin-form-linha">' +
-                '<label>Tipo<select class="sec-estoque-mov-tipo"><option value="entrada">Entrada</option><option value="saida">Saída</option></select></label>' +
-                '<label>Quantidade<input type="number" class="sec-estoque-mov-quantidade" min="1" step="1" required></label>' +
-                '<label>Data<input type="date" class="sec-estoque-mov-data" required></label>' +
-              "</div>" +
-              '<label>Descrição (opcional)<input type="text" class="sec-estoque-mov-descricao" maxlength="140" placeholder="Ex.: Compra na papelaria, uso na aula..."></label>' +
-              '<div class="admin-form-botoes">' +
-                '<button type="submit" class="btn-admin btn-admin-primario">Lançar</button>' +
-                '<button type="button" class="btn-admin btn-danger sec-estoque-excluir-material">Excluir Material</button>' +
-              "</div>" +
-              '<p class="admin-agenda-status sec-estoque-mov-status"></p>' +
-            "</form>" +
-            '<div class="sec-caixa-lista sec-estoque-mov-lista"></div>';
-          paineisWrap.appendChild(painel);
-
-          const campoData = painel.querySelector(".sec-estoque-mov-data");
-          if (campoData) campoData.value = hojeISOSecretaria();
-
-          const listaMov = painel.querySelector(".sec-estoque-mov-lista");
-          if (!movs.length) {
-            listaMov.innerHTML = '<p class="admin-agenda-info">Nenhuma movimentação lançada ainda.</p>';
-          } else {
-            listaMov.innerHTML = "";
-            movs.forEach((m) => {
-              let dataFmt = m.data || "";
-              try { dataFmt = new Date(m.data + "T00:00:00").toLocaleDateString("pt-BR"); } catch (e) {}
-              const ehSaida = m.tipo === "saida";
-              const sinal = ehSaida ? "− " : "+ ";
-              const classeValor = ehSaida ? "sec-caixa-valor-saida" : "sec-caixa-valor-entrada";
-              const item = document.createElement("div");
-              item.className = "admin-perfis-item";
-              item.innerHTML =
-                '<div class="admin-perfis-item-info">' +
-                  '<span class="admin-perfis-item-nome">' + (m.descricao || "(sem descrição)") + "</span>" +
-                  '<span class="admin-perfis-item-email">' + dataFmt + " · " + (m.lancadoPorNome || "") + "</span>" +
-                "</div>" +
-                '<span class="' + classeValor + '">' + sinal + m.quantidade + " " + unidade + "</span>" +
-                '<button type="button" class="admin-perfis-item-remover" data-id="' + m.id + '" title="Excluir">×</button>';
-              listaMov.appendChild(item);
-            });
-            listaMov.querySelectorAll(".admin-perfis-item-remover").forEach((btn) => {
-              btn.addEventListener("click", async () => {
-                if (!confirm("Excluir esta movimentação? Essa ação não pode ser desfeita.")) return;
-                try {
-                  await deleteDoc(doc(db, "materiaisMovimentacoes", btn.dataset.id));
-                  carregarEstoqueMateriais();
-                } catch (err) {
-                  alert("Não foi possível excluir. " + (err.message || ""));
-                  console.error(err);
-                }
-              });
-            });
-          }
-
-          const formMov = painel.querySelector("form");
-          formMov.addEventListener("submit", async (e) => {
-            e.preventDefault();
-            const tipo = painel.querySelector(".sec-estoque-mov-tipo").value;
-            const quantidade = Number(painel.querySelector(".sec-estoque-mov-quantidade").value);
-            const dataMov = painel.querySelector(".sec-estoque-mov-data").value;
-            const descricao = painel.querySelector(".sec-estoque-mov-descricao").value.trim();
-            const status = painel.querySelector(".sec-estoque-mov-status");
-            if (!quantidade || quantidade <= 0 || !dataMov) return;
-            const botao = formMov.querySelector('button[type="submit"]');
-            botao.disabled = true;
-            try {
-              const novoRef = doc(collection(db, "materiaisMovimentacoes"));
-              await setDoc(novoRef, {
-                materialId: mat.id,
-                materialNome: mat.nome,
-                tipo: tipo,
-                quantidade: quantidade,
-                descricao: descricao,
-                data: dataMov,
-                lancadoPorUid: usuarioAtualCache ? usuarioAtualCache.uid : "",
-                lancadoPorNome: usuarioAtualCache ? (usuarioAtualCache.nome || usuarioAtualCache.email || "") : "",
-                criadoEm: serverTimestamp(),
-                criadoEmMs: Date.now()
-              });
-              if (status) { status.textContent = "Lançamento salvo."; status.className = "admin-agenda-status ok"; }
-              carregarEstoqueMateriais();
-            } catch (err) {
-              if (status) { status.textContent = "Não foi possível salvar. " + (err.message || ""); status.className = "admin-agenda-status erro"; }
-              console.error(err);
-            } finally {
-              botao.disabled = false;
-            }
-          });
-
-          const btnExcluirMaterial = painel.querySelector(".sec-estoque-excluir-material");
-          btnExcluirMaterial.addEventListener("click", async () => {
+            '<button type="button" class="sec-estoque-lapis" title="Corrigir quantidade" aria-label="Corrigir quantidade">✎</button>' +
+            '<button type="button" class="sec-estoque-excluir" title="Excluir material" aria-label="Excluir material">🗑️</button>';
+          grid.appendChild(wrap);
+          wrap.querySelector(".sec-estoque-lapis").addEventListener("click", () => abrirCorrecaoEstoque(mat, quantidadeAtual, unidade));
+          // Excluir: só com estoque zerado; o primeiro clique pede confirmação
+          const btnExcluir = wrap.querySelector(".sec-estoque-excluir");
+          btnExcluir.addEventListener("click", async () => {
             if (quantidadeAtual !== 0) {
-              alert('Este material ainda tem ' + quantidadeAtual + " " + unidade + ' em estoque. Lance saídas até zerar antes de excluir.');
+              window.notificar("Este material ainda tem " + quantidadeAtual + (unidade ? " " + unidade : "") + " em estoque. Corrija a quantidade para zero antes de excluir.", "error");
               return;
             }
-            if (!confirm('Excluir o material "' + mat.nome + '"? O histórico de movimentações não será apagado.')) return;
+            if (btnExcluir.dataset.confirmar !== "1") {
+              btnExcluir.dataset.confirmar = "1";
+              btnExcluir.textContent = "Confirmar?";
+              setTimeout(() => { btnExcluir.dataset.confirmar = ""; btnExcluir.textContent = "🗑️"; }, 3000);
+              return;
+            }
             try {
               await deleteDoc(doc(db, "materiaisEstoque", mat.id));
+              window.notificar('Material "' + mat.nome + '" excluído.', "success");
               carregarEstoqueMateriais();
             } catch (err) {
-              alert("Não foi possível excluir. " + (err.message || ""));
+              window.notificar("Não foi possível excluir. " + (err.message || ""), "error");
               console.error(err);
             }
           });
+          wrap.querySelector(".sec-estoque-frente").addEventListener("click", () => wrap.classList.add("is-virado"));
+          // Clicar no verso volta para a frente
+          wrap.querySelector(".sec-estoque-verso").addEventListener("click", () => wrap.classList.remove("is-virado"));
+
         });
 
         ligarSanfona(document.getElementById("canvaSecCaixaInsumos"));
@@ -3966,8 +4159,76 @@
       }
     }
 
+    // Correção de quantidade: não apaga nada; lança um ajuste (entrada ou saída) pela diferença
+    let estoqueCorrigindo = null;
+
+    function abrirCorrecaoEstoque(mat, saldo, unidade) {
+      estoqueCorrigindo = { mat: mat, saldo: saldo, unidade: unidade };
+      document.getElementById("estoqueCorrigirTitulo").textContent = "Corrigir quantidade de " + mat.nome;
+      document.getElementById("estoqueCorrigirAtual").textContent = "Quantidade atual no sistema: " + saldo + (unidade ? " " + unidade : "");
+      document.getElementById("estoqueCorrigirQuantidade").value = saldo;
+      document.getElementById("estoqueCorrigirMotivo").value = "";
+      const modal = document.getElementById("estoqueCorrigirModal");
+      modal.hidden = false;
+      requestAnimationFrame(() => modal.classList.add("is-open"));
+    }
+
+    function fecharCorrecaoEstoque() {
+      const modal = document.getElementById("estoqueCorrigirModal");
+      modal.classList.remove("is-open");
+      setTimeout(() => { modal.hidden = true; }, 200);
+      estoqueCorrigindo = null;
+    }
+
+    function ligarCorrecaoEstoque() {
+      const modal = document.getElementById("estoqueCorrigirModal");
+      const form = document.getElementById("estoqueCorrigirForm");
+      if (!modal || !form) return;
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        if (!estoqueCorrigindo) return;
+        const { mat, saldo, unidade } = estoqueCorrigindo;
+        const novo = Number(document.getElementById("estoqueCorrigirQuantidade").value);
+        const motivo = document.getElementById("estoqueCorrigirMotivo").value.trim();
+        if (isNaN(novo) || novo < 0 || !motivo) {
+          window.notificar("Informe a quantidade correta e o motivo.", "error");
+          return;
+        }
+        const diferenca = novo - saldo;
+        if (diferenca === 0) { fecharCorrecaoEstoque(); return; }
+        const botao = form.querySelector('button[type="submit"]');
+        botao.disabled = true;
+        try {
+          await setDoc(doc(collection(db, "materiaisMovimentacoes")), {
+            materialId: mat.id,
+            materialNome: mat.nome,
+            tipo: diferenca > 0 ? "entrada" : "saida",
+            quantidade: Math.abs(diferenca),
+            descricao: "Correção de " + saldo + " para " + novo + (unidade ? " " + unidade : "") + " · " + motivo,
+            ajuste: true,
+            data: hojeISOSecretaria(),
+            lancadoPorUid: usuarioAtualCache ? usuarioAtualCache.uid : "",
+            lancadoPorNome: usuarioAtualCache ? (usuarioAtualCache.nome || usuarioAtualCache.email || "") : "",
+            criadoEm: serverTimestamp(),
+            criadoEmMs: Date.now()
+          });
+          fecharCorrecaoEstoque();
+          window.notificar("Quantidade corrigida. A correção ficou registrada nas inclusões.", "success");
+          carregarEstoqueMateriais();
+        } catch (err) {
+          window.notificar("Não foi possível corrigir. " + (err.message || ""), "error");
+          console.error(err);
+        } finally {
+          botao.disabled = false;
+        }
+      });
+      document.getElementById("estoqueCorrigirCancelar").addEventListener("click", fecharCorrecaoEstoque);
+      modal.addEventListener("click", (e) => { if (e.target === modal) fecharCorrecaoEstoque(); });
+    }
+
     // Liga o formulario de cadastro de material (so uma vez) e carrega a lista.
     function iniciarEstoqueMateriais() {
+      ligarCorrecaoEstoque();
       const form = document.getElementById("secEstoqueForm");
       if (form) {
         form.addEventListener("submit", async (e) => {
@@ -3978,33 +4239,62 @@
           const minimo = Number(document.getElementById("secEstoqueMinimo").value);
           const status = document.getElementById("secEstoqueStatus");
           if (!nome || !unidade || isNaN(quantidadeInicial) || quantidadeInicial < 0 || isNaN(minimo) || minimo < 0) return;
+          // Material parecido com um já cadastrado: pergunta antes de criar outro
+          const parecidos = materiaisParecidos(nome);
+          let escolha = { tipo: "novo" };
+          if (parecidos.length) {
+            escolha = await perguntarMaterialParecido(nome, parecidos);
+            if (!escolha) return;
+          }
           const botao = form.querySelector('button[type="submit"]');
           botao.disabled = true;
           try {
-            const novoMaterialRef = doc(collection(db, "materiaisEstoque"));
-            await setDoc(novoMaterialRef, {
-              nome: nome,
-              unidade: unidade,
-              quantidadeMinima: minimo,
-              criadoEm: serverTimestamp()
-            });
-            if (quantidadeInicial > 0) {
-              const novaMovRef = doc(collection(db, "materiaisMovimentacoes"));
-              await setDoc(novaMovRef, {
-                materialId: novoMaterialRef.id,
-                materialNome: nome,
-                tipo: "entrada",
-                quantidade: quantidadeInicial,
-                descricao: "Cadastro inicial do material",
-                data: hojeISOSecretaria(),
-                lancadoPorUid: usuarioAtualCache ? usuarioAtualCache.uid : "",
-                lancadoPorNome: usuarioAtualCache ? (usuarioAtualCache.nome || usuarioAtualCache.email || "") : "",
-                criadoEm: serverTimestamp(),
-                criadoEmMs: Date.now()
+            const usuarioNome = usuarioAtualCache ? (usuarioAtualCache.nome || usuarioAtualCache.email || "") : "";
+            const usuarioUid = usuarioAtualCache ? usuarioAtualCache.uid : "";
+            if (escolha.tipo === "somar") {
+              // Soma a quantidade ao material existente (como uma nova inclusão)
+              const alvo = escolha.material;
+              if (quantidadeInicial > 0) {
+                await setDoc(doc(collection(db, "materiaisMovimentacoes")), {
+                  materialId: alvo.id,
+                  materialNome: alvo.nome,
+                  tipo: "entrada",
+                  quantidade: quantidadeInicial,
+                  descricao: 'Somado pelo cadastro de "' + nome + '"',
+                  data: hojeISOSecretaria(),
+                  lancadoPorUid: usuarioUid,
+                  lancadoPorNome: usuarioNome,
+                  criadoEm: serverTimestamp(),
+                  criadoEmMs: Date.now()
+                });
+              }
+              if (status) { status.textContent = 'Quantidade somada ao material "' + alvo.nome + '".'; status.className = "admin-agenda-status ok"; }
+            } else {
+              const novoMaterialRef = doc(collection(db, "materiaisEstoque"));
+              await setDoc(novoMaterialRef, {
+                nome: nome,
+                unidade: unidade,
+                quantidadeMinima: minimo,
+                criadoEm: serverTimestamp()
               });
+              if (quantidadeInicial > 0) {
+                const novaMovRef = doc(collection(db, "materiaisMovimentacoes"));
+                await setDoc(novaMovRef, {
+                  materialId: novoMaterialRef.id,
+                  materialNome: nome,
+                  tipo: "entrada",
+                  quantidade: quantidadeInicial,
+                  descricao: "Cadastro inicial do material",
+                  data: hojeISOSecretaria(),
+                  lancadoPorUid: usuarioUid,
+                  lancadoPorNome: usuarioNome,
+                  criadoEm: serverTimestamp(),
+                  criadoEmMs: Date.now()
+                });
+              }
+              if (status) { status.textContent = "Material cadastrado."; status.className = "admin-agenda-status ok"; }
             }
             form.reset();
-            if (status) { status.textContent = "Material cadastrado."; status.className = "admin-agenda-status ok"; }
             carregarEstoqueMateriais();
           } catch (err) {
             if (status) { status.textContent = "Não foi possível cadastrar. " + (err.message || ""); status.className = "admin-agenda-status erro"; }
@@ -4071,6 +4361,57 @@
       return ano + "-" + mes + "-" + dia;
     }
 
+    // Ofertas da EBD no Livro Caixa: por Sala e por dia, uma entrada em Dinheiro e uma em Pix.
+    // O ID é fixo (sala + data + método): ao reabrir o relatório, a entrada é atualizada e não duplicada.
+    // Se o total do método for zero, a entrada é removida.
+    async function lancarOfertasNoCaixa(relatorios, dataISO) {
+      try {
+        const dataBr = dataISO.split("-").reverse().join("/");
+        const nomeMetodo = { dinheiro: "Dinheiro", pix: "Pix" };
+        const operacoes = [];
+        relatorios.forEach((r) => {
+          if (!r.salaId) return;
+          const totais = { dinheiro: 0, pix: 0 };
+          const linhas = (r.chamada || []).concat(r.ouvintes || []);
+          linhas.forEach((l) => {
+            const metodo = l.ofertaMetodo === "pix" ? "pix" : "dinheiro";
+            totais[metodo] += Number(l.ofertaValor) || 0;
+          });
+          Object.keys(totais).forEach((metodo) => {
+            const valor = Math.round(totais[metodo] * 100) / 100;
+            const id = "oferta_" + r.salaId + "_" + dataISO + "_" + metodo;
+            const ref = doc(db, "caixaMovimentacoes", id);
+            // Entrada já corrigida à mão (com histórico) não é sobrescrita pelo relatório
+            operacoes.push((async () => {
+              const atual = await getDoc(ref);
+              if (atual.exists() && Array.isArray(atual.data().historico) && atual.data().historico.length) return;
+              if (valor > 0) return setDoc(ref, {
+                tipo: "entrada",
+                valor: valor,
+                descricao: "Oferta EBD " + (r.salaNome || r.salaId) + " - " + dataBr + " - " + nomeMetodo[metodo],
+                meio: metodo,
+                data: dataISO,
+                origem: "relatorioAula",
+                salaId: r.salaId,
+                metodo: metodo,
+                lancadoPorUid: usuarioAtualCache ? usuarioAtualCache.uid : "",
+                lancadoPorNome: usuarioAtualCache ? (usuarioAtualCache.nome || usuarioAtualCache.email || "") : "",
+                criadoEm: serverTimestamp(),
+                criadoEmMs: Date.now()
+              }, { merge: true });
+              return deleteDoc(ref);
+            })());
+          });
+        });
+        await Promise.all(operacoes);
+        return true;
+      } catch (err) {
+        window.notificar("Não foi possível lançar as ofertas no Livro Caixa. " + (err.message || ""), "error");
+        console.error(err);
+        return false;
+      }
+    }
+
     // Relatório Geral: soma os relatórios de todas as Salas lançados
     // para o Domingo escolhido no combobox.
     async function montarRelatorioGeral(dataSelecionada) {
@@ -4119,9 +4460,35 @@
     // qualquer Sala), mais o Domingo atual (mesmo que ainda vazio, para
     // sempre vir pré-selecionado). Roda toda vez que "Relatório
     // Dominical" é reaberto, para refletir lançamentos novos.
+    // Botão "Registrar relatório no caixa": lança as ofertas do Domingo escolhido no Livro Caixa
+    async function registrarRelatorioNoCaixa() {
+      const btn = document.getElementById("btnRegistrarCaixa");
+      const dataISO = document.getElementById("secRelGeralData").value;
+      if (!dataISO) return;
+      btn.disabled = true;
+      try {
+        const snap = await getDocs(query(collection(db, "relatoriosAula"), where("data", "==", dataISO)));
+        const relatorios = [];
+        snap.forEach((d) => relatorios.push(d.data()));
+        if (!relatorios.length) {
+          window.notificar("Não há relatório lançado para este Domingo.", "error");
+          return;
+        }
+        const ok = await lancarOfertasNoCaixa(relatorios, dataISO);
+        if (ok) window.notificar("Relatório registrado no caixa.", "success");
+      } catch (err) {
+        window.notificar("Não foi possível registrar no caixa. " + (err.message || ""), "error");
+        console.error(err);
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
     async function carregarDatasRelatorioGeral() {
       const select = document.getElementById("secRelGeralData");
       if (!select) return;
+      const btnCaixa = document.getElementById("btnRegistrarCaixa");
+      if (btnCaixa) btnCaixa.onclick = registrarRelatorioNoCaixa;
       try {
         const snap = await getDocs(collection(db, "relatoriosAula"));
         const datas = new Set();
@@ -4952,35 +5319,331 @@
       });
     }
 
-    async function salvarPoolProfessores(sala, novaLista) {
-      const uids = novaLista.map((p) => p.uid);
-      await updateDoc(doc(db, "salas", sala.id), {
-        professores: novaLista,
-        professoresUids: uids,
-        professorUid: novaLista[0] ? novaLista[0].uid : null,
-        professorNome: novaLista[0] ? novaLista[0].nome : ""
-      });
-      sala.professores = novaLista;
-      sala.professoresUids = uids;
-      sala.professorUid = novaLista[0] ? novaLista[0].uid : null;
-      sala.professorNome = novaLista[0] ? novaLista[0].nome : "";
+    // ---------- Professores por Turma: escala cíclica ----------
+    // A escala repete a ordem do pool (Professor 1, 2, 3, 1, 2, 3...). A ordem é salas.professores.
+    // salas.escalaCiclo = { desde: "AAAA-MM-DD" (um domingo), inicioIdx } diz qual professor da
+    // ordem cai no domingo "desde". Ao mudar o pool, a escala é gravada em escalaEbd a partir desse domingo.
+    const poolModal = document.getElementById("poolModal");
+    const poolCorpo = document.getElementById("poolModalCorpo");
+    const poolTitulo = document.getElementById("poolModalTitulo");
+    const poolBtnSalvar = document.getElementById("poolModalSalvar");
+    const poolBtnCancelar = document.getElementById("poolModalCancelar");
+    let poolColetar = null;
+    let poolResolver = null;
+
+    function fecharPopupPool(valor) {
+      poolModal.classList.remove("is-open");
+      setTimeout(() => { poolModal.hidden = true; }, 200);
+      const resolver = poolResolver;
+      poolResolver = null;
+      poolColetar = null;
+      if (resolver) resolver(valor);
     }
 
-    async function removerProfessorDaSala(sala, uid, containerLista) {
+    // Abre o pop-up. montar(corpo) desenha os campos e devolve a função que lê a escolha
+    // (ou null, quando a escolha está incompleta). A Promise devolve a escolha ou null se cancelado.
+    function abrirPopupPool(titulo, textoBotao, montar) {
+      poolTitulo.textContent = titulo;
+      poolBtnSalvar.textContent = textoBotao;
+      poolCorpo.innerHTML = "";
+      poolColetar = montar(poolCorpo);
+      poolModal.hidden = false;
+      requestAnimationFrame(() => poolModal.classList.add("is-open"));
+      return new Promise((resolve) => { poolResolver = resolve; });
+    }
+
+    poolBtnSalvar.addEventListener("click", () => {
+      if (!poolColetar) return;
+      const valor = poolColetar();
+      if (valor) fecharPopupPool(valor);
+    });
+    poolBtnCancelar.addEventListener("click", () => fecharPopupPool(null));
+    poolModal.addEventListener("click", (e) => { if (e.target === poolModal) fecharPopupPool(null); });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && !poolModal.hidden) fecharPopupPool(null);
+    });
+
+    // Datas em texto AAAA-MM-DD, somadas em UTC para não sofrer com horário de verão
+    const pad2 = (n) => String(n).padStart(2, "0");
+    function hojeISO() {
+      const h = new Date();
+      return h.getFullYear() + "-" + pad2(h.getMonth() + 1) + "-" + pad2(h.getDate());
+    }
+    function isoParaData(iso) {
+      const [a, m, d] = iso.split("-").map(Number);
+      return new Date(Date.UTC(a, m - 1, d));
+    }
+    function isoSomaDias(iso, dias) {
+      const dt = isoParaData(iso);
+      dt.setUTCDate(dt.getUTCDate() + dias);
+      return dt.toISOString().slice(0, 10);
+    }
+    function domingoNaOuDepois(iso) {
+      return isoSomaDias(iso, (7 - isoParaData(iso).getUTCDay()) % 7);
+    }
+    function semanasEntre(isoA, isoB) {
+      return Math.round((isoParaData(isoB) - isoParaData(isoA)) / (7 * 86400000));
+    }
+    function formatarData(iso) {
+      const [a, m, d] = iso.split("-");
+      return d + "/" + m + "/" + a;
+    }
+    function proximoDomingoEstrito() {
+      return domingoNaOuDepois(isoSomaDias(hojeISO(), 1));
+    }
+    function inicioProximoTrimestre() {
+      const h = new Date();
+      const trimestreAtual = Math.floor(h.getMonth() / 3) + 1;
+      const ano = trimestreAtual === 4 ? h.getFullYear() + 1 : h.getFullYear();
+      const mes = (trimestreAtual % 4) * 3;
+      return domingoNaOuDepois(ano + "-" + pad2(mes + 1) + "-01");
+    }
+
+    // Professor escalado em uma data, pela ordem do pool a partir de ciclo.desde
+    function professorNoCiclo(ordem, ciclo, iso) {
+      if (!ordem.length) return null;
+      const n = ciclo.desde ? semanasEntre(ciclo.desde, iso) : 0;
+      const len = ordem.length;
+      const idx = (((ciclo.inicioIdx || 0) + n) % len + len) % len;
+      return ordem[idx];
+    }
+
+    // Grava o novo pool e a escala de cada domingo, de efetivoEm até o fim do ano seguinte.
+    // mapa troca quem sai por quem entra (substituição): { uidQueSai: uidQueEntra }.
+    // A sequência continua de onde estava: quem estaria escalado em efetivoEm mantém o lugar
+    // (ou, se saiu, passa a vez para o próximo que continua no pool).
+    async function aplicarNovoPool(sala, novaLista, efetivoEm, mapa) {
       const atual = nomesProfessoresDaSala(sala);
-      const nova = atual.filter((p) => p.uid !== uid);
-      statusProfEl.textContent = "Removendo...";
+      const cicloAntigo = {
+        desde: sala.escalaCiclo ? sala.escalaCiclo.desde : null,
+        inicioIdx: sala.escalaCiclo ? sala.escalaCiclo.inicioIdx : 0
+      };
+      const pAntes = professorNoCiclo(atual, cicloAntigo, efetivoEm);
+      let inicioIdx = 0;
+      if (pAntes) {
+        const i0 = atual.findIndex((p) => p.uid === pAntes.uid);
+        for (let k = 0; k < atual.length; k++) {
+          const cand = atual[(i0 + k) % atual.length];
+          const alvo = mapa[cand.uid] || cand.uid;
+          const j = novaLista.findIndex((p) => p.uid === alvo);
+          if (j >= 0) { inicioIdx = j; break; }
+        }
+      }
+      const ciclo = { desde: efetivoEm, inicioIdx: inicioIdx };
+
+      await updateDoc(doc(db, "salas", sala.id), {
+        professores: novaLista,
+        professoresUids: novaLista.map((p) => p.uid),
+        professorUid: novaLista[0] ? novaLista[0].uid : null,
+        professorNome: novaLista[0] ? novaLista[0].nome : "",
+        escalaCiclo: ciclo
+      });
+
+      // Escala de cada domingo (até o fim do ano seguinte), em lotes de até 400 gravações
+      const fim = (Number(efetivoEm.slice(0, 4)) + 1) + "-12-31";
+      const gravacoes = [];
+      for (let data = efetivoEm; data <= fim; data = isoSomaDias(data, 7)) {
+        const prof = professorNoCiclo(novaLista, ciclo, data);
+        gravacoes.push({
+          ref: doc(db, "escalaEbd", sala.id + "_" + data),
+          dados: {
+            salaId: sala.id,
+            salaNome: sala.nome,
+            data: data,
+            professorUid: prof ? prof.uid : null,
+            professorNome: prof ? prof.nome : "",
+            atualizadoEm: serverTimestamp()
+          }
+        });
+      }
+      for (let i = 0; i < gravacoes.length; i += 400) {
+        const lote = writeBatch(db);
+        gravacoes.slice(i, i + 400).forEach((g) => lote.set(g.ref, g.dados));
+        await lote.commit();
+      }
+    }
+
+    async function executarMudancaPool(sala, novaLista, efetivoEm, mapa, mensagem) {
       try {
-        await salvarPoolProfessores(sala, nova);
-        statusProfEl.textContent = "Professor removido de " + sala.nome + ".";
-        statusProfEl.className = "admin-agenda-status ok";
-        renderListaProfessoresAtuais(containerLista, sala);
-        if (renderGradeEscala) renderGradeEscala();
+        await aplicarNovoPool(sala, novaLista, efetivoEm, mapa);
+        window.notificar(mensagem + " Escala a partir de " + formatarData(efetivoEm) + ".", "success");
+        await carregarSalas();
       } catch (err) {
-        statusProfEl.textContent = "Não foi possível remover. " + (err.message || "");
-        statusProfEl.className = "admin-agenda-status erro";
+        window.notificar("Não foi possível atualizar os Professores. " + (err.message || ""), "error");
         console.error(err);
       }
+    }
+
+    // Campos do pop-up
+    function criarRotulo(texto) {
+      const d = document.createElement("div");
+      d.className = "sala-professores-titulo";
+      d.textContent = texto;
+      d.style.marginTop = "12px";
+      return d;
+    }
+    function criarSelect(opcoes) {
+      const s = document.createElement("select");
+      s.className = "admin-perfis-item-select";
+      opcoes.forEach((o) => {
+        const op = document.createElement("option");
+        op.value = o.value;
+        op.textContent = o.label;
+        s.appendChild(op);
+      });
+      return s;
+    }
+    // Grupo de opções (radio). Cada opção pode trazer um campo extra que aparece só quando ela é marcada.
+    // Devolve a função que lê o valor marcado.
+    function criarEscolhas(corpo, nome, opcoes, marcado) {
+      const itens = opcoes.map((o) => {
+        const linha = document.createElement("label");
+        linha.className = "sala-professores-checkbox-linha";
+        const radio = document.createElement("input");
+        radio.type = "radio";
+        radio.name = nome;
+        radio.value = o.value;
+        radio.checked = o.value === marcado;
+        linha.appendChild(radio);
+        linha.appendChild(document.createTextNode(" " + o.label));
+        corpo.appendChild(linha);
+        if (o.extra) corpo.appendChild(o.extra);
+        return { radio: radio, extra: o.extra || null };
+      });
+      const atualizar = () => itens.forEach((i) => { if (i.extra) i.extra.hidden = !i.radio.checked; });
+      itens.forEach((i) => i.radio.addEventListener("change", atualizar));
+      atualizar();
+      return () => {
+        const marcadoItem = itens.find((i) => i.radio.checked);
+        return marcadoItem ? marcadoItem.radio.value : null;
+      };
+    }
+
+    // Pop-up ao adicionar um Professor na Sala
+    function abrirPopupAdicionar(sala) {
+      const atuais = nomesProfessoresDaSala(sala);
+      const atuaisUids = atuais.map((p) => p.uid);
+      const disponiveis = professoresCache.filter((p) => !atuaisUids.includes(p.uid));
+      if (!disponiveis.length) {
+        window.notificar('Nenhum Professor disponível para adicionar. Atribua o perfil "Professor" em Gerenciar Perfis.', "error");
+        return;
+      }
+
+      abrirPopupPool("Adicionar Professor em " + sala.nome, "Salvar", (corpo) => {
+        corpo.appendChild(criarRotulo("Professor a adicionar"));
+        const selNovo = criarSelect(disponiveis.map((p) => ({ value: p.uid, label: p.nome })));
+        corpo.appendChild(selNovo);
+
+        corpo.appendChild(criarRotulo("A partir de qual data?"));
+        const inputData = document.createElement("input");
+        inputData.type = "date";
+        inputData.min = hojeISO();
+        inputData.style.marginTop = "8px";
+        const lerData = criarEscolhas(corpo, "pool-data", [
+          { value: "imediato", label: "Imediato (a escala muda do próximo domingo em diante)" },
+          { value: "data", label: "A partir da data:", extra: inputData },
+          { value: "trimestre", label: "A partir do próximo trimestre" }
+        ], "imediato");
+
+        let selSair = null;
+        let lerSair = () => "nao";
+        if (atuais.length) {
+          corpo.appendChild(criarRotulo("Haverá substituição?"));
+          selSair = criarSelect(atuais.map((p) => ({ value: p.uid, label: p.nome })));
+          selSair.style.marginTop = "8px";
+          lerSair = criarEscolhas(corpo, "pool-sair", [
+            { value: "nao", label: "Não" },
+            { value: "sim", label: "Sim (qual professor sai da escala):", extra: selSair }
+          ], "nao");
+        }
+
+        return () => {
+          const novo = disponiveis.find((p) => p.uid === selNovo.value);
+          const modo = lerData();
+          let efetivoEm;
+          if (modo === "imediato") {
+            efetivoEm = proximoDomingoEstrito();
+          } else if (modo === "trimestre") {
+            efetivoEm = inicioProximoTrimestre();
+          } else {
+            if (!inputData.value) { alert("Escolha a data a partir de quando a escala muda."); return null; }
+            if (inputData.value < hojeISO()) { alert("A data não pode ser anterior a hoje."); return null; }
+            efetivoEm = domingoNaOuDepois(inputData.value);
+          }
+          const saida = lerSair() === "sim" && selSair ? selSair.value : "";
+          return { novo: novo, efetivoEm: efetivoEm, saida: saida };
+        };
+      }).then(async (r) => {
+        if (!r) return;
+        const atualLista = nomesProfessoresDaSala(sala);
+        const novoObj = { uid: r.novo.uid, nome: r.novo.nome };
+        let novaLista;
+        const mapa = {};
+        if (r.saida) {
+          novaLista = atualLista.map((p) => (p.uid === r.saida ? novoObj : p));
+          mapa[r.saida] = novoObj.uid;
+        } else {
+          novaLista = atualLista.concat([novoObj]);
+        }
+        const msg = r.saida
+          ? novoObj.nome + " substitui o Professor que saiu em " + sala.nome + "."
+          : novoObj.nome + " adicionado a " + sala.nome + ".";
+        await executarMudancaPool(sala, novaLista, r.efetivoEm, mapa, msg);
+      });
+    }
+
+    // Pop-up ao remover um Professor da Sala: pergunta se haverá substituição
+    function abrirPopupRemover(sala, professor) {
+      const atuaisUids = nomesProfessoresDaSala(sala).map((p) => p.uid);
+      const disponiveis = professoresCache.filter((p) => !atuaisUids.includes(p.uid) && p.uid !== professor.uid);
+
+      abrirPopupPool("Remover " + professor.nome + " de " + sala.nome, "Gravar", (corpo) => {
+        corpo.appendChild(criarRotulo("Haverá substituição de " + professor.nome + "?"));
+        const info = document.createElement("p");
+        info.className = "admin-agenda-info";
+        info.style.margin = "6px 0 0";
+        info.textContent = "Não: a escala é atualizada a partir do próximo domingo.";
+        corpo.appendChild(info);
+
+        let selSubst = null;
+        let extra = null;
+        if (disponiveis.length) {
+          selSubst = criarSelect(disponiveis.map((p) => ({ value: p.uid, label: p.nome })));
+          selSubst.style.marginTop = "8px";
+          extra = selSubst;
+        } else {
+          extra = document.createElement("p");
+          extra.className = "admin-agenda-vazio";
+          extra.textContent = "Nenhum Professor disponível para substituir.";
+        }
+        const lerSub = criarEscolhas(corpo, "pool-substituicao", [
+          { value: "nao", label: "Não" },
+          { value: "sim", label: "Sim (novo Professor):", extra: extra }
+        ], "nao");
+
+        return () => {
+          if (lerSub() !== "sim") return { novo: null };
+          if (!selSubst) { alert("Não há Professor disponível para substituir. Escolha Não."); return null; }
+          const novo = disponiveis.find((p) => p.uid === selSubst.value);
+          return { novo: novo ? { uid: novo.uid, nome: novo.nome } : null };
+        };
+      }).then(async (r) => {
+        if (!r) return;
+        const atualLista = nomesProfessoresDaSala(sala);
+        const proximo = proximoDomingoEstrito();
+        const mapa = {};
+        let novaLista;
+        let msg;
+        if (r.novo) {
+          novaLista = atualLista.map((p) => (p.uid === professor.uid ? r.novo : p));
+          mapa[professor.uid] = r.novo.uid;
+          msg = r.novo.nome + " substitui " + professor.nome + " em " + sala.nome + ".";
+        } else {
+          novaLista = atualLista.filter((p) => p.uid !== professor.uid);
+          msg = professor.nome + " removido de " + sala.nome + ".";
+        }
+        await executarMudancaPool(sala, novaLista, proximo, mapa, msg);
+      });
     }
 
     function renderListaProfessoresAtuais(container, sala) {
@@ -5001,80 +5664,11 @@
         btnRemover.className = "sala-professores-remover";
         btnRemover.textContent = "✕";
         btnRemover.title = "Remover";
-        btnRemover.addEventListener("click", () => removerProfessorDaSala(sala, p.uid, container));
+        btnRemover.addEventListener("click", () => abrirPopupRemover(sala, p));
         linha.appendChild(nome);
         linha.appendChild(btnRemover);
         container.appendChild(linha);
       });
-    }
-
-    function abrirChecklistProfessores(item, sala, containerLista) {
-      const existente = item.querySelector(".sala-professores-checklist");
-      if (existente) { existente.remove(); return; }
-
-      const atuaisUids = nomesProfessoresDaSala(sala).map((p) => p.uid);
-
-      const painel = document.createElement("div");
-      painel.className = "sala-professores-checklist";
-
-      if (!professoresCache.length) {
-        const aviso = document.createElement("p");
-        aviso.className = "admin-agenda-vazio";
-        aviso.textContent = 'Nenhum Professor cadastrado ainda (atribua o perfil "Professor" em Gerenciar Perfis).';
-        painel.appendChild(aviso);
-      } else {
-        professoresCache.forEach((p) => {
-          const label = document.createElement("label");
-          label.className = "sala-professores-checkbox-linha";
-          const checkbox = document.createElement("input");
-          checkbox.type = "checkbox";
-          checkbox.value = p.uid;
-          checkbox.checked = atuaisUids.includes(p.uid);
-          label.appendChild(checkbox);
-          label.appendChild(document.createTextNode(" " + p.nome));
-          painel.appendChild(label);
-        });
-      }
-
-      const botoes = document.createElement("div");
-      botoes.className = "admin-form-botoes";
-      const btnSalvar = document.createElement("button");
-      btnSalvar.type = "button";
-      btnSalvar.className = "btn-admin";
-      btnSalvar.textContent = "Salvar";
-      const btnCancelar = document.createElement("button");
-      btnCancelar.type = "button";
-      btnCancelar.className = "btn-admin";
-      btnCancelar.textContent = "Cancelar";
-      botoes.appendChild(btnSalvar);
-      botoes.appendChild(btnCancelar);
-      painel.appendChild(botoes);
-
-      btnCancelar.addEventListener("click", () => painel.remove());
-
-      btnSalvar.addEventListener("click", async () => {
-        const marcados = Array.from(painel.querySelectorAll('input[type="checkbox"]:checked')).map((c) => c.value);
-        const novaLista = marcados.map((uid) => {
-          const p = professoresCache.find((pp) => pp.uid === uid);
-          return { uid: uid, nome: p ? p.nome : uid };
-        });
-        btnSalvar.disabled = true;
-        try {
-          await salvarPoolProfessores(sala, novaLista);
-          statusProfEl.textContent = "Professores de " + sala.nome + " atualizados.";
-          statusProfEl.className = "admin-agenda-status ok";
-          painel.remove();
-          renderListaProfessoresAtuais(containerLista, sala);
-          if (renderGradeEscala) renderGradeEscala();
-        } catch (err) {
-          statusProfEl.textContent = "Não foi possível salvar. " + (err.message || "");
-          statusProfEl.className = "admin-agenda-status erro";
-          console.error(err);
-          btnSalvar.disabled = false;
-        }
-      });
-
-      item.appendChild(painel);
     }
 
     function renderProfessores() {
@@ -5115,7 +5709,7 @@
         const listaAtuais = document.createElement("div");
         listaAtuais.className = "sala-professores-lista";
 
-        btnAdicionar.addEventListener("click", () => abrirChecklistProfessores(item, sala, listaAtuais));
+        btnAdicionar.addEventListener("click", () => abrirPopupAdicionar(sala));
 
         linhaTopo.appendChild(info);
         linhaTopo.appendChild(btnAdicionar);
@@ -5404,6 +5998,7 @@
     const anoSelect = document.getElementById("licoesAnoSelect");
     const trimestreSelect = document.getElementById("licoesTrimestreSelect");
     const camposLista = document.getElementById("licoesCamposLista");
+    const camposSanfona = document.getElementById("licoesCamposSanfona");
     const pdfAtualEl = document.getElementById("licoesPdfAtual");
     const pdfFileInput = document.getElementById("licoesPdfInput");
     const btnEnviarPdf = document.getElementById("btnEnviarPdf");
@@ -5640,7 +6235,8 @@
       }
     }
 
-    async function carregar() {
+    // silencioso: carga automática ao abrir a página (sem aviso de "escolha a revista")
+    async function carregar(silencioso = false) {
       renderizarRevistasCombo();
       renderizarSalasCombo();
       const meuToken = ++carregandoToken;
@@ -5651,9 +6247,11 @@
       atualizarPdfUI();
       atualizarProfUI();
       const ref = docRevistaAtual();
+      // Sem revista escolhida, as lições (Lição 1 a 13) ficam recolhidas
+      camposSanfona.classList.toggle("aberto", !!ref);
       if (!ref) {
         carregandoLicoes = false;
-        avisar("Escolha a revista para cadastrar as lições.");
+        if (!silencioso) avisar("Escolha a revista para cadastrar as lições.");
         return;
       }
       try {
@@ -5783,6 +6381,7 @@
         // "Selecione uma revista..." não desvincula a sala: volta para a revista dela
         revistaSeletor.value = sala ? (sala.revistaId || "") : "";
         renderizarRevistasCombo();
+        await carregar();
         return;
       }
       if (sala && (sala.revistaId || "") === id) {
@@ -6192,7 +6791,7 @@
         const snap = await getDoc(REF_REVISTAS);
         revistas = snap.exists() && Array.isArray(snap.data().itens) ? snap.data().itens : [];
         preencherRevistas("");
-        await carregar();
+        await carregar(true);
       } catch (err) {
         mostrarStatusRevista("Não foi possível carregar as revistas. " + (err.message || ""), "erro");
         console.error(err);
@@ -6217,7 +6816,6 @@
     const conteudo = document.getElementById("professorConteudo");
     const revistaPdfEl = document.getElementById("professorRevistaPdf");
     const form = document.getElementById("formRelatorioAula");
-    const statusEl = document.getElementById("relatorioStatus");
     if (!seletor || !form) return;
 
     const campoData = document.getElementById("relatorioData");
@@ -6231,8 +6829,6 @@
     const chamadaLicaoLabel = document.getElementById("chamadaLicaoLabel");
     const chamadaLicaoTitulo = document.getElementById("chamadaLicaoTitulo");
     const chamadaProfessorEscalado = document.getElementById("chamadaProfessorEscalado");
-    const chamadaCabecalhoAula = document.getElementById("chamadaCabecalhoAula");
-    const chamadaCapaImg = document.getElementById("chamadaCapaImg");
     const salaAlunosLista = document.getElementById("salaAlunosLista");
     const salaAlunoCandidato = document.getElementById("salaAlunoCandidato");
     const btnAdicionarAlunoConta = document.getElementById("btnAdicionarAlunoConta");
@@ -6244,6 +6840,7 @@
     const salaAlunoAvulsoMae = document.getElementById("salaAlunoAvulsoMae");
     const btnAdicionarAlunoAvulso = document.getElementById("btnAdicionarAlunoAvulso");
     const salaAlunosStatus = document.getElementById("salaAlunosStatus");
+    const alunosSalaNome = document.getElementById("alunosSalaNome");
 
     const chamadaLista = document.getElementById("chamadaLista");
     const chamadaVazia = document.getElementById("chamadaVazia");
@@ -6319,6 +6916,11 @@
     function novoSeletorMetodo(valorAtual, onChange) {
       const select = document.createElement("select");
       select.className = "admin-perfis-item-select";
+      // Sem padrão: o professor precisa escolher Dinheiro ou Pix
+      const vazio = document.createElement("option");
+      vazio.value = "";
+      vazio.textContent = "Escolha...";
+      select.appendChild(vazio);
       ["dinheiro", "pix"].forEach((m) => {
         const opt = document.createElement("option");
         opt.value = m;
@@ -6326,7 +6928,7 @@
         if (valorAtual === m) opt.selected = true;
         select.appendChild(opt);
       });
-      select.addEventListener("change", () => onChange(select.value));
+      select.addEventListener("change", () => { onChange(select.value); salvarRelatorio(); });
       return select;
     }
 
@@ -6339,21 +6941,35 @@
       input.style.width = "110px";
       input.value = valorAtual || "";
       input.addEventListener("input", () => onInput(Number(input.value) || 0));
+      // Ao sair do campo, grava (como no Gerenciar Lições)
+      input.addEventListener("change", () => salvarRelatorio());
       return input;
+    }
+
+    // Quem entra na chamada: alunos matriculados e professores da Sala (chave única para cada um)
+    function pessoasDaChamada() {
+      const sala = minhasSalas.find((s) => s.id === seletor.value);
+      const professores = sala && Array.isArray(sala.professores) ? sala.professores : [];
+      const alunos = alunosDaSala.map((a) => ({ chave: a.matriculaId, nome: a.nome, idade: a.idade, tipo: "aluno" }));
+      const profs = professores.map((p) => ({ chave: "prof_" + p.uid, nome: p.nome || p.uid, idade: null, tipo: "professor" }));
+      return alunos.concat(profs);
     }
 
     function recalcularResumo() {
       const matriculados = alunosDaSala.length;
-      let presentes = 0;
+      const pessoas = pessoasDaChamada();
+      let presentesPessoas = 0;
       let ofertas = 0;
-      alunosDaSala.forEach((a) => {
-        const st = chamadaEstado[a.matriculaId];
-        if (st && st.presente) presentes++;
+      pessoas.forEach((p) => {
+        const st = chamadaEstado[p.chave];
+        if (st && st.presente) presentesPessoas++;
         if (st && st.ofertaValor) ofertas += Number(st.ofertaValor) || 0;
       });
       ouvintes.forEach((o) => { ofertas += Number(o.ofertaValor) || 0; });
-      const ausentes = matriculados - presentes;
       const visitantes = ouvintes.length;
+      // Visitantes contam como presentes; alunos e professores entram em presentes ou ausentes
+      const presentes = presentesPessoas + visitantes;
+      const ausentes = pessoas.length - presentesPessoas;
       resumoMatriculados.textContent = matriculados;
       resumoPresentes.textContent = presentes;
       resumoAusentes.textContent = ausentes;
@@ -6382,8 +6998,6 @@
       campoTema.value = "";
       if (revistaPdfEl) { revistaPdfEl.hidden = true; revistaPdfEl.innerHTML = ""; }
       let revistaNomeAtual = "";
-      let revistaCapaUrlAtual = "";
-      let revistaCapaIdAtual = "";
       let licaoNumeroAtual = null;
       let dataAulaISO = dataISO;
       if (salaId) {
@@ -6392,8 +7006,6 @@
           const snap = await getDoc(licRef);
           const dados = snap.exists() ? snap.data() : null;
           revistaNomeAtual = (await nomeDaRevistaPorId(revistaDaSala)) || (dados && dados.revistaNome) || "";
-          revistaCapaUrlAtual = (dados && dados.revistaCapaUrl) ? dados.revistaCapaUrl : "";
-          revistaCapaIdAtual = (dados && dados.revistaCapaDriveId) ? dados.revistaCapaDriveId : "";
           const licoesArr = dados && Array.isArray(dados.licoes) ? dados.licoes : [];
           const licaoIndex = licoesArr.findIndex((l) => l.data >= dataISO);
           const licaoHoje = licaoIndex >= 0 ? licoesArr[licaoIndex] : null;
@@ -6430,25 +7042,12 @@
       if (chamadaLicaoBloco) {
         const temLicao = !!campoTema.value;
         chamadaLicaoBloco.hidden = !temLicao;
-        if (chamadaLicaoLabel) chamadaLicaoLabel.textContent = licaoNumeroAtual ? ("Lição " + licaoNumeroAtual) : "Lição";
+        if (chamadaLicaoLabel) chamadaLicaoLabel.textContent = (licaoNumeroAtual ? ("Lição " + licaoNumeroAtual) : "Lição") + ":";
         if (chamadaLicaoTitulo) chamadaLicaoTitulo.textContent = campoTema.value;
       }
-      if (chamadaCapaImg) {
-        if (revistaCapaIdAtual) {
-          chamadaCapaImg.src = "https://drive.google.com/thumbnail?id=" + revistaCapaIdAtual + "&sz=w400";
-          chamadaCapaImg.hidden = false;
-        } else if (revistaCapaUrlAtual) {
-          chamadaCapaImg.src = revistaCapaUrlAtual;
-          chamadaCapaImg.hidden = false;
-        } else {
-          chamadaCapaImg.src = "";
-          chamadaCapaImg.hidden = true;
-        }
-      }
-      if (chamadaCabecalhoAula) chamadaCabecalhoAula.classList.toggle("com-capa", !!(revistaCapaIdAtual || revistaCapaUrlAtual));
       if (chamadaProfessorEscalado) {
         const textoProfessor = professorEscaladoNome ? ("Professor(a): " + professorEscaladoNome) : "Nenhum professor escalado para hoje";
-        chamadaProfessorEscalado.innerHTML = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line><line x1="12" y1="14" x2="12" y2="17"></line><circle cx="12" cy="19.5" r="0.6" fill="currentColor"></circle></svg><span>' + textoProfessor + '</span>';
+        chamadaProfessorEscalado.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"></circle><path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1"></path></svg><span>' + textoProfessor + '</span>';
       }
     }
 
@@ -6481,6 +7080,7 @@
           ouvintes.splice(idx, 1);
           renderOuvintes();
           recalcularResumo();
+          salvarRelatorio();
         });
         direita.appendChild(btnRemover);
 
@@ -6492,12 +7092,13 @@
 
     function renderChamada() {
       chamadaLista.innerHTML = "";
-      chamadaVazia.hidden = alunosDaSala.length > 0;
-      alunosDaSala.forEach((aluno) => {
-        if (!chamadaEstado[aluno.matriculaId]) {
-          chamadaEstado[aluno.matriculaId] = { presente: true, ofertaValor: 0, ofertaMetodo: "dinheiro" };
+      const pessoas = pessoasDaChamada();
+      chamadaVazia.hidden = pessoas.length > 0;
+      pessoas.forEach((aluno) => {
+        if (!chamadaEstado[aluno.chave]) {
+          chamadaEstado[aluno.chave] = { presente: true, ofertaValor: 0, ofertaMetodo: "" };
         }
-        const st = chamadaEstado[aluno.matriculaId];
+        const st = chamadaEstado[aluno.chave];
 
         const item = document.createElement("div");
         item.className = "admin-perfis-item";
@@ -6511,7 +7112,7 @@
         const checkbox = document.createElement("input");
         checkbox.type = "checkbox";
         checkbox.checked = !!st.presente;
-        checkbox.addEventListener("change", () => { st.presente = checkbox.checked; recalcularResumo(); });
+        checkbox.addEventListener("change", () => { st.presente = checkbox.checked; recalcularResumo(); salvarRelatorio(); });
 
         const nomeWrap = document.createElement("span");
         const nomeEl = document.createElement("span");
@@ -6521,7 +7122,7 @@
         nomeWrap.appendChild(document.createElement("br"));
         const subEl = document.createElement("span");
         subEl.className = "admin-perfis-item-sub";
-        subEl.textContent = "Idade: " + (aluno.idade != null ? aluno.idade : "—");
+        subEl.textContent = aluno.tipo === "professor" ? "Professor(a) da Sala" : "Idade: " + (aluno.idade != null ? aluno.idade : "—");
         nomeWrap.appendChild(subEl);
 
         info.appendChild(checkbox);
@@ -6618,7 +7219,11 @@
         usuariosSnap.forEach((d) => {
           const u = d.data();
           if (u.ativo !== false && !jaVinculados.has(d.id)) {
-            candidatos.push({ uid: d.id, nome: [u.nome, u.sobrenome].filter(Boolean).join(" ") || u.email || d.id });
+            candidatos.push({
+              uid: d.id,
+              nome: [u.nome, u.sobrenome].filter(Boolean).join(" ") || u.email || d.id,
+              idade: calcularIdade(u.dataNascimento)
+            });
           }
         });
         candidatos.sort((a, b) => a.nome.localeCompare(b.nome));
@@ -6634,7 +7239,8 @@
           candidatos.forEach((c) => {
             const opt = document.createElement("option");
             opt.value = c.uid;
-            opt.textContent = c.nome;
+            opt.textContent = c.nome + " - Idade: " + (c.idade != null ? String(c.idade).padStart(2, "0") : "--");
+            opt.dataset.nome = c.nome;
             salaAlunoCandidato.appendChild(opt);
           });
         }
@@ -7086,8 +7692,6 @@
 
     async function carregarRelatorio(salaId, data) {
       if (!salaId || !data) return;
-      statusEl.textContent = "";
-      statusEl.className = "admin-agenda-status";
       campoTema.value = "";
       chamadaEstado = {};
       ouvintes = [];
@@ -7097,13 +7701,12 @@
           const r = snap.data();
           campoTema.value = r.tema || "";
           (r.chamada || []).forEach((c) => {
-            chamadaEstado[c.matriculaId] = { presente: !!c.presente, ofertaValor: c.ofertaValor || 0, ofertaMetodo: c.ofertaMetodo || "dinheiro" };
+            chamadaEstado[c.matriculaId] = { presente: !!c.presente, ofertaValor: c.ofertaValor || 0, ofertaMetodo: c.ofertaMetodo || "" };
           });
           ouvintes = (r.ouvintes || []).map((o) => Object.assign({}, o));
         }
       } catch (err) {
-        statusEl.textContent = "Não foi possível carregar o relatório dessa data. " + (err.message || "");
-        statusEl.className = "admin-agenda-status erro";
+        window.notificar("Não foi possível carregar o relatório dessa data. " + (err.message || ""), "error");
         console.error(err);
       }
       renderChamada();
@@ -7112,6 +7715,8 @@
 
     async function recarregarTudo() {
       const salaId = seletor.value;
+      const opcaoSala = seletor.options[seletor.selectedIndex];
+      if (alunosSalaNome) alunosSalaNome.textContent = opcaoSala ? "Sala: " + opcaoSala.textContent : "";
       campoData.value = hojeISO();
       await carregarAlunosDaSala(salaId);
       await carregarRelatorio(salaId, campoData.value);
@@ -7201,7 +7806,7 @@
             salaId: seletor.value,
             tipo: "conta",
             uid: uid,
-            nome: opt ? opt.textContent : uid,
+            nome: opt ? (opt.dataset.nome || opt.textContent) : uid,
             ativo: true,
             criadoEm: serverTimestamp(),
             criadoPorUid: usuarioAtualCache.uid
@@ -7259,30 +7864,46 @@
     btnAdicionarOuvinte.addEventListener("click", () => {
       const nome = ouvinteNomeInput.value.trim();
       if (!nome) return;
-      ouvintes.push({ nome: nome, ofertaValor: 0, ofertaMetodo: "dinheiro" });
+      ouvintes.push({ nome: nome, ofertaValor: 0, ofertaMetodo: "" });
       ouvinteNomeInput.value = "";
       renderOuvintes();
       recalcularResumo();
+      salvarRelatorio();
     });
 
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
+    // Salvamento automático: presença, ofertas, método e visitantes gravam o relatório ao serem alterados.
+    // As gravações entram em fila, para que uma não sobrescreva a outra.
+    let salvamentoRelatorio = Promise.resolve();
+    function salvarRelatorio() {
+      salvamentoRelatorio = salvamentoRelatorio.then(gravarRelatorio);
+      return salvamentoRelatorio;
+    }
+
+    async function gravarRelatorio() {
       const salaId = seletor.value;
       const data = campoData.value;
       if (!salaId || !data) return;
       const sala = minhasSalas.find((s) => s.id === salaId);
+      // Não grava enquanto houver oferta sem Dinheiro ou Pix escolhido
+      const semMetodo = pessoasDaChamada().find((a) => {
+        const st = chamadaEstado[a.chave];
+        return st && Number(st.ofertaValor) > 0 && !st.ofertaMetodo;
+      }) || ouvintes.find((o) => Number(o.ofertaValor) > 0 && !o.ofertaMetodo);
+      if (semMetodo) {
+        window.notificar("Escolha Dinheiro ou Pix para a oferta de " + semMetodo.nome + " antes de salvar.", "error");
+        return;
+      }
       const resumo = recalcularResumo();
-      const botao = form.querySelector('button[type="submit"]');
-      botao.disabled = true;
       try {
-        const chamadaArray = alunosDaSala.map((a) => {
-          const st = chamadaEstado[a.matriculaId] || { presente: false, ofertaValor: 0, ofertaMetodo: "dinheiro" };
+        const chamadaArray = pessoasDaChamada().map((a) => {
+          const st = chamadaEstado[a.chave] || { presente: false, ofertaValor: 0, ofertaMetodo: "" };
           return {
-            matriculaId: a.matriculaId,
+            matriculaId: a.chave,
+            tipo: a.tipo,
             nome: a.nome,
             presente: !!st.presente,
             ofertaValor: Number(st.ofertaValor) || 0,
-            ofertaMetodo: st.ofertaMetodo || "dinheiro"
+            ofertaMetodo: st.ofertaMetodo || ""
           };
         });
         await setDoc(doc(db, "relatoriosAula", salaId + "_" + data), {
@@ -7301,16 +7922,15 @@
           lancadoPorNome: usuarioAtualCache.nome || usuarioAtualCache.email || "",
           atualizadoEm: serverTimestamp()
         }, { merge: true });
-        statusEl.textContent = "Relatório salvo com sucesso.";
-        statusEl.className = "admin-agenda-status ok";
+        window.notificar("Salvo automaticamente.", "success");
       } catch (err) {
-        statusEl.textContent = "Não foi possível salvar o relatório. " + (err.message || "");
-        statusEl.className = "admin-agenda-status erro";
+        window.notificar("Não foi possível salvar o relatório. " + (err.message || ""), "error");
         console.error(err);
-      } finally {
-        botao.disabled = false;
       }
-    });
+    }
+
+    // Enter nos campos não deve recarregar a página
+    form.addEventListener("submit", (e) => e.preventDefault());
 
     montarSeletor();
   }

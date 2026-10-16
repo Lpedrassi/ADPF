@@ -426,13 +426,18 @@ body::after {
 }
 #areaAdministrativo .professor-canvas-titulo {
   color: #FFFFFF;
-  font-size: 17px;
+  font-size: 14px;
   font-weight: 800;
 }
 #areaAdministrativo .professor-canvas-sub {
   color: #FFFFFF;
-  font-size: 13px;
+  font-size: 12px;
   line-height: 1.5;
+}
+/* Cards da Secretaria com o mesmo tamanho dos cards de Turma (133 px de largura) */
+#areaAdministrativo .professor-canvas-grid:not(#secRelatorioDominicalTurmas) {
+  grid-template-columns: repeat(auto-fill, 133px);
+  justify-content: center;
 }
 #secNivel0 .professor-canvas-titulo {
   text-transform: uppercase;
@@ -561,7 +566,6 @@ body::after {
   justify-content: center;
   text-align: center;
   gap: 8px;
-  aspect-ratio: 1 / 1;
   padding: 16px;
 }
 #areaProfessor .professor-canvas-icone {
@@ -570,19 +574,97 @@ body::after {
 }
 #areaProfessor .professor-canvas-icone img {
   display: block;
-  width: 110px;
-  height: 110px;
+  width: 96px;
+  height: 96px;
   object-fit: contain;
 }
 #areaProfessor .professor-canvas-titulo {
   color: #FFFFFF;
-  font-size: 17px;
+  font-size: 14px;
   font-weight: 800;
 }
 #areaProfessor .professor-canvas-sub {
   color: #FFFFFF;
-  font-size: 13px;
+  font-size: 12px;
   line-height: 1.5;
+}
+/* Estoque de Materiais: card que vira (frente = saldo, verso = inclusões) */
+.sec-estoque-flip { position: relative; perspective: 900px; width: 133px; }
+/* Lápis pequeno no canto do card: corrige a quantidade */
+.sec-estoque-excluir {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  z-index: 2;
+  height: 26px;
+  padding: 0 8px;
+  border-radius: 8px;
+  border: 1px solid var(--border-strong);
+  background: var(--surface-2);
+  font-size: 12px;
+  line-height: 1;
+  cursor: pointer;
+}
+.sec-estoque-excluir:hover { border-color: #e5484d; }
+.sec-estoque-lapis {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  z-index: 2;
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  border: 1px solid var(--border-strong);
+  background: var(--surface-2);
+  color: var(--ink);
+  font-size: 13px;
+  line-height: 1;
+  cursor: pointer;
+}
+.sec-estoque-lapis:hover { border-color: var(--laranja); }
+.sec-estoque-flip-inner { display: grid; transform-style: preserve-3d; transition: transform 0.5s ease; }
+.sec-estoque-flip.is-virado .sec-estoque-flip-inner { transform: rotateY(180deg); }
+.sec-estoque-frente, .sec-estoque-verso {
+  grid-area: 1 / 1;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  width: 100%;
+  min-height: 176px;
+  margin: 0;
+}
+.sec-estoque-verso {
+  transform: rotateY(180deg);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px;
+  text-align: left;
+  cursor: default;
+}
+.sec-estoque-verso-titulo { font-weight: 800; font-size: 14px; text-align: center; color: var(--laranja); }
+.sec-estoque-verso-lista { flex: 1; overflow-y: auto; max-height: 150px; font-size: 12px; line-height: 1.4; }
+.sec-estoque-verso-linha { padding: 4px 0; border-bottom: 1px solid var(--border); }
+
+/* Livro Caixa: botão de editar e histórico de alterações abaixo de cada lançamento */
+.sec-caixa-editar {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  border: 1px solid var(--border-strong);
+  background: var(--surface-2);
+  color: var(--ink);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.sec-caixa-editar:hover { border-color: var(--laranja); }
+.sec-caixa-historico { margin: -4px 0 10px 14px; padding-left: 10px; border-left: 2px solid var(--border-strong); }
+.sec-caixa-historico-linha { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+/* Cards da Sala do Professor com o mesmo tamanho dos cards de Turma (133 px de largura) */
+#areaProfessor .professor-canvas-grid {
+  grid-template-columns: repeat(auto-fill, 133px);
+  justify-content: center;
+}
 }
 
 #secRelatorioDominicalTurmas .professor-canvas-card {
@@ -594,9 +676,22 @@ body::after {
 }
 #secRelatorioDominicalTurmas .professor-canvas-icone img {
   display: block;
-  width: 130px;
-  height: 130px;
+  width: 96px;
+  height: 96px;
   object-fit: contain;
+}
+/* As seis Salas ficam na mesma linha (no celular, 3 e depois 2 por linha) */
+#secRelatorioDominicalTurmas.professor-canvas-grid {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 10px;
+}
+#secRelatorioDominicalTurmas .professor-canvas-titulo { font-size: 14px; }
+@media (max-width: 900px) {
+  #secRelatorioDominicalTurmas.professor-canvas-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 560px) {
+  #secRelatorioDominicalTurmas.professor-canvas-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  #secRelatorioDominicalTurmas .professor-canvas-icone img { width: 72px; height: 72px; }
 }
 
 .nav-links {
@@ -753,14 +848,23 @@ body::after {
   font-size: 14px;
 }
 
+/* "SALA:" e o combobox na mesma linha */
 #professorSalaSeletorWrap label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
   font-size: 15px;
   font-weight: 700;
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--ink);
   width: 100%;
-  max-width: 420px;
+  white-space: nowrap;
+}
+#professorSalaSeletorWrap select {
+  flex: 1;
+  min-width: 0;
+  white-space: normal;
 }
 #professorSalaSeletorWrap .combo-dep-atual {
   height: 48px;
@@ -1298,6 +1402,32 @@ body::after {
 #canvasPainelArquivos > .admin-form-linha,
 #canvasPainelArquivos > .arquivo-acoes { margin-left: 0; margin-right: 0; }
 #canvasPainelArquivos .arquivo-aula-rotulo { display: block; margin-top: 8px; }
+
+/* Regras de Professores por Turma (Gerenciar Salas) */
+.pool-regras {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--ink);
+  margin: 0 0 16px;
+  padding: 14px 18px;
+  background: var(--surface-2);
+  border: 1px solid var(--border-strong);
+  border-radius: 10px;
+}
+.pool-regras-titulo { font-weight: 800; letter-spacing: 0.05em; margin: 0 0 8px; color: var(--laranja); }
+.pool-regras ol, .pool-regras ul { margin: 6px 0 6px 20px; padding: 0; }
+.pool-regras li { margin: 4px 0; }
+
+/* Sanfona das lições em Gerenciar Lições: recolhida sem revista escolhida */
+.licoes-sanfona { overflow: hidden; max-height: 0; transition: max-height 0.35s ease; }
+.licoes-sanfona.aberto { max-height: 6000px; }
+
+/* Título "Revistas em PDF" em Gerenciar Lições: maior e centralizado */
+.perfil-secao-titulo.licoes-revistas-titulo {
+  font-size: 18px;
+  text-align: center;
+  margin: 8px 0 14px;
+}
 
 /* Quadrados alinhados: título com altura fixa (2 linhas), nome do arquivo com até 2 linhas */
 .arquivo-tile-titulo {
