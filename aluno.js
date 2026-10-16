@@ -8,7 +8,9 @@ import {
   query,
   where,
   doc,
-  getDoc
+  getDoc,
+  setDoc,
+  serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
 import { firebaseConfig } from "./firebase-config.js";
@@ -29,11 +31,15 @@ let nomeSalaAluno = "";
 let revistaDriveId = "";
 let leitor = null;
 let controlesLigados = false;
+let uidAluno = null;
+// Sala onde o aluno está matriculado (a que vale para o pedido de revista, não a que ele escolhe na Sala de Aula)
+let matriculaAluno = null; // { salaId, salaNome, nome }
 
 // Carrega a Área do Aluno quando logado
 onAuthStateChanged(auth, async (user) => {
   if (user && document.getElementById("areaAluno")) {
     try {
+      uidAluno = user.uid;
       await iniciarSalaDeAula(user.uid);
       carregarAvisos();
       carregarRecursos();
@@ -62,6 +68,7 @@ async function iniciarSalaDeAula(uid) {
     btnEntrar.disabled = true;
     salaIdAluno = null;
     nomeSalaAluno = "";
+    matriculaAluno = null;
     return;
   }
 
@@ -69,6 +76,8 @@ async function iniciarSalaDeAula(uid) {
   await preencherSeletorDeSalas();
   // Regra: o aluno só pode estar em 1 Sala (o cadastro já garante isso)
   selecionarSala(salaIds[0]);
+  const matriculaDoAluno = matriculasSnap.docs.map((d) => d.data()).find((m) => m.ativo !== false && m.salaId === salaIds[0]);
+  matriculaAluno = { salaId: salaIds[0], salaNome: nomeSalaAluno, nome: matriculaDoAluno ? (matriculaDoAluno.nome || "") : "" };
 
   selTrimestre.innerHTML = "";
   for (let t = 1; t <= 4; t++) {
@@ -85,12 +94,11 @@ async function iniciarSalaDeAula(uid) {
     document.getElementById("alunoSala").addEventListener("change", (e) => selecionarSala(e.target.value));
     btnEntrar.addEventListener("click", abrirSalaDeAula);
     document.getElementById("btnAlunoVoltar").addEventListener("click", voltarParaPainel);
-    document.getElementById("btnAlunoVoltarRevista").addEventListener("click", voltarDaSolicitacaoRevista);
+    ligarPedidoRevista();
     // Ao entrar de novo na Área do Aluno, volta para o trimestre e a aula atuais
     document.querySelectorAll('[data-area="areaAluno"]').forEach((link) => {
       link.addEventListener("click", () => {
         voltarParaPainel();
-        voltarDaSolicitacaoRevista();
         resetarParaAtual();
       });
     });
@@ -363,14 +371,26 @@ async function carregarArquivosAula(trimestre, aulaData) {
   }
 }
 
-// 2. Avisos (estático por enquanto)
-function carregarAvisos() {
+// 2. Avisos (estático, exceto a revista: se o aluno já pediu, a mensagem muda)
+async function carregarAvisos() {
   const el = document.getElementById("alunoAvisos");
+
+  let pediuRevista = false;
+  try {
+    const periodo = proximoTrimestre();
+    pediuRevista = (await buscarPedidosAluno(periodo.ano, periodo.trimestre)).length > 0;
+  } catch (err) {
+    console.error("Erro ao verificar pedido de revista:", err);
+  }
+
+  const avisoRevista = pediuRevista
+    ? { icone: "📚", titulo: "Você já solicitou a sua revista", detalhe: "Em breve será entregue pela secretaria da EBD." }
+    : { icone: "📚", titulo: "Revista da EBD disponível", detalhe: "Pegue com seu professor" };
 
   const avisos = [
     { icone: "🔔", titulo: "Santa Ceia", detalhe: "Próximo domingo (29/09)" },
     { icone: "📢", titulo: "Congresso UFADEJ", detalhe: "28 a 30 de Setembro" },
-    { icone: "📚", titulo: "Revista da EBD disponível", detalhe: "Pegue com seu professor" }
+    avisoRevista
   ];
 
   const html = avisos.map(aviso =>
@@ -387,39 +407,521 @@ function carregarAvisos() {
 }
 
 // 3. Recursos (links/materiais)
-function carregarRecursos() {
+// Com pedido feito no trimestre, aparece também o cartão "Meu pedido" (somente leitura)
+async function carregarRecursos() {
   const el = document.getElementById("alunoRecursos");
+  const periodo = proximoTrimestre();
+  let temPedido = false;
+  try {
+    temPedido = (await buscarPedidosAluno(periodo.ano, periodo.trimestre)).length > 0;
+  } catch (err) {
+    console.error("Erro ao verificar pedidos:", err);
+  }
 
   el.innerHTML = `
-    <div style="margin-top: 8px;">
-      <button type="button" class="aluno-card-lista-item aluno-recurso-botao" id="btnAlunoSolicitarRevista">
-        <div class="aluno-card-lista-icon">🛒</div>
-        <div>
-          <strong style="color: var(--ink);">Solicitar Revista</strong><br>
-          <span style="font-size: 12px;">Clique aqui para solicitar a revista do próximo trimestre.</span>
-        </div>
+    <div class="professor-canvas-grid aluno-recursos-grid">
+      <button type="button" class="professor-canvas-card" id="btnAlunoSolicitarRevista" aria-label="Solicitar Revista">
+        <span class="professor-canvas-icone"><img src="icones-secretaria/revistas-coloridas.webp" alt=""></span>
+        <span class="professor-canvas-titulo">Solicitar Revista</span>
+        <span class="professor-canvas-sub">Revista do próximo trimestre</span>
       </button>
-      <div class="aluno-card-lista-item">
-        <div class="aluno-card-lista-icon">🙏</div>
-        <div>
-          <strong style="color: var(--ink);">Versículos da Semana</strong><br>
-          <span style="font-size: 12px;">Acompanhe as lições</span>
-        </div>
-      </div>
+      ${temPedido ? `
+      <button type="button" class="professor-canvas-card" id="btnAlunoMeuPedido" aria-label="Meu pedido">
+        <span class="professor-canvas-icone"><img src="icones-secretaria/meu-pedido.webp" alt=""></span>
+        <span class="professor-canvas-titulo">Meu pedido</span>
+        <span class="professor-canvas-sub">Veja o que você pediu</span>
+      </button>` : ""}
     </div>`;
 
   document.getElementById("btnAlunoSolicitarRevista").addEventListener("click", abrirSolicitarRevista);
+  if (temPedido) document.getElementById("btnAlunoMeuPedido").addEventListener("click", abrirMeuPedido);
 }
 
-// Tela de solicitação de revista (formulário será implementado depois)
-function abrirSolicitarRevista() {
-  document.getElementById("alunoPainelPrincipal").hidden = true;
-  document.getElementById("alunoSalaAula").hidden = true;
-  document.getElementById("alunoSolicitarRevista").hidden = false;
-  document.getElementById("areaAluno").scrollIntoView({ behavior: "smooth", block: "start" });
+// ---------- Pedido de revista (pop-up) ----------
+// Um pedido por aluno e por trimestre: documento "pedidosRevistas/{uid}_{ano}_{trimestre}".
+// Preço: campo "preco" de cada revista em licoes/_revistas (itens). Sem preço, aparece "Sem preço no momento".
+const MSG_SEM_PRECO = "Sem preço no momento";
+
+// O pedido é sempre da revista do próximo trimestre (no 4º, o próximo é o 1º do ano seguinte)
+function proximoTrimestre() {
+  return TRIMESTRE_ATUAL === 4
+    ? { ano: ANO + 1, trimestre: 1 }
+    : { ano: ANO, trimestre: TRIMESTRE_ATUAL + 1 };
 }
 
-function voltarDaSolicitacaoRevista() {
-  document.getElementById("alunoSolicitarRevista").hidden = true;
-  document.getElementById("alunoPainelPrincipal").hidden = false;
+// Pedidos deste aluno no trimestre (pode haver mais de um, se ele pediu de novo). Lista vazia se não pediu.
+async function buscarPedidosAluno(ano, trimestre) {
+  if (!uidAluno) return [];
+  const snap = await getDocs(query(collection(db, "pedidosRevistas"), where("uid", "==", uidAluno)));
+  return snap.docs.map((d) => ({ id: d.id, ...d.data() })).filter((p) => p.ano === ano && p.trimestre === trimestre);
+}
+
+const formatarReal = (n) => "R$ " + n.toFixed(2).replace(".", ",");
+
+// Pop-ups do pedido ficam no fim do <body>: a seção da Área do Aluno tem backdrop-filter, que prende o position: fixed dentro dela
+function abrirModalAluno(id) {
+  const modal = document.getElementById(id);
+  modal.hidden = false;
+  modal.classList.add("is-open");
+}
+function fecharModalAluno(id) {
+  const modal = document.getElementById(id);
+  modal.classList.remove("is-open");
+  modal.hidden = true;
+}
+
+function ligarPedidoRevista() {
+  ["alunoPedidoModal", "alunoDividirModal", "alunoMaisRevistasModal", "alunoMeuPedidoModal"].forEach((id) => {
+    document.body.appendChild(document.getElementById(id));
+  });
+  document.getElementById("alunoPedidoCancelar").addEventListener("click", fecharPedidoRevista);
+  document.getElementById("alunoMeuPedidoFechar").addEventListener("click", () => fecharModalAluno("alunoMeuPedidoModal"));
+  document.getElementById("alunoPedidoForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    enviarPedidoRevista();
+  });
+}
+
+// .login-overlay começa invisível (opacity 0): precisa da classe is-open para aparecer
+function fecharPedidoRevista() {
+  const modal = document.getElementById("alunoPedidoModal");
+  modal.classList.remove("is-open");
+  modal.hidden = true;
+}
+
+// Abre o pop-up: trimestre, sala, revistas (checklist + quantidade), custo e Fazer o Pedido
+async function abrirSolicitarRevista() {
+  const status = document.getElementById("alunoPedidoStatus");
+  if (!matriculaAluno) {
+    alert("Solicite ao professor ou à Secretaria matricular você antes de pedir a revista.");
+    return;
+  }
+
+  const periodo = proximoTrimestre();
+  document.getElementById("alunoPedidoTrimestreTexto").textContent = `${periodo.trimestre}º Trimestre ${periodo.ano}`;
+  status.textContent = "";
+  const modal = document.getElementById("alunoPedidoModal");
+  modal.hidden = false;
+  modal.classList.add("is-open");
+
+  const lista = document.getElementById("alunoPedidoLista");
+  lista.textContent = "Carregando revistas...";
+  try {
+    const [revSnap, salasSnap, precosSnap] = await Promise.all([
+      getDoc(doc(db, "licoes", "_revistas")),
+      getDocs(collection(db, "salas")),
+      // Se a regra ainda não existir, o pedido segue sem preço (não trava a tela)
+      getDoc(doc(db, "configRevistas", `precos_${proximoTrimestre().ano}_${proximoTrimestre().trimestre}`)).catch(() => null)
+    ]);
+    const itens = revSnap.exists() && Array.isArray(revSnap.data().itens) ? revSnap.data().itens : [];
+    const salas = salasSnap.docs.map((d) => d.data());
+    // Preços cadastrados pela Secretaria (Valores das revistas); sem preço fica null
+    const precos = precosSnap && precosSnap.exists() && precosSnap.data().precos ? precosSnap.data().precos : {};
+    // Mostra as salas que usam cada revista (ex.: Juniores: Estrela da Manhã)
+    catalogoRevistas = itens.map((r) => ({
+      id: r.id,
+      nome: r.nome || "",
+      precoAluno: precoDe(precos[r.id], "aluno"),
+      precoProfessor: precoDe(precos[r.id], "professor"),
+      salas: salas.filter((s) => s.revistaId === r.id).map((s) => s.nome || "")
+    }));
+    desenharListaRevistas();
+    atualizarCustoRevista();
+  } catch (err) {
+    console.error("Erro ao carregar revistas:", err);
+    lista.textContent = "";
+    status.textContent = "Não foi possível carregar as revistas agora.";
+  }
+}
+
+let catalogoRevistas = [];
+
+// Valor de uma revista para o tipo ("aluno" ou "professor"). Aceita o formato antigo (um número só, vale para os dois).
+function precoDe(valor, tipo) {
+  const n = typeof valor === "number" ? valor : Number(valor && typeof valor === "object" ? valor[tipo] : undefined);
+  return n > 0 ? n : null;
+}
+
+function desenharListaRevistas() {
+  const lista = document.getElementById("alunoPedidoLista");
+  lista.textContent = "";
+  if (!catalogoRevistas.length) {
+    lista.textContent = "Nenhuma revista cadastrada ainda.";
+    return;
+  }
+  // Cabeçalho da tabela
+  const cabecalho = document.createElement("div");
+  cabecalho.className = "aluno-pedido-grade aluno-pedido-grade-cab";
+  ["Revista", "Qtd.", "Tipo", "Valor total"].forEach((titulo) => {
+    const celula = document.createElement("span");
+    celula.textContent = titulo;
+    cabecalho.appendChild(celula);
+  });
+  lista.appendChild(cabecalho);
+
+  catalogoRevistas.forEach((r) => {
+    const linha = document.createElement("div");
+    linha.className = "aluno-pedido-linha aluno-pedido-grade";
+    linha.dataset.revistaId = r.id;
+
+    // Revista (com a sala que a usa, em letras menores)
+    const rotulo = document.createElement("label");
+    rotulo.className = "aluno-pedido-check";
+    const marca = document.createElement("input");
+    marca.type = "checkbox";
+    const texto = document.createElement("span");
+    const nome = document.createElement("strong");
+    nome.textContent = r.nome;
+    texto.appendChild(nome);
+    if (r.salas.length) {
+      const salas = document.createElement("small");
+      salas.textContent = "Sala: " + r.salas.join(", ");
+      texto.appendChild(document.createElement("br"));
+      texto.appendChild(salas);
+    }
+    rotulo.append(marca, texto);
+
+    const qtd = document.createElement("input");
+    qtd.type = "number";
+    qtd.min = "1";
+    qtd.max = "50";
+    qtd.value = "1";
+    qtd.disabled = true;
+    qtd.setAttribute("aria-label", "Quantidade de " + r.nome);
+
+    // Tipo: revista de aluno ou de professor. Com mais de 1 revista, a divisão é perguntada ao fazer o pedido
+    const tipo = document.createElement("select");
+    tipo.setAttribute("aria-label", "Tipo de revista de " + r.nome);
+    [["aluno", "Aluno"], ["professor", "Professor"]].forEach(([valor, textoOpcao]) => {
+      const opt = document.createElement("option");
+      opt.value = valor;
+      opt.textContent = textoOpcao;
+      tipo.appendChild(opt);
+    });
+    tipo.disabled = true;
+
+    // Valor total desta revista (preenchido por atualizarCustoRevista)
+    const valor = document.createElement("span");
+    valor.className = "aluno-pedido-valor";
+    valor.textContent = "—";
+
+    // Mudou a escolha: a divisão deixa de valer
+    const atualizarLinha = () => {
+      delete linha.dataset.qtdAluno;
+      delete linha.dataset.qtdProfessor;
+      qtd.disabled = !marca.checked;
+      tipo.disabled = !marca.checked || Number(qtd.value) > 1;
+      atualizarCustoRevista();
+    };
+    marca.addEventListener("change", atualizarLinha);
+    qtd.addEventListener("input", () => {
+      delete linha.dataset.qtdAluno;
+      delete linha.dataset.qtdProfessor;
+      tipo.disabled = !marca.checked || Number(qtd.value) > 1;
+      atualizarCustoRevista();
+    });
+    linha.append(rotulo, qtd, tipo, valor);
+    lista.appendChild(linha);
+  });
+}
+
+// Pergunta quantas revistas de cada pedido são de professor e quantas são de aluno.
+// Devolve { revistaId: { qtdProfessor, qtdAluno } } ou null se o aluno cancelar.
+function dividirRevistas(pendentes) {
+  return new Promise((resolve) => {
+    const modal = document.getElementById("alunoDividirModal");
+    const lista = document.getElementById("alunoDividirLista");
+    const status = document.getElementById("alunoDividirStatus");
+    const confirmar = document.getElementById("alunoDividirConfirmar");
+    const cancelar = document.getElementById("alunoDividirCancelar");
+    lista.textContent = "";
+    status.textContent = "";
+
+    const campos = pendentes.map((p) => {
+      const linha = document.createElement("div");
+      linha.className = "aluno-pedido-linha";
+      const nome = document.createElement("div");
+      nome.className = "aluno-pedido-nome";
+      nome.textContent = "REVISTA: " + p.nome + " (" + p.quantidade + ")";
+
+      const prof = document.createElement("input");
+      prof.type = "number";
+      prof.min = "0";
+      prof.max = String(p.quantidade);
+      prof.value = "0";
+      const alu = document.createElement("input");
+      alu.type = "number";
+      alu.min = "0";
+      alu.max = String(p.quantidade);
+      alu.value = String(p.quantidade);
+      const rotProf = document.createElement("label");
+      rotProf.className = "aluno-pedido-qtd";
+      rotProf.append("Professor ", prof);
+      const rotAlu = document.createElement("label");
+      rotAlu.className = "aluno-pedido-qtd";
+      rotAlu.append("Aluno ", alu);
+
+      linha.append(nome, rotProf, rotAlu);
+      lista.appendChild(linha);
+      return { p, prof, alu };
+    });
+
+    const fechar = (resultado) => {
+      modal.classList.remove("is-open");
+      modal.hidden = true;
+      cancelar.onclick = null;
+      confirmar.onclick = null;
+      resolve(resultado);
+    };
+    cancelar.onclick = () => fechar(null);
+    confirmar.onclick = () => {
+      const resultado = {};
+      for (const c of campos) {
+        const qProf = parseInt(c.prof.value, 10);
+        const qAlu = parseInt(c.alu.value, 10);
+        if (!(qProf >= 0) || !(qAlu >= 0) || qProf + qAlu !== c.p.quantidade) {
+          status.textContent = "Para " + c.p.nome + ", a soma de professor e aluno deve ser " + c.p.quantidade + ".";
+          return;
+        }
+        resultado[c.p.revistaId] = { qtdProfessor: qProf, qtdAluno: qAlu };
+      }
+      fechar(resultado);
+    };
+
+    modal.hidden = false;
+    modal.classList.add("is-open");
+  });
+}
+
+// Soma (preço × quantidade) das revistas marcadas. Se alguma marcada não tem preço, ou não há nada marcado, mostra "Sem preço no momento"
+function atualizarCustoRevista() {
+  const campo = document.getElementById("alunoPedidoCusto");
+  let total = 0;
+  let semPreco = false;
+  let divisaoPendente = false;
+  let marcadas = 0;
+  document.querySelectorAll("#alunoPedidoLista .aluno-pedido-linha").forEach((linha) => {
+    const marca = linha.querySelector("input[type=checkbox]");
+    const celula = linha.querySelector(".aluno-pedido-valor");
+    if (!marca.checked) {
+      celula.textContent = "—";
+      return;
+    }
+    marcadas++;
+    const valorLinha = valorDaLinhaAluno(linha);
+    if (valorLinha === null) {
+      semPreco = true;
+      celula.textContent = MSG_SEM_PRECO;
+    } else if (valorLinha === "divisao") {
+      divisaoPendente = true;
+      celula.textContent = "Após a divisão";
+    } else {
+      total += valorLinha;
+      celula.textContent = formatarReal(valorLinha);
+    }
+  });
+  if (marcadas === 0 || semPreco) {
+    campo.value = MSG_SEM_PRECO;
+  } else if (divisaoPendente) {
+    campo.value = "Valor após informar a divisão";
+  } else {
+    campo.value = formatarReal(total);
+  }
+}
+
+// Valor de uma linha: número; "divisao" (mais de 1 revista, divisão ainda não informada); ou null (falta preço)
+function valorDaLinhaAluno(linha) {
+  const r = catalogoRevistas.find((x) => x.id === linha.dataset.revistaId);
+  const qtd = parseInt(linha.querySelector("input[type=number]").value, 10);
+  if (!r || !(qtd >= 1)) return null;
+  // Quantas são de aluno e quantas de professor: do pedido já feito, ou pelo tipo (quando é 1 revista)
+  let deAluno;
+  let deProfessor;
+  if (linha.dataset.qtdAluno !== undefined) {
+    deAluno = Number(linha.dataset.qtdAluno);
+    deProfessor = Number(linha.dataset.qtdProfessor);
+  } else if (qtd === 1) {
+    const ehProfessor = linha.querySelector("select").value === "professor";
+    deAluno = ehProfessor ? 0 : 1;
+    deProfessor = ehProfessor ? 1 : 0;
+  } else {
+    return "divisao";
+  }
+  if ((deAluno > 0 && r.precoAluno === null) || (deProfessor > 0 && r.precoProfessor === null)) return null;
+  return deAluno * (r.precoAluno || 0) + deProfessor * (r.precoProfessor || 0);
+}
+
+// Volta a tela de solicitação para o estado inicial (nada marcado)
+function limparListaPedido() {
+  document.querySelectorAll("#alunoPedidoLista .aluno-pedido-linha").forEach((linha) => {
+    linha.querySelector("input[type=checkbox]").checked = false;
+    const qtd = linha.querySelector("input[type=number]");
+    qtd.value = "1";
+    qtd.disabled = true;
+    const tipo = linha.querySelector("select");
+    tipo.value = "aluno";
+    tipo.disabled = true;
+    delete linha.dataset.qtdAluno;
+    delete linha.dataset.qtdProfessor;
+  });
+  document.getElementById("alunoPedidoStatus").textContent = "";
+  atualizarCustoRevista();
+}
+
+// Já há pedido neste trimestre: pergunta se o aluno quer solicitar mais revistas (true = sim)
+function confirmarMaisRevistas() {
+  return new Promise((resolve) => {
+    const nao = document.getElementById("alunoMaisNao");
+    const sim = document.getElementById("alunoMaisSim");
+    const fechar = (resposta) => {
+      fecharModalAluno("alunoMaisRevistasModal");
+      nao.onclick = null;
+      sim.onclick = null;
+      resolve(resposta);
+    };
+    nao.onclick = () => fechar(false);
+    sim.onclick = () => fechar(true);
+    abrirModalAluno("alunoMaisRevistasModal");
+  });
+}
+
+// Meu pedido (somente leitura): tudo o que o aluno pediu no trimestre, com o valor total
+async function abrirMeuPedido() {
+  const periodo = proximoTrimestre();
+  const lista = document.getElementById("alunoMeuPedidoLista");
+  const total = document.getElementById("alunoMeuPedidoTotal");
+  lista.textContent = "Carregando...";
+  total.textContent = "";
+  abrirModalAluno("alunoMeuPedidoModal");
+  try {
+    const [pedidos, revSnap, precosSnap] = await Promise.all([
+      buscarPedidosAluno(periodo.ano, periodo.trimestre),
+      getDoc(doc(db, "licoes", "_revistas")),
+      getDoc(doc(db, "configRevistas", `precos_${periodo.ano}_${periodo.trimestre}`)).catch(() => null)
+    ]);
+    const precos = precosSnap && precosSnap.exists() && precosSnap.data().precos ? precosSnap.data().precos : {};
+    lista.textContent = "";
+
+    const cabecalho = document.createElement("div");
+    cabecalho.className = "aluno-pedido-grade aluno-pedido-grade-cab";
+    ["Revista", "Qtd.", "Tipo", "Valor total"].forEach((titulo) => {
+      const celula = document.createElement("span");
+      celula.textContent = titulo;
+      cabecalho.appendChild(celula);
+    });
+    lista.appendChild(cabecalho);
+
+    let soma = 0;
+    let semPreco = false;
+    pedidos.forEach((p) => {
+      (p.itens || []).forEach((i) => {
+        const qAluno = i.qtdAluno !== undefined ? Number(i.qtdAluno) : Number(i.quantidade) || 0;
+        const qProfessor = Number(i.qtdProfessor) || 0;
+        [["Aluno", qAluno, precoDe(precos[i.revistaId], "aluno")], ["Professor", qProfessor, precoDe(precos[i.revistaId], "professor")]].forEach(([tipoTexto, q, preco]) => {
+          if (!(q > 0)) return;
+          let valorTexto = MSG_SEM_PRECO;
+          if (preco === null) {
+            semPreco = true;
+          } else {
+            soma += preco * q;
+            valorTexto = formatarReal(preco * q);
+          }
+          const linha = document.createElement("div");
+          linha.className = "aluno-pedido-grade aluno-pedido-linha";
+          [i.nome || "", String(q), tipoTexto, valorTexto].forEach((texto) => {
+            const celula = document.createElement("span");
+            celula.textContent = texto;
+            linha.appendChild(celula);
+          });
+          lista.appendChild(linha);
+        });
+      });
+    });
+    total.textContent = formatarReal(soma) + (semPreco ? " (alguns sem preço)" : "");
+  } catch (err) {
+    console.error("Erro ao carregar seu pedido:", err);
+    lista.textContent = "Não foi possível carregar seu pedido agora.";
+  }
+}
+
+async function enviarPedidoRevista() {
+  const status = document.getElementById("alunoPedidoStatus");
+  const enviar = document.getElementById("alunoPedidoEnviar");
+  const periodo = proximoTrimestre();
+
+  const escolhidas = [];
+  document.querySelectorAll("#alunoPedidoLista .aluno-pedido-linha").forEach((linha) => {
+    const marca = linha.querySelector("input[type=checkbox]");
+    if (!marca.checked) return;
+    const qtd = parseInt(linha.querySelector("input[type=number]").value, 10);
+    const revista = catalogoRevistas.find((r) => r.id === linha.dataset.revistaId);
+    escolhidas.push({
+      revistaId: linha.dataset.revistaId,
+      nome: revista ? revista.nome : "",
+      quantidade: qtd,
+      tipo: linha.querySelector("select").value
+    });
+  });
+
+  if (!escolhidas.length) {
+    status.textContent = "Marque pelo menos uma revista.";
+    return;
+  }
+  if (escolhidas.some((i) => !(i.quantidade >= 1))) {
+    status.textContent = "Informe uma quantidade válida (1 ou mais) para cada revista marcada.";
+    return;
+  }
+
+  // Mais de 1 revista da mesma escolha: pergunta quantas são de professor e quantas de aluno
+  const pendentes = escolhidas.filter((i) => i.quantidade > 1);
+  let divisao = {};
+  if (pendentes.length) {
+    divisao = await dividirRevistas(pendentes);
+    if (!divisao) return; // cancelado: nada é gravado
+  }
+
+  const itens = escolhidas.map((i) => {
+    if (divisao[i.revistaId]) {
+      return { revistaId: i.revistaId, nome: i.nome, quantidade: i.quantidade, ...divisao[i.revistaId] };
+    }
+    return {
+      revistaId: i.revistaId,
+      nome: i.nome,
+      quantidade: i.quantidade,
+      qtdAluno: i.tipo === "aluno" ? i.quantidade : 0,
+      qtdProfessor: i.tipo === "professor" ? i.quantidade : 0
+    };
+  });
+
+  // Já fez pedido neste trimestre: pergunta antes de pedir mais (a secretaria cancela, se precisar)
+  const anteriores = await buscarPedidosAluno(periodo.ano, periodo.trimestre);
+  if (anteriores.length && !(await confirmarMaisRevistas())) return;
+
+  enviar.disabled = true;
+  try {
+    // Pedido novo do trimestre: o id é único (o primeiro usa o id padrão do trimestre)
+    const base = `${uidAluno}_${periodo.ano}_${periodo.trimestre}`;
+    const idPedido = anteriores.length ? `${base}_${Date.now()}` : base;
+    await setDoc(doc(db, "pedidosRevistas", idPedido), {
+      uid: uidAluno,
+      alunoNome: matriculaAluno.nome || "",
+      salaId: matriculaAluno.salaId,
+      salaNome: matriculaAluno.salaNome || "",
+      ano: periodo.ano,
+      trimestre: periodo.trimestre,
+      itens: itens,
+      status: "pendente",
+      criadoEm: serverTimestamp()
+    });
+    limparListaPedido();
+    fecharPedidoRevista();
+    carregarAvisos();
+    carregarRecursos();
+    window.notificar("Confirmado! Seu pedido de revista foi enviado à Secretaria da EBD.", "success");
+  } catch (err) {
+    console.error("Erro ao fazer o pedido de revista:", err);
+    status.textContent = "Não foi possível fazer o pedido agora. Tente de novo.";
+    window.notificar("Não foi possível fazer o pedido. Tente de novo.", "error");
+    enviar.disabled = false;
+  }
 }

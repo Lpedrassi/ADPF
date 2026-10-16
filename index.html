@@ -2475,20 +2475,120 @@
       </div>
     </div>
 
-    <!-- Leitor da revista (PDF, página a página, sem download) -->
-    <!-- Tela Solicitar Revista (formulário a ser implementado) -->
-    <div id="alunoSolicitarRevista" hidden>
-      <div class="aluno-sala-cabecalho">
-        <span></span>
-        <h3>Solicitar Revista</h3>
-        <button type="button" id="btnAlunoVoltarRevista" class="btn-admin">← Voltar</button>
+    <!-- Secretaria > Controle de Revistas: Adicionar Pedido (cópia do pop-up do aluno, campos a definir) -->
+    <div class="login-overlay" id="secPedidoModal" role="dialog" aria-modal="true" aria-labelledby="secPedidoTitulo" hidden>
+      <div class="login-card aluno-pedido-card">
+        <h3 id="secPedidoTitulo" style="margin:0;">Adicionar pedido</h3>
+        <form id="secPedidoForm" class="admin-form" style="margin-top:14px;">
+          <label>Trimestre
+            <select id="secPedidoTrimestre"></select>
+          </label>
+          <label>Nome do Aluno
+            <input type="text" id="secPedidoAluno" maxlength="120">
+          </label>
+          <div id="secPedidoLista" class="aluno-pedido-lista"></div>
+          <p id="secPedidoStatus" class="login-note aluno-pedido-status" aria-live="polite"></p>
+          <div class="login-btn-row">
+            <button type="button" class="btn btn-ghost" id="secPedidoFechar" style="flex:1;justify-content:center;">Fechar</button>
+            <button type="button" class="btn btn-blue-grad" id="secPedidoEnviar" style="flex:1;justify-content:center;">Fazer o Pedido</button>
+          </div>
+        </form>
       </div>
-      <div class="aluno-card">
-        <div class="aluno-card-content">
-          <div class="aluno-card-info">O formulário de solicitação da revista do próximo trimestre será disponibilizado aqui.</div>
+    </div>
+
+    <!-- Secretaria > Controle de Revistas: Valores das revistas (preço de cada revista) -->
+    <div class="login-overlay" id="secValoresModal" role="dialog" aria-modal="true" aria-labelledby="secValoresTitulo" hidden>
+      <div class="login-card aluno-pedido-card">
+        <h3 id="secValoresTitulo" style="margin:0;">Valores das revistas</h3>
+        <form id="secValoresForm" class="admin-form" style="margin-top:14px;">
+          <label>Trimestre
+            <select id="secValoresTrimestre"></select>
+          </label>
+          <div class="aluno-pedido-titulo-lista">Informe o valor de cada revista (R$)</div>
+          <div id="secValoresLista" class="aluno-pedido-lista"></div>
+          <p id="secValoresStatus" class="login-note aluno-pedido-status" aria-live="polite"></p>
+          <div class="login-btn-row">
+            <button type="button" class="btn btn-ghost" id="secValoresFechar" style="flex:1;justify-content:center;">Fechar</button>
+            <button type="submit" class="btn btn-blue-grad" id="secValoresSalvar" style="flex:1;justify-content:center;">Salvar valores</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Secretaria > Adicionar Pedido: quantas revistas são de professor e quantas são de aluno (quando a quantidade é maior que 1) -->
+    <div class="login-overlay" id="secDividirModal" role="dialog" aria-modal="true" aria-labelledby="secDividirTitulo" hidden>
+      <div class="login-card aluno-pedido-card aluno-pedido-dividir">
+        <h3 id="secDividirTitulo" style="margin:0;">Revistas de professor e de aluno</h3>
+        <p class="login-note" style="margin:8px 0 0;">Informe quantas são de professor e quantas são de aluno. A soma deve ser igual à quantidade.</p>
+        <div id="secDividirLista" class="aluno-pedido-lista" style="margin-top:12px;"></div>
+        <p id="secDividirStatus" class="login-note aluno-pedido-status" aria-live="polite"></p>
+        <div class="login-btn-row">
+          <button type="button" class="btn btn-ghost" id="secDividirCancelar" style="flex:1;justify-content:center;">Cancelar</button>
+          <button type="button" class="btn btn-blue-grad" id="secDividirConfirmar" style="flex:1;justify-content:center;">Confirmar</button>
         </div>
       </div>
     </div>
+
+    <!-- Pop-up do aluno: já tem pedido neste trimestre e quer pedir mais -->
+    <div class="login-overlay" id="alunoMaisRevistasModal" role="dialog" aria-modal="true" aria-labelledby="alunoMaisTitulo" hidden>
+      <div class="login-card aluno-pedido-card">
+        <h3 id="alunoMaisTitulo" style="margin:0;">Você já fez um pedido</h3>
+        <p class="login-note" style="margin:12px 0 0;">Deseja solicitar mais revistas? Caso deseja cancelar seu pedido, solicite à secretaria.</p>
+        <div class="login-btn-row">
+          <button type="button" class="btn btn-ghost" id="alunoMaisNao" style="flex:1;justify-content:center;">Não</button>
+          <button type="button" class="btn btn-blue-grad" id="alunoMaisSim" style="flex:1;justify-content:center;">Sim, solicitar mais</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pop-up do aluno: Meu pedido (somente leitura) -->
+    <div class="login-overlay" id="alunoMeuPedidoModal" role="dialog" aria-modal="true" aria-labelledby="alunoMeuPedidoTitulo" hidden>
+      <div class="login-card aluno-pedido-card">
+        <h3 id="alunoMeuPedidoTitulo" style="margin:0;">Meu pedido</h3>
+        <div id="alunoMeuPedidoLista" class="aluno-pedido-lista" style="margin-top:12px;"></div>
+        <div class="aluno-pedido-total">VALOR TOTAL: <strong id="alunoMeuPedidoTotal"></strong></div>
+        <p class="login-note aluno-pedido-status">Para cancelar um pedido, solicite à secretaria.</p>
+        <div class="login-btn-row">
+          <button type="button" class="btn btn-ghost" id="alunoMeuPedidoFechar" style="flex:1;justify-content:center;">Fechar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pop-up: quantas revistas são de professor e quantas são de aluno (quando o aluno pede mais de 1 da mesma revista) -->
+    <div class="login-overlay" id="alunoDividirModal" role="dialog" aria-modal="true" aria-labelledby="alunoDividirTitulo" hidden>
+      <div class="login-card aluno-pedido-card aluno-pedido-dividir">
+        <h3 id="alunoDividirTitulo" style="margin:0;">Revistas de professor e de aluno</h3>
+        <p class="login-note" style="margin:8px 0 0;">Informe quantas são de professor e quantas são de aluno. A soma deve ser igual à quantidade pedida.</p>
+        <div id="alunoDividirLista" class="aluno-pedido-lista" style="margin-top:12px;"></div>
+        <p id="alunoDividirStatus" class="login-note aluno-pedido-status" aria-live="polite"></p>
+        <div class="login-btn-row">
+          <button type="button" class="btn btn-ghost" id="alunoDividirCancelar" style="flex:1;justify-content:center;">Cancelar</button>
+          <button type="button" class="btn btn-blue-grad" id="alunoDividirConfirmar" style="flex:1;justify-content:center;">Confirmar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pop-up Solicitar Revista (trimestre, sala, revistas com quantidade, custo e Fazer o Pedido) -->
+    <div class="login-overlay" id="alunoPedidoModal" role="dialog" aria-modal="true" aria-labelledby="alunoPedidoTitulo" hidden>
+      <div class="login-card aluno-pedido-card">
+        <h3 id="alunoPedidoTitulo" style="margin:12px 0 0;">Pedido da revista</h3>
+        <form id="alunoPedidoForm" class="admin-form" style="margin-top:14px;">
+          <div class="aluno-pedido-trimestre">Trimestre: <strong id="alunoPedidoTrimestreTexto"></strong></div>
+          <div class="aluno-pedido-titulo-lista">REVISTAS: (Selecione as que deseja comprar).</div>
+          <div id="alunoPedidoLista" class="aluno-pedido-lista"></div>
+          <label class="aluno-pedido-custo">VALOR TOTAL
+            <input type="text" id="alunoPedidoCusto" readonly value="Sem preço no momento">
+          </label>
+          <p id="alunoPedidoStatus" class="login-note aluno-pedido-status" aria-live="polite"></p>
+          <div class="login-btn-row">
+            <button type="button" class="btn btn-ghost" id="alunoPedidoCancelar" style="flex:1;justify-content:center;">Fechar</button>
+            <button type="submit" class="btn btn-blue-grad" id="alunoPedidoEnviar" style="flex:1;justify-content:center;">Fazer o Pedido</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Leitor da revista (PDF, página a página, sem download) -->
 
     <!-- Tela Sala de Aula (aberta pelo botão Entrar) -->
     <div id="alunoSalaAula" hidden>
@@ -2655,16 +2755,38 @@
 
     <div id="secNivelRevistas" class="secretaria-nivel-wrap" hidden>
       <button type="button" class="btn btn-ghost secretaria-voltar" data-abrir="secNivel0" data-ocultar="secNivelRevistas">← Voltar</button>
-      <div class="secretaria-nivel-titulo">Controle de Revistas</div>
-      <div class="professor-canvas-grid">
-        <button type="button" class="professor-canvas-card" data-alvo="canvaSecRevistasPedidos">
-          <span class="professor-canvas-icone"><img src="icones-secretaria/carrinho.webp" alt=""></span>
-          <span class="professor-canvas-titulo">Fazer Pedidos das Revistas</span>
-          <span class="professor-canvas-sub">Pedidos dos Alunos e condição de pagamento</span>
-        </button>
+      <div class="secretaria-nivel-titulo sec-revistas-titulo">Controle de Revistas</div>
+      <div class="sec-resumo-grid">
+        <div class="sec-resumo-canvas">
+          <div class="sec-resumo-titulo">Resumo do pedido</div>
+          <div id="secResumoTabela"></div>
+        </div>
+        <div class="sec-resumo-canvas sec-resumo-cards">
+          <div class="sec-resumo-card">
+            <span>Valor total</span>
+            <strong id="secResumoValor">R$ 0,00</strong>
+          </div>
+          <div class="sec-resumo-card">
+            <span>Quantidade total</span>
+            <strong id="secResumoQtd">0 revistas</strong>
+          </div>
+        </div>
       </div>
-      <div id="canvaSecRevistasPedidos" class="canva-sanfona-conteudo">
-        <p class="admin-agenda-info">Em breve: aqui vai aparecer a lista de pedidos de revista dos Alunos (feitos pela Área do Aluno, ou cadastrados diretamente pelo Secretário), com a condição de pagamento de cada um. Por enquanto o pagamento será marcado manualmente pelo Secretário (Pago / Não pago) — o pagamento de verdade pela internet (Pix/cartão) fica para uma etapa futura.</p>
+      <div class="sec-revistas-acoes">
+        <button type="button" class="btn btn-blue-grad" id="btnSecAdicionarPedido">Adicionar Pedido</button>
+        <button type="button" class="btn btn-ghost" id="btnSecValoresRevistas">Valores das revistas</button>
+      </div>
+      <div id="canvaSecRevistasPedidos" class="canva-sanfona-conteudo aberto">
+        <div class="sec-pedidos-filtros">
+          <label>Trimestre <select id="secFiltroTrimestre" class="sec-pedido-select"></select></label>
+          <label>Revista <select id="secFiltroRevista" class="sec-pedido-select"></select></label>
+          <label>Aluno <select id="secFiltroAluno" class="sec-pedido-select"></select></label>
+          <label>Status <select id="secFiltroStatus" class="sec-pedido-select"></select></label>
+          <label>Pagamento <select id="secFiltroPago" class="sec-pedido-select"></select></label>
+          <label>Forma de pagamento <select id="secFiltroForma" class="sec-pedido-select"></select></label>
+        </div>
+        <p id="secPedidosRevistasStatus" class="admin-agenda-info"></p>
+        <div id="secPedidosRevistasLista" class="sec-pedidos-lista"></div>
       </div>
     </div>
 
@@ -3418,7 +3540,7 @@
 
 <script type="module" src="aluno.js"></script>
 <script type="module" src="biblia.js"></script>
-<script src="seed-escalas.js"></script>
+<script type="module" src="seed-escalas.js"></script>
 
 <script type="module">
   import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
@@ -4324,7 +4446,821 @@
         }
       }
     });
-    ligarSanfona(document.getElementById("secNivelRevistas"));
+    // Controle de Revistas abre direto com a grade de pedidos (sem cartão intermediário)
+    document.querySelector('[data-abrir="secNivelRevistas"]')?.addEventListener("click", () => carregarPedidosRevistas());
+
+    // Pop-ups da Secretaria (saem da seção para o body, como os do aluno)
+    const secPedidoModal = document.getElementById("secPedidoModal");
+    const secValoresModal = document.getElementById("secValoresModal");
+    document.body.appendChild(secPedidoModal);
+    document.body.appendChild(secValoresModal);
+
+    function abrirPopupSec(modal) {
+      modal.hidden = false;
+      modal.classList.add("is-open");
+    }
+    function fecharPopupSec(modal) {
+      modal.classList.remove("is-open");
+      modal.hidden = true;
+    }
+
+    // Adicionar Pedido (ou Editar, quando recebe o pedido). pedidoEditandoId diz se o "Fazer o Pedido" cria ou atualiza.
+    let pedidoEditandoId = null;
+    async function abrirAdicionarPedidoSec(pedidoEdit = null) {
+      pedidoEditandoId = pedidoEdit ? pedidoEdit.id : null;
+      document.getElementById("secPedidoEnviar").textContent = pedidoEdit ? "Salvar alterações" : "Fazer o Pedido";
+      document.getElementById("secPedidoStatus").textContent = "";
+
+      // Trimestre: o atual e o próximo (o próximo vem selecionado)
+      const hoje = new Date();
+      const tAtual = Math.floor(hoje.getMonth() / 3) + 1;
+      const anoAtual = hoje.getFullYear();
+      const opcoes = [
+        { ano: anoAtual, trimestre: tAtual },
+        { ano: tAtual === 4 ? anoAtual + 1 : anoAtual, trimestre: tAtual === 4 ? 1 : tAtual + 1 }
+      ];
+      const selTrimestre = document.getElementById("secPedidoTrimestre");
+      selTrimestre.innerHTML = "";
+      opcoes.forEach((o) => {
+        const opt = document.createElement("option");
+        opt.value = `${o.ano}-${o.trimestre}`;
+        opt.textContent = `${o.trimestre}º Trimestre ${o.ano}`;
+        selTrimestre.appendChild(opt);
+      });
+      selTrimestre.value = `${opcoes[1].ano}-${opcoes[1].trimestre}`;
+      if (pedidoEdit) {
+        // Edição: mantém o trimestre do pedido (mesmo que não seja o atual ou o próximo)
+        const valorPedido = `${pedidoEdit.ano}-${pedidoEdit.trimestre}`;
+        if (!selTrimestre.querySelector(`option[value="${valorPedido}"]`)) {
+          const opt = document.createElement("option");
+          opt.value = valorPedido;
+          opt.textContent = `${pedidoEdit.trimestre}º Trimestre ${pedidoEdit.ano}`;
+          selTrimestre.appendChild(opt);
+        }
+        selTrimestre.value = valorPedido;
+      }
+      document.getElementById("secPedidoAluno").value = pedidoEdit ? (pedidoEdit.alunoNome || "") : "";
+
+      const lista = document.getElementById("secPedidoLista");
+      lista.textContent = "Carregando revistas...";
+      abrirPopupSec(secPedidoModal);
+      try {
+        const revSnap = await getDoc(doc(db, "licoes", "_revistas"));
+        const itens = revSnap.exists() && Array.isArray(revSnap.data().itens) ? revSnap.data().itens : [];
+        lista.textContent = "";
+        const cabecalho = document.createElement("div");
+        cabecalho.className = "sec-revista-cabecalho";
+        ["Revista", "Qtd.", "Revista de"].forEach((titulo) => {
+          const celula = document.createElement("span");
+          celula.textContent = titulo;
+          cabecalho.appendChild(celula);
+        });
+        lista.appendChild(cabecalho);
+        itens.forEach((r) => {
+          const linha = document.createElement("div");
+          linha.className = "aluno-pedido-linha sec-revista-linha";
+          linha.dataset.revistaId = r.id;
+          const rotulo = document.createElement("label");
+          rotulo.className = "aluno-pedido-check";
+          const marca = document.createElement("input");
+          marca.type = "checkbox";
+          const nome = document.createElement("span");
+          nome.className = "sec-revista-nome";
+          nome.textContent = r.nome || "";
+          rotulo.append(marca, nome);
+          const qtd = document.createElement("input");
+          qtd.type = "number";
+          qtd.min = "1";
+          qtd.max = "50";
+          qtd.value = "1";
+          qtd.disabled = true;
+          qtd.setAttribute("aria-label", "Quantidade de " + (r.nome || ""));
+          const qtdRotulo = document.createElement("label");
+          qtdRotulo.className = "aluno-pedido-qtd";
+          qtdRotulo.append("Qtd. ", qtd);
+
+          // Revista de: professor ou aluno. Com quantidade maior que 1, a divisão é perguntada na hora
+          const tipo = document.createElement("select");
+          tipo.setAttribute("aria-label", "Revista de, " + (r.nome || ""));
+          // Aluno é o padrão (primeira opção)
+          [["aluno", "Aluno"], ["professor", "Professor"]].forEach(([valor, texto]) => {
+            const opt = document.createElement("option");
+            opt.value = valor;
+            opt.textContent = texto;
+            tipo.appendChild(opt);
+          });
+          tipo.disabled = true;
+          const tipoRotulo = document.createElement("label");
+          tipoRotulo.className = "aluno-pedido-qtd";
+          tipoRotulo.append("Revista de: ", tipo);
+
+          const atualizarLinhaSec = () => {
+            qtd.disabled = !marca.checked;
+            tipo.disabled = !marca.checked || Number(qtd.value) > 1;
+          };
+          marca.addEventListener("change", () => {
+            if (!marca.checked) {
+              delete linha.dataset.qtdProfessor;
+              delete linha.dataset.qtdAluno;
+            }
+            atualizarLinhaSec();
+          });
+          qtd.addEventListener("change", async () => {
+            const q = parseInt(qtd.value, 10);
+            if (!(q >= 1)) qtd.value = "1";
+            if (Number(qtd.value) > 1) {
+              const divisao = await dividirRevistasSec({ nome: r.nome || "", quantidade: Number(qtd.value) });
+              if (!divisao) {
+                // Cancelou: volta para 1 revista
+                qtd.value = "1";
+                delete linha.dataset.qtdProfessor;
+                delete linha.dataset.qtdAluno;
+              } else {
+                linha.dataset.qtdProfessor = String(divisao.qtdProfessor);
+                linha.dataset.qtdAluno = String(divisao.qtdAluno);
+              }
+            } else {
+              delete linha.dataset.qtdProfessor;
+              delete linha.dataset.qtdAluno;
+            }
+            atualizarLinhaSec();
+          });
+          // Edição: marca as revistas do pedido com a quantidade e o tipo gravados
+          const item = pedidoEdit ? (pedidoEdit.itens || []).find((i) => i.revistaId === r.id) : null;
+          if (item) {
+            marca.checked = true;
+            qtd.value = String(item.quantidade);
+            if (Number(item.quantidade) > 1) {
+              linha.dataset.qtdAluno = String(item.qtdAluno ?? item.quantidade);
+              linha.dataset.qtdProfessor = String(item.qtdProfessor ?? 0);
+            } else {
+              tipo.value = Number(item.qtdProfessor) > 0 ? "professor" : "aluno";
+            }
+          }
+          atualizarLinhaSec();
+          linha.append(rotulo, qtdRotulo, tipoRotulo);
+          lista.appendChild(linha);
+        });
+      } catch (err) {
+        console.error("Erro ao carregar revistas:", err);
+        lista.textContent = "Não foi possível carregar as revistas agora.";
+      }
+    }
+
+    // Valores das revistas: um campo de valor por revista, gravado em configRevistas/precos
+    // Valor total de um pedido pelos preços do trimestre dele (null se falta preço de algum tipo)
+    async function valorDoPedidoSec(p) {
+      const snap = await getDoc(doc(db, "configRevistas", "precos_" + p.ano + "_" + p.trimestre)).catch(() => null);
+      const precos = snap && snap.exists() && snap.data().precos ? snap.data().precos : {};
+      let total = 0;
+      for (const i of p.itens || []) {
+        const qAluno = i.qtdAluno !== undefined ? Number(i.qtdAluno) : Number(i.quantidade) || 0;
+        const qProfessor = Number(i.qtdProfessor) || 0;
+        const pAluno = precoDeSec(precos[i.revistaId], "Aluno");
+        const pProfessor = precoDeSec(precos[i.revistaId], "Professor");
+        if ((qAluno > 0 && pAluno === null) || (qProfessor > 0 && pProfessor === null)) return null;
+        total += qAluno * (pAluno || 0) + qProfessor * (pProfessor || 0);
+      }
+      return total;
+    }
+
+    // Pagamento de um pedido: pendente | feito | doacao. Pedidos antigos têm só "pago" (sim/não).
+    function pagamentoDoPedido(p) {
+      if (p.pagamento) return p.pagamento;
+      return (p.pago === true || p.pago === "sim") ? "feito" : "pendente";
+    }
+
+    // Pedidos com pagamento incompleto (id -> { pagamento, forma }): avisa antes de sair da página
+    const pendenciasSec = new Map();
+
+    // Combobox pequeno da tabela de pedidos (status, pago, forma de pagamento)
+    function criarSelectSec(opcoes, valor) {
+      const sel = document.createElement("select");
+      sel.className = "sec-pedido-select";
+      opcoes.forEach(([v, t]) => {
+        const o = document.createElement("option");
+        o.value = v;
+        o.textContent = t;
+        sel.appendChild(o);
+      });
+      sel.value = valor;
+      return sel;
+    }
+
+    // Valor de uma revista para o tipo ("Aluno" ou "Professor"). Aceita o formato antigo (um número só).
+    function precoDeSec(valor, tipo) {
+      const chave = tipo === "Professor" ? "professor" : "aluno";
+      const n = typeof valor === "number" ? valor : Number(valor && typeof valor === "object" ? valor[chave] : undefined);
+      return n > 0 ? n : null;
+    }
+
+    // Valores por trimestre: atual e próximo (cada trimestre tem as próprias revistas e preços)
+    function opcoesTrimestrePrecos() {
+      const hoje = new Date();
+      const t = Math.floor(hoje.getMonth() / 3) + 1;
+      const a = hoje.getFullYear();
+      return [{ ano: a, trimestre: t }, { ano: t === 4 ? a + 1 : a, trimestre: t === 4 ? 1 : t + 1 }];
+    }
+    function idPrecosTrimestre(p) { return `precos_${p.ano}_${p.trimestre}`; }
+    function periodoDoSelectValores() {
+      const [a, t] = document.getElementById("secValoresTrimestre").value.split("-");
+      return { ano: Number(a), trimestre: Number(t) };
+    }
+
+    async function abrirValoresRevistasSec() {
+      const selTrim = document.getElementById("secValoresTrimestre");
+      selTrim.innerHTML = "";
+      const opcoes = opcoesTrimestrePrecos();
+      opcoes.forEach((o) => {
+        const opt = document.createElement("option");
+        opt.value = `${o.ano}-${o.trimestre}`;
+        opt.textContent = `${o.trimestre}º Trimestre ${o.ano}`;
+        selTrim.appendChild(opt);
+      });
+      selTrim.value = `${opcoes[1].ano}-${opcoes[1].trimestre}`;
+      document.getElementById("secValoresStatus").textContent = "";
+      abrirPopupSec(secValoresModal);
+      await carregarValoresPeriodo();
+    }
+
+    // Preenche os campos com as revistas e os valores do trimestre escolhido
+    async function carregarValoresPeriodo() {
+      const lista = document.getElementById("secValoresLista");
+      const status = document.getElementById("secValoresStatus");
+      status.textContent = "";
+      lista.textContent = "Carregando revistas...";
+      try {
+        const [revSnap, precosSnap] = await Promise.all([
+          getDoc(doc(db, "licoes", "_revistas")),
+          getDoc(doc(db, "configRevistas", idPrecosTrimestre(periodoDoSelectValores()))).catch(() => null)
+        ]);
+        const itens = revSnap.exists() && Array.isArray(revSnap.data().itens) ? revSnap.data().itens : [];
+        const precos = precosSnap && precosSnap.exists() && precosSnap.data().precos ? precosSnap.data().precos : {};
+        lista.textContent = "";
+        const cabecalho = document.createElement("div");
+        cabecalho.className = "sec-valores-linha sec-valores-cabecalho";
+        ["REVISTA", "VALOR ALUNO", "VALOR PROFESSOR"].forEach((titulo) => {
+          const celula = document.createElement("span");
+          celula.textContent = titulo;
+          cabecalho.appendChild(celula);
+        });
+        lista.appendChild(cabecalho);
+
+        // Formato novo: { aluno, professor }. Formato antigo (um número): vale para os dois.
+        const valorDe = (v, tipo) => {
+          const n = typeof v === "number" ? v : Number(v && typeof v === "object" ? v[tipo] : undefined);
+          return n > 0 ? String(n).replace(".", ",") : "";
+        };
+        itens.forEach((r) => {
+          const linha = document.createElement("div");
+          linha.className = "sec-valores-linha";
+          linha.dataset.revistaId = r.id;
+          const nome = document.createElement("div");
+          nome.className = "sec-valores-nome";
+          nome.textContent = r.nome || "";
+          const criarValor = (tipo, rotuloTexto) => {
+            const valor = document.createElement("input");
+            valor.type = "text";
+            valor.inputMode = "decimal";
+            valor.placeholder = "0,00";
+            valor.value = valorDe(precos[r.id], tipo);
+            valor.className = "sec-valores-campo valor-" + tipo;
+            valor.setAttribute("aria-label", rotuloTexto + " de " + (r.nome || ""));
+            const rotulo = document.createElement("label");
+            rotulo.className = "sec-valores-rotulo";
+            rotulo.append("R$ ", valor);
+            return rotulo;
+          };
+          linha.append(nome, criarValor("aluno", "Valor aluno"), criarValor("professor", "Valor professor"));
+          lista.appendChild(linha);
+        });
+      } catch (err) {
+        console.error("Erro ao carregar valores:", err);
+        lista.textContent = "";
+        status.textContent = "Não foi possível carregar as revistas agora.";
+      }
+    }
+
+    async function salvarValoresRevistasSec(e) {
+      e.preventDefault();
+      const status = document.getElementById("secValoresStatus");
+      const precos = {};
+      let invalido = false;
+      // Vazio = sem valor; número inválido = erro
+      const lerValor = (txt) => {
+        const t = txt.trim().replace(/\./g, "").replace(",", ".");
+        if (t === "") return null;
+        const n = Number(t);
+        return n >= 0 ? n : NaN;
+      };
+      document.querySelectorAll("#secValoresLista .sec-valores-linha:not(.sec-valores-cabecalho)").forEach((linha) => {
+        const a = lerValor(linha.querySelector(".valor-aluno").value);
+        const p = lerValor(linha.querySelector(".valor-professor").value);
+        if (Number.isNaN(a) || Number.isNaN(p)) { invalido = true; return; }
+        if (a === null && p === null) return;
+        precos[linha.dataset.revistaId] = { aluno: a, professor: p };
+      });
+      if (invalido) {
+        status.textContent = "Confira os valores: use números, como 30,00.";
+        return;
+      }
+      const botao = document.getElementById("secValoresSalvar");
+      botao.disabled = true;
+      try {
+        await setDoc(doc(db, "configRevistas", idPrecosTrimestre(periodoDoSelectValores())), { precos: precos });
+        status.textContent = "";
+        fecharPopupSec(secValoresModal);
+        window.notificar("Valores das revistas salvos.", "success");
+        // A tabela de pedidos mostra o valor pelo preço salvo: atualiza na hora
+        carregarPedidosRevistas();
+      } catch (err) {
+        console.error("Erro ao salvar valores:", err);
+        status.textContent = "Não foi possível salvar agora. Tente de novo.";
+        window.notificar("Não foi possível salvar os valores.", "error");
+      } finally {
+        botao.disabled = false;
+      }
+    }
+
+    // Pergunta quantas revistas são de professor e quantas são de aluno (quantidade maior que 1).
+    // Devolve { qtdProfessor, qtdAluno } ou null se cancelar.
+    function dividirRevistasSec(pedido) {
+      return new Promise((resolve) => {
+        const modal = document.getElementById("secDividirModal");
+        const lista = document.getElementById("secDividirLista");
+        const status = document.getElementById("secDividirStatus");
+        const confirmar = document.getElementById("secDividirConfirmar");
+        const cancelar = document.getElementById("secDividirCancelar");
+        lista.textContent = "";
+        status.textContent = "";
+
+        const linha = document.createElement("div");
+        linha.className = "aluno-pedido-linha";
+        const nome = document.createElement("div");
+        nome.className = "aluno-pedido-nome";
+        nome.textContent = "REVISTA: " + pedido.nome + " (" + pedido.quantidade + ")";
+        const prof = document.createElement("input");
+        prof.type = "number";
+        prof.min = "0";
+        prof.max = String(pedido.quantidade);
+        prof.value = "0";
+        const alu = document.createElement("input");
+        alu.type = "number";
+        alu.min = "0";
+        alu.max = String(pedido.quantidade);
+        alu.value = String(pedido.quantidade);
+        const rotProf = document.createElement("label");
+        rotProf.className = "aluno-pedido-qtd";
+        rotProf.append("Professor ", prof);
+        const rotAlu = document.createElement("label");
+        rotAlu.className = "aluno-pedido-qtd";
+        rotAlu.append("Aluno ", alu);
+        linha.append(nome, rotProf, rotAlu);
+        lista.appendChild(linha);
+
+        const fechar = (resultado) => {
+          modal.classList.remove("is-open");
+          modal.hidden = true;
+          cancelar.onclick = null;
+          confirmar.onclick = null;
+          resolve(resultado);
+        };
+        cancelar.onclick = () => fechar(null);
+        confirmar.onclick = () => {
+          const qProf = parseInt(prof.value, 10);
+          const qAlu = parseInt(alu.value, 10);
+          if (!(qProf >= 0) || !(qAlu >= 0) || qProf + qAlu !== pedido.quantidade) {
+            status.textContent = "A soma de professor e aluno deve ser " + pedido.quantidade + ".";
+            return;
+          }
+          fechar({ qtdProfessor: qProf, qtdAluno: qAlu });
+        };
+        modal.hidden = false;
+        modal.classList.add("is-open");
+      });
+    }
+
+    // Fazer o Pedido (Secretaria): grava em pedidosRevistas e a tabela é atualizada.
+    // Pedido da Secretaria não tem turma (salaId/salaNome ficam vazios).
+    async function salvarPedidoSec() {
+      const status = document.getElementById("secPedidoStatus");
+      const botao = document.getElementById("secPedidoEnviar");
+      const alunoNome = document.getElementById("secPedidoAluno").value.trim();
+      const [anoTxt, trimTxt] = document.getElementById("secPedidoTrimestre").value.split("-");
+      const ano = Number(anoTxt);
+      const trimestre = Number(trimTxt);
+      status.textContent = "";
+
+      if (!alunoNome) { status.textContent = "Informe o nome do aluno."; return; }
+
+      const itens = [];
+      document.querySelectorAll("#secPedidoLista .sec-revista-linha").forEach((linha) => {
+        const marca = linha.querySelector("input[type=checkbox]");
+        if (!marca.checked) return;
+        const qtd = Number(linha.querySelector("input[type=number]").value);
+        const tipo = linha.querySelector("select").value;
+        // Com quantidade maior que 1, a divisão veio do pop-up (guardada na linha)
+        const qtdAluno = qtd > 1 ? Number(linha.dataset.qtdAluno) : (tipo === "aluno" ? qtd : 0);
+        const qtdProfessor = qtd > 1 ? Number(linha.dataset.qtdProfessor) : (tipo === "professor" ? qtd : 0);
+        itens.push({
+          revistaId: linha.dataset.revistaId,
+          nome: linha.querySelector(".sec-revista-nome").textContent,
+          quantidade: qtd,
+          qtdAluno: qtdAluno,
+          qtdProfessor: qtdProfessor
+        });
+      });
+
+      if (!itens.length) { status.textContent = "Marque pelo menos uma revista."; return; }
+      if (itens.some((i) => !(i.qtdAluno + i.qtdProfessor === i.quantidade))) {
+        status.textContent = "Confira a divisão de professor e aluno de cada revista.";
+        return;
+      }
+
+      botao.disabled = true;
+      try {
+        if (pedidoEditandoId) {
+          await updateDoc(doc(db, "pedidosRevistas", pedidoEditandoId), {
+            alunoNome: alunoNome,
+            ano: ano,
+            trimestre: trimestre,
+            itens: itens,
+            atualizadoEm: serverTimestamp()
+          });
+        } else {
+          await addDoc(collection(db, "pedidosRevistas"), {
+            uid: null, // pedido feito pela Secretaria (sem conta de aluno)
+            origem: "secretaria",
+            alunoNome: alunoNome,
+            salaId: null,
+            salaNome: "",
+            ano: ano,
+            trimestre: trimestre,
+            itens: itens,
+            status: "pendente",
+            criadoEm: serverTimestamp()
+          });
+        }
+        fecharPopupSec(secPedidoModal);
+        window.notificar(pedidoEditandoId ? "Pedido atualizado." : "Pedido adicionado à tabela.", "success");
+        pedidoEditandoId = null;
+        carregarPedidosRevistas();
+      } catch (err) {
+        console.error("Erro ao salvar pedido da Secretaria:", err);
+        status.textContent = "Não foi possível salvar o pedido. Tente de novo.";
+        window.notificar("Não foi possível salvar o pedido.", "error");
+      } finally {
+        botao.disabled = false;
+      }
+    }
+
+    document.body.appendChild(document.getElementById("secDividirModal"));
+    document.getElementById("btnSecAdicionarPedido").addEventListener("click", () => abrirAdicionarPedidoSec());
+    document.getElementById("secPedidoEnviar").addEventListener("click", salvarPedidoSec);
+    ["secFiltroTrimestre", "secFiltroRevista", "secFiltroAluno", "secFiltroStatus", "secFiltroPago", "secFiltroForma"].forEach((id) => {
+      document.getElementById(id).addEventListener("change", () => carregarPedidosRevistas());
+    });
+
+    // Aviso de dados incompletos: ao recarregar/fechar a aba o navegador mostra o próprio aviso de saída
+    const MSG_INCOMPLETO_SEC = "Os dados não foram salvos porque o pagamento está incompleto (falta a forma de pagamento). Deseja sair assim mesmo? OK = sair. Cancelar = continuar preenchendo.";
+    window.addEventListener("beforeunload", (e) => {
+      if (pendenciasSec.size) {
+        e.preventDefault();
+        e.returnValue = "";
+      }
+    });
+    // Trocar de tela pelo menu ou pelo "Voltar": pergunta antes de sair
+    document.addEventListener("click", (e) => {
+      if (!pendenciasSec.size) return;
+      const alvo = e.target.closest("[data-area], .secretaria-voltar, .nav a, .nav button, .sidebar-link, .nav-admin-dropdown-item");
+      if (!alvo) return;
+      if (!window.confirm(MSG_INCOMPLETO_SEC)) {
+        e.preventDefault();
+        e.stopPropagation();
+        return;
+      }
+      pendenciasSec.clear();
+    }, true);
+    document.getElementById("btnSecValoresRevistas").addEventListener("click", abrirValoresRevistasSec);
+    document.getElementById("secPedidoFechar").addEventListener("click", () => fecharPopupSec(secPedidoModal));
+    document.getElementById("secValoresFechar").addEventListener("click", () => fecharPopupSec(secValoresModal));
+    document.getElementById("secValoresForm").addEventListener("submit", salvarValoresRevistasSec);
+    document.getElementById("secValoresTrimestre").addEventListener("change", carregarValoresPeriodo);
+
+    // Filtros da tabela de pedidos. Cada filtro tem "Todos" (valor vazio).
+    // Trimestre começa no próximo; a escolha do usuário é mantida quando a tabela recarrega.
+    function preencherFiltroSec(id, opcoes, padrao) {
+      const sel = document.getElementById(id);
+      const atual = sel.dataset.iniciado === "sim" ? sel.value : (padrao || "");
+      sel.innerHTML = "";
+      opcoes.forEach(([valor, texto]) => {
+        const opt = document.createElement("option");
+        opt.value = valor;
+        opt.textContent = texto;
+        sel.appendChild(opt);
+      });
+      sel.value = opcoes.some(([valor]) => valor === atual) ? atual : "";
+      sel.dataset.iniciado = "sim";
+    }
+
+    function atualizarFiltrosPedidosSec(linhas) {
+      const prox = opcoesTrimestrePrecos()[1];
+      // Trimestres: os que aparecem nos pedidos, mais o próximo (que é o padrão)
+      const trims = new Map();
+      trims.set(`${prox.ano}-${prox.trimestre}`, { ano: prox.ano, trimestre: prox.trimestre });
+      linhas.forEach((l) => trims.set(`${l.pedido.ano}-${l.pedido.trimestre}`, { ano: l.pedido.ano, trimestre: l.pedido.trimestre }));
+      const trimOrdenados = [...trims.values()].sort((a, b) => a.ano - b.ano || a.trimestre - b.trimestre);
+      preencherFiltroSec("secFiltroTrimestre",
+        [["", "Todos"]].concat(trimOrdenados.map((t) => [`${t.ano}-${t.trimestre}`, `${t.trimestre}º/${String(t.ano).slice(-2)}`])),
+        `${prox.ano}-${prox.trimestre}`);
+
+      const revistas = [...new Set(linhas.map((l) => l.revista))].sort((a, b) => a.localeCompare(b, "pt-BR"));
+      preencherFiltroSec("secFiltroRevista", [["", "Todos"]].concat(revistas.map((r) => [r, r])));
+
+      const alunos = [...new Set(linhas.map((l) => l.pedido.alunoNome || ""))].filter((a) => a).sort((a, b) => a.localeCompare(b, "pt-BR"));
+      preencherFiltroSec("secFiltroAluno", [["", "Todos"]].concat(alunos.map((a) => [a, a])));
+
+      preencherFiltroSec("secFiltroStatus", [["", "Todos"], ["solicitado", "Solicitado"], ["entregue", "Entregue"]]);
+      preencherFiltroSec("secFiltroPago", [["", "Todos"], ["feito", "Feito"], ["pendente", "Pendente"], ["doacao", "Doação"]]);
+      preencherFiltroSec("secFiltroForma", [["", "Todos"], ["pix", "Pix"], ["dinheiro", "Dinheiro"]]);
+    }
+
+    // Resumo do pedido (segue os filtros): tabela por tipo e revista, e os cartões de totais
+    function formatarReal(n) {
+      return "R$ " + n.toFixed(2).replace(".", ",");
+    }
+
+    function desenharResumoSec(linhasF) {
+      const tabela = document.getElementById("secResumoTabela");
+      tabela.textContent = "";
+      const cabecalho = document.createElement("div");
+      cabecalho.className = "sec-resumo-linha sec-resumo-cabecalho";
+      ["Tipo de revista", "Revista", "QTD", "Valor total"].forEach((titulo) => {
+        const celula = document.createElement("span");
+        celula.textContent = titulo;
+        cabecalho.appendChild(celula);
+      });
+      tabela.appendChild(cabecalho);
+
+      // Agrupa por tipo e revista
+      const grupos = new Map();
+      linhasF.forEach((l) => {
+        const chave = l.tipo + "|" + l.revista;
+        const g = grupos.get(chave) || { tipo: l.tipo, revista: l.revista, qtd: 0, valor: 0, semPreco: false };
+        g.qtd += l.qtd;
+        if (l.valorNum === null) g.semPreco = true;
+        else g.valor += l.valorNum;
+        grupos.set(chave, g);
+      });
+      const itens = [...grupos.values()].sort((a, b) => a.tipo.localeCompare(b.tipo, "pt-BR") || a.revista.localeCompare(b.revista, "pt-BR"));
+      if (!itens.length) {
+        const vazio = document.createElement("p");
+        vazio.className = "admin-agenda-info";
+        vazio.textContent = "Nenhum pedido nos filtros escolhidos.";
+        tabela.appendChild(vazio);
+      }
+      itens.forEach((g) => {
+        const linha = document.createElement("div");
+        linha.className = "sec-resumo-linha";
+        [g.tipo, g.revista, String(g.qtd), g.semPreco ? "Sem preço no momento" : formatarReal(g.valor)].forEach((texto) => {
+          const celula = document.createElement("span");
+          celula.textContent = texto;
+          linha.appendChild(celula);
+        });
+        tabela.appendChild(linha);
+      });
+
+      // Cartões: valor total (soma dos preços conhecidos) e quantidade total
+      const valorTotal = linhasF.reduce((soma, l) => soma + (l.valorNum || 0), 0);
+      const algumSemPreco = linhasF.some((l) => l.valorNum === null);
+      const qtdTotal = linhasF.reduce((soma, l) => soma + l.qtd, 0);
+      document.getElementById("secResumoValor").textContent = formatarReal(valorTotal) + (algumSemPreco ? " (alguns sem preço)" : "");
+      document.getElementById("secResumoQtd").textContent = qtdTotal + (qtdTotal === 1 ? " revista" : " revistas");
+    }
+
+    // Uma linha passa se atende a todos os filtros escolhidos
+    function linhaPassaFiltrosSec(l) {
+      const p = l.pedido;
+      const v = (id) => document.getElementById(id).value;
+      if (v("secFiltroTrimestre") && `${p.ano}-${p.trimestre}` !== v("secFiltroTrimestre")) return false;
+      if (v("secFiltroRevista") && l.revista !== v("secFiltroRevista")) return false;
+      if (v("secFiltroAluno") && (p.alunoNome || "") !== v("secFiltroAluno")) return false;
+      if (v("secFiltroStatus") && (p.status === "entregue" ? "entregue" : "solicitado") !== v("secFiltroStatus")) return false;
+      if (v("secFiltroPago") && pagamentoDoPedido(p) !== v("secFiltroPago")) return false;
+      if (v("secFiltroForma") && (p.formaPagamento || "") !== v("secFiltroForma")) return false;
+      return true;
+    }
+
+    // Pedidos de revista feitos pelos alunos (Área do Aluno): Turma, Aluno e revistas pedidas
+    async function carregarPedidosRevistas() {
+      const lista = document.getElementById("secPedidosRevistasLista");
+      const status = document.getElementById("secPedidosRevistasStatus");
+      lista.textContent = "";
+      status.textContent = "Carregando pedidos...";
+      try {
+        const snap = await getDocs(collection(db, "pedidosRevistas"));
+        const pedidos = snap.docs.map((d) => ({ id: d.id, ...d.data() })).sort((a, b) =>
+          (a.salaNome || "").localeCompare(b.salaNome || "", "pt-BR") ||
+          (a.alunoNome || "").localeCompare(b.alunoNome || "", "pt-BR")
+        );
+        status.textContent = pedidos.length ? "" : "Nenhum pedido de revista ainda.";
+        if (!pedidos.length) {
+          desenharResumoSec([]);
+          return;
+        }
+
+        // Preços de cada trimestre que aparece nos pedidos (cada trimestre tem os próprios valores)
+        const periodos = [...new Set(pedidos.map((p) => `${p.ano}_${p.trimestre}`))];
+        const docsPrecos = await Promise.all(periodos.map((k) =>
+          getDoc(doc(db, "configRevistas", "precos_" + k)).catch(() => null)
+        ));
+        const precosPorPeriodo = {};
+        periodos.forEach((k, idx) => {
+          const s = docsPrecos[idx];
+          precosPorPeriodo[k] = s && s.exists() && s.data().precos ? s.data().precos : {};
+        });
+
+        // Uma linha por revista e tipo (aluno ou professor). Pedidos antigos sem divisão são de aluno.
+        const linhas = [];
+        pedidos.forEach((p) => {
+          const precos = precosPorPeriodo[`${p.ano}_${p.trimestre}`] || {};
+          (p.itens || []).forEach((i) => {
+            const qAluno = i.qtdAluno !== undefined ? Number(i.qtdAluno) : Number(i.quantidade) || 0;
+            const qProfessor = Number(i.qtdProfessor) || 0;
+            const adicionar = (tipo, qtd) => {
+              if (!(qtd > 0)) return;
+              const preco = precoDeSec(precos[i.revistaId], tipo);
+              linhas.push({
+                aluno: p.alunoNome || "",
+                revista: i.nome || "",
+                tipo: tipo,
+                trimestre: p.trimestre + "º/" + String(p.ano).slice(-2),
+                qtd: qtd,
+                valorNum: preco === null ? null : preco * qtd,
+                valor: preco === null ? "Sem preço no momento" : "R$ " + (preco * qtd).toFixed(2).replace(".", ","),
+                pedido: p
+              });
+            };
+            adicionar("Aluno", qAluno);
+            adicionar("Professor", qProfessor);
+          });
+        });
+
+        // Filtros: as opções vêm destes dados; a tabela mostra só o que passa nos filtros
+        atualizarFiltrosPedidosSec(linhas);
+        const linhasFiltradas = linhas.filter((l) => linhaPassaFiltrosSec(l));
+        status.textContent = linhasFiltradas.length ? "" : "Nenhum pedido com esses filtros.";
+        desenharResumoSec(linhasFiltradas);
+
+        const cabecalho = document.createElement("div");
+        cabecalho.className = "sec-pedido-linha sec-pedido-cabecalho";
+        ["Aluno", "Revista", "Tipo de revista", "Trim", "Qtd.", "Valor", "Status", "Pagamento", "Forma de pagamento", "Ações"].forEach((titulo) => {
+          const celula = document.createElement("span");
+          celula.textContent = titulo;
+          cabecalho.appendChild(celula);
+        });
+        lista.appendChild(cabecalho);
+
+        linhasFiltradas.forEach((l) => {
+          const linha = document.createElement("div");
+          linha.className = "sec-pedido-linha";
+          [l.aluno, l.revista, l.tipo, l.trimestre, String(l.qtd), l.valor].forEach((texto) => {
+            const celula = document.createElement("span");
+            celula.textContent = texto;
+            linha.appendChild(celula);
+          });
+
+          // Status, pago e forma de pagamento: ficam gravados no pedido e salvam ao mudar
+          const situacao = l.pedido;
+          const selStatus = criarSelectSec([["solicitado", "Solicitado"], ["entregue", "Entregue"]], situacao.status === "entregue" ? "entregue" : "solicitado");
+          // Pendência: se o usuário deixou o pagamento incompleto, a tela mantém a escolha dele
+          const pend = pendenciasSec.get(situacao.id) || null;
+          const selPago = criarSelectSec([["pendente", "Pendente"], ["feito", "Feito"], ["doacao", "Doação"]], pend ? pend.pagamento : pagamentoDoPedido(situacao));
+          const selForma = criarSelectSec([["", "—"], ["pix", "Pix"], ["dinheiro", "Dinheiro"]], pend ? pend.forma : (situacao.formaPagamento || ""));
+          if (pend && pend.pagamento === "feito" && !selForma.value) selForma.classList.add("campo-invalido");
+          selForma.disabled = (pend ? pend.pagamento : pagamentoDoPedido(situacao)) !== "feito";
+          const campos = [selStatus, selPago, selForma];
+          const salvarSituacao = async () => {
+            const pagamento = selPago.value; // pendente | feito | doacao
+            // Doação sai sempre em dinheiro e não usa forma de pagamento; só o Feito pede a forma
+            const precisaForma = pagamento === "feito";
+            selForma.disabled = !precisaForma;
+            if (!precisaForma) selForma.value = "";
+            const forma = precisaForma ? selForma.value : "";
+            const pagou = pagamento !== "pendente"; // feito ou doação: movimenta o caixa
+            // Incompleto: não grava, marca a forma em vermelho e guarda a pendência (o usuário é avisado se sair)
+            if (precisaForma && !forma) {
+              pendenciasSec.set(situacao.id, { pagamento: pagamento, forma: "" });
+              selForma.classList.add("campo-invalido");
+              window.notificar("Escolha a forma de pagamento (Pix ou Dinheiro) para salvar.", "error");
+              return;
+            }
+            pendenciasSec.delete(situacao.id);
+            selForma.classList.remove("campo-invalido");
+            campos.forEach((c) => { c.disabled = true; });
+            try {
+              const idCaixa = "revista_" + situacao.id;
+              if (pagou) {
+                // Feito: entrada no caixa. Doação: saída (custo da Secretaria que sai do caixa da EBD).
+                // Id fixo: muda o tipo/forma sem duplicar o lançamento.
+                const total = await valorDoPedidoSec(situacao);
+                if (total === null || !(total > 0)) {
+                  pendenciasSec.set(situacao.id, { pagamento: pagamento, forma: forma });
+                  window.notificar("Esta revista não tem valor cadastrado. Cadastre em Valores das revistas antes de salvar.", "error");
+                  campos.forEach((c) => { c.disabled = false; });
+                  selForma.disabled = !precisaForma;
+                  return;
+                }
+                const ehDoacao = pagamento === "doacao";
+                await setDoc(doc(db, "caixaMovimentacoes", idCaixa), {
+                  tipo: ehDoacao ? "saida" : "entrada",
+                  meio: ehDoacao ? "dinheiro" : forma,
+                  valor: total,
+                  descricao: (ehDoacao ? "Doação de revista (" : "Pagamento de revista (") + (situacao.alunoNome || "") + ")",
+                  data: hojeISOSecretaria(),
+                  origem: "pagamentoRevista",
+                  pedidoId: situacao.id,
+                  lancadoPorUid: usuarioAtualCache ? usuarioAtualCache.uid : "",
+                  lancadoPorNome: usuarioAtualCache ? (usuarioAtualCache.nome || usuarioAtualCache.email || "") : "",
+                  criadoEm: serverTimestamp(),
+                  criadoEmMs: Date.now()
+                });
+              } else if (pagamentoDoPedido(situacao) !== "pendente") {
+                // Voltou para Pendente: o lançamento do caixa sai
+                await deleteDoc(doc(db, "caixaMovimentacoes", idCaixa));
+              }
+              await updateDoc(doc(db, "pedidosRevistas", situacao.id), {
+                status: selStatus.value,
+                pagamento: pagamento,
+                pago: pagou,
+                formaPagamento: precisaForma ? forma : null
+              });
+              window.notificar(pagou ? (pagamento === "doacao" ? "Doação registrada no caixa." : "Pagamento registrado no caixa.") : "Situação do pedido atualizada.", "success");
+              carregarPedidosRevistas();
+            } catch (err) {
+              console.error("Erro ao atualizar situação do pedido:", err);
+              window.notificar("Não foi possível atualizar o pedido.", "error");
+              pendenciasSec.set(situacao.id, { pagamento: pagamento, forma: forma });
+              campos.forEach((c) => { c.disabled = false; });
+              selForma.disabled = !precisaForma;
+            }
+          };
+          campos.forEach((c) => c.addEventListener("change", salvarSituacao));
+          linha.append(...campos);
+
+          // Editar: reabre o pop-up Adicionar Pedido com os dados do pedido
+          // Excluir: dois cliques (o primeiro pede confirmação)
+          const acoes = document.createElement("div");
+          acoes.className = "sec-pedido-acoes";
+          const btnEditar = document.createElement("button");
+          btnEditar.type = "button";
+          btnEditar.className = "sec-caixa-editar";
+          btnEditar.textContent = "✎";
+          btnEditar.title = "Editar";
+          btnEditar.setAttribute("aria-label", "Editar pedido");
+          btnEditar.addEventListener("click", () => abrirAdicionarPedidoSec(l.pedido));
+          const btnExcluir = document.createElement("button");
+          btnExcluir.type = "button";
+          btnExcluir.className = "admin-perfis-item-remover sec-pedido-excluir";
+          btnExcluir.textContent = "×";
+          btnExcluir.title = "Excluir";
+          btnExcluir.setAttribute("aria-label", "Excluir pedido");
+          btnExcluir.addEventListener("click", async () => {
+            if (btnExcluir.dataset.armado !== "sim") {
+              btnExcluir.dataset.armado = "sim";
+              btnExcluir.classList.add("armado");
+              btnExcluir.title = "Clique de novo para excluir";
+              btnExcluir.textContent = "?";
+              setTimeout(() => {
+                if (btnExcluir.isConnected && btnExcluir.dataset.armado === "sim") {
+                  btnExcluir.dataset.armado = "";
+                  btnExcluir.classList.remove("armado");
+                  btnExcluir.title = "Excluir";
+                  btnExcluir.textContent = "×";
+                }
+              }, 4000);
+              return;
+            }
+            btnExcluir.disabled = true;
+            try {
+              await deleteDoc(doc(db, "pedidosRevistas", l.pedido.id));
+              window.notificar("Pedido excluído.", "success");
+              carregarPedidosRevistas();
+            } catch (err) {
+              console.error("Erro ao excluir pedido:", err);
+              window.notificar("Não foi possível excluir o pedido.", "error");
+              btnExcluir.disabled = false;
+            }
+          });
+          acoes.append(btnEditar, btnExcluir);
+          linha.appendChild(acoes);
+          lista.appendChild(linha);
+        });
+      } catch (err) {
+        console.error("Erro ao carregar pedidos de revista:", err);
+        status.textContent = "Não foi possível carregar os pedidos agora.";
+      }
+    }
 
     function linhaResumo(rotulo, valor) {
       return '<div class="sec-relatorio-linha"><span class="rotulo">' + rotulo + '</span><span class="valor">' + valor + "</span></div>";

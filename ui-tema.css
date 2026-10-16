@@ -465,19 +465,6 @@ body::after {
 #areaAluno .aluno-card-acoes {
   margin-top: 6px;
 }
-#areaAluno .aluno-recurso-botao {
-  width: 100%;
-  background: none;
-  border: 0;
-  padding: 0;
-  text-align: left;
-  color: inherit;
-  font: inherit;
-  cursor: pointer;
-}
-#areaAluno .aluno-recurso-botao:hover strong {
-  color: var(--laranja);
-}
 #areaAluno .aluno-card-lista-item > div:not(.aluno-card-lista-icon) {
   min-width: 0;
   overflow-wrap: anywhere;
@@ -559,7 +546,8 @@ body::after {
   text-transform: none;
   margin-bottom: 14px;
 }
-#areaProfessor .professor-canvas-card {
+#areaProfessor .professor-canvas-card,
+#areaAluno .professor-canvas-card {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -568,22 +556,26 @@ body::after {
   gap: 8px;
   padding: 16px;
 }
-#areaProfessor .professor-canvas-icone {
+#areaProfessor .professor-canvas-icone,
+#areaAluno .professor-canvas-icone {
   font-size: 56px;
   line-height: 1;
 }
-#areaProfessor .professor-canvas-icone img {
+#areaProfessor .professor-canvas-icone img,
+#areaAluno .professor-canvas-icone img {
   display: block;
   width: 96px;
   height: 96px;
   object-fit: contain;
 }
-#areaProfessor .professor-canvas-titulo {
+#areaProfessor .professor-canvas-titulo,
+#areaAluno .professor-canvas-titulo {
   color: #FFFFFF;
   font-size: 14px;
   font-weight: 800;
 }
-#areaProfessor .professor-canvas-sub {
+#areaProfessor .professor-canvas-sub,
+#areaAluno .professor-canvas-sub {
   color: #FFFFFF;
   font-size: 12px;
   line-height: 1.5;
@@ -661,10 +653,10 @@ body::after {
 .sec-caixa-historico-linha { font-size: 12px; color: var(--muted); line-height: 1.5; }
 
 /* Cards da Sala do Professor com o mesmo tamanho dos cards de Turma (133 px de largura) */
-#areaProfessor .professor-canvas-grid {
+#areaProfessor .professor-canvas-grid,
+#areaAluno .professor-canvas-grid {
   grid-template-columns: repeat(auto-fill, 133px);
   justify-content: center;
-}
 }
 
 #secRelatorioDominicalTurmas .professor-canvas-card {
@@ -1126,6 +1118,96 @@ body::after {
 
 /* Botão Voltar do cadastro some quando o .btn tem display próprio (regra de hidden) */
 #perfilBtnVoltar2[hidden] { display: none !important; }
+
+/* Área do Aluno: Solicitar Revista mostra ícone e texto sempre; a frase de apoio fica oculta */
+#areaAluno .aluno-recursos-grid .professor-canvas-sub { display: none; }
+
+
+/* Pedido do aluno em formato de tabela: Revista | Qtd. | Tipo | Valor total */
+.aluno-pedido-grade { display: grid; grid-template-columns: minmax(0, 1.7fr) 70px 110px minmax(0, 1fr); gap: 10px; align-items: center; }
+.aluno-pedido-grade-cab { padding: 8px 0; border-bottom: 1px solid var(--border-strong); font-size: 11px; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+.admin-form .aluno-pedido-grade input[type=number] { width: 70px; padding: 6px 8px; }
+.admin-form .aluno-pedido-grade select { width: 100%; padding: 6px 8px; }
+.aluno-pedido-valor { font-size: 13px; color: var(--ink); }
+.aluno-pedido-total { margin-top: 12px; font-size: 13px; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+.aluno-pedido-total strong { font-size: 18px; color: var(--ink); margin-left: 6px; text-transform: none; }
+
+/* Pop-up de divisão (professor e aluno): usado no aluno e na Secretaria */
+.aluno-pedido-dividir .aluno-pedido-linha { flex-wrap: wrap; justify-content: flex-start; gap: 10px 14px; }
+.aluno-pedido-dividir .aluno-pedido-nome { flex: 1 1 100%; font-size: 14px; font-weight: 700; color: var(--ink); }
+.aluno-pedido-dividir .aluno-pedido-qtd { display: flex; flex-direction: row; align-items: center; gap: 8px; margin: 0; font-size: 13px; font-weight: 600; color: var(--ink); }
+.aluno-pedido-dividir .aluno-pedido-qtd input { width: 72px; padding: 6px 8px; font: inherit; font-size: 14px; color: var(--ink); background: var(--surface-2); border: 1px solid var(--border-strong); border-radius: 10px; }
+.aluno-pedido-dividir .aluno-pedido-qtd input:focus { outline: none; border-color: var(--laranja); }
+
+/* Pop-up Solicitar Revista (Área do Aluno) */
+.aluno-pedido-card { max-width: 520px; width: 100%; max-height: 90vh; overflow-y: auto; box-sizing: border-box; }
+.aluno-pedido-trimestre { margin: 12px 0 4px; font-size: 14px; color: var(--ink); }
+.aluno-pedido-custo { text-align: center; }
+.aluno-pedido-custo input { text-align: center; }
+.aluno-pedido-titulo-lista { margin: 14px 0 4px; font-size: 13px; font-weight: 700; color: var(--muted); }
+.aluno-pedido-linha { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border-strong); }
+/* Linha da tabela de pedido: precisa vencer a regra acima (flex) para ficar em grade */
+.aluno-pedido-grade .aluno-pedido-check { font-size: 12px; }
+.aluno-pedido-grade .aluno-pedido-check strong { font-size: 12px; font-weight: 700; }
+.aluno-pedido-grade .aluno-pedido-check small { font-size: 10.5px; }
+.aluno-pedido-linha.aluno-pedido-grade { display: grid; grid-template-columns: minmax(0, 1.7fr) 70px 110px minmax(0, 1fr); gap: 10px; align-items: center; justify-content: normal; }
+/* .admin-form label deixa o rótulo em bloco: o seletor abaixo precisa de mais especificidade para manter a linha */
+.admin-form .aluno-pedido-check { flex: 1; min-width: 0; display: flex; flex-direction: row; align-items: flex-start; gap: 10px; cursor: pointer; font-size: 14px; color: var(--ink); margin: 0; }
+.aluno-pedido-check input[type=checkbox] { flex: 0 0 auto; width: auto; margin: 3px 0 0; }
+.aluno-pedido-check > span { display: block; }
+.aluno-pedido-check small { color: var(--muted); font-size: 12px; }
+.admin-form .aluno-pedido-qtd { display: flex; flex-direction: row; align-items: center; gap: 6px; font-size: 13px; color: var(--muted); white-space: nowrap; margin: 0; flex: 0 0 auto; }
+.admin-form .aluno-pedido-qtd input { width: 64px; padding: 6px 8px; }
+.aluno-pedido-status { min-height: 1.4em; margin: 12px 0 0; font-size: 13px; }
+
+/* Controle de Revistas (Secretaria): pedidos dos alunos */
+.sec-pedidos-lista { margin-top: 10px; overflow-x: auto; }
+.sec-pedido-linha { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.3fr) minmax(0, 0.9fr) minmax(0, 0.8fr) 40px minmax(0, 0.9fr) minmax(0, 1fr) minmax(0, 0.9fr) minmax(0, 1.1fr) 96px; gap: 8px; padding: 10px 0; border-bottom: 1px solid var(--border-strong); font-size: 13px; color: var(--ink); align-items: start; }
+#secNivelRevistas .sec-revistas-titulo { text-align: center; font-size: 22px; }
+.sec-revistas-acoes { display: flex; justify-content: center; flex-wrap: wrap; gap: 12px; margin: 16px 0 8px; }
+.aluno-pedido-nome { flex: 1; min-width: 0; font-size: 14px; color: var(--ink); font-weight: 700; }
+.admin-form .aluno-pedido-qtd select { width: auto; padding: 6px 8px; }
+
+/* Adicionar Pedido (Secretaria): cabeçalho e linhas com as mesmas colunas */
+.sec-revista-cabecalho, .sec-revista-linha { display: grid; grid-template-columns: minmax(0, 1fr) 120px 170px; gap: 12px; align-items: center; }
+.sec-revista-cabecalho { padding: 8px 0; border-bottom: 1px solid var(--border-strong); font-size: 12px; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+.sec-revista-linha { padding: 10px 0; border-bottom: 1px solid var(--border-strong); }
+.sec-revista-nome { font-size: 13px; font-weight: 600; color: var(--ink); text-transform: none; }
+/* Resumo do pedido (Controle de Revistas): tabela à esquerda, dois cartões à direita */
+.sec-resumo-grid { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 16px; margin: 16px 0 6px; }
+@media (max-width: 760px) { .sec-resumo-grid { grid-template-columns: minmax(0, 1fr); } }
+.sec-resumo-canvas { background: var(--surface); border: 1px solid var(--border-strong); border-radius: 18px; padding: 18px; min-width: 0; }
+.sec-resumo-titulo { font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); margin-bottom: 10px; }
+.sec-resumo-linha { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr) 50px minmax(0, 1fr); gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--border-strong); font-size: 13px; color: var(--ink); }
+.sec-resumo-cabecalho { font-size: 11px; font-weight: 800; color: var(--muted); text-transform: uppercase; }
+.sec-resumo-cards { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; align-content: center; }
+.sec-resumo-card { background: var(--surface-2); border: 1px solid var(--border-strong); border-radius: 14px; padding: 16px; display: flex; flex-direction: column; gap: 6px; }
+.sec-resumo-card span { font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+.sec-resumo-card strong { font-size: 24px; color: var(--ink); }
+.sec-pedidos-filtros { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px 12px; margin: 14px 0 6px; }
+.sec-pedidos-filtros label { display: flex; flex-direction: column; gap: 4px; font-size: 11px; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+.sec-pedido-select { width: 100%; padding: 5px 6px; font-size: 12px; color: var(--ink); background: var(--surface-2); border: 1px solid var(--border-strong); border-radius: 8px; }
+.sec-pedido-select:focus { outline: none; border-color: var(--laranja); }
+/* Campo obrigatório que ainda não foi preenchido */
+.sec-pedido-select.campo-invalido { border-color: var(--vermelho); box-shadow: 0 0 0 1px var(--vermelho); }
+.sec-pedido-select:disabled { opacity: .5; }
+.sec-pedido-acoes { display: flex; gap: 6px; align-items: center; justify-content: flex-end; }
+/* Valores das revistas: revista | valor aluno | valor professor */
+.sec-valores-linha { display: grid; grid-template-columns: minmax(0, 1fr) 150px 150px; gap: 12px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border-strong); }
+.sec-valores-cabecalho { padding: 8px 0; font-size: 12px; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+.sec-valores-nome { font-size: 13px; font-weight: 700; color: var(--ink); }
+.admin-form .sec-valores-rotulo { display: flex; flex-direction: row; align-items: center; gap: 6px; margin: 0; font-size: 13px; color: var(--muted); }
+.admin-form .sec-valores-campo { width: 100%; padding: 6px 8px; text-align: right; }
+
+/* Excluir: × vermelho sempre (igual aos outros formulários) */
+.sec-pedido-acoes .sec-pedido-excluir { width: 30px; height: 30px; font-size: 18px; font-weight: 700; line-height: 1; color: var(--vermelho); border: 1px solid var(--vermelho); border-radius: 8px; background: transparent; cursor: pointer; padding: 0; }
+.sec-pedido-acoes .sec-pedido-excluir:hover, .sec-pedido-acoes .sec-pedido-excluir.armado { background: var(--vermelho); color: #fff; }
+.sec-pedido-acoes .sec-pedido-excluir:disabled { opacity: .5; cursor: default; }
+.sec-pedido-cabecalho { font-weight: 800; color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .04em; }
+@media (max-width: 560px) {
+  .sec-pedido-linha { grid-template-columns: 1fr; gap: 2px; }
+  .sec-pedido-cabecalho { display: none; }
+}
 
 /* Lista do combobox (Trimestre/Aula) deve aparecer por cima do card seguinte (Recursos Disponíveis).
    Cada card é um contexto de empilhamento (backdrop-filter), então o card que tem a lista aberta sobe. */
