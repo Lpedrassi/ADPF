@@ -124,49 +124,6 @@ export async function excluirEvento(id) {
   _cacheEventos = null;
 }
 
-/**
- * Importa, de uma só vez, a lista inicial de eventos de 2026 (já digitada
- * a partir da agenda antiga do Google Sites). Só roda uma vez: se o
- * marcador "agenda_meta/import_2026" já existir, não faz nada de novo -
- * assim não corre o risco de duplicar tudo se alguém clicar 2x.
- */
-export async function importarAgendaInicial(listaEventos) {
-  const marcadorRef = doc(db, "agenda_meta", "import_2026");
-  const marcadorSnap = await getDoc(marcadorRef);
-  if (marcadorSnap.exists()) {
-    return { importado: false, motivo: "Essa importação inicial já tinha sido feita antes." };
-  }
-
-  // Grava em lotes de 450 (o Firestore só aceita até 500 escritas por lote).
-  const TAMANHO_LOTE = 450;
-  for (let i = 0; i < listaEventos.length; i += TAMANHO_LOTE) {
-    const pedaco = listaEventos.slice(i, i + TAMANHO_LOTE);
-    const lote = writeBatch(db);
-    pedaco.forEach((evento) => {
-      const novoDocRef = doc(collection(db, NOME_COLECAO));
-      lote.set(novoDocRef, {
-        escopo: evento.escopo,
-        dataInicio: evento.dataInicio,
-        dataFim: evento.dataFim || evento.dataInicio,
-        titulo: evento.titulo,
-        hora: evento.hora || null,
-        categoria: evento.categoria || null,
-        observacao: evento.observacao || null,
-        criadoEm: serverTimestamp()
-      });
-    });
-    await lote.commit();
-  }
-
-  await setDoc(marcadorRef, {
-    importadoEm: serverTimestamp(),
-    totalEventos: listaEventos.length
-  });
-
-  _cacheEventos = null;
-  return { importado: true, total: listaEventos.length };
-}
-
 // =================================================================
 // 2) EXIBIÇÃO PÚBLICA (seção "Agenda" do site) — só roda se existir na página
 // =================================================================
@@ -175,17 +132,6 @@ function formatarDataCurta(dataISO) {
   // "2026-09-27" -> "27/09"
   const [, mes, dia] = dataISO.split("-");
   return `${dia}/${mes}`;
-}
-
-function formatarPeriodo(evento) {
-  if (evento.outrasDatas && evento.outrasDatas.length > 0) {
-    const todas = [evento.dataInicio, ...evento.outrasDatas].sort();
-    return todas.map(formatarDataCurta).join(", ");
-  }
-  if (!evento.dataFim || evento.dataFim === evento.dataInicio) {
-    return formatarDataCurta(evento.dataInicio);
-  }
-  return `${formatarDataCurta(evento.dataInicio)} a ${formatarDataCurta(evento.dataFim)}`;
 }
 
 /**
