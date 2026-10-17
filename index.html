@@ -113,7 +113,7 @@
   .nav {
     max-width: 1240px; margin: 0 auto;
     display: flex; align-items: center; justify-content: space-between; gap: 10px;
-    padding: 8px 8px 8px 16px; border-radius: 999px;
+    padding: 8px 8px 8px 16px; border-radius: 16px;
     background: rgba(22,22,31,0.72);
     backdrop-filter: blur(18px);
     border: 1px solid var(--border);
@@ -1036,6 +1036,26 @@
   .admin-perfis-item-seta:hover:not(:disabled) { border-color: var(--laranja); }
   .admin-perfis-item-seta:disabled { opacity: .3; cursor: default; }
 
+  /* Dropdown do menu: o atributo hidden precisa vencer o display:block dos itens */
+  .nav-admin-dropdown-item[hidden] { display: none; }
+
+  /* Lista de áreas no pop-up de perfil */
+  /* Árvore de páginas no pop-up de perfil: pastas (telas) com as páginas dentro */
+  .perfil-areas-lista { margin: 6px 0 4px; max-height: 52vh; overflow-y: auto; padding: 8px 4px; border: 1px solid var(--border); border-radius: 12px; background: rgba(9,9,14,0.45); }
+  .perfil-pasta { display: flex; align-items: center; gap: 6px; padding: 6px 4px; }
+  .perfil-folha { padding: 5px 4px; }
+  /* Cada pasta aberta recua em relação à pasta de cima (com uma linha guia à esquerda) */
+  .perfil-filhos { margin-left: 30px; padding-left: 6px; border-left: 1px solid var(--border); }
+  .perfil-seta { width: 24px; height: 24px; flex-shrink: 0; border: 1px solid var(--border-strong); border-radius: 6px; background: transparent; color: var(--ink); cursor: pointer; font-size: 12px; line-height: 1; }
+  .perfil-areas-lista label { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; text-transform: none; letter-spacing: 0; cursor: pointer; }
+  .perfil-areas-lista input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--laranja); flex-shrink: 0; }
+  .perfil-areas-lista small { font-weight: 500; color: var(--muted); }
+  /* .admin-form label deixa o rótulo em coluna e centralizado: a árvore precisa de linha, à esquerda */
+  .admin-form .perfil-areas-lista label { display: flex; flex-direction: row; align-items: center; justify-content: flex-start; gap: 8px; text-align: left; text-transform: none; letter-spacing: 0; font-size: 14px; font-weight: 600; color: var(--ink); }
+  .admin-form .perfil-pasta { display: flex; flex-direction: row; align-items: center; gap: 6px; }
+  .admin-form .perfil-folha { display: block; }
+  .admin-form .perfil-seta { display: inline-flex; align-items: center; justify-content: center; margin: 0; }
+
   #areaGerenciarPerfis {
     position: relative; overflow: hidden; isolation: isolate;
     background: rgba(22,22,31,0.45); -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px);
@@ -1072,6 +1092,38 @@
     background: transparent; border: 1px solid var(--border-strong); border-radius: 12px;
   }
   #areaGerenciarPerfis .admin-perfis-item-editar:hover { background: rgba(255,255,255,0.05); border-color: var(--azul); }
+
+  /* Acessos de Usuários: mesmo visual da antiga Gerenciar Perfis */
+  #areaAcessosUsuarios {
+    position: relative; overflow: hidden; isolation: isolate;
+    background: rgba(22,22,31,0.45); -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px);
+    border: 1px solid var(--border-strong); border-radius: 24px;
+    box-shadow: 0 8px 32px 0 rgba(0,0,0,0.37);
+  }
+  #areaAcessosUsuarios h2 {
+    font-size: 22px; font-weight: 800; letter-spacing: -0.01em;
+    background: linear-gradient(180deg, #FFFFFF 0%, #E4E4EA 55%, #9B9BA8 100%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  #areaAcessosUsuarios .admin-perfis-item {
+    background: rgba(9,9,14,0.55); border: 1px solid var(--border); border-radius: 14px; padding: 12px 16px;
+    transition: all .3s ease;
+  }
+  #areaAcessosUsuarios .admin-perfis-item:hover {
+    background: rgba(14,14,21,0.8); border-color: rgba(255,255,255,0.2);
+    box-shadow: 0 10px 28px rgba(0,0,0,0.35); transform: translateY(-2px);
+  }
+  #areaAcessosUsuarios .admin-perfis-item-nome { font-weight: 600; }
+  #areaAcessosUsuarios .admin-perfis-item-email { font-size: 12px; }
+  #areaAcessosUsuarios .admin-perfis-item-select {
+    background: rgba(9,9,14,0.6); border: 1px solid var(--border-strong); border-radius: 12px;
+    height: 40px; padding: 0 14px; font-size: 13px; outline: none; transition: border-color .2s, box-shadow .2s;
+  }
+  #areaAcessosUsuarios .admin-perfis-item-select:focus { border-color: var(--azul); box-shadow: 0 0 0 1px var(--azul); }
+  #areaAcessosUsuarios .admin-perfis-item-editar, #areaAcessosUsuarios .admin-perfis-item-remover {
+    background: transparent; border: 1px solid var(--border-strong); border-radius: 12px;
+  }
+  #areaAcessosUsuarios .admin-perfis-item-editar:hover { background: rgba(255,255,255,0.05); border-color: var(--azul); }
 
   .professor-canvas-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin: 16px 0; }
   .professor-canvas-card {
@@ -1185,11 +1237,22 @@
   .nav-admin-menu-item > .nav-admin-toggle:hover { color: var(--ink); }
   .nav-admin-menu-item > .nav-admin-toggle.open { color: var(--ink); }
 
+  /* Menu suspenso: cilindro vertical de vidro escuro */
   .nav-admin-dropdown {
-    position: absolute; top: 100%; left: 0; margin-top: 4px;
-    background: var(--surface-2); border: 1px solid var(--border-strong);
-    border-radius: 8px; min-width: 200px; display: none; z-index: 100;
+    position: absolute; top: 100%; left: 0; margin-top: 14px;
+    background: linear-gradient(170deg, rgba(12,12,16,0.98) 0%, rgba(6,6,8,1) 100%);
+    border: 1px solid rgba(255,255,255,0.12); border-top: 1.5px solid rgba(255,255,255,0.18);
+    border-radius: 28px; padding: 16px; min-width: 250px; display: none; z-index: 100;
+    -webkit-backdrop-filter: blur(30px); backdrop-filter: blur(30px);
+    box-shadow: 0 30px 60px rgba(0,0,0,0.6), inset 0 1px 1px rgba(255,255,255,0.08), inset 0 -4px 10px rgba(0,0,0,0.8);
   }
+  /* Título do menu aberto: linha de destaque em degradê, como no modelo */
+  .nav-admin-menu-item > .nav-admin-toggle { position: relative; }
+  .nav-admin-menu-item > .nav-admin-toggle.open { color: #ffffff; text-shadow: 0 0 15px rgba(255,255,255,0.5); }
+  /* Itens do dropdown com ícone à esquerda */
+  .nav-admin-dropdown-item { display: flex; align-items: center; gap: 12px; border-radius: 16px; padding: 12px 16px; font-size: 14.85px; font-weight: 500; color: #F5F5F8; text-transform: none; letter-spacing: 0; }
+  .nav-admin-dropdown-item.is-active { background: rgba(255,255,255,0.08); color: #F5F5F8; font-weight: 600; box-shadow: inset 0 1px 0 rgba(255,255,255,0.1); }
+  .nav-admin-dropdown-item .nav-ico { width: 18px; height: 18px; flex-shrink: 0; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; color: #F5F5F8; }
   .nav-admin-menu-item > .nav-admin-toggle.open ~ .nav-admin-dropdown { display: block; }
 
   .nav-admin-dropdown-category {
@@ -1198,11 +1261,11 @@
   }
   .nav-admin-dropdown-item {
     background: none; border: none; color: var(--ink);
-    width: 100%; text-align: left; padding: 10px 12px; font-size: 13px;
+    width: 100%; text-align: left; padding: 12px 16px; font-size: 14.85px;
     cursor: pointer; transition: background 0.2s ease;
-    display: block;
+    display: flex; align-items: center; gap: 12px;
   }
-  .nav-admin-dropdown-item:hover { background: var(--surface); }
+  .nav-admin-dropdown-item:hover { background: none; }
 
   /* Esconder sidebar quando logado */
   .portal-sidebar { display: none; }
@@ -1239,32 +1302,33 @@
         <div class="nav-admin-menu-item">
           <button class="nav-admin-toggle" id="navSiteToggle" type="button">Site</button>
           <div class="nav-admin-dropdown" id="navSiteDropdown">
-            <button class="nav-admin-dropdown-item" data-section="topo">Início</button>
-            <button class="nav-admin-dropdown-item" data-section="noticias">Notícias</button>
-            <button class="nav-admin-dropdown-item" data-section="cultos">Cultos</button>
-            <button class="nav-admin-dropdown-item" data-section="sobre">Quem somos</button>
-            <button class="nav-admin-dropdown-item" data-section="departamentos">Departamentos</button>
-            <button class="nav-admin-dropdown-item" data-section="ebd">EBD</button>
-            <button class="nav-admin-dropdown-item" data-section="contato-section">Como chegar</button>
+            <button class="nav-admin-dropdown-item" data-section="topo"><svg class="nav-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>Início</button>
+            <button class="nav-admin-dropdown-item" data-section="noticias"><svg class="nav-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 8h10M7 12h10M7 16h6"/></svg>Notícias</button>
+            <button class="nav-admin-dropdown-item" data-section="cultos"><svg class="nav-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Cultos</button>
+            <button class="nav-admin-dropdown-item" data-section="sobre"><svg class="nav-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.6 2.9-6.5 6.5-6.5s6.5 2.9 6.5 6.5"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18.5 13.8c1.9.9 3 3.1 3 5.7"/></svg>Quem somos</button>
+            <button class="nav-admin-dropdown-item" data-section="departamentos"><svg class="nav-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>Departamentos</button>
+            <button class="nav-admin-dropdown-item" data-section="ebd"><svg class="nav-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M22 9 12 4 2 9l10 5 10-5Z"/><path d="M6 11v5c0 1.5 2.7 3 6 3s6-1.5 6-3v-5"/></svg>EBD</button>
+            <button class="nav-admin-dropdown-item" data-section="contato-section"><svg class="nav-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>Como chegar</button>
           </div>
         </div>
 
         <div class="nav-admin-menu-item">
           <button class="nav-admin-toggle" id="navAdminToggle" type="button">Administração</button>
           <div class="nav-admin-dropdown" id="navAdminDropdown">
-            <button class="nav-admin-dropdown-item" data-area="areaGerenciarPerfis">Gerenciar Perfis</button>
-            <button class="nav-admin-dropdown-item" data-area="areaAgenda">Agenda de Cultos</button>
-            <button class="nav-admin-dropdown-item" data-area="areaPostsSite">Posts do Site</button>
+            <button class="nav-admin-dropdown-item" data-area="areaAcessosUsuarios"><svg class="nav-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.4"/><path d="M5 20c0-3.9 3.1-7 7-7s7 3.1 7 7"/></svg>Acessos de Usuários</button>
+            <button class="nav-admin-dropdown-item" data-area="areaGerenciarPerfis"><svg class="nav-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2.2"/><path d="M6 16c.6-1.6 1.7-2.4 3-2.4s2.4.8 3 2.4M14 10h4M14 14h3"/></svg>Gerenciar Perfis</button>
+            <button class="nav-admin-dropdown-item" data-area="areaAgenda"><svg class="nav-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Agenda de Cultos</button>
+            <button class="nav-admin-dropdown-item" data-area="areaPostsSite"><svg class="nav-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11v2a1 1 0 0 0 1 1h2l5 4V6L6 10H4a1 1 0 0 0-1 1Z"/><path d="M16 8a5 5 0 0 1 0 8"/></svg>Posts do Site</button>
+            <button class="nav-admin-dropdown-item" data-area="areaCadastroSalas"><svg class="nav-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 21V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v17"/><path d="M3 21h18"/><circle cx="14" cy="12" r="1"/></svg>Gerenciar Salas</button>
           </div>
         </div>
 
         <div class="nav-admin-menu-item">
           <button class="nav-admin-toggle" id="navEbdToggle" type="button">Portal EBD</button>
           <div class="nav-admin-dropdown" id="navEbdDropdown">
-            <button class="nav-admin-dropdown-item" data-area="areaAluno">Sala do Aluno</button>
-            <button class="nav-admin-dropdown-item" data-area="areaProfessor">Sala do Professor</button>
-            <button class="nav-admin-dropdown-item" data-area="areaAdministrativo">Sala da Secretaria</button>
-            <button class="nav-admin-dropdown-item" data-area="areaCadastroSalas">Gerenciar Salas</button>
+            <button class="nav-admin-dropdown-item" data-area="areaAluno"><svg class="nav-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v12a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v12a3 3 0 0 1 3-3h7z"/></svg>Sala do Aluno</button>
+            <button class="nav-admin-dropdown-item" data-area="areaProfessor"><svg class="nav-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M12 16v4M8 20h8M7 9l3 2 2-3 3 2"/></svg>Sala do Professor</button>
+            <button class="nav-admin-dropdown-item" data-area="areaAdministrativo"><svg class="nav-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2M3 12h18"/></svg>Sala da Secretaria</button>
           </div>
         </div>
       </li>
@@ -1646,6 +1710,7 @@
     <button class="sidebar-link active" type="button" data-area="siteHome">Início (site)</button>
 
     <div class="sidebar-category">Administração</div>
+    <button class="sidebar-link" type="button" data-area="areaAcessosUsuarios">Acessos de Usuários</button>
     <button class="sidebar-link" type="button" data-area="areaGerenciarPerfis">Gerenciar Perfis</button>
     <button class="sidebar-link" type="button" data-area="areaAgenda">Agenda de Cultos e Eventos</button>
     <button class="sidebar-link" type="button" data-area="areaPostsSite">Post's do Site!</button>
@@ -2119,12 +2184,41 @@
 
   </div>
 
-  <section id="areaGerenciarPerfis" class="portal-section">
-    <h2>Gerenciar Perfis</h2>
+  <section id="areaAcessosUsuarios" class="portal-section">
+    <h2>Acessos de Usuários</h2>
     <p class="admin-agenda-info">Defina o perfil de acesso de cada pessoa cadastrada no site. Contas novas entram como "Convidado" até serem revisadas aqui.</p>
     <p id="gerenciarPerfisStatus" class="admin-agenda-status"></p>
     <div id="gerenciarPerfisLista" class="admin-perfis-lista">Carregando...</div>
   </section>
+
+  <section id="areaGerenciarPerfis" class="portal-section">
+    <h2>Gerenciar Perfis</h2>
+    <p class="admin-agenda-info">Crie perfis e escolha quais áreas do site cada um pode acessar. Os perfis do sistema (Administrador Master, Administrativo, Professor, Aluno e Convidado) podem ser editados, mas não excluídos.</p>
+    <div class="admin-form-botoes">
+      <button type="button" class="btn btn-contorno-azul" id="btnNovoPerfil">Novo perfil</button>
+    </div>
+    <p id="perfisStatus" class="admin-agenda-status"></p>
+    <div id="perfisLista" class="admin-perfis-lista">Carregando...</div>
+  </section>
+
+  <!-- Gerenciar Perfis: pop-up de criar/editar perfil (vai para o body ao iniciar) -->
+  <div class="login-overlay" id="paModal" role="dialog" aria-modal="true" aria-labelledby="perfilModalTitulo" hidden>
+    <div class="login-card aluno-pedido-card">
+      <h3 id="perfilModalTitulo" style="margin:0;">Novo perfil</h3>
+      <form id="paForm" class="admin-form" style="margin-top:14px;">
+        <label>Nome do perfil
+          <input type="text" id="paNome" maxlength="60" required>
+        </label>
+        <div class="aluno-pedido-titulo-lista">Áreas que este perfil pode acessar</div>
+        <div id="perfilAreasLista" class="perfil-areas-lista"></div>
+        <p id="paMensagem" class="login-note aluno-pedido-status" aria-live="polite"></p>
+        <div class="login-btn-row">
+          <button type="button" class="btn btn-ghost" id="perfilCancelar" style="flex:1;justify-content:center;">Cancelar</button>
+          <button type="submit" class="btn btn-blue-grad" id="perfilSalvar" style="flex:1;justify-content:center;">Salvar</button>
+        </div>
+      </form>
+    </div>
+  </div>
 
     <section id="areaAgenda" class="portal-section">
     <h2>Agenda de Cultos e Eventos</h2>
@@ -2213,48 +2307,110 @@
   </section>
 
   <section id="areaPostsSite" class="portal-section">
-    <h2>Gerenciar Posts do Carousel</h2>
-    <p class="admin-agenda-info">Adicione, edite ou remova os posts que aparecem no carousel "Principais Notícias" da home.</p>
+    <h2>Gerenciar Posts do Carrosel</h2>
+    <p class="admin-agenda-info">Adicione, edite ou remova os posts que aparecem no carrosel "Principais Notícias" da home.</p>
 
     <button id="btnImportarNoticias" type="button" class="btn-admin" hidden>Importar notícias iniciais (uma vez só)</button>
     <p id="importarNoticiasStatus" class="admin-agenda-status"></p>
 
     <form id="formPostSite" class="admin-noticia-form">
+      <!-- Linha 1: imagem à esquerda; categoria (e ID) à direita -->
       <div>
-        <label>Tag/Categoria
-          <input type="text" id="postTag" placeholder="Ex: Homenagem, Evento, Culto especial" required>
-        </label>
+        <span class="post-imagem-rotulo">Imagem do post</span>
+        <div class="post-imagem-wrap">
+        <div class="post-imagem-canva" id="postImagemCanva">
+          <div id="postImagemVazio" class="post-imagem-vazio">
+            <label class="post-imagem-acao">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V4"/><path d="m7 9 5-5 5 5"/><path d="M4 15v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg>
+              <span>Subir imagem</span>
+              <input type="file" id="postImageFile" accept="image/*" hidden>
+            </label>
+            <button type="button" id="postImagemLinkAbrir" class="post-imagem-acao">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></svg>
+              <span>Subir link</span>
+            </button>
+          </div>
+          <img id="postImagePreview" class="post-imagem-miniatura" alt="Miniatura da imagem (clique para ampliar)" hidden>
+          <button type="button" id="postImagemTrocar" class="post-imagem-trocar" hidden>Trocar</button>
+        </div>
+        <!-- Fica fora do rótulo do quadro, para o clique não abrir a escolha de arquivo -->
+        <button type="button" id="postImagemRemover" class="post-imagem-remover" title="Remover imagem" aria-label="Remover imagem" hidden>×</button>
+        </div>
+        <input type="hidden" id="postImage">
       </div>
+      <!-- ID do post: texto discreto no canto superior direito (só aparece ao editar) -->
+      <input type="hidden" id="postId">
+      <span id="postIdTexto" class="post-id-canto" hidden></span>
+      <!-- Coluna da direita: categoria, título, data do evento e link -->
       <div>
-        <label>ID do Post (automático)
-          <input type="text" id="postId" placeholder="Será gerado automaticamente" disabled>
-        </label>
-      </div>
-      <div>
-        <label>Título
+        <div class="post-tag-linha">
+          <div class="cat-combo-campo">
+            <span class="cat-combo-rotulo">Tag/Categoria</span>
+            <button type="button" class="cat-combo-atual" id="postTagAtual" aria-haspopup="listbox" aria-expanded="false">Escolha...</button>
+            <input type="hidden" id="postTag">
+            <div class="cat-combo-lista" id="postTagLista" hidden></div>
+          </div>
+          <div class="cat-combo-campo">
+            <span class="cat-combo-rotulo">Departamento</span>
+            <button type="button" class="cat-combo-atual" id="postDepAtual" aria-haspopup="listbox" aria-expanded="false">Todos</button>
+            <input type="hidden" id="postDepartamento" value="Todos">
+            <div class="cat-combo-lista" id="postDepLista" hidden></div>
+          </div>
+        </div>
+        <label style="margin-top:12px;">Título
           <input type="text" id="postTitle" placeholder="Ex: Feliz Dia do Pastor" required>
         </label>
-      </div>
-      <div>
-        <label>URL da Imagem
-          <input type="text" id="postImage" placeholder="Ex: noticia-dia-do-pastor.webp" required>
-        </label>
-      </div>
-      <textarea id="postDesc" placeholder="Descrição do post..." required></textarea>
-      <div>
-        <label>Link (opcional)
+        <div class="post-data-hora" style="margin-top:12px;">
+          <label>Data do evento
+            <input type="text" id="postData" inputmode="numeric" placeholder="dd/mm/aaaa" maxlength="10">
+          </label>
+          <label>Horário
+            <input type="text" id="postHora" inputmode="numeric" placeholder="hh:mm" maxlength="5">
+          </label>
+        </div>
+        <label style="margin-top:12px;">Link (opcional)
           <input type="text" id="postLink" placeholder="Ex: https://...">
         </label>
       </div>
+      <!-- Descrição na largura toda -->
+      <div style="grid-column: 1 / -1;">
+        <label>Descrição do post
+          <textarea id="postDesc" placeholder="Descrição do post..." required></textarea>
+        </label>
+      </div>
       <div class="admin-noticia-acoes">
-        <button type="submit" class="btn btn-primary">Adicionar Post</button>
+        <button type="submit" class="btn btn-blue-grad">Adicionar Post</button>
         <button type="button" id="btnCancelarPostEdicao" hidden class="btn btn-ghost">Cancelar edição</button>
       </div>
     </form>
 
+    <!-- Subir imagem por link: pop-up com o campo do link e o botão Gravar -->
+    <div class="login-overlay" id="postLinkModal" role="dialog" aria-modal="true" aria-labelledby="postLinkTitulo" hidden>
+      <div class="login-card aluno-pedido-card">
+        <h3 id="postLinkTitulo" style="margin:0;">Subir imagem por link</h3>
+        <p class="admin-agenda-info">Cole o endereço direto da imagem (termina em .jpg, .png ou .webp). Numa rede social, abra a foto, clique com o botão direito sobre ela e escolha "Copiar endereço da imagem".</p>
+        <div class="admin-form" style="margin-top:12px;">
+          <label>Link da imagem
+            <input type="text" id="postLinkCampo" placeholder="https://...">
+          </label>
+        </div>
+        <p id="postLinkMensagem" class="login-note aluno-pedido-status" aria-live="polite"></p>
+        <div class="login-btn-row">
+          <button type="button" class="btn btn-ghost" id="postLinkCancelar" style="flex:1;justify-content:center;">Cancelar</button>
+          <button type="button" class="btn btn-blue-grad" id="postLinkGravar" style="flex:1;justify-content:center;">Gravar</button>
+        </div>
+      </div>
+    </div>
+
     <div class="admin-noticias-list">
       <h4>Posts cadastrados</h4>
       <div id="listaPostsSite" class="admin-noticia-list">Carregando...</div>
+    </div>
+
+    <div class="admin-noticia-encerrados">
+      <h3 class="admin-noticia-encerrados-titulo">Posts encerrados</h3>
+      <p class="admin-agenda-info">Posts cuja data do evento já passou. Saem do carrosel da home e ficam guardados aqui.</p>
+      <div id="postsEncerrados"></div>
     </div>
   </section>
 
@@ -2647,85 +2803,122 @@
 
     <div id="secNivel0" class="secretaria-nivel-wrap">
       <div class="professor-canvas-grid">
-        <button type="button" class="professor-canvas-card" data-abrir="secNivelCaixa" data-ocultar="secNivel0">
+        <button type="button" class="professor-canvas-card" data-abrir="secNivelLivroCaixa" data-ocultar="secNivel0">
           <span class="professor-canvas-icone"><img src="icones-secretaria/caixa-registradora.webp" alt=""></span>
-          <span class="professor-canvas-titulo">Caixa</span>
-          <span class="professor-canvas-sub">Controle de movimentações de dinheiro</span>
+          <span class="professor-canvas-titulo">CAIXA</span>
+          <span class="professor-canvas-sub">Controle e Movimentações do Caixa</span>
+        </button>
+        <button type="button" class="professor-canvas-card" data-abrir="secNivelEstoque" data-ocultar="secNivel0">
+          <span class="professor-canvas-icone"><img src="icones-secretaria/estante.webp" alt=""></span>
+          <span class="professor-canvas-titulo">Estoque de Materiais</span>
+          <span class="professor-canvas-sub">Controle de materiais, papelaria e recursos da EBD</span>
         </button>
         <button type="button" class="professor-canvas-card" data-abrir="secNivelRevistas" data-ocultar="secNivel0">
           <span class="professor-canvas-icone"><img src="icones-secretaria/revistas-coloridas.webp" alt=""></span>
           <span class="professor-canvas-titulo">Controle de Revistas</span>
           <span class="professor-canvas-sub">Pedidos de revista dos Alunos</span>
         </button>
-        <button type="button" class="professor-canvas-card" data-abrir="secNivelRelatoriosGrid" data-ocultar="secNivel0">
+        <button type="button" class="professor-canvas-card" data-abrir="secNivelRelatorioDominical" data-ocultar="secNivel0">
           <span class="professor-canvas-icone"><img src="icones-secretaria/dashboard.webp" alt=""></span>
-          <span class="professor-canvas-titulo">Relatórios</span>
-          <span class="professor-canvas-sub">Relatório Dominical por Turma</span>
+          <span class="professor-canvas-titulo">Relatório Dominical</span>
+          <span class="professor-canvas-sub">Relatório dominical das salas</span>
+        </button>
+        <button type="button" class="professor-canvas-card card-aniversariantes" data-abrir="secNivelAniversariantes" data-ocultar="secNivel0">
+          <span class="professor-canvas-icone"><img src="icones-secretaria/aniversariantes.webp" alt=""></span>
+          <span class="professor-canvas-titulo">Parabéns!</span>
+          <span class="professor-canvas-sub">Aniversariantes da Igreja</span>
         </button>
         <button type="button" class="professor-canvas-card" data-abrir="secNivelAgendas" data-ocultar="secNivel0">
           <span class="professor-canvas-icone"><img src="icones-secretaria/calendario.webp" alt=""></span>
-          <span class="professor-canvas-titulo">Agendas</span>
-          <span class="professor-canvas-sub">Em breve</span>
+          <span class="professor-canvas-titulo">Agenda</span>
+          <span class="professor-canvas-sub">Agenda de compromissos da Secretaria</span>
         </button>
       </div>
     </div>
 
-    <div id="secNivelCaixa" class="secretaria-nivel-wrap" hidden>
-      <button type="button" class="btn btn-ghost secretaria-voltar" data-abrir="secNivel0" data-ocultar="secNivelCaixa">← Voltar</button>
-      <div class="secretaria-nivel-titulo">Caixa</div>
-      <div class="professor-canvas-grid">
-        <button type="button" class="professor-canvas-card" data-alvo="canvaSecCaixaEntradas">
-          <span class="professor-canvas-icone"><img src="icones-secretaria/livro-caixa.webp" alt=""></span>
-          <span class="professor-canvas-titulo">Livro Caixa</span>
-          <span class="professor-canvas-sub">Controle de Entradas e Saídas de Caixa</span>
-        </button>
-        <button type="button" class="professor-canvas-card" data-alvo="canvaSecCaixaInsumos">
-          <span class="professor-canvas-icone"><img src="icones-secretaria/estante.webp" alt=""></span>
-          <span class="professor-canvas-titulo">Estoque de Materiais</span>
-          <span class="professor-canvas-sub">Controle de materiais, papelaria e recursos da EBD</span>
-        </button>
-      </div>
-      <div id="canvaSecCaixaEntradas" class="canva-sanfona-conteudo">
-        <div class="sec-caixa-saldo">
-          <span class="sec-caixa-saldo-rotulo">Saldo atual</span>
-          <span id="secCaixaSaldoValor" class="sec-caixa-saldo-valor">R$ 0,00</span>
+    <div id="secNivelLivroCaixa" class="secretaria-nivel-wrap" hidden>
+      <button type="button" class="btn btn-ghost secretaria-voltar" data-abrir="secNivel0" data-ocultar="secNivelLivroCaixa">← Voltar</button>
+      <div class="secretaria-nivel-titulo">Livro Caixa</div>
+      <div id="canvaSecCaixaEntradas" class="canva-sanfona-conteudo aberto">
+        <div class="lc-cabecalho">
+          <h3 class="lc-titulo">Relatório Financeiro &amp; Caixa</h3>
+          <div class="lc-acoes">
+            <select id="lcMes" class="lc-mes" aria-label="Mês do relatório"></select>
+            <div class="lc-exportar">
+              <button type="button" class="btn btn-ghost" id="lcExportarBtn" aria-haspopup="true" aria-expanded="false">Exportar</button>
+              <div id="lcExportarMenu" class="lc-exportar-menu" hidden>
+                <button type="button" data-formato="pdf">PDF</button>
+                <button type="button" data-formato="excel">Excel</button>
+              </div>
+            </div>
+          </div>
         </div>
-        <form id="secCaixaForm" class="admin-form">
-          <div class="admin-form-linha">
-            <label>Tipo
-              <select id="secCaixaTipo">
-                <option value="entrada">Entrada</option>
-                <option value="saida">Saída</option>
+
+        <div class="lc-kpis">
+          <div class="lc-kpi lc-kpi-saldo">
+            <span class="lc-kpi-rotulo">Saldo em Caixa</span>
+            <strong id="lcSaldo" class="lc-kpi-valor">R$ 0,00</strong>
+            <span class="lc-kpi-sub">Disponível para despesas</span>
+          </div>
+          <div class="lc-kpi lc-kpi-entradas">
+            <span class="lc-kpi-rotulo">Entradas do Mês</span>
+            <strong id="lcEntradas" class="lc-kpi-valor">R$ 0,00</strong>
+            <span id="lcEntradasSub" class="lc-kpi-sub"></span>
+          </div>
+          <div class="lc-kpi lc-kpi-saidas">
+            <span class="lc-kpi-rotulo">Saídas / Gastos</span>
+            <strong id="lcSaidas" class="lc-kpi-valor">R$ 0,00</strong>
+            <span id="lcSaidasSub" class="lc-kpi-sub"></span>
+          </div>
+          <div class="lc-kpi lc-kpi-formas">
+            <span class="lc-kpi-rotulo">Formas de Pagamento</span>
+            <div id="lcFormas" class="lc-formas"></div>
+          </div>
+        </div>
+
+        <div class="lc-meio">
+          <div class="lc-bloco lc-bloco-origem">
+            <div class="lc-bloco-titulo">Origem das Entradas</div>
+            <div id="lcOrigem"></div>
+          </div>
+
+          <form id="secCaixaForm" class="lc-bloco lc-bloco-lancamento">
+            <div class="lc-bloco-titulo">Novo Lançamento Rápido</div>
+            <div class="lc-lancamento-linha">
+              <select id="secCaixaTipo" aria-label="Tipo">
+                <option value="entrada">Entrada (+)</option>
+                <option value="saida">Saída (-)</option>
               </select>
-            </label>
-            <label>Tipo do dinheiro
-              <select id="secCaixaMeio" required>
-                <option value="">Escolha...</option>
+              <select id="secCaixaMeio" required aria-label="Forma de pagamento">
+                <option value="">Escolha a forma...</option>
                 <option value="dinheiro">Dinheiro</option>
                 <option value="pix">Pix</option>
                 <option value="cartao">Cartão</option>
               </select>
-            </label>
-            <label>Data
-              <input type="date" id="secCaixaData" required>
-            </label>
-          </div>
-          <div class="admin-form-linha">
-            <label>Valor (R$)
-              <input type="text" id="secCaixaValor" inputmode="decimal" placeholder="0,00" required>
-            </label>
-            <label>Descrição
-              <input type="text" id="secCaixaDescricao" maxlength="140" required placeholder="Ex.: Oferta da EBD, compra de material...">
-            </label>
-          </div>
-          <div class="admin-form-botoes">
-            <button type="submit" class="btn-admin btn-admin-primario">Lançar</button>
-          </div>
-          <p id="secCaixaStatus" class="admin-agenda-status"></p>
-        </form>
-        <div id="secCaixaLista" class="sec-caixa-lista">Carregando...</div>
+            </div>
+            <div class="lc-lancamento-linha">
+              <input type="text" id="secCaixaValor" inputmode="decimal" placeholder="R$ 0,00" aria-label="Valor" required>
+              <input type="text" id="secCaixaDescricao" maxlength="140" placeholder="Descrição rápida..." aria-label="Descrição" required>
+            </div>
+            <div class="lc-lancamento-linha lc-linha-data">
+              <input type="text" id="secCaixaData" inputmode="numeric" placeholder="dd/mm/aaaa" maxlength="10" aria-label="Data" required>
+              <button type="submit" class="btn-admin btn-admin-primario">Registrar</button>
+            </div>
+            <p id="secCaixaStatus" class="admin-agenda-status"></p>
+          </form>
+        </div>
+
+        <div class="lc-bloco lc-bloco-extrato">
+          <div class="lc-bloco-titulo">Extrato Consolidado</div>
+          <div id="secCaixaLista" class="lc-extrato">Carregando...</div>
+        </div>
       </div>
-      <div id="canvaSecCaixaInsumos" class="canva-sanfona-conteudo">
+    </div>
+
+    <div id="secNivelEstoque" class="secretaria-nivel-wrap" hidden>
+      <button type="button" class="btn btn-ghost secretaria-voltar" data-abrir="secNivel0" data-ocultar="secNivelEstoque">← Voltar</button>
+      <div class="secretaria-nivel-titulo">Estoque de Materiais</div>
+      <div id="canvaSecCaixaInsumos" class="canva-sanfona-conteudo aberto">
         <form id="secEstoqueForm" class="admin-form">
           <div class="admin-form-linha">
             <label>Material
@@ -2797,7 +2990,7 @@
         <button type="button" class="professor-canvas-card" data-abrir="secNivelRelatorioDominical" data-ocultar="secNivelRelatoriosGrid">
           <span class="professor-canvas-icone"><img src="icones-secretaria/prancheta.webp" alt=""></span>
           <span class="professor-canvas-titulo">Relatório Dominical</span>
-          <span class="professor-canvas-sub">Resumo de cada Turma, conforme a Chamada do Professor</span>
+          <span class="professor-canvas-sub">Relatório dominical das salas</span>
         </button>
         <button type="button" class="professor-canvas-card" data-abrir="secNivelRelatorioCaixa" data-ocultar="secNivelRelatoriosGrid">
           <span class="professor-canvas-icone"><img src="icones-secretaria/pasta-financeira.webp" alt=""></span>
@@ -2818,9 +3011,13 @@
     </div>
 
     <div id="secNivelRelatorioDominical" class="secretaria-nivel-wrap" hidden>
-      <button type="button" class="btn btn-ghost secretaria-voltar" data-abrir="secNivelRelatoriosGrid" data-ocultar="secNivelRelatorioDominical">← Voltar</button>
+      <button type="button" class="btn btn-ghost secretaria-voltar" data-abrir="secNivel0" data-ocultar="secNivelRelatorioDominical">← Voltar</button>
       <div class="secretaria-nivel-titulo">Relatório Dominical</div>
-      <p class="admin-agenda-info">Uma Turma por Sala cadastrada — clique numa Turma para ver o resumo dela.</p>
+      <div class="aniv-aviso">
+        <div class="aniv-aviso-titulo">Aniversariantes da semana</div>
+        <div id="anivPeriodo" class="aniv-aviso-periodo"></div>
+        <div id="anivLista" class="aniv-aviso-lista">Carregando...</div>
+      </div>
 
       <div class="sec-relgeral-bloco">
         <div class="sec-relgeral-cabecalho">
@@ -2842,7 +3039,45 @@
     <div id="secNivelRelatorioCaixa" class="secretaria-nivel-wrap" hidden>
       <button type="button" class="btn btn-ghost secretaria-voltar" data-abrir="secNivelRelatoriosGrid" data-ocultar="secNivelRelatorioCaixa">← Voltar</button>
       <div class="secretaria-nivel-titulo">Relatório do Caixa</div>
-      <p class="admin-agenda-info">Em breve.</p>
+      <div class="rc-filtros">
+        <label>Ano <select id="rcAno"></select></label>
+        <label>Mês <select id="rcMes"></select></label>
+        <button type="button" class="btn btn-ghost" id="rcAtualizar">Atualizar</button>
+      </div>
+      <p id="rcStatus" class="admin-agenda-info">Carregando...</p>
+      <div id="rcKpis" class="rc-kpis"></div>
+      <div id="rcAlertas" class="rc-alertas"></div>
+      <div class="rc-graficos">
+        <div class="rc-canvas rc-largo">
+          <div class="rc-canvas-titulo">
+            <span>Entradas × Saídas por mês</span>
+            <span class="rc-legenda"><span style="--cor:#7CD992">Entradas</span><span style="--cor:var(--vermelho)">Saídas</span></span>
+          </div>
+          <div id="rcGraficoMeses"></div>
+        </div>
+        <div class="rc-canvas rc-largo">
+          <div class="rc-canvas-titulo"><span>Saldo acumulado no ano</span></div>
+          <div id="rcGraficoSaldo"></div>
+        </div>
+        <div class="rc-canvas">
+          <div class="rc-canvas-titulo"><span>Por forma de pagamento (período)</span></div>
+          <div id="rcFormas"></div>
+        </div>
+        <div class="rc-canvas">
+          <div class="rc-canvas-titulo"><span>Por origem (período)</span></div>
+          <div id="rcOrigens"></div>
+        </div>
+      </div>
+      <div class="rc-listas">
+        <div class="rc-canvas">
+          <div class="rc-canvas-titulo"><span>Maiores saídas do período</span></div>
+          <div id="rcMaioresSaidas"></div>
+        </div>
+        <div class="rc-canvas">
+          <div class="rc-canvas-titulo"><span>Últimos lançamentos do período</span></div>
+          <div id="rcUltimos"></div>
+        </div>
+      </div>
     </div>
 
     <div id="secNivelRelatorioRevistas" class="secretaria-nivel-wrap" hidden>
@@ -2857,10 +3092,76 @@
       <p class="admin-agenda-info">Em breve.</p>
     </div>
 
+    <div id="secNivelAniversariantes" class="secretaria-nivel-wrap" hidden>
+      <button type="button" class="btn btn-ghost secretaria-voltar" data-abrir="secNivel0" data-ocultar="secNivelAniversariantes">← Voltar</button>
+      <div class="secretaria-nivel-titulo">Aniversariantes</div>
+      <div class="ag-filtros aniv-filtros">
+        <label>Mês <select id="anivMes" aria-label="Mês"></select></label>
+        <label>Ano <select id="anivAno" aria-label="Ano"></select></label>
+      </div>
+      <div id="anivTabela" class="aniv-tabela-wrap"></div>
+    </div>
+
     <div id="secNivelAgendas" class="secretaria-nivel-wrap" hidden>
       <button type="button" class="btn btn-ghost secretaria-voltar" data-abrir="secNivel0" data-ocultar="secNivelAgendas">← Voltar</button>
-      <div class="secretaria-nivel-titulo">Agendas</div>
-      <p class="admin-agenda-info">Em breve — Lucas vai detalhar essa área depois.</p>
+      <div class="secretaria-nivel-titulo">Agenda</div>
+      <div class="ag-topo">
+        <div class="ag-filtros">
+          <label>Dia <select id="agDia" aria-label="Dia"></select></label>
+          <label>Mês <select id="agMes" aria-label="Mês"></select></label>
+          <label>Ano <select id="agAno" aria-label="Ano"></select></label>
+        </div>
+        <button type="button" class="btn btn-blue-grad" id="agIncluir">Incluir compromisso</button>
+      </div>
+      <p id="agStatus" class="admin-agenda-info"></p>
+      <div id="agCalendario" class="ag-calendario"></div>
+      <div class="ag-lista-titulo" id="agListaTitulo"></div>
+      <div id="agLista" class="ag-lista"></div>
+    </div>
+
+    <!-- Aviso de convite: aparece para o usuário convidado ao entrar no sistema -->
+    <div class="login-overlay" id="convitesModal" role="dialog" aria-modal="true" aria-labelledby="convitesTitulo" hidden>
+      <div class="login-card aluno-pedido-card">
+        <h3 id="convitesTitulo" style="margin:0;">Você foi convidado para compromisso(s)</h3>
+        <div id="convitesLista" class="ag-lista" style="margin-top:14px;"></div>
+        <div class="login-btn-row">
+          <button type="button" class="btn btn-blue-grad" id="convitesOk" style="flex:1;justify-content:center;">Entendi</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Agendas da Secretaria: pop-up para incluir um compromisso -->
+    <div class="login-overlay" id="agModal" role="dialog" aria-modal="true" aria-labelledby="agModalTitulo" hidden>
+      <div class="login-card aluno-pedido-card">
+        <h3 id="agModalTitulo" style="margin:0;">Incluir compromisso</h3>
+        <form id="agForm" class="admin-form" style="margin-top:14px;">
+          <label>Título
+            <input type="text" id="agTitulo" maxlength="120" required>
+          </label>
+          <div class="admin-form-linha">
+            <label>De
+              <input type="text" id="agData" inputmode="numeric" placeholder="dd/mm/aaaa" maxlength="10" required>
+            </label>
+            <label>Até
+              <input type="text" id="agDataFim" inputmode="numeric" placeholder="dd/mm/aaaa" maxlength="10" required>
+            </label>
+          </div>
+          <label>Hora (opcional)
+            <input type="time" id="agHora">
+          </label>
+          <label>Convidar
+            <select id="agConvidar"><option value="">Ninguém</option></select>
+          </label>
+          <label>Descrição (opcional)
+            <textarea id="agDescricao" maxlength="500" rows="3"></textarea>
+          </label>
+          <p id="agFormStatus" class="login-note aluno-pedido-status" aria-live="polite"></p>
+          <div class="login-btn-row">
+            <button type="button" class="btn btn-ghost" id="agCancelar" style="flex:1;justify-content:center;">Cancelar</button>
+            <button type="submit" class="btn btn-blue-grad" id="agSalvar" style="flex:1;justify-content:center;">Salvar</button>
+          </div>
+        </form>
+      </div>
     </div>
   </section>
 
@@ -3386,6 +3687,14 @@
 
     buildCards();
     startAutoplay();
+
+    // Recarrega o carrosel quando a lista de posts muda (posts vencidos saem da home)
+    window.__recarregarCarousel = function () {
+      try { newsItems = JSON.parse(dataScript.textContent || '[]'); } catch (e) { newsItems = []; }
+      cfIndex = 0;
+      buildCards();
+      positionCards();
+    };
   })();
 </script>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -3670,13 +3979,313 @@
   const CONGREGACOES_SETOR = ["Sede", "Roseira", "Cruzeiro", "Bananal", "Jaguariúna", "Primavera", "Pq Florianópolis"];
   const CONGREGACAO_LOCAL = "Pq Florianópolis";
 
+  // Áreas do site que podem ser liberadas para cada perfil (nome que aparece para o usuário)
+  // "sec_*" são as páginas dentro da Sala da Secretaria (cada uma pode ser liberada separadamente)
+  const AREAS_CATALOGO = [
+    ["siteHome", "Início (site)"],
+    ["areaAluno", "Sala do Aluno"],
+    ["areaProfessor", "Sala do Professor"],
+    ["areaAdministrativo", "Sala da Secretaria"],
+    ["sec_caixa", "Secretaria · Caixa"],
+    ["sec_estoque", "Secretaria · Estoque de Materiais"],
+    ["sec_revistas", "Secretaria · Controle de Revistas"],
+    ["sec_dominical", "Secretaria · Relatório Dominical"],
+    ["sec_aniversariantes", "Secretaria · Aniversariantes"],
+    ["sec_agenda", "Secretaria · Agenda"],
+    ["prof_alunos", "Professor · Alunos matriculados"],
+    ["prof_chamada", "Professor · Chamada"],
+    ["prof_arquivos", "Professor · Arquivos"],
+    ["areaAgenda", "Agenda de Cultos"],
+    ["areaPostsSite", "Posts do Site"],
+    ["areaCadastroSalas", "Gerenciar Salas"],
+    ["areaAcessosUsuarios", "Acessos de Usuários"],
+    ["areaGerenciarPerfis", "Gerenciar Perfis"]
+  ];
+  const ROTULO_AREA = Object.fromEntries(AREAS_CATALOGO);
+  const SEC_PAGINAS = ["sec_caixa", "sec_estoque", "sec_revistas", "sec_dominical", "sec_aniversariantes", "sec_agenda"];
+  const PROF_PAGINAS = ["prof_alunos", "prof_chamada", "prof_arquivos"];
+  // Árvore mostrada em Gerenciar Perfis (pasta = tela que tem páginas dentro)
+  const ARVORE_AREAS = [
+    { id: "siteHome", nome: "Início (site)" },
+    { id: "areaAluno", nome: "Sala do Aluno" },
+    {
+      id: "areaProfessor", nome: "Sala do Professor",
+      filhos: PROF_PAGINAS.map((id) => ({ id: id, nome: ROTULO_AREA[id].replace("Professor · ", "") }))
+    },
+    {
+      id: "areaAdministrativo", nome: "Sala da Secretaria",
+      filhos: SEC_PAGINAS.map((id) => ({ id: id, nome: ROTULO_AREA[id].replace("Secretaria · ", "") }))
+    },
+    {
+      // Pasta só de organização (igual ao menu Administração): não tem acesso próprio
+      id: "grupo_admin", nome: "Administração",
+      filhos: [
+        { id: "areaAgenda", nome: "Agenda de Cultos" },
+        { id: "areaPostsSite", nome: "Posts do Site" },
+        { id: "areaCadastroSalas", nome: "Gerenciar Salas" },
+        { id: "areaAcessosUsuarios", nome: "Acessos de Usuários" },
+        { id: "areaGerenciarPerfis", nome: "Gerenciar Perfis" }
+      ]
+    }
+  ];
+
+  // Monta a árvore (pastas dentro de pastas) com checkbox. Marcado = o perfil tem acesso.
+  function renderArvoreAreas(marcadas, fixas) {
+    // Uma pasta conta como marcada se ela mesma ou algo dentro dela estiver marcado
+    const temMarcada = (no) => (no.filhos ? no.filhos.some(temMarcada) : marcadas.includes(no.id));
+    const caixa = (no, marcada) => {
+      const fixa = fixas.includes(no.id);
+      return '<input type="checkbox" data-area="' + no.id + '"' + (marcada || fixa ? " checked" : "") + (fixa ? " disabled" : "") + "> " +
+        no.nome + (fixa ? " <small>(fixo)</small>" : "");
+    };
+    const montar = (no) => {
+      if (!no.filhos) return '<div class="perfil-folha"><label>' + caixa(no, marcadas.includes(no.id)) + "</label></div>";
+      return '<div class="perfil-pasta-bloco">' +
+        '<div class="perfil-pasta"><button type="button" class="perfil-seta" aria-expanded="true" title="Mostrar ou ocultar">▾</button>' +
+        "<label>" + caixa(no, marcadas.includes(no.id) || temMarcada(no)) + "</label></div>" +
+        '<div class="perfil-filhos">' + no.filhos.map(montar).join("") + "</div>" +
+        "</div>";
+    };
+    return ARVORE_AREAS.map(montar).join("");
+  }
+
+  // Perfis do sistema: áreas padrão (valem enquanto a Gerenciar Perfis não salvar outra configuração)
+  // Convidado (conta nova) e Aluno: só a Sala do Aluno. Professor: Aluno + Professor.
+  // Secretário (administrativo): Professor + Secretaria (todas as páginas). Administrador: tudo.
   const AREAS_POR_PERFIL = {
-    admin: ["siteHome", "areaGerenciarPerfis", "areaAgenda", "areaProfessor", "areaAluno", "areaAdministrativo", "areaPostsSite", "areaCadastroSalas"],
-    professor: ["siteHome", "areaProfessor"],
+    admin: AREAS_CATALOGO.map(([id]) => id),
+    professor: ["siteHome", "areaAluno", "areaProfessor", ...PROF_PAGINAS],
     aluno: ["siteHome", "areaAluno"],
-    administrativo: ["siteHome", "areaAdministrativo", "areaProfessor"],
-    convidado: ["siteHome"]
+    administrativo: ["siteHome", "areaProfessor", ...PROF_PAGINAS, "areaAdministrativo", ...SEC_PAGINAS],
+    convidado: ["siteHome", "areaAluno"]
   };
+  const NOMES_PERFIS_SISTEMA = { admin: "Administrador Master", administrativo: "Administrativo", professor: "Professor", aluno: "Aluno", convidado: "Convidado" };
+  // Quem é Administrador Master sempre acessa as telas de acesso (evita ficar trancado para fora)
+  const AREAS_FIXAS_ADMIN = ["areaAcessosUsuarios", "areaGerenciarPerfis"];
+
+  // Perfis atuais: os do sistema + os criados na Gerenciar Perfis (coleção perfisAcesso)
+  let perfisCache = {};
+  async function carregarPerfisAcesso() {
+    const base = {};
+    Object.keys(NOMES_PERFIS_SISTEMA).forEach((id) => {
+      base[id] = { id: id, nome: NOMES_PERFIS_SISTEMA[id], areas: AREAS_POR_PERFIL[id].slice(), sistema: true };
+    });
+    try {
+      const snap = await getDocs(collection(db, "perfisAcesso"));
+      snap.forEach((d) => {
+        const v = d.data();
+        base[d.id] = {
+          id: d.id,
+          nome: v.nome || d.id,
+          areas: Array.isArray(v.areas) ? v.areas.slice() : [],
+          sistema: NOMES_PERFIS_SISTEMA[d.id] !== undefined
+        };
+      });
+    } catch (err) {
+      // Sem leitura (regra ainda não publicada): usa os padrões
+      console.error("Perfis de acesso:", err);
+    }
+    if (base.admin) AREAS_FIXAS_ADMIN.forEach((a) => { if (!base.admin.areas.includes(a)) base.admin.areas.push(a); });
+    perfisCache = base;
+    return base;
+  }
+  // Nome de cada perfil para as listas: sistema primeiro, depois os criados (por nome)
+  function rotulosDosPerfis() {
+    const ordenados = Object.values(perfisCache).sort((a, b) =>
+      a.sistema === b.sistema ? a.nome.localeCompare(b.nome, "pt-BR") : (a.sistema ? -1 : 1)
+    );
+    return Object.fromEntries(ordenados.map((p) => [p.id, p.nome]));
+  }
+
+  // Página "Gerenciar Perfis": lista os perfis e permite criar, editar e excluir (só os não-sistema)
+  let perfisAcessoLigado = false;
+  function iniciarPerfisAcesso() {
+    const lista = document.getElementById("perfisLista");
+    const status = document.getElementById("perfisStatus");
+    const modal = document.getElementById("paModal");
+    if (!lista || !modal) return;
+    const titulo = document.getElementById("perfilModalTitulo");
+    const form = document.getElementById("paForm");
+    const campoNome = document.getElementById("paNome");
+    const areasEl = document.getElementById("perfilAreasLista");
+    const msg = document.getElementById("paMensagem");
+    const btnSalvar = document.getElementById("perfilSalvar");
+    let editandoId = null;
+
+    function render() {
+      const perfis = Object.values(perfisCache).sort((a, b) =>
+        a.sistema === b.sistema ? a.nome.localeCompare(b.nome, "pt-BR") : (a.sistema ? -1 : 1)
+      );
+      lista.innerHTML = "";
+      perfis.forEach((p) => {
+        const item = document.createElement("div");
+        item.className = "admin-perfis-item";
+        const info = document.createElement("div");
+        info.className = "admin-perfis-item-info";
+        const nome = document.createElement("span");
+        nome.className = "admin-perfis-item-nome";
+        nome.textContent = p.nome + (p.sistema ? " · padrão do sistema" : "");
+        const areas = document.createElement("span");
+        areas.className = "admin-perfis-item-email";
+        areas.textContent = p.areas.length ? p.areas.map((a) => ROTULO_AREA[a] || a).join(", ") : "Nenhuma área além do início";
+        info.appendChild(nome);
+        info.appendChild(areas);
+        const btnEditar = document.createElement("button");
+        btnEditar.type = "button";
+        btnEditar.className = "admin-perfis-item-editar";
+        btnEditar.title = "Editar";
+        btnEditar.textContent = "✏️";
+        btnEditar.addEventListener("click", () => abrir(p));
+        item.appendChild(info);
+        item.appendChild(btnEditar);
+        if (!p.sistema) {
+          const btnExcluir = document.createElement("button");
+          btnExcluir.type = "button";
+          btnExcluir.className = "admin-perfis-item-remover";
+          btnExcluir.title = "Excluir";
+          btnExcluir.textContent = "×";
+          btnExcluir.addEventListener("click", () => excluir(p));
+          item.appendChild(btnExcluir);
+        }
+        lista.appendChild(item);
+      });
+    }
+
+    function abrir(p) {
+      editandoId = p ? p.id : null;
+      titulo.textContent = p ? "Editar perfil" : "Novo perfil";
+      campoNome.value = p ? p.nome : "";
+      const fixas = p && p.id === "admin" ? AREAS_FIXAS_ADMIN : [];
+      const marcadas = p ? p.areas : [];
+      areasEl.innerHTML = renderArvoreAreas(marcadas, fixas);
+      msg.textContent = "";
+      modal.hidden = false;
+      modal.classList.add("is-open");
+      campoNome.focus();
+    }
+
+    function fechar() {
+      modal.classList.remove("is-open");
+      modal.hidden = true;
+    }
+
+    async function excluir(p) {
+      status.textContent = "";
+      try {
+        const snap = await getDocs(collection(db, "usuarios"));
+        const usando = snap.docs.filter((d) => d.data().perfil === p.id && d.data().ativo !== false).length;
+        if (usando) {
+          status.textContent = "Não é possível excluir \"" + p.nome + "\": " + usando + " usuário(s) usam este perfil. Troque o perfil deles em Acessos de Usuários antes.";
+          status.className = "admin-agenda-status erro";
+          return;
+        }
+        if (!confirm("Excluir o perfil \"" + p.nome + "\"? Essa ação não pode ser desfeita.")) return;
+        await deleteDoc(doc(db, "perfisAcesso", p.id));
+        await carregar();
+        status.textContent = "Perfil excluído.";
+        status.className = "admin-agenda-status ok";
+      } catch (err) {
+        status.textContent = "Não foi possível excluir. " + (err.message || "");
+        status.className = "admin-agenda-status erro";
+        console.error(err);
+      }
+    }
+
+    async function carregar() {
+      status.textContent = "Carregando...";
+      status.className = "admin-agenda-status";
+      await carregarPerfisAcesso();
+      render();
+      status.textContent = "";
+    }
+
+    if (!perfisAcessoLigado) {
+      perfisAcessoLigado = true;
+      document.body.appendChild(modal);
+      document.getElementById("btnNovoPerfil").addEventListener("click", () => abrir(null));
+      document.getElementById("perfilCancelar").addEventListener("click", fechar);
+      modal.addEventListener("click", (e) => { if (e.target === modal) fechar(); });
+      // Setas da árvore: mostram ou ocultam as páginas da pasta
+      areasEl.addEventListener("click", (e) => {
+        const seta = e.target.closest(".perfil-seta");
+        if (!seta) return;
+        const filhos = seta.closest(".perfil-pasta-bloco").querySelector(".perfil-filhos");
+        const abrir = filhos.hidden;
+        filhos.hidden = !abrir;
+        seta.textContent = abrir ? "▾" : "▸";
+        seta.setAttribute("aria-expanded", String(abrir));
+      });
+      // Checkboxes: a pasta marca/desmarca tudo dentro; uma página marca a pasta
+      areasEl.addEventListener("change", (e) => {
+        const cb = e.target;
+        if (cb.type !== "checkbox") return;
+        const bloco = cb.closest(".perfil-pasta-bloco");
+        if (cb.closest(".perfil-pasta")) {
+          // Caixa de uma pasta: marca ou desmarca tudo que está dentro dela
+          if (!bloco) return;
+          bloco.querySelectorAll("input[type=checkbox]").forEach((x) => { if (x !== cb && !x.disabled) x.checked = cb.checked; });
+          return;
+        }
+        // Caixa de uma página: cada pasta acima passa a ficar marcada se algo dentro dela estiver marcado
+        let pasta = bloco;
+        while (pasta) {
+          const pastaCb = pasta.querySelector(":scope > .perfil-pasta input");
+          if (pastaCb && !pastaCb.disabled) {
+            pastaCb.checked = Array.from(pasta.querySelectorAll("input[type=checkbox]")).some((x) => x !== pastaCb && x.checked);
+          }
+          pasta = pasta.parentElement ? pasta.parentElement.closest(".perfil-pasta-bloco") : null;
+        }
+      });
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const nome = campoNome.value.trim();
+        if (!nome) {
+          msg.textContent = "Informe o nome do perfil.";
+          msg.className = "login-note aluno-pedido-status erro";
+          return;
+        }
+        const duplicado = Object.values(perfisCache).some((p) => p.id !== editandoId && p.nome.trim().toLowerCase() === nome.toLowerCase());
+        if (duplicado) {
+          msg.textContent = "Já existe um perfil com este nome.";
+          msg.className = "login-note aluno-pedido-status erro";
+          return;
+        }
+        // Inclui também as áreas fixas (desabilitadas, mas marcadas)
+        // Pastas de organização (grupo_*) não são áreas: não entram na lista salva
+        const areas = Array.from(areasEl.querySelectorAll("input[type=checkbox]:checked"))
+          .map((c) => c.dataset.area)
+          .filter((a) => a && !a.startsWith("grupo_"));
+        const id = editandoId || ("perfil_" + Date.now().toString(36));
+        btnSalvar.disabled = true;
+        try {
+          await setDoc(doc(db, "perfisAcesso", id), {
+            nome: nome,
+            areas: areas,
+            atualizadoPorNome: usuarioAtualCache ? (usuarioAtualCache.nome || usuarioAtualCache.email || "") : "",
+            atualizadoEmMs: Date.now()
+          }, { merge: true });
+          fechar();
+          await carregar();
+          status.textContent = "Perfil salvo. Quem já está logado precisa entrar de novo para ver as mudanças.";
+          status.className = "admin-agenda-status ok";
+        } catch (err) {
+          msg.textContent = "Não foi possível salvar. " + (err.message || "");
+          msg.className = "login-note aluno-pedido-status erro";
+          console.error(err);
+        } finally {
+          btnSalvar.disabled = false;
+        }
+      });
+    }
+    carregar();
+  }
+
+  // Áreas liberadas para um perfil (perfil apagado ou desconhecido cai no padrão de Convidado)
+  function areasDoPerfil(perfil) {
+    const p = perfisCache[perfil];
+    if (p) return p.areas;
+    return AREAS_POR_PERFIL[perfil] || AREAS_POR_PERFIL.convidado;
+  }
 
   const portalLayout = document.getElementById("portalLayout");
   const loginLabel = document.querySelector("#loginBtn .nav-login-label");
@@ -3689,16 +4298,21 @@
     document.querySelectorAll(".sidebar-link").forEach((link) => {
       link.classList.toggle("active", link.dataset.area === areaId);
     });
+    document.querySelectorAll(".nav-admin-dropdown-item[data-area]").forEach((item) => {
+      item.classList.toggle("is-active", item.dataset.area === areaId);
+    });
     // Recarrega listas que dependem de outros cadastros (ex: perfil de
     // usuários) toda vez que a área é reaberta, para não mostrar dados
     // desatualizados de quando a área foi carregada pela primeira vez.
-    if (areaId === "areaGerenciarPerfis" && window.__recarregarGerenciarPerfis) window.__recarregarGerenciarPerfis();
+    if (areaId === "areaAcessosUsuarios" && window.__recarregarGerenciarPerfis) window.__recarregarGerenciarPerfis();
+    if (areaId === "areaGerenciarPerfis") iniciarPerfisAcesso();
     if (areaId === "areaCadastroSalas") {
       if (window.__recarregarGerenciarSalas) window.__recarregarGerenciarSalas();
       if (window.__recarregarGerenciarLicoesSalas) window.__recarregarGerenciarLicoesSalas();
     }
     if (areaId === "areaPostsSite" && window.__recarregarPostsSite) window.__recarregarPostsSite();
     if (areaId === "areaProfessor" && window.__recolherAreaProfessor) window.__recolherAreaProfessor();
+    if (areaId === "areaAdministrativo" && window.__recolherAreaSecretaria) window.__recolherAreaSecretaria();
   }
 
   document.querySelectorAll(".sidebar-link").forEach((link) => {
@@ -3712,6 +4326,60 @@
   let areaProfessorIniciado = false;
   let secretariaIniciada = false;
   let usuarioAtualCache = null;
+
+  // ===== Datas no padrão brasileiro (dd/mm/aaaa) =====
+  // O campo de data nativo (type="date") mostra mm/dd/aaaa em navegador/Windows em inglês,
+  // então usamos texto com máscara e convertemos para AAAA-MM-DD (o formato do banco).
+  function mascaraDataBrInput(campo) {
+    campo.addEventListener("input", () => {
+      const d = campo.value.replace(/\D/g, "").slice(0, 8);
+      campo.value = d.length > 4 ? d.slice(0, 2) + "/" + d.slice(2, 4) + "/" + d.slice(4) : d.length > 2 ? d.slice(0, 2) + "/" + d.slice(2) : d;
+    });
+  }
+  // "16/10/2026" -> "2026-10-16" (ou "" se a data não existir)
+  function dataBrParaIsoLocal(br) {
+    const m = String(br || "").match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+    if (!m) return "";
+    const [, dd, mm, aaaa] = m;
+    const d = new Date(Number(aaaa), Number(mm) - 1, Number(dd));
+    if (d.getFullYear() !== Number(aaaa) || d.getMonth() !== Number(mm) - 1 || d.getDate() !== Number(dd)) return "";
+    return aaaa + "-" + mm + "-" + dd;
+  }
+  // "2026-10-16" -> "16/10/2026"
+  function isoParaDataBrLocal(iso) {
+    const p = String(iso || "").split("-");
+    return p.length === 3 ? p[2] + "/" + p[1] + "/" + p[0] : "";
+  }
+
+  // ===== Convites de compromisso (avisos para o usuário convidado) =====
+  // Ao entrar, mostra os convites ainda não lidos. "Entendi" marca como lidos.
+  async function verificarConvitesAgenda(uid) {
+    const snap = await getDocs(query(collection(db, "avisosUsuarios"), where("uidDestino", "==", uid)));
+    const pendentes = snap.docs.map((d) => ({ id: d.id, ...d.data() })).filter((a) => a.lido !== true);
+    if (!pendentes.length) return;
+    const modal = document.getElementById("convitesModal");
+    const lista = document.getElementById("convitesLista");
+    const esc = (t) => String(t == null ? "" : t).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+    lista.innerHTML = pendentes.map((a) =>
+      '<div class="ag-item"><div class="ag-item-info"><span class="ag-item-titulo">' + esc(a.mensagem || a.titulo || "Compromisso") + "</span>" +
+      '<small class="ag-item-quem">Convidado por ' + esc(a.criadoPorNome || "a Secretaria") + "</small></div></div>"
+    ).join("");
+    if (modal.parentElement !== document.body) document.body.appendChild(modal);
+    modal.hidden = false;
+    modal.classList.add("is-open");
+    document.getElementById("convitesOk").onclick = async () => {
+      document.getElementById("convitesOk").disabled = true;
+      try {
+        await Promise.all(pendentes.map((a) => updateDoc(doc(db, "avisosUsuarios", a.id), { lido: true })));
+      } catch (err) {
+        console.error(err);
+      } finally {
+        document.getElementById("convitesOk").disabled = false;
+        modal.classList.remove("is-open");
+        modal.hidden = true;
+      }
+    };
+  }
 
   onAuthStateChanged(auth, async (user) => {
     if (!user) {
@@ -3751,14 +4419,40 @@
     const perfil = dadosUsuario.perfil || "convidado";
     const nome = dadosUsuario.nome || (user.email ? user.email.split("@")[0] : "Usuário");
     usuarioAtualCache = Object.assign({ uid: user.uid, email: user.email }, dadosUsuario);
+    // Convites de compromisso (sem travar o login se a leitura falhar)
+    verificarConvitesAgenda(user.uid).catch((err) => console.error("Convites:", err));
 
     loginLabel.textContent = "Olá " + nome;
     window.__loginBtnAcao = () => { if (window.__toggleUserMenu) window.__toggleUserMenu(); };
     window.__logoutAcao = () => signOut(auth);
 
-    const areasLiberadas = AREAS_POR_PERFIL[perfil] || AREAS_POR_PERFIL.convidado;
+    // Áreas liberadas para o perfil (configuradas em Gerenciar Perfis)
+    await carregarPerfisAcesso();
+    const areasLiberadas = areasDoPerfil(perfil);
     document.querySelectorAll(".sidebar-link").forEach((link) => {
       link.hidden = !areasLiberadas.includes(link.dataset.area);
+    });
+    document.querySelectorAll(".nav-admin-dropdown-item[data-area]").forEach((item) => {
+      item.hidden = !areasLiberadas.includes(item.dataset.area);
+    });
+    // Cards da tela inicial da Secretaria: só aparecem as páginas liberadas
+    const cardsSecretaria = {
+      secNivelLivroCaixa: "sec_caixa",
+      secNivelEstoque: "sec_estoque",
+      secNivelRevistas: "sec_revistas",
+      secNivelRelatorioDominical: "sec_dominical",
+      secNivelAniversariantes: "sec_aniversariantes",
+      secNivelAgendas: "sec_agenda"
+    };
+    // Opções da Sala do Professor (Alunos matriculados, Chamada, Arquivos)
+    const cardsProfessor = { alunos: "prof_alunos", chamada: "prof_chamada", arquivos: "prof_arquivos" };
+    document.querySelectorAll("#areaProfessor [data-canvas]").forEach((card) => {
+      const pagina = cardsProfessor[card.dataset.canvas];
+      if (pagina) card.style.display = areasLiberadas.includes(pagina) ? "" : "none";
+    });
+    document.querySelectorAll("#secNivel0 [data-abrir]").forEach((card) => {
+      const pagina = cardsSecretaria[card.dataset.abrir];
+      if (pagina) card.style.display = areasLiberadas.includes(pagina) ? "" : "none";
     });
     document.querySelectorAll(".sidebar-category").forEach((cat) => {
       let el = cat.nextElementSibling;
@@ -3775,27 +4469,28 @@
     document.getElementById("navLoggedMenu").style.display = "flex";
     mostrarArea("siteHome");
 
-    if (perfil === "admin" && !painelAgendaIniciado) {
+    // As telas são iniciadas conforme as áreas liberadas para o perfil (não pelo nome do perfil)
+    if (areasLiberadas.includes("areaAgenda") && !painelAgendaIniciado) {
       painelAgendaIniciado = true;
       iniciarPainelAgenda();
     }
-    if (perfil === "admin" && !gerenciarPerfisIniciado) {
+    if (areasLiberadas.includes("areaAcessosUsuarios") && !gerenciarPerfisIniciado) {
       gerenciarPerfisIniciado = true;
       iniciarGerenciarPerfis();
     }
-    if (perfil === "admin" && !gerenciarSalasIniciado) {
+    if (areasLiberadas.includes("areaCadastroSalas") && !gerenciarSalasIniciado) {
       gerenciarSalasIniciado = true;
       iniciarGerenciarSalas();
     }
-    if (perfil === "admin" && !gerenciarLicoesIniciado) {
+    if (areasLiberadas.includes("areaCadastroSalas") && !gerenciarLicoesIniciado) {
       gerenciarLicoesIniciado = true;
       iniciarGerenciarLicoes();
     }
-    if ((perfil === "professor" || perfil === "administrativo" || perfil === "admin") && !areaProfessorIniciado) {
+    if (areasLiberadas.includes("areaProfessor") && !areaProfessorIniciado) {
       areaProfessorIniciado = true;
       iniciarAreaProfessor();
     }
-    if ((perfil === "administrativo" || perfil === "admin") && !secretariaIniciada) {
+    if (areasLiberadas.includes("areaAdministrativo") && !secretariaIniciada) {
       secretariaIniciada = true;
       iniciarSecretaria();
     }
@@ -3823,6 +4518,14 @@
         if (abrir) abrir.hidden = false;
       });
     });
+
+    // Clicar no menu "Sala da Secretaria" (mesmo estando nela) volta à tela inicial,
+    // como já acontece na Sala do Professor e na Sala do Aluno.
+    window.__recolherAreaSecretaria = function () {
+      raiz.querySelectorAll(".secretaria-nivel-wrap").forEach((nivel) => {
+        nivel.hidden = nivel.id !== "secNivel0";
+      });
+    };
 
     // Efeito sanfona (mesmo padrão de "Gerenciar Salas"): dentro de um
     // container, cada cartão com data-alvo abre/fecha o painel
@@ -3871,10 +4574,182 @@
     // Recarrega a lista de movimentações do Caixa e recalcula o saldo
     // (soma de entradas menos saídas). Roda sempre que o painel é aberto,
     // para refletir lançamentos feitos em outra sessão/dispositivo.
+    // Livro Caixa: guarda as movimentações lidas e redesenha indicadores e extrato
+    // (o mês escolhido só filtra a tela; o saldo é sempre o total).
+    let caixaMovsCache = [];
+
+    function mesISOCaixa(data) { return String(data || "").slice(0, 7); }
+
+    // Lista de meses: os que têm lançamento e o mês atual, do mais novo para o mais antigo
+    function preencherMesesCaixa() {
+      const sel = document.getElementById("lcMes");
+      const atual = sel.value;
+      const hoje = hojeISOSecretaria().slice(0, 7);
+      const meses = [...new Set([hoje, ...caixaMovsCache.map((m) => mesISOCaixa(m.data))].filter(Boolean))].sort().reverse();
+      sel.innerHTML = "";
+      meses.forEach((v) => {
+        const [ano, mes] = v.split("-");
+        const o = document.createElement("option");
+        o.value = v;
+        o.textContent = MESES_RC_LONGO[Number(mes) - 1] + " / " + ano;
+        sel.appendChild(o);
+      });
+      sel.value = atual && meses.includes(atual) ? atual : hoje;
+    }
+
+    function desenharLivroCaixa() {
+      const movs = caixaMovsCache;
+      const mes = document.getElementById("lcMes").value;
+      const doMes = movs.filter((m) => mesISOCaixa(m.data) === mes);
+      const entradasMes = doMes.filter((m) => m.tipo !== "saida");
+      const saidasMes = doMes.filter((m) => m.tipo === "saida");
+      const somaLista = (l) => l.reduce((t, m) => t + (Number(m.valor) || 0), 0);
+      const saldo = movs.reduce((t, m) => t + (m.tipo === "saida" ? -1 : 1) * (Number(m.valor) || 0), 0);
+      const totalEntradas = somaLista(entradasMes);
+      const totalSaidas = somaLista(saidasMes);
+
+      const saldoEl = document.getElementById("lcSaldo");
+      saldoEl.textContent = "R$ " + formatarMoedaCaixa(saldo);
+      saldoEl.classList.toggle("negativo", saldo < 0);
+      document.getElementById("lcEntradas").textContent = "R$ " + formatarMoedaCaixa(totalEntradas);
+      document.getElementById("lcEntradasSub").textContent = entradasMes.length + " lançamento(s)";
+      document.getElementById("lcSaidas").textContent = "R$ " + formatarMoedaCaixa(totalSaidas);
+      document.getElementById("lcSaidasSub").textContent = saidasMes.length ? saidasMes.length + " despesa(s)" : "Nenhuma despesa";
+
+      // Formas de pagamento das entradas do mês
+      const formas = document.getElementById("lcFormas");
+      const linhasFormas = ["dinheiro", "pix", "cartao"]
+        .map((k) => ({ k, valor: somaLista(entradasMes.filter((m) => m.meio === k)) }))
+        .filter((f) => f.valor > 0);
+      formas.innerHTML = linhasFormas.length
+        ? linhasFormas.map((f) =>
+            '<div class="lc-forma"><span class="lc-forma-marca lc-marca-' + f.k + '"></span>' +
+            '<span class="lc-forma-nome">' + (f.k === "dinheiro" ? "Espécie (Dinheiro)" : ROTULO_MEIO_CAIXA[f.k]) + "</span>" +
+            "<strong>R$ " + formatarMoedaCaixa(f.valor) + "</strong></div>"
+          ).join("")
+        : '<span class="lc-kpi-sub">Nenhuma entrada no mês</span>';
+
+      // Origem das entradas: venda de revistas (automático) × ofertas e outras entradas
+      const revistas = somaLista(entradasMes.filter((m) => m.origem === "pagamentoRevista"));
+      const ofertas = totalEntradas - revistas;
+      const origem = document.getElementById("lcOrigem");
+      if (!totalEntradas) {
+        origem.innerHTML = '<p class="admin-agenda-info">Nenhuma entrada no mês.</p>';
+      } else {
+        const pctOfertas = Math.round(ofertas / totalEntradas * 100);
+        const pctRevistas = 100 - pctOfertas;
+        origem.innerHTML =
+          '<div class="lc-origem-linha"><span>Ofertas da EBD</span><strong class="lc-laranja">' + pctOfertas + '%</strong></div>' +
+          '<div class="lc-trilho"><span class="lc-fill lc-fill-laranja" style="width:' + pctOfertas + '%"></span></div>' +
+          '<div class="lc-origem-linha"><span>Venda de Revistas</span><strong class="lc-verde">' + pctRevistas + '%</strong></div>' +
+          '<div class="lc-trilho"><span class="lc-fill lc-fill-verde" style="width:' + pctRevistas + '%"></span></div>';
+      }
+
+      // Extrato do mês, do mais recente para o mais antigo
+      const lista = document.getElementById("secCaixaLista");
+      lista.innerHTML = "";
+      if (!doMes.length) {
+        lista.innerHTML = '<p class="admin-agenda-info">Nenhuma movimentação neste mês.</p>';
+        return;
+      }
+      const movsPorId = {};
+      doMes.forEach((m) => {
+        movsPorId[m.id] = m;
+        const ehSaida = m.tipo === "saida";
+        const item = document.createElement("div");
+        item.className = "lc-item";
+        let dataFmt = m.data || "";
+        try { dataFmt = new Date(m.data + "T00:00:00").toLocaleDateString("pt-BR"); } catch (e) {}
+        const detalhe = [dataFmt, ROTULO_MEIO_CAIXA[m.meio] || "", escaparTextoCaixa(m.lancadoPorNome || "")].filter(Boolean).join(" • ");
+        item.innerHTML =
+          '<span class="lc-item-sinal ' + (ehSaida ? "saida" : "entrada") + '">' + (ehSaida ? "−" : "+") + "</span>" +
+          '<div class="lc-item-info"><span class="lc-item-descricao">' + escaparTextoCaixa(m.descricao || "(sem descrição)") + "</span>" +
+          '<small class="lc-item-detalhe">' + detalhe + "</small></div>" +
+          '<span class="lc-item-valor ' + (ehSaida ? "saida" : "entrada") + '">R$ ' + formatarMoedaCaixa(m.valor) + "</span>" +
+          '<div class="lc-item-acoes">' +
+            '<button type="button" class="sec-caixa-editar" data-editar="' + m.id + '" title="Editar">✏️</button>' +
+            '<button type="button" class="admin-perfis-item-remover" data-id="' + m.id + '" title="Excluir">×</button>' +
+          "</div>";
+        lista.appendChild(item);
+        const historico = Array.isArray(m.historico) ? m.historico : [];
+        if (historico.length) {
+          const bloco = document.createElement("div");
+          bloco.className = "sec-caixa-historico";
+          bloco.innerHTML = historico.map((h) => linhaHistoricoCaixa(h)).join("");
+          lista.appendChild(bloco);
+        }
+      });
+      lista.querySelectorAll(".sec-caixa-editar").forEach((btn) => {
+        btn.addEventListener("click", () => abrirEdicaoCaixa(movsPorId[btn.dataset.editar]));
+      });
+      lista.querySelectorAll(".admin-perfis-item-remover").forEach((btn) => {
+        btn.addEventListener("click", async () => {
+          if (!confirm("Excluir esta movimentação? Essa ação não pode ser desfeita.")) return;
+          try {
+            await deleteDoc(doc(db, "caixaMovimentacoes", btn.dataset.id));
+            carregarMovimentacoesCaixa();
+          } catch (err) {
+            alert("Não foi possível excluir. " + (err.message || ""));
+            console.error(err);
+          }
+        });
+      });
+    }
+
+    // Exportar: abre um menu com PDF (impressão do navegador, "Salvar como PDF")
+    // e Excel (CSV com ponto e vírgula, que o Excel abre direto), sempre do mês escolhido.
+    function exportarExcelCaixa() {
+      const mes = document.getElementById("lcMes").value;
+      const doMes = caixaMovsCache.filter((m) => mesISOCaixa(m.data) === mes);
+      const cabecalho = ["Data", "Tipo", "Forma de pagamento", "Descrição", "Valor (R$)", "Origem", "Lançado por"];
+      const linhas = doMes.map((m) => [
+        dataBrRC(m.data),
+        m.tipo === "saida" ? "Saída" : "Entrada",
+        ROTULO_MEIO_CAIXA[m.meio] || "",
+        m.descricao || "",
+        formatarMoedaCaixa(m.valor),
+        m.origem === "pagamentoRevista" ? "Revista" : "Manual",
+        m.lancadoPorNome || ""
+      ]);
+      const csv = [cabecalho, ...linhas]
+        .map((l) => l.map((c) => '"' + String(c).replace(/"/g, '""') + '"').join(";"))
+        .join("\r\n");
+      const blob = new Blob(["﻿" + csv], { type: "text/csv;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "livro-caixa-" + mes + ".csv";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+
+    function ligarExportarCaixa() {
+      const botao = document.getElementById("lcExportarBtn");
+      const menu = document.getElementById("lcExportarMenu");
+      const fechar = () => { menu.hidden = true; botao.setAttribute("aria-expanded", "false"); };
+      botao.addEventListener("click", (e) => {
+        e.stopPropagation();
+        menu.hidden = !menu.hidden;
+        botao.setAttribute("aria-expanded", String(!menu.hidden));
+      });
+      menu.querySelectorAll("button[data-formato]").forEach((b) => {
+        b.addEventListener("click", () => {
+          fechar();
+          if (b.dataset.formato === "pdf") window.print();
+          else exportarExcelCaixa();
+        });
+      });
+      document.addEventListener("click", (e) => {
+        if (!e.target.closest(".lc-exportar")) fechar();
+      });
+    }
+
+    // Lê as movimentações do banco (ao abrir o Livro Caixa e depois de cada alteração)
     async function carregarMovimentacoesCaixa() {
       const lista = document.getElementById("secCaixaLista");
-      const saldoEl = document.getElementById("secCaixaSaldoValor");
-      if (!lista || !saldoEl) return;
+      if (!lista) return;
       lista.innerHTML = "Carregando...";
       try {
         const snap = await getDocs(collection(db, "caixaMovimentacoes"));
@@ -3884,59 +4759,9 @@
           const cmp = (b.data || "").localeCompare(a.data || "");
           return cmp !== 0 ? cmp : (b.criadoEmMs || 0) - (a.criadoEmMs || 0);
         });
-
-        let saldo = 0;
-        movs.forEach((m) => { saldo += (m.tipo === "saida" ? -1 : 1) * (Number(m.valor) || 0); });
-        saldoEl.textContent = "R$ " + formatarMoedaCaixa(saldo);
-        saldoEl.classList.toggle("negativo", saldo < 0);
-
-        lista.innerHTML = "";
-        if (!movs.length) {
-          lista.innerHTML = '<p class="admin-agenda-info">Nenhuma movimentação lançada ainda.</p>';
-          return;
-        }
-        const movsPorId = {};
-        movs.forEach((m) => {
-          movsPorId[m.id] = m;
-          const item = document.createElement("div");
-          item.className = "admin-perfis-item";
-          let dataFmt = m.data || "";
-          try { dataFmt = new Date(m.data + "T00:00:00").toLocaleDateString("pt-BR"); } catch (e) {}
-          const ehSaida = m.tipo === "saida";
-          const sinal = ehSaida ? "- " : "+ ";
-          const classeValor = ehSaida ? "sec-caixa-valor-saida" : "sec-caixa-valor-entrada";
-          item.innerHTML =
-            '<div class="admin-perfis-item-info">' +
-              '<span class="admin-perfis-item-nome">' + (m.descricao || "(sem descrição)") + "</span>" +
-              '<span class="admin-perfis-item-email">' + dataFmt + " · " + (ROTULO_MEIO_CAIXA[m.meio] ? ROTULO_MEIO_CAIXA[m.meio] + " · " : "") + escaparTextoCaixa(m.lancadoPorNome || "") + "</span>" +
-            "</div>" +
-            '<span class="' + classeValor + '">' + sinal + "R$ " + formatarMoedaCaixa(m.valor) + "</span>" +
-            '<button type="button" class="sec-caixa-editar" data-editar="' + m.id + '" title="Editar">✎</button>' +
-            '<button type="button" class="admin-perfis-item-remover" data-id="' + m.id + '" title="Excluir">×</button>';
-          lista.appendChild(item);
-          const historico = Array.isArray(m.historico) ? m.historico : [];
-          if (historico.length) {
-            const bloco = document.createElement("div");
-            bloco.className = "sec-caixa-historico";
-            bloco.innerHTML = historico.map((h) => linhaHistoricoCaixa(h)).join("");
-            lista.appendChild(bloco);
-          }
-        });
-        lista.querySelectorAll(".sec-caixa-editar").forEach((btn) => {
-          btn.addEventListener("click", () => abrirEdicaoCaixa(movsPorId[btn.dataset.editar]));
-        });
-        lista.querySelectorAll(".admin-perfis-item-remover").forEach((btn) => {
-          btn.addEventListener("click", async () => {
-            if (!confirm("Excluir esta movimentação? Essa ação não pode ser desfeita.")) return;
-            try {
-              await deleteDoc(doc(db, "caixaMovimentacoes", btn.dataset.id));
-              carregarMovimentacoesCaixa();
-            } catch (err) {
-              alert("Não foi possível excluir. " + (err.message || ""));
-              console.error(err);
-            }
-          });
-        });
+        caixaMovsCache = movs;
+        preencherMesesCaixa();
+        desenharLivroCaixa();
       } catch (err) {
         lista.innerHTML = '<p class="admin-agenda-status erro">Não foi possível carregar as movimentações.</p>';
         console.error(err);
@@ -4048,7 +4873,12 @@
       const campoValor = document.getElementById("secCaixaValor");
       const status = document.getElementById("secCaixaStatus");
       ligarEdicaoCaixa();
-      if (campoData) campoData.value = hojeISOSecretaria();
+      document.getElementById("lcMes").addEventListener("change", desenharLivroCaixa);
+      ligarExportarCaixa();
+      if (campoData) {
+        mascaraDataBrInput(campoData);
+        campoData.value = isoParaDataBrLocal(hojeISOSecretaria());
+      }
 
       // Mascara de dinheiro: digita so numeros, o campo formata sozinho
       // como "1.234,56" (mesmo padrao dos outros campos com mascara do
@@ -4069,7 +4899,7 @@
           e.preventDefault();
           const valor = Number(campoValor.value.replace(/\./g, "").replace(",", "."));
           const descricao = document.getElementById("secCaixaDescricao").value.trim();
-          const data = campoData.value;
+          const data = dataBrParaIsoLocal(campoData.value);
           const tipo = campoTipo.value;
           const meio = document.getElementById("secCaixaMeio").value;
           if (!valor || valor <= 0 || !descricao || !data || !meio) return;
@@ -4089,7 +4919,7 @@
               criadoEmMs: Date.now()
             });
             form.reset();
-            campoData.value = hojeISOSecretaria();
+            campoData.value = isoParaDataBrLocal(hojeISOSecretaria());
             if (status) {
               status.textContent = "Lançamento salvo.";
               status.className = "admin-agenda-status ok";
@@ -4242,7 +5072,7 @@
                 '<div class="sec-estoque-verso-lista">' + listaInclusoes + "</div>" +
               "</div>" +
             "</div>" +
-            '<button type="button" class="sec-estoque-lapis" title="Corrigir quantidade" aria-label="Corrigir quantidade">✎</button>' +
+            '<button type="button" class="sec-estoque-lapis" title="Corrigir quantidade" aria-label="Corrigir quantidade">✏️</button>' +
             '<button type="button" class="sec-estoque-excluir" title="Excluir material" aria-label="Excluir material">🗑️</button>';
           grid.appendChild(wrap);
           wrap.querySelector(".sec-estoque-lapis").addEventListener("click", () => abrirCorrecaoEstoque(mat, quantidadeAtual, unidade));
@@ -4429,21 +5259,593 @@
       carregarEstoqueMateriais();
     }
 
-    ligarSanfona(document.getElementById("secNivelCaixa"), (card) => {
-      if (card.dataset.alvo === "canvaSecCaixaEntradas") {
-        if (!caixaEntradasIniciado) {
-          caixaEntradasIniciado = true;
-          iniciarCaixaEntradas();
-        } else {
-          carregarMovimentacoesCaixa();
+    // ===== Relatório do Caixa (dashboard de monitoramento) =====
+    // Lê o Livro Caixa e os pedidos de revista pendentes e desenha tudo com SVG/CSS.
+    // Os filtros de Mês e Ano só redesenham (sem nova leitura do banco).
+    const MESES_RC = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
+    const MESES_RC_LONGO = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+    let rcDados = null;
+    let rcLigado = false;
+
+    function valorRC(m) { return Number(m.valor) || 0; }
+    function partesRC(m) {
+      const p = String(m.data || "").split("-");
+      return { ano: Number(p[0]) || 0, mes: Number(p[1]) || 0 };
+    }
+    function dataBrRC(iso) {
+      const p = String(iso || "").split("-");
+      return p.length === 3 ? p[2] + "/" + p[1] + "/" + p[0] : "";
+    }
+    function moedaRC(v) { return "R$ " + formatarMoedaCaixa(v); }
+    // 1234 -> "1,2 mil" (eixos e rótulos curtos)
+    function abreviarRC(v) {
+      const a = Math.abs(v);
+      const texto = a >= 1000 ? (a / 1000).toFixed(a >= 10000 ? 0 : 1).replace(".", ",") + " mil" : String(Math.round(a));
+      return (v < 0 ? "-" : "") + texto;
+    }
+    function somaRC(lista, tipo) {
+      return lista.filter((m) => (m.tipo === "saida" ? "saida" : "entrada") === tipo).reduce((t, m) => t + valorRC(m), 0);
+    }
+    function filtrarRC(movs, ano, mes) {
+      return movs.filter((m) => {
+        const p = partesRC(m);
+        return p.ano === ano && (!mes || p.mes === mes);
+      });
+    }
+    function ordenarRC(lista) {
+      return lista.slice().sort((a, b) => (b.data || "").localeCompare(a.data || "") || (b.criadoEmMs || 0) - (a.criadoEmMs || 0));
+    }
+
+    async function buscarDadosRelatorioCaixa() {
+      const [snapMovs, snapPedidos] = await Promise.all([
+        getDocs(collection(db, "caixaMovimentacoes")),
+        getDocs(collection(db, "pedidosRevistas"))
+      ]);
+      const movs = [];
+      snapMovs.forEach((d) => movs.push(Object.assign({ id: d.id }, d.data())));
+      const pendentes = snapPedidos.docs.map((d) => ({ id: d.id, ...d.data() })).filter((p) => pagamentoDoPedido(p) === "pendente");
+      const valores = await Promise.all(pendentes.map((p) => valorDoPedidoSec(p).catch(() => null)));
+      let pendentesValor = 0;
+      let pendentesSemPreco = 0;
+      valores.forEach((v) => { if (v === null) pendentesSemPreco++; else pendentesValor += v; });
+      return { movs, pendentesQtd: pendentes.length, pendentesValor, pendentesSemPreco };
+    }
+
+    // Entradas e saídas de cada mês do ano (barras agrupadas)
+    function graficoMesesRC(ano) {
+      const ent = Array(12).fill(0);
+      const sai = Array(12).fill(0);
+      rcDados.movs.forEach((m) => {
+        const p = partesRC(m);
+        if (p.ano !== ano || p.mes < 1) return;
+        if (m.tipo === "saida") sai[p.mes - 1] += valorRC(m);
+        else ent[p.mes - 1] += valorRC(m);
+      });
+      const max = Math.max(1, ...ent, ...sai);
+      const W = 640, H = 250, L = 52, R = 8, T = 10, B = 26;
+      const iw = W - L - R, ih = H - T - B, slot = iw / 12, bw = slot * 0.36;
+      let s = '<svg viewBox="0 0 ' + W + " " + H + '" class="rc-svg" role="img" aria-label="Entradas e saídas por mês em ' + ano + '">';
+      [0, 0.5, 1].forEach((f) => {
+        const y = (T + ih - ih * f).toFixed(1);
+        s += '<line class="rc-grade" x1="' + L + '" x2="' + (W - R) + '" y1="' + y + '" y2="' + y + '"/>' +
+             '<text class="rc-eixo" x="' + (L - 6) + '" y="' + y + '" dy="4" text-anchor="end">' + abreviarRC(max * f) + "</text>";
+      });
+      for (let i = 0; i < 12; i++) {
+        const x0 = L + i * slot + (slot - bw * 2 - 3) / 2;
+        [[ent[i], "rc-barra-entrada", "entradas", x0], [sai[i], "rc-barra-saida", "saídas", x0 + bw + 3]].forEach(([v, cls, nome, x]) => {
+          const h = ih * v / max;
+          s += '<rect class="' + cls + '" x="' + x.toFixed(1) + '" y="' + (T + ih - h).toFixed(1) + '" width="' + bw.toFixed(1) + '" height="' + h.toFixed(1) + '" rx="3">' +
+               "<title>" + MESES_RC[i] + ": " + nome + " " + moedaRC(v) + "</title></rect>";
+        });
+        s += '<text class="rc-eixo" x="' + (L + i * slot + slot / 2).toFixed(1) + '" y="' + (H - 8) + '" text-anchor="middle">' + MESES_RC[i] + "</text>";
+      }
+      return s + "</svg>";
+    }
+
+    // Saldo no fim de cada mês do ano (linha com área). Não desenha meses que ainda não chegaram.
+    function graficoSaldoRC(ano) {
+      const hoje = new Date();
+      const anoHoje = hoje.getFullYear();
+      const nMeses = ano > anoHoje ? 0 : (ano === anoHoje ? hoje.getMonth() + 1 : 12);
+      if (!nMeses) return '<p class="admin-agenda-info">Este ano ainda não começou.</p>';
+      let base = 0;
+      const delta = Array(12).fill(0);
+      rcDados.movs.forEach((m) => {
+        const p = partesRC(m);
+        const v = (m.tipo === "saida" ? -1 : 1) * valorRC(m);
+        if (p.ano < ano) base += v;
+        else if (p.ano === ano && p.mes >= 1) delta[p.mes - 1] += v;
+      });
+      let acumulado = base;
+      const pontos = [];
+      for (let i = 0; i < nMeses; i++) { acumulado += delta[i]; pontos.push(acumulado); }
+      const todos = [0, ...pontos];
+      const minV = Math.min(...todos), maxV = Math.max(...todos);
+      const faixa = (maxV - minV) || 1;
+      const W = 640, H = 250, L = 52, R = 8, T = 10, B = 26;
+      const iw = W - L - R, ih = H - T - B, slot = iw / 12;
+      const x = (i) => L + i * slot + slot / 2;
+      const y = (v) => T + ih - ((v - minV) / faixa) * ih;
+      let s = '<svg viewBox="0 0 ' + W + " " + H + '" class="rc-svg" role="img" aria-label="Saldo acumulado em ' + ano + '">';
+      [minV, (minV + maxV) / 2, maxV].forEach((v) => {
+        s += '<line class="rc-grade" x1="' + L + '" x2="' + (W - R) + '" y1="' + y(v).toFixed(1) + '" y2="' + y(v).toFixed(1) + '"/>' +
+             '<text class="rc-eixo" x="' + (L - 6) + '" y="' + y(v).toFixed(1) + '" dy="4" text-anchor="end">' + abreviarRC(v) + "</text>";
+      });
+      const linha = pontos.map((v, i) => (i ? "L" : "M") + x(i).toFixed(1) + " " + y(v).toFixed(1)).join(" ");
+      s += '<path class="rc-area-saldo" d="' + linha + " L" + x(nMeses - 1).toFixed(1) + " " + y(0).toFixed(1) + " L" + x(0).toFixed(1) + " " + y(0).toFixed(1) + ' Z"/>';
+      s += '<path class="rc-linha-saldo" d="' + linha + '"/>';
+      pontos.forEach((v, i) => {
+        s += '<circle class="rc-ponto-saldo" cx="' + x(i).toFixed(1) + '" cy="' + y(v).toFixed(1) + '" r="4"><title>Fim de ' + MESES_RC[i] + ": " + moedaRC(v) + "</title></circle>";
+      });
+      for (let i = 0; i < 12; i++) {
+        s += '<text class="rc-eixo" x="' + x(i).toFixed(1) + '" y="' + (H - 8) + '" text-anchor="middle">' + MESES_RC[i] + "</text>";
+      }
+      return s + "</svg>";
+    }
+
+    // Barras horizontais: uma linha por categoria, com entradas (verde) e saídas (vermelho)
+    function barrasRC(linhas, vazio) {
+      if (linhas.every((l) => !l.entrada && !l.saida)) return '<p class="admin-agenda-info">' + vazio + "</p>";
+      const max = Math.max(1, ...linhas.flatMap((l) => [l.entrada, l.saida]));
+      return linhas.map((l) =>
+        '<div class="rc-barra-linha">' +
+          '<span class="rc-barra-rotulo">' + escaparTextoCaixa(l.rotulo) + "</span>" +
+          '<div class="rc-barra-pares">' +
+            '<div class="rc-barra-trilho"><span class="rc-barra-fill" style="width:' + (l.entrada / max * 100).toFixed(1) + '%;--cor:#7CD992"></span></div>' +
+            '<div class="rc-barra-trilho"><span class="rc-barra-fill" style="width:' + (l.saida / max * 100).toFixed(1) + '%;--cor:var(--vermelho)"></span></div>' +
+          "</div>" +
+          '<div class="rc-barra-valores"><span class="rc-pos">+ ' + moedaRC(l.entrada) + '</span><span class="rc-neg">- ' + moedaRC(l.saida) + "</span></div>" +
+        "</div>"
+      ).join("");
+    }
+
+    function listaRC(lista, vazio) {
+      if (!lista.length) return '<p class="admin-agenda-info">' + vazio + "</p>";
+      return lista.map((m) => {
+        const ehSaida = m.tipo === "saida";
+        const detalhe = [dataBrRC(m.data), ROTULO_MEIO_CAIXA[m.meio] || "", m.origem === "pagamentoRevista" ? "revista" : ""].filter(Boolean).join(" · ");
+        return '<div class="rc-linha"><div class="rc-linha-info"><span>' + escaparTextoCaixa(m.descricao || "(sem descrição)") +
+          "</span><small>" + escaparTextoCaixa(detalhe) + '</small></div><span class="' + (ehSaida ? "rc-neg" : "rc-pos") + '">' +
+          (ehSaida ? "- " : "+ ") + moedaRC(valorRC(m)) + "</span></div>";
+      }).join("");
+    }
+
+    function kpiRC(rotulo, valor, classe, sub) {
+      return '<div class="rc-kpi"><span class="rc-kpi-rotulo">' + rotulo + '</span><strong class="rc-kpi-valor ' + classe + '">' + valor +
+        '</strong><span class="rc-kpi-sub">' + sub + "</span></div>";
+    }
+
+    function desenharRelatorioCaixa() {
+      if (!rcDados) return;
+      const ano = Number(document.getElementById("rcAno").value);
+      const mes = Number(document.getElementById("rcMes").value);
+      const movs = rcDados.movs;
+      const periodo = filtrarRC(movs, ano, mes);
+      const entradas = somaRC(periodo, "entrada");
+      const saidas = somaRC(periodo, "saida");
+      const resultado = entradas - saidas;
+      const saldoAtual = somaRC(movs, "entrada") - somaRC(movs, "saida");
+      const rotuloPeriodo = mes ? MESES_RC_LONGO[mes - 1] + " de " + ano : "Ano " + ano;
+      const qtdEntradas = periodo.filter((m) => m.tipo !== "saida").length;
+      const qtdSaidas = periodo.length - qtdEntradas;
+
+      document.getElementById("rcKpis").innerHTML =
+        kpiRC("Saldo atual", moedaRC(saldoAtual), saldoAtual < 0 ? "negativo" : "positivo", "Entradas menos saídas, desde o início") +
+        kpiRC("Entradas", moedaRC(entradas), "positivo", qtdEntradas + " lançamento(s) · " + rotuloPeriodo) +
+        kpiRC("Saídas", moedaRC(saidas), "negativo", qtdSaidas + " lançamento(s) · " + rotuloPeriodo) +
+        kpiRC("Resultado do período", moedaRC(resultado), resultado < 0 ? "negativo" : "positivo", rotuloPeriodo) +
+        kpiRC("A receber (revistas)", moedaRC(rcDados.pendentesValor), "", rcDados.pendentesQtd + " pedido(s) pendente(s)" +
+          (rcDados.pendentesSemPreco ? " · " + rcDados.pendentesSemPreco + " sem preço" : ""));
+
+      // Alertas de monitoramento
+      const alertas = [];
+      if (saldoAtual < 0) alertas.push(["As saídas já superam as entradas no total. Confira os lançamentos."]);
+      let mesesNegativos = 0;
+      for (let i = 1; i <= 12; i++) {
+        const doMes = movs.filter((m) => partesRC(m).ano === ano && partesRC(m).mes === i);
+        if (doMes.length && somaRC(doMes, "entrada") < somaRC(doMes, "saida")) mesesNegativos++;
+      }
+      if (mesesNegativos) alertas.push([mesesNegativos + " mês(es) de " + ano + " terminaram com saídas maiores que entradas."]);
+      if (rcDados.pendentesQtd) {
+        alertas.push([rcDados.pendentesQtd + " revista(s) ainda não paga(s): " + moedaRC(rcDados.pendentesValor) +
+          " a receber. Ao marcar como Feito na Secretaria, o valor entra no caixa."]);
+      }
+      if (movs.length) {
+        const ultimo = movs.map((m) => m.data || "").sort().pop();
+        const dias = Math.floor((Date.now() - new Date(ultimo + "T00:00:00").getTime()) / 86400000);
+        if (dias > 30) alertas.push(["Sem lançamentos há " + dias + " dias (último em " + dataBrRC(ultimo) + ")."]);
+      }
+      if (!alertas.length) alertas.push(["Nenhum alerta. O caixa está em dia.", true]);
+      document.getElementById("rcAlertas").innerHTML = alertas.map((a) =>
+        '<div class="rc-alerta' + (a[1] ? " ok" : "") + '">' + escaparTextoCaixa(a[0]) + "</div>"
+      ).join("");
+
+      document.getElementById("rcGraficoMeses").innerHTML = graficoMesesRC(ano);
+      document.getElementById("rcGraficoSaldo").innerHTML = graficoSaldoRC(ano);
+
+      const formas = ["dinheiro", "pix", "cartao"].map((k) => {
+        const lista = periodo.filter((m) => m.meio === k);
+        return { rotulo: ROTULO_MEIO_CAIXA[k], entrada: somaRC(lista, "entrada"), saida: somaRC(lista, "saida") };
+      });
+      document.getElementById("rcFormas").innerHTML = barrasRC(formas, "Nenhum lançamento neste período.");
+
+      const daRevista = (m) => m.origem === "pagamentoRevista";
+      const origens = [
+        { rotulo: "Revistas (pagamentos e doações)", lista: periodo.filter(daRevista) },
+        { rotulo: "Lançamentos manuais", lista: periodo.filter((m) => !daRevista(m)) }
+      ].map((o) => ({ rotulo: o.rotulo, entrada: somaRC(o.lista, "entrada"), saida: somaRC(o.lista, "saida") }));
+      document.getElementById("rcOrigens").innerHTML = barrasRC(origens, "Nenhum lançamento neste período.");
+
+      const maioresSaidas = periodo.filter((m) => m.tipo === "saida").sort((a, b) => valorRC(b) - valorRC(a)).slice(0, 5);
+      document.getElementById("rcMaioresSaidas").innerHTML = listaRC(maioresSaidas, "Nenhuma saída neste período.");
+      document.getElementById("rcUltimos").innerHTML = listaRC(ordenarRC(periodo).slice(0, 6), "Nenhum lançamento neste período.");
+    }
+
+    function ligarRelatorioCaixa() {
+      if (rcLigado) return;
+      rcLigado = true;
+      const selMes = document.getElementById("rcMes");
+      selMes.innerHTML = '<option value="0">Todos os meses</option>' +
+        MESES_RC_LONGO.map((nome, i) => '<option value="' + (i + 1) + '">' + nome + "</option>").join("");
+      selMes.value = "0";
+      document.getElementById("rcAno").addEventListener("change", desenharRelatorioCaixa);
+      selMes.addEventListener("change", desenharRelatorioCaixa);
+      document.getElementById("rcAtualizar").addEventListener("click", carregarRelatorioCaixa);
+    }
+
+    async function carregarRelatorioCaixa() {
+      ligarRelatorioCaixa();
+      const status = document.getElementById("rcStatus");
+      const selAno = document.getElementById("rcAno");
+      status.textContent = "Carregando...";
+      status.className = "admin-agenda-info";
+      try {
+        rcDados = await buscarDadosRelatorioCaixa();
+        const anoHoje = new Date().getFullYear();
+        const anos = [...new Set([anoHoje, ...rcDados.movs.map((m) => partesRC(m).ano).filter((a) => a > 0)])].sort((a, b) => b - a);
+        const anoAtual = Number(selAno.value);
+        selAno.innerHTML = anos.map((a) => '<option value="' + a + '">' + a + "</option>").join("");
+        selAno.value = String(anos.includes(anoAtual) ? anoAtual : anoHoje);
+        status.textContent = rcDados.movs.length ? "" : "Nenhuma movimentação lançada ainda.";
+        desenharRelatorioCaixa();
+      } catch (err) {
+        status.textContent = "Não foi possível carregar o relatório.";
+        status.className = "admin-agenda-status erro";
+        console.error(err);
+      }
+    }
+
+    // ===== Agendas da Secretaria (calendário de compromissos) =====
+    // Coleção "compromissosSecretaria": { titulo, data (AAAA-MM-DD), hora, descricao, criadoPorNome, criadoEmMs }.
+    // Filtros: Dia (opcional, destaca o dia e lista só ele), Mês e Ano (mostram o calendário).
+    const DIAS_SEMANA_AG = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"];
+    let compromissosAgCache = [];
+    let usuariosAgCache = [];
+    let agLigado = false;
+    let abrirEdicaoAg = null; // preenchido por ligarAgendaSec (abre o pop-up para editar)
+
+    // Lista de usuários para "Convidar" (só admin e administrativo leem a lista de usuários)
+    async function carregarConvidadosAg() {
+      const sel = document.getElementById("agConvidar");
+      const atual = sel.value;
+      if (!usuariosAgCache.length) {
+        try {
+          const snap = await getDocs(collection(db, "usuarios"));
+          // Só quem tem perfil Secretaria (administrativo) pode ser convidado
+          usuariosAgCache = snap.docs.map((d) => ({ uid: d.id, ...d.data() }))
+            .filter((u) => u.ativo !== false && u.perfil === "administrativo")
+            .sort((a, b) => (a.nome || a.email || "").localeCompare(b.nome || b.email || "", "pt-BR"));
+        } catch (err) {
+          console.error(err);
         }
-      } else if (card.dataset.alvo === "canvaSecCaixaInsumos") {
-        if (!estoqueMateriaisIniciado) {
-          estoqueMateriaisIniciado = true;
-          iniciarEstoqueMateriais();
+      }
+      sel.innerHTML = '<option value="">Ninguém</option>' + usuariosAgCache.map((u) =>
+        '<option value="' + u.uid + '">' + escaparTextoCaixa(u.nome || u.email || "Sem nome") + "</option>"
+      ).join("");
+      sel.value = atual;
+    }
+
+    const pad2Ag = (n) => String(n).padStart(2, "0");
+    const isoAg = (ano, mes, dia) => ano + "-" + pad2Ag(mes) + "-" + pad2Ag(dia);
+    const dataBrAg = (iso) => { const p = String(iso || "").split("-"); return p.length === 3 ? p[2] + "/" + p[1] + "/" + p[0] : ""; };
+
+    // Dia escolhido no filtro (ou null para "Todos os dias")
+    function diaAgSelecionado() {
+      const v = document.getElementById("agDia").value;
+      return v ? Number(v) : null;
+    }
+
+    // Atualiza as opções de dia conforme o mês e o ano (mantém o dia se ainda existir)
+    function preencherDiasAg() {
+      const ano = Number(document.getElementById("agAno").value);
+      const mes = Number(document.getElementById("agMes").value);
+      const sel = document.getElementById("agDia");
+      const atual = sel.value;
+      const total = new Date(ano, mes, 0).getDate();
+      sel.innerHTML = '<option value="">Todos os dias</option>' +
+        Array.from({ length: total }, (_, i) => '<option value="' + (i + 1) + '">' + (i + 1) + "</option>").join("");
+      sel.value = atual && Number(atual) <= total ? atual : "";
+    }
+
+    // Compromisso cobre o dia se estiver entre "data" e "dataFim" (inclusive). Sem dataFim, vale só o dia.
+    const fimAg = (c) => c.dataFim || c.data;
+    function compromissosDoDiaAg(iso) {
+      return compromissosAgCache.filter((c) => (c.data || "") <= iso && iso <= fimAg(c));
+    }
+
+    function desenharAgenda() {
+      const ano = Number(document.getElementById("agAno").value);
+      const mes = Number(document.getElementById("agMes").value);
+      const diaSel = diaAgSelecionado();
+      const hoje = hojeISOSecretaria();
+      const total = new Date(ano, mes, 0).getDate();
+      const primeiroDia = new Date(ano, mes - 1, 1).getDay();
+      const cal = document.getElementById("agCalendario");
+
+      let html = DIAS_SEMANA_AG.map((d) =>
+        '<div class="ag-cabecalho"><span class="ag-nome-longo">' + d + '</span><span class="ag-nome-curto">' + d.slice(0, 3) + "</span></div>"
+      ).join("");
+      for (let i = 0; i < primeiroDia; i++) html += '<div class="ag-dia ag-vazio"></div>';
+      for (let d = 1; d <= total; d++) {
+        const iso = isoAg(ano, mes, d);
+        const lista = compromissosDoDiaAg(iso);
+        const classes = ["ag-dia"];
+        if (iso === hoje) classes.push("ag-hoje");
+        if (diaSel === d) classes.push("ag-selecionado");
+        const chips = lista.slice(0, 3).map((c) =>
+          '<span class="ag-evento">' + (c.hora ? escaparTextoCaixa(c.hora) + " " : "") + escaparTextoCaixa(c.titulo) + "</span>"
+        ).join("") + (lista.length > 3 ? '<span class="ag-mais">+' + (lista.length - 3) + "</span>" : "");
+        html += '<button type="button" class="' + classes.join(" ") + '" data-dia="' + d + '">' +
+          '<span class="ag-numero">' + d + "</span>" +
+          (lista.length ? '<span class="ag-contador">' + lista.length + "</span>" : "") +
+          '<span class="ag-eventos">' + chips + "</span></button>";
+      }
+      cal.innerHTML = html;
+      cal.querySelectorAll("button[data-dia]").forEach((b) => {
+        b.addEventListener("click", () => {
+          // Clicar num dia filtra por ele; clicar de novo volta a "Todos os dias"
+          const d = Number(b.dataset.dia);
+          document.getElementById("agDia").value = diaSel === d ? "" : String(d);
+          desenharAgenda();
+        });
+      });
+
+      // Lista: do dia escolhido, ou de todo o mês
+      const diaAtual = diaAgSelecionado();
+      const nomeMes = MESES_RC_LONGO[mes - 1];
+      let itens;
+      if (diaAtual) {
+        itens = compromissosDoDiaAg(isoAg(ano, mes, diaAtual));
+        document.getElementById("agListaTitulo").textContent = "Compromissos de " + pad2Ag(diaAtual) + "/" + pad2Ag(mes) + "/" + ano;
+      } else {
+        const primeiro = isoAg(ano, mes, 1);
+        const ultimo = isoAg(ano, mes, total);
+        itens = compromissosAgCache.filter((c) => (c.data || "") <= ultimo && fimAg(c) >= primeiro);
+        document.getElementById("agListaTitulo").textContent = "Compromissos de " + nomeMes + " de " + ano;
+      }
+      itens = itens.slice().sort((a, b) => (a.data || "").localeCompare(b.data || "") || (a.hora || "").localeCompare(b.hora || ""));
+
+      const lista = document.getElementById("agLista");
+      if (!itens.length) {
+        lista.innerHTML = '<p class="admin-agenda-info">Nenhum compromisso ' + (diaAtual ? "neste dia." : "neste mês.") + "</p>";
+        return;
+      }
+      lista.innerHTML = itens.map((c) =>
+        '<div class="ag-item" data-id="' + c.id + '">' +
+          '<div class="ag-item-data"><strong>' + dataBrAg(c.data) + (fimAg(c) !== c.data ? " a " + dataBrAg(fimAg(c)) : "") + "</strong>" + (c.hora ? "<span>" + escaparTextoCaixa(c.hora) + "</span>" : "") + "</div>" +
+          '<div class="ag-item-info"><span class="ag-item-titulo">' + escaparTextoCaixa(c.titulo) + "</span>" +
+            (c.descricao ? '<small class="ag-item-desc">' + escaparTextoCaixa(c.descricao) + "</small>" : "") +
+            (c.convidadoNome ? '<small class="ag-item-quem">Convidado: ' + escaparTextoCaixa(c.convidadoNome) + "</small>" : "") +
+            '<small class="ag-item-quem">Incluído por ' + escaparTextoCaixa(c.criadoPorNome || "") + "</small></div>" +
+          '<div class="ag-item-acoes">' +
+            '<button type="button" class="sec-caixa-editar" data-editar-ag="' + c.id + '" title="Editar">✏️</button>' +
+            '<button type="button" class="admin-perfis-item-remover" data-excluir="' + c.id + '" title="Excluir">×</button>' +
+          "</div>" +
+        "</div>"
+      ).join("");
+      // Editar: pelo lápis ou clicando no texto do compromisso
+      lista.querySelectorAll(".ag-item[data-id]").forEach((el) => {
+        const comp = itens.find((c) => c.id === el.dataset.id);
+        el.querySelector(".ag-item-info").addEventListener("click", () => abrirEdicaoAg(comp));
+        el.querySelector("[data-editar-ag]").addEventListener("click", () => abrirEdicaoAg(comp));
+      });
+      lista.querySelectorAll("[data-excluir]").forEach((b) => {
+        b.addEventListener("click", async () => {
+          if (!confirm("Excluir este compromisso?")) return;
+          try {
+            await deleteDoc(doc(db, "compromissosSecretaria", b.dataset.excluir));
+            await carregarAgendaSec();
+          } catch (err) {
+            alert("Não foi possível excluir. " + (err.message || ""));
+            console.error(err);
+          }
+        });
+      });
+    }
+
+    async function carregarAgendaSec() {
+      ligarAgendaSec();
+      const status = document.getElementById("agStatus");
+      status.textContent = "Carregando...";
+      status.className = "admin-agenda-info";
+      try {
+        const snap = await getDocs(collection(db, "compromissosSecretaria"));
+        compromissosAgCache = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+        status.textContent = "";
+        preencherDiasAg();
+        desenharAgenda();
+      } catch (err) {
+        status.textContent = "Não foi possível carregar os compromissos. " + (err.message || "");
+        status.className = "admin-agenda-status erro";
+        console.error(err);
+        // Mesmo sem dados, o calendário e os filtros continuam na tela
+        preencherDiasAg();
+        desenharAgenda();
+      }
+    }
+
+    function ligarAgendaSec() {
+      if (agLigado) return;
+      agLigado = true;
+      const selAno = document.getElementById("agAno");
+      const selMes = document.getElementById("agMes");
+      const hoje = new Date();
+      const anoHoje = hoje.getFullYear();
+      selAno.innerHTML = [anoHoje - 1, anoHoje, anoHoje + 1, anoHoje + 2].map((a) => '<option value="' + a + '">' + a + "</option>").join("");
+      selAno.value = String(anoHoje);
+      selMes.innerHTML = MESES_RC_LONGO.map((nome, i) => '<option value="' + (i + 1) + '">' + nome + "</option>").join("");
+      selMes.value = String(hoje.getMonth() + 1);
+      const mudouPeriodo = () => { preencherDiasAg(); desenharAgenda(); };
+      selAno.addEventListener("change", mudouPeriodo);
+      selMes.addEventListener("change", mudouPeriodo);
+      document.getElementById("agDia").addEventListener("change", desenharAgenda);
+
+      // Pop-up "Incluir compromisso" (sai da seção para o body, como os outros pop-ups)
+      const modal = document.getElementById("agModal");
+      document.body.appendChild(modal);
+      const form = document.getElementById("agForm");
+      const status = document.getElementById("agFormStatus");
+      const campoData = document.getElementById("agData");
+      const campoDataFim = document.getElementById("agDataFim");
+      mascaraDataBrInput(campoData);
+      mascaraDataBrInput(campoDataFim);
+      // Mesmo pop-up serve para incluir (comp = null) e editar (comp = compromisso da lista)
+      let agEditando = null;
+      const tituloModal = document.getElementById("agModalTitulo");
+      const botaoSalvar = document.getElementById("agSalvar");
+      const fechar = () => { modal.classList.remove("is-open"); modal.hidden = true; agEditando = null; };
+      function abrirModalAg(comp) {
+        form.reset();
+        status.textContent = "";
+        agEditando = comp || null;
+        tituloModal.textContent = comp ? "Editar compromisso" : "Incluir compromisso";
+        botaoSalvar.textContent = comp ? "Salvar alterações" : "Salvar";
+        if (comp) {
+          document.getElementById("agTitulo").value = comp.titulo || "";
+          campoData.value = isoParaDataBrLocal(comp.data);
+          campoDataFim.value = isoParaDataBrLocal(fimAg(comp));
+          document.getElementById("agHora").value = comp.hora || "";
+          document.getElementById("agDescricao").value = comp.descricao || "";
         } else {
-          carregarEstoqueMateriais();
+          const dia = diaAgSelecionado() || 1;
+          campoData.value = isoParaDataBrLocal(isoAg(Number(selAno.value), Number(selMes.value), dia));
+          campoDataFim.value = campoData.value;
         }
+        carregarConvidadosAg().then(() => {
+          const selConv = document.getElementById("agConvidar");
+          // Quem já foi convidado mantém a escolha, mesmo fora da lista atual (ex.: outro perfil)
+          if (comp && comp.convidadoUid && !selConv.querySelector('option[value="' + comp.convidadoUid + '"]')) {
+            const opt = document.createElement("option");
+            opt.value = comp.convidadoUid;
+            opt.textContent = comp.convidadoNome || "Convidado";
+            selConv.appendChild(opt);
+          }
+          selConv.value = comp && comp.convidadoUid ? comp.convidadoUid : "";
+        });
+        modal.hidden = false;
+        modal.classList.add("is-open");
+        document.getElementById("agTitulo").focus();
+      }
+      abrirEdicaoAg = abrirModalAg;
+      document.getElementById("agIncluir").addEventListener("click", () => abrirModalAg(null));
+      document.getElementById("agCancelar").addEventListener("click", fechar);
+      modal.addEventListener("click", (e) => { if (e.target === modal) fechar(); });
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const titulo = document.getElementById("agTitulo").value.trim();
+        const data = dataBrParaIsoLocal(campoData.value);
+        const dataFim = dataBrParaIsoLocal(campoDataFim.value);
+        if (!titulo) { status.textContent = "Informe o título."; status.className = "login-note aluno-pedido-status erro"; return; }
+        if (!data || !dataFim) { status.textContent = "Informe as datas De e Até no formato dd/mm/aaaa."; status.className = "login-note aluno-pedido-status erro"; return; }
+        if (dataFim < data) { status.textContent = "A data Até não pode ser antes da data De."; status.className = "login-note aluno-pedido-status erro"; return; }
+        const hora = document.getElementById("agHora").value || "";
+        const descricao = document.getElementById("agDescricao").value.trim();
+        const selConvidar = document.getElementById("agConvidar");
+        const convidado = usuariosAgCache.find((u) => u.uid === selConvidar.value)
+          || (agEditando && agEditando.convidadoUid && agEditando.convidadoUid === selConvidar.value
+            ? { uid: agEditando.convidadoUid, nome: agEditando.convidadoNome }
+            : null);
+        const quem = usuarioAtualCache ? (usuarioAtualCache.nome || usuarioAtualCache.email || "") : "";
+        const botao = document.getElementById("agSalvar");
+        botao.disabled = true;
+        try {
+          const dadosComp = {
+            titulo: titulo,
+            data: data,
+            dataFim: dataFim,
+            hora: hora,
+            descricao: descricao,
+            convidadoUid: convidado ? convidado.uid : "",
+            convidadoNome: convidado ? (convidado.nome || convidado.email || "") : ""
+          };
+          let compromissoId;
+          let novoConvite;
+          if (agEditando) {
+            // Edição: só gera convite de novo se trocou a pessoa convidada
+            await updateDoc(doc(db, "compromissosSecretaria", agEditando.id), Object.assign({}, dadosComp, {
+              editadoPorNome: quem,
+              editadoEmMs: Date.now()
+            }));
+            compromissoId = agEditando.id;
+            novoConvite = !!convidado && convidado.uid !== (agEditando.convidadoUid || "");
+          } else {
+            const ref = await addDoc(collection(db, "compromissosSecretaria"), Object.assign({}, dadosComp, {
+              criadoPorUid: usuarioAtualCache ? usuarioAtualCache.uid : "",
+              criadoPorNome: quem,
+              criadoEm: serverTimestamp(),
+              criadoEmMs: Date.now()
+            }));
+            compromissoId = ref.id;
+            novoConvite = !!convidado;
+          }
+          // Convite: um aviso para o usuário convidado ver ao entrar no sistema
+          if (convidado && novoConvite) {
+            await addDoc(collection(db, "avisosUsuarios"), {
+              uidDestino: convidado.uid,
+              tipo: "convite",
+              titulo: "Convite de compromisso",
+              mensagem: titulo + " — " + isoParaDataBrLocal(data) + (dataFim !== data ? " a " + isoParaDataBrLocal(dataFim) : "") + (hora ? " às " + hora : ""),
+              compromissoId: compromissoId,
+              criadoPorNome: quem,
+              lido: false,
+              criadoEm: serverTimestamp(),
+              criadoEmMs: Date.now()
+            });
+          }
+          fechar();
+          // Mostra o mês do compromisso salvo
+          const [a, m] = data.split("-");
+          selAno.value = String(Number(a)); selMes.value = String(Number(m));
+          await carregarAgendaSec();
+          window.notificar(agEditando ? "Compromisso alterado." : "Compromisso incluído.", "success");
+        } catch (err) {
+          status.textContent = "Não foi possível salvar. " + (err.message || "");
+          status.className = "login-note aluno-pedido-status erro";
+          console.error(err);
+        } finally {
+          botao.disabled = false;
+        }
+      });
+    }
+
+    document.querySelector('[data-abrir="secNivelAgendas"]')?.addEventListener("click", () => carregarAgendaSec());
+
+    // Livro Caixa e Estoque de Materiais são cards do menu principal da Secretaria:
+    // ao abrir, carrega a primeira vez ou atualiza a lista.
+    document.querySelector('[data-abrir="secNivelLivroCaixa"]')?.addEventListener("click", () => {
+      if (!caixaEntradasIniciado) {
+        caixaEntradasIniciado = true;
+        iniciarCaixaEntradas();
+      } else {
+        carregarMovimentacoesCaixa();
+      }
+    });
+    document.querySelector('[data-abrir="secNivelEstoque"]')?.addEventListener("click", () => {
+      if (!estoqueMateriaisIniciado) {
+        estoqueMateriaisIniciado = true;
+        iniciarEstoqueMateriais();
+      } else {
+        carregarEstoqueMateriais();
       }
     });
     // Controle de Revistas abre direto com a grade de pedidos (sem cartão intermediário)
@@ -5215,7 +6617,7 @@
           const btnEditar = document.createElement("button");
           btnEditar.type = "button";
           btnEditar.className = "sec-caixa-editar";
-          btnEditar.textContent = "✎";
+          btnEditar.textContent = "✏️";
           btnEditar.title = "Editar";
           btnEditar.setAttribute("aria-label", "Editar pedido");
           btnEditar.addEventListener("click", () => abrirAdicionarPedidoSec(l.pedido));
@@ -5562,11 +6964,160 @@
     // aberto, para já refletir Salas criadas/renomeadas/reordenadas depois
     // do login (mesmo padrão já usado em "Alunos Matriculados" e
     // "Gerenciar Perfis").
+    // ===== Aniversariantes (quadro no Relatório Dominical) =====
+    // Janela: 6 dias antes e 3 dias depois de hoje (ex.: hoje 18 → de 12 a 21)
+    const ANIV_ANTES = 6;
+    const ANIV_DEPOIS = 3;
+    const ROTULO_PERFIL_ANIV = { professor: "Professor(a)", administrativo: "Secretaria", admin: "Administração", aluno: "Aluno(a)" };
+
+    // Data de aniversário de um ISO (aaaa-mm-dd) no ano informado. 29/02 vira 28/02 em ano não bissexto.
+    function dataAnivNoAno(iso, ano) {
+      const [, m, d] = String(iso).split("-").map(Number);
+      if (m === 2 && d === 29 && !((ano % 4 === 0 && ano % 100 !== 0) || ano % 400 === 0)) return new Date(ano, 1, 28);
+      return new Date(ano, m - 1, d);
+    }
+
+    // Lê alunos matriculados e demais usuários com data de nascimento (usado pelo quadro e pela tela)
+    async function buscarPessoasAniversario() {
+      const [usuariosSnap, matSnap] = await Promise.all([
+        getDocs(collection(db, "usuarios")),
+        getDocs(collection(db, "matriculas"))
+      ]);
+      const usuarios = {};
+      usuariosSnap.forEach((d) => { usuarios[d.id] = d.data(); });
+
+      // Alunos matriculados (matrícula de conta usa o cadastro do usuário) e demais usuários
+      const pessoas = [];
+      const uidsCobertos = new Set();
+      matSnap.forEach((d) => {
+        const m = d.data();
+        if (m.ativo === false) return;
+        const conta = m.tipo === "conta" ? usuarios[m.uid] : null;
+        if (m.tipo === "conta" && m.uid) uidsCobertos.add(m.uid);
+        pessoas.push({
+          nome: m.nome || (conta && conta.nome) || "(sem nome)",
+          nasc: m.tipo === "conta" ? (conta && conta.dataNascimento) : m.dataNascimento,
+          rotulo: "Aluno(a)"
+        });
+      });
+      Object.entries(usuarios).forEach(([uid, u]) => {
+        if (uidsCobertos.has(uid) || u.ativo === false) return;
+        pessoas.push({ nome: u.nome || u.email || "(sem nome)", nasc: u.dataNascimento, rotulo: ROTULO_PERFIL_ANIV[u.perfil] || "Membro" });
+      });
+      return pessoas;
+    }
+
+    // ===== Tela Aniversariantes (Secretaria): filtro de mês e ano, tabela por dia =====
+    let anivPaginaPessoas = null;
+    let anivPaginaLigada = false;
+
+    function desenharTabelaAniversariantes() {
+      const mes = Number(document.getElementById("anivMes").value);
+      const ano = Number(document.getElementById("anivAno").value);
+      const cont = document.getElementById("anivTabela");
+      const grupos = {};
+      anivPaginaPessoas.forEach((p) => {
+        if (!p.nasc) return;
+        const [by, bm, bd] = String(p.nasc).split("-").map(Number);
+        if (bm !== mes) return;
+        (grupos[bd] = grupos[bd] || []).push(Object.assign({ idade: ano - by }, p));
+      });
+      const dias = Object.keys(grupos).map(Number).sort((a, b) => a - b);
+      if (!dias.length) {
+        cont.innerHTML = '<p class="admin-agenda-info">Nenhum aniversariante em ' + MESES_RC_LONGO[mes - 1] + " de " + ano + ".</p>";
+        return;
+      }
+      cont.innerHTML = '<table class="aniv-tab"><thead><tr><th>Dia</th><th>Aniversariantes</th></tr></thead><tbody>' +
+        dias.map((d) =>
+          '<tr><td class="aniv-tab-dia">' + pad2Ag(d) + "</td><td>" +
+          grupos[d].sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR")).map((p) =>
+            '<div class="aniv-tab-pessoa"><span>' + escaparTextoCaixa(p.nome) + "</span><small>" +
+            escaparTextoCaixa(p.rotulo) + (p.idade >= 0 ? " · completa " + p.idade + " anos" : "") + "</small></div>"
+          ).join("") +
+          "</td></tr>"
+        ).join("") +
+        "</tbody></table>";
+    }
+
+    async function carregarAniversariantesPagina() {
+      const selMes = document.getElementById("anivMes");
+      const selAno = document.getElementById("anivAno");
+      const cont = document.getElementById("anivTabela");
+      if (!anivPaginaLigada) {
+        anivPaginaLigada = true;
+        const hoje = new Date();
+        selMes.innerHTML = MESES_RC_LONGO.map((nome, i) => '<option value="' + (i + 1) + '">' + nome + "</option>").join("");
+        selMes.value = String(hoje.getMonth() + 1);
+        // O ano é sempre o atual
+        selAno.innerHTML = '<option value="' + hoje.getFullYear() + '">' + hoje.getFullYear() + "</option>";
+        selAno.value = String(hoje.getFullYear());
+        selAno.disabled = true;
+        selMes.addEventListener("change", () => { if (anivPaginaPessoas) desenharTabelaAniversariantes(); });
+      }
+      cont.textContent = "Carregando...";
+      try {
+        anivPaginaPessoas = await buscarPessoasAniversario();
+        desenharTabelaAniversariantes();
+      } catch (err) {
+        cont.innerHTML = '<p class="admin-agenda-status erro">Não foi possível carregar os aniversariantes.</p>';
+        console.error(err);
+      }
+    }
+    document.querySelector('[data-abrir="secNivelAniversariantes"]')?.addEventListener("click", () => carregarAniversariantesPagina());
+
+    async function carregarAniversariantesAviso() {
+      const lista = document.getElementById("anivLista");
+      const periodo = document.getElementById("anivPeriodo");
+      const hoje = new Date();
+      hoje.setHours(0, 0, 0, 0);
+      const ini = new Date(hoje); ini.setDate(ini.getDate() - ANIV_ANTES);
+      const fim = new Date(hoje); fim.setDate(fim.getDate() + ANIV_DEPOIS);
+      const br = (dt) => pad2Ag(dt.getDate()) + "/" + pad2Ag(dt.getMonth() + 1);
+      periodo.textContent = "De " + br(ini) + " a " + br(fim);
+      lista.textContent = "Carregando...";
+      try {
+        const pessoas = await buscarPessoasAniversario();
+
+        // Cada aniversário conta no ano anterior, atual ou seguinte (para a janela passar do fim do ano)
+        const ano = hoje.getFullYear();
+        const achados = [];
+        pessoas.forEach((p) => {
+          if (!p.nasc) return;
+          for (const a of [ano - 1, ano, ano + 1]) {
+            const dt = dataAnivNoAno(p.nasc, a);
+            if (dt >= ini && dt <= fim) { achados.push(Object.assign({ dt: dt }, p)); break; }
+          }
+        });
+        achados.sort((a, b) => a.dt - b.dt || a.nome.localeCompare(b.nome, "pt-BR"));
+
+        if (!achados.length) {
+          lista.innerHTML = '<p class="admin-agenda-info">Nenhum aniversariante neste período.</p>';
+          return;
+        }
+        lista.innerHTML = achados.map((a) =>
+          '<div class="aniv-item' + (a.dt.getTime() === hoje.getTime() ? " aniv-hoje" : "") + '">' +
+            '<span class="aniv-data">' + br(a.dt) + "</span>" +
+            '<span class="aniv-nome">' + escaparTextoCaixa(a.nome) + "</span>" +
+            '<span class="aniv-rotulo">' + escaparTextoCaixa(a.rotulo) + "</span>" +
+          "</div>"
+        ).join("");
+      } catch (err) {
+        lista.innerHTML = '<p class="admin-agenda-status erro">Não foi possível carregar os aniversariantes.</p>';
+        console.error(err);
+      }
+    }
+
+    const btnAbrirRelatorioCaixa = raiz.querySelector('[data-abrir="secNivelRelatorioCaixa"]');
+    if (btnAbrirRelatorioCaixa) {
+      btnAbrirRelatorioCaixa.addEventListener("click", () => carregarRelatorioCaixa());
+    }
+
     const btnAbrirRelatorioDominical = raiz.querySelector('[data-abrir="secNivelRelatorioDominical"]');
     if (btnAbrirRelatorioDominical) {
       btnAbrirRelatorioDominical.addEventListener("click", () => {
         carregarTurmasRelatorio();
         carregarDatasRelatorioGeral();
+        carregarAniversariantesAviso();
       });
     }
 
@@ -5584,11 +7135,14 @@
     const statusEl = document.getElementById("gerenciarPerfisStatus");
     if (!listaEl) return;
 
-    const ROTULOS_GERENCIAR = { convidado: "Convidado", aluno: "Aluno", professor: "Professor", administrativo: "Administrativo", admin: "Administrador Master" };
+    // Opções de perfil = perfis atuais (sistema + criados em Gerenciar Perfis)
+    let ROTULOS_GERENCIAR = { convidado: "Convidado", aluno: "Aluno", professor: "Professor", administrativo: "Administrativo", admin: "Administrador Master" };
 
     async function carregar() {
       listaEl.innerHTML = "Carregando...";
       try {
+        await carregarPerfisAcesso();
+        ROTULOS_GERENCIAR = rotulosDosPerfis();
         const snap = await getDocs(collection(db, "usuarios"));
         const usuarios = [];
         snap.forEach((d) => usuarios.push(Object.assign({ uid: d.id }, d.data())));
@@ -7396,7 +8950,7 @@
         editar.className = "combo-dep-editar";
         editar.title = "Editar revista";
         editar.setAttribute("aria-label", "Editar " + r.nome);
-        editar.textContent = "✎";
+        editar.textContent = "✏️";
         editar.addEventListener("click", (e) => {
           e.stopPropagation();
           fecharListaRevistas();
@@ -9633,7 +11187,7 @@
         editar.className = "combo-dep-editar";
         editar.title = "Renomear departamento";
         editar.setAttribute("aria-label", `Renomear ${d}`);
-        editar.textContent = "✎";
+        editar.textContent = "✏️";
         editar.addEventListener("click", (e) => {
           e.stopPropagation();
           renomearDepartamento(d);
@@ -9898,26 +11452,36 @@
         const botoes = document.createElement("div");
         botoes.className = "admin-agenda-item-botoes";
 
-        const btnDuplicar = document.createElement("button");
-        btnDuplicar.type = "button";
-        btnDuplicar.textContent = "Copiar";
-        btnDuplicar.addEventListener("click", () => preencherFormulario(ev, false));
+        // Três ícones: copiar, lápis (editar) e X (excluir), no mesmo modelo dos outros botões do sistema
+        const btnCopiar = document.createElement("button");
+        btnCopiar.type = "button";
+        btnCopiar.className = "admin-perfis-item-editar admin-agenda-icone";
+        btnCopiar.title = "Copiar";
+        btnCopiar.setAttribute("aria-label", "Copiar evento");
+        btnCopiar.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>';
+        btnCopiar.addEventListener("click", () => preencherFormulario(ev, false));
 
         const btnEditar = document.createElement("button");
         btnEditar.type = "button";
-        btnEditar.textContent = "Editar";
+        btnEditar.className = "admin-perfis-item-editar";
+        btnEditar.title = "Editar";
+        btnEditar.setAttribute("aria-label", "Editar evento");
+        btnEditar.textContent = "✏️";
         btnEditar.addEventListener("click", () => preencherFormulario(ev, true));
 
         const btnExcluir = document.createElement("button");
         btnExcluir.type = "button";
-        btnExcluir.textContent = "Excluir";
+        btnExcluir.className = "admin-perfis-item-remover";
+        btnExcluir.title = "Excluir";
+        btnExcluir.setAttribute("aria-label", "Excluir evento");
+        btnExcluir.textContent = "×";
         btnExcluir.addEventListener("click", async () => {
           if (!confirm(`Excluir o evento "${ev.titulo}"?`)) return;
           await excluirEvento(ev.id);
           recarregarLista();
         });
 
-        botoes.appendChild(btnDuplicar);
+        botoes.appendChild(btnCopiar);
         botoes.appendChild(btnEditar);
         botoes.appendChild(btnExcluir);
 
@@ -10352,6 +11916,31 @@
       }
     }
 
+    // Data de hoje (AAAA-MM-DD, no horário local)
+    function hojeISOPosts() {
+      const d = new Date();
+      return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+    }
+
+    // Tabela dos posts encerrados (data do evento já passou): só para consulta
+    function renderPostsEncerrados(encerrados) {
+      const area = document.getElementById("postsEncerrados");
+      if (!area) return;
+      if (!encerrados.length) {
+        area.innerHTML = '<p class="admin-agenda-info">Nenhum post encerrado.</p>';
+        return;
+      }
+      const ordenados = encerrados.slice().sort((a, b) => (b.dataEvento || "").localeCompare(a.dataEvento || ""));
+      area.innerHTML = '<table class="aniv-tab"><thead><tr><th>Data do evento</th><th>Tag</th><th>Título</th></tr></thead><tbody>' +
+        ordenados.map((p) =>
+          "<tr><td>" + isoParaDataBrLocal(p.dataEvento) + "</td><td>" + escaparTextoPosts(p.tag || "Post") + "</td><td>" + escaparTextoPosts(p.title || "Sem título") + "</td></tr>"
+        ).join("") +
+        "</tbody></table>";
+    }
+    function escaparTextoPosts(t) {
+      return String(t == null ? "" : t).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+    }
+
     // Carregar posts do Firestore
     async function carregarPostsSite() {
       listaPostsSite.innerHTML = "Carregando...";
@@ -10371,8 +11960,14 @@
         }
 
         btnImportarNoticias.hidden = true;
+        // Post com data do evento já passada sai da lista e da home, e vai para a tabela "encerrados"
+        const hoje = hojeISOPosts();
+        const vencido = (p) => !!p.dataEvento && p.dataEvento < hoje;
+        const ativos = posts.filter((p) => !vencido(p));
+        const encerrados = posts.filter(vencido);
         listaPostsSite.innerHTML = "";
-        posts.forEach((post) => {
+        if (!ativos.length) listaPostsSite.innerHTML = '<p class="admin-agenda-info">Nenhum post ativo no momento.</p>';
+        ativos.forEach((post) => {
           const item = document.createElement("div");
           item.className = "admin-noticia-item";
           item.innerHTML = `
@@ -10380,12 +11975,13 @@
             <div class="admin-noticia-body">
               <span class="admin-noticia-tag">${post.tag || 'Post'}</span>
               <h4>${post.title || 'Sem título'}</h4>
+              ${post.dataEvento ? `<p><strong>Data do evento:</strong> ${isoParaDataBrLocal(post.dataEvento)}${post.horario ? ' às ' + post.horario : ''}</p>` : ''}
               <p>${post.desc || 'Sem descrição'}</p>
               ${post.link ? `<p><strong>Link:</strong> <a href="${post.link}" target="_blank">Ver</a></p>` : ''}
             </div>
             <div class="admin-noticia-actions">
-              <button class="admin-noticia-edit" data-id="${post.id}">Editar</button>
-              <button class="admin-noticia-delete" data-id="${post.id}">Deletar</button>
+              <button class="sec-caixa-editar admin-noticia-edit" data-id="${post.id}" title="Editar" aria-label="Editar post">✏️</button>
+              <button class="admin-perfis-item-remover admin-noticia-delete" data-id="${post.id}" title="Excluir" aria-label="Excluir post">×</button>
             </div>
           `;
           listaPostsSite.appendChild(item);
@@ -10399,24 +11995,261 @@
           btn.addEventListener("click", () => deletarPost(btn.dataset.id));
         });
 
-        // Atualizar carousel
-        atualizarCarousel(posts);
+        // Carrosel da home e tabela de encerrados
+        atualizarCarousel(ativos);
+        renderPostsEncerrados(encerrados);
       } catch (err) {
         console.error("Erro ao carregar posts:", err);
         listaPostsSite.innerHTML = '<p style="color: red;">Erro ao carregar posts.</p>';
       }
     }
 
+    // ID do post: texto discreto no canto superior direito, só quando está editando
+    function mostrarIdPost(id) {
+      const el = document.getElementById("postIdTexto");
+      el.textContent = id ? "ID: " + id : "";
+      el.hidden = !id;
+    }
+
+    // ===== Categorias do post: lista própria (cada uma com ✎ editar e × excluir), salva no banco =====
+    const CATEGORIAS_PADRAO = ["Evento", "Culto", "Festividade", "Palestra"];
+    let categoriasPosts = CATEGORIAS_PADRAO.slice();
+    const postTagAtual = document.getElementById("postTagAtual");
+    const postTagLista = document.getElementById("postTagLista");
+    const refCategorias = doc(db, "configPosts", "categorias");
+
+    async function salvarCategorias() {
+      try {
+        await setDoc(refCategorias, { lista: categoriasPosts });
+      } catch (err) {
+        console.error("Categorias:", err);
+        alert("Não foi possível salvar as categorias. " + (err.message || ""));
+      }
+    }
+
+    // Mostra a categoria escolhida no botão (sem apagar a lista)
+    function definirTag(valor) {
+      postTag.value = valor || "";
+      postTagAtual.textContent = valor || "Escolha...";
+    }
+
+    // Post antigo com categoria fora da lista: mostra mesmo assim, sem salvar na lista
+    function garantirOpcaoTag(nome) {
+      const valor = (nome || "").trim();
+      if (valor && !categoriasPosts.includes(valor)) categoriasPosts.push(valor);
+    }
+
+    function renderCategorias() {
+      postTagLista.innerHTML = "";
+      categoriasPosts.forEach((cat) => {
+        const linha = document.createElement("div");
+        linha.className = "cat-combo-item";
+        const nome = document.createElement("button");
+        nome.type = "button";
+        nome.className = "cat-combo-nome";
+        nome.textContent = cat;
+        nome.addEventListener("click", () => {
+          definirTag(cat);
+          fecharListaTag();
+        });
+        const editar = document.createElement("button");
+        editar.type = "button";
+        editar.className = "cat-combo-acao sec-caixa-editar";
+        editar.title = "Editar categoria";
+        editar.setAttribute("aria-label", "Editar categoria " + cat);
+        editar.textContent = "✏️";
+        editar.addEventListener("click", async () => {
+          const novo = (prompt("Novo nome da categoria:", cat) || "").trim();
+          if (!novo || novo === cat) return;
+          if (categoriasPosts.includes(novo)) { alert("Já existe uma categoria com este nome."); return; }
+          categoriasPosts = categoriasPosts.map((c) => (c === cat ? novo : c));
+          if (postTag.value === cat) definirTag(novo);
+          await salvarCategorias();
+          renderCategorias();
+        });
+        const excluir = document.createElement("button");
+        excluir.type = "button";
+        excluir.className = "cat-combo-acao admin-perfis-item-remover";
+        excluir.title = "Excluir categoria";
+        excluir.setAttribute("aria-label", "Excluir categoria " + cat);
+        excluir.textContent = "×";
+        excluir.addEventListener("click", async () => {
+          if (!confirm("Excluir a categoria \"" + cat + "\"? Os posts que já usam esta categoria continuam com ela.")) return;
+          categoriasPosts = categoriasPosts.filter((c) => c !== cat);
+          if (postTag.value === cat) definirTag("");
+          await salvarCategorias();
+          renderCategorias();
+        });
+        linha.append(nome, editar, excluir);
+        postTagLista.appendChild(linha);
+      });
+      const nova = document.createElement("button");
+      nova.type = "button";
+      nova.className = "cat-combo-nova";
+      nova.textContent = "+ Adicionar categoria";
+      nova.addEventListener("click", async () => {
+        const nome = (prompt("Nome da nova categoria:") || "").trim();
+        if (!nome) return;
+        if (categoriasPosts.includes(nome)) { alert("Já existe uma categoria com este nome."); return; }
+        categoriasPosts.push(nome);
+        await salvarCategorias();
+        renderCategorias();
+        definirTag(nome);
+        fecharListaTag();
+      });
+      postTagLista.appendChild(nova);
+    }
+
+    function fecharListaTag() {
+      postTagLista.hidden = true;
+      postTagAtual.setAttribute("aria-expanded", "false");
+    }
+    postTagAtual.addEventListener("click", () => {
+      postTagLista.hidden = !postTagLista.hidden;
+      postTagAtual.setAttribute("aria-expanded", String(!postTagLista.hidden));
+    });
+    document.addEventListener("click", (e) => {
+      if (!e.target.closest(".cat-combo-campo")) fecharListaTag();
+    });
+
+    // Carrega a lista salva (ou usa a padrão na primeira vez)
+    (async () => {
+      try {
+        const snap = await getDoc(refCategorias);
+        if (snap.exists() && Array.isArray(snap.data().lista)) categoriasPosts = snap.data().lista;
+      } catch (err) {
+        console.error("Categorias:", err);
+      }
+      renderCategorias();
+    })();
+
+    // ===== Departamentos do post: originais fixos + os que a Secretaria adicionar (editar/excluir) =====
+    const DEPARTAMENTOS_ORIGINAIS = ["Infantil", "Adolescentes", "Jovens", "Irmãs", "Varões", "Missões", "EBD"];
+    let departamentosExtras = [];
+    const depAtual = document.getElementById("postDepAtual");
+    const depLista = document.getElementById("postDepLista");
+    const depHidden = document.getElementById("postDepartamento");
+    const refDepartamentos = doc(db, "configPosts", "departamentos");
+
+    async function salvarDepartamentos() {
+      try {
+        await setDoc(refDepartamentos, { lista: departamentosExtras });
+      } catch (err) {
+        console.error("Departamentos:", err);
+        alert("Não foi possível salvar os departamentos. " + (err.message || ""));
+      }
+    }
+    function definirDep(valor) {
+      depHidden.value = valor || "Todos";
+      depAtual.textContent = depHidden.value;
+    }
+    function fecharListaDep() {
+      depLista.hidden = true;
+      depAtual.setAttribute("aria-expanded", "false");
+    }
+    function todosOsDepartamentos() {
+      return DEPARTAMENTOS_ORIGINAIS.concat(departamentosExtras);
+    }
+
+    function renderDepartamentos() {
+      depLista.innerHTML = "";
+      const linha = (nome, editavel) => {
+        const item = document.createElement("div");
+        item.className = "cat-combo-item";
+        const botaoNome = document.createElement("button");
+        botaoNome.type = "button";
+        botaoNome.className = "cat-combo-nome";
+        botaoNome.textContent = nome;
+        botaoNome.addEventListener("click", () => { definirDep(nome); fecharListaDep(); });
+        item.appendChild(botaoNome);
+        if (editavel) {
+          const editar = document.createElement("button");
+          editar.type = "button";
+          editar.className = "cat-combo-acao sec-caixa-editar";
+          editar.title = "Editar departamento";
+          editar.setAttribute("aria-label", "Editar departamento " + nome);
+          editar.textContent = "✏️";
+          editar.addEventListener("click", async () => {
+            const novo = (prompt("Novo nome do departamento:", nome) || "").trim();
+            if (!novo || novo === nome) return;
+            if (todosOsDepartamentos().includes(novo)) { alert("Já existe um departamento com este nome."); return; }
+            departamentosExtras = departamentosExtras.map((d) => (d === nome ? novo : d));
+            if (depHidden.value === nome) definirDep(novo);
+            await salvarDepartamentos();
+            renderDepartamentos();
+          });
+          const excluir = document.createElement("button");
+          excluir.type = "button";
+          excluir.className = "cat-combo-acao admin-perfis-item-remover";
+          excluir.title = "Excluir departamento";
+          excluir.setAttribute("aria-label", "Excluir departamento " + nome);
+          excluir.textContent = "×";
+          excluir.addEventListener("click", async () => {
+            if (!confirm("Excluir o departamento \"" + nome + "\"? Os posts que já usam este departamento continuam com ele.")) return;
+            departamentosExtras = departamentosExtras.filter((d) => d !== nome);
+            if (depHidden.value === nome) definirDep("Todos");
+            await salvarDepartamentos();
+            renderDepartamentos();
+          });
+          item.append(editar, excluir);
+        }
+        depLista.appendChild(item);
+      };
+      linha("Todos", false);
+      DEPARTAMENTOS_ORIGINAIS.forEach((nome) => linha(nome, false));
+      departamentosExtras.forEach((nome) => linha(nome, true));
+      const nova = document.createElement("button");
+      nova.type = "button";
+      nova.className = "cat-combo-nova";
+      nova.textContent = "+ Adicionar departamento";
+      nova.addEventListener("click", async () => {
+        const nome = (prompt("Nome do novo departamento:") || "").trim();
+        if (!nome) return;
+        if (todosOsDepartamentos().includes(nome)) { alert("Já existe um departamento com este nome."); return; }
+        departamentosExtras.push(nome);
+        await salvarDepartamentos();
+        renderDepartamentos();
+        definirDep(nome);
+        fecharListaDep();
+      });
+      depLista.appendChild(nova);
+    }
+
+    depAtual.addEventListener("click", () => {
+      depLista.hidden = !depLista.hidden;
+      depAtual.setAttribute("aria-expanded", String(!depLista.hidden));
+    });
+    document.addEventListener("click", (e) => {
+      if (!e.target.closest("#postDepAtual, #postDepLista")) fecharListaDep();
+    });
+
+    // Carrega os departamentos adicionados (os originais já estão no código)
+    (async () => {
+      try {
+        const snap = await getDoc(refDepartamentos);
+        if (snap.exists() && Array.isArray(snap.data().lista)) departamentosExtras = snap.data().lista;
+      } catch (err) {
+        console.error("Departamentos:", err);
+      }
+      renderDepartamentos();
+    })();
+
     function editarPost(post) {
       postEmEdicao = post;
       postId.value = post.id;
-      postTag.value = post.tag || "";
+      garantirOpcaoTag(post.tag);
+      renderCategorias();
+      definirTag(post.tag || "");
+      definirDep(post.departamento || "Todos");
       postTitle.value = post.title || "";
       postImage.value = post.image || "";
+      mostrarPreviewPost(post.image);
       postDesc.value = post.desc || "";
       postLink.value = post.link || "";
+      document.getElementById("postData").value = post.dataEvento ? isoParaDataBrLocal(post.dataEvento) : "";
+      document.getElementById("postHora").value = post.horario || "";
       btnCancelarPostEdicao.hidden = false;
-      postId.parentElement.style.display = "block";
+      mostrarIdPost(post.id);
       formPostSite.querySelector("button[type='submit']").textContent = "Atualizar Post";
       window.scrollTo(0, formPostSite.offsetTop - 100);
     }
@@ -10424,13 +12257,18 @@
     function cancelarEdicao() {
       postEmEdicao = null;
       postId.value = "";
-      postTag.value = "";
+      definirTag("");
+      definirDep("Todos");
       postTitle.value = "";
       postImage.value = "";
+      campoImagemArq.value = "";
+      mostrarPreviewPost("");
       postDesc.value = "";
       postLink.value = "";
+      document.getElementById("postData").value = "";
+      document.getElementById("postHora").value = "";
       btnCancelarPostEdicao.hidden = true;
-      postId.parentElement.style.display = "none";
+      mostrarIdPost("");
       formPostSite.querySelector("button[type='submit']").textContent = "Adicionar Post";
     }
 
@@ -10448,12 +12286,33 @@
     // Formulário de adicionar/atualizar post
     formPostSite.addEventListener("submit", async (e) => {
       e.preventDefault();
+      if (!postImage.value) {
+        alert("Escolha a imagem do post.");
+        return;
+      }
+      if (!postTag.value) {
+        alert("Escolha a categoria do post.");
+        return;
+      }
+      const campoDataEvento = document.getElementById("postData");
+      const dataEvento = campoDataEvento.value ? dataBrParaIsoLocal(campoDataEvento.value) : "";
+      if (campoDataEvento.value && !dataEvento) {
+        alert("Informe a data do evento no formato dd/mm/aaaa.");
+        return;
+      }
+      if (campoHora.value && !/^([01]\d|2[0-3]):[0-5]\d$/.test(campoHora.value)) {
+        alert("Informe o horário no formato hh:mm.");
+        return;
+      }
       const dados = {
         tag: postTag.value,
+        departamento: document.getElementById("postDepartamento").value,
         title: postTitle.value,
         image: postImage.value,
         desc: postDesc.value,
         link: postLink.value,
+        dataEvento: dataEvento,
+        horario: campoHora.value,
       };
 
       try {
@@ -10469,6 +12328,8 @@
           alert("Post adicionado com sucesso!");
         }
         formPostSite.reset();
+        definirTag("");
+        definirDep("Todos");
         carregarPostsSite();
       } catch (err) {
         console.error("Erro ao salvar post:", err);
@@ -10476,6 +12337,132 @@
       }
     });
 
+    mascaraDataBrInput(document.getElementById("postData"));
+    // Horário no formato hh:mm (digita só números; a barra entra sozinha)
+    const campoHora = document.getElementById("postHora");
+    campoHora.addEventListener("input", () => {
+      const d = campoHora.value.replace(/\D/g, "").slice(0, 4);
+      campoHora.value = d.length > 2 ? d.slice(0, 2) + ":" + d.slice(2) : d;
+    });
+
+    // Imagem do post: o arquivo é reduzido (1000px) e guardado no próprio post, sem precisar de link
+    const campoImagemArq = document.getElementById("postImageFile");
+    const previewImg = document.getElementById("postImagePreview");
+    const vazioImagemEl = document.getElementById("postImagemVazio");
+    const trocarImagemEl = document.getElementById("postImagemTrocar");
+    function mostrarPreviewPost(src) {
+      const mostrar = !!src && /^(data:|https?:)/.test(src);
+      previewImg.src = mostrar ? src : "";
+      previewImg.hidden = !mostrar;
+      vazioImagemEl.hidden = mostrar;
+      trocarImagemEl.hidden = !mostrar;
+      document.getElementById("postImagemRemover").hidden = !mostrar;
+    }
+    // Subir imagem por link: o endereço precisa ser da própria foto (não da página do post)
+    function imagemComoDataUrl(img) {
+      const escala = Math.min(1, 1000 / img.naturalWidth);
+      const c = document.createElement("canvas");
+      c.width = Math.round(img.naturalWidth * escala);
+      c.height = Math.round(img.naturalHeight * escala);
+      c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+      return c.toDataURL("image/webp", 0.85); // dá erro se o site de origem bloquear a imagem
+    }
+    // Pop-up "Subir imagem por link": Gravar carrega a foto e mostra a miniatura no quadro
+    const modalLink = document.getElementById("postLinkModal");
+    const campoLink = document.getElementById("postLinkCampo");
+    const msgLink = document.getElementById("postLinkMensagem");
+    document.body.appendChild(modalLink);
+    const fecharLink = () => { modalLink.classList.remove("is-open"); modalLink.hidden = true; };
+    const erroLink = (texto) => { msgLink.textContent = texto; msgLink.className = "login-note aluno-pedido-status erro"; };
+    document.getElementById("postImagemLinkAbrir").addEventListener("click", () => {
+      campoLink.value = "";
+      msgLink.textContent = "";
+      modalLink.hidden = false;
+      modalLink.classList.add("is-open");
+      campoLink.focus();
+    });
+    document.getElementById("postLinkCancelar").addEventListener("click", fecharLink);
+    modalLink.addEventListener("click", (e) => { if (e.target === modalLink) fecharLink(); });
+    document.getElementById("postLinkGravar").addEventListener("click", () => {
+      const url = campoLink.value.trim();
+      if (!url) { erroLink("Cole o endereço da imagem."); return; }
+      if (!/^https?:\/\//i.test(url)) { erroLink("Cole o endereço completo, começando com https://"); return; }
+      if (!/\.(jpe?g|png|webp|gif)(\?|#|$)/i.test(url)) {
+        erroLink("Este link parece ser da página do post, e não da foto. Copie o endereço direto da imagem ou baixe a foto e use Subir imagem.");
+        return;
+      }
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.onload = () => {
+        try {
+          const dataUrl = imagemComoDataUrl(img);
+          if (dataUrl.length > 900000) {
+            erroLink("Esta imagem ficou grande demais mesmo reduzida. Use uma imagem menor.");
+            return;
+          }
+          postImage.value = dataUrl;
+          mostrarPreviewPost(dataUrl);
+          fecharLink();
+        } catch (err) {
+          erroLink("O site da imagem não permite importar por link. Baixe a foto no seu computador e use Subir imagem.");
+        }
+      };
+      img.onerror = () => erroLink("Não consegui abrir a imagem por este link. Confira o endereço ou baixe a foto e use Subir imagem.");
+      img.src = url;
+    });
+    // Trocar: abre a escolha de arquivo (o quadro já tem uma imagem)
+    document.getElementById("postImagemTrocar").addEventListener("click", () => campoImagemArq.click());
+
+    // Bolinha com × no canto: remove a imagem e volta o quadro ao estado vazio
+    document.getElementById("postImagemRemover").addEventListener("click", () => {
+      postImage.value = "";
+      campoImagemArq.value = "";
+      mostrarPreviewPost("");
+    });
+    // Clique na miniatura: visualização ampliada (fecha com um clique)
+    const zoomImagem = document.createElement("div");
+    zoomImagem.className = "imagem-zoom";
+    zoomImagem.hidden = true;
+    zoomImagem.innerHTML = '<img alt="Imagem do post ampliada">';
+    document.body.appendChild(zoomImagem);
+    previewImg.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      zoomImagem.querySelector("img").src = previewImg.src;
+      zoomImagem.hidden = false;
+    });
+    zoomImagem.addEventListener("click", () => { zoomImagem.hidden = true; });
+    campoImagemArq.addEventListener("change", () => {
+      const arq = campoImagemArq.files && campoImagemArq.files[0];
+      if (!arq) return;
+      if (!arq.type.startsWith("image/")) {
+        alert("Escolha um arquivo de imagem.");
+        campoImagemArq.value = "";
+        return;
+      }
+      const leitor = new FileReader();
+      leitor.onload = () => {
+        const img = new Image();
+        img.onload = () => {
+          const escala = Math.min(1, 1000 / img.width);
+          const c = document.createElement("canvas");
+          c.width = Math.round(img.width * escala);
+          c.height = Math.round(img.height * escala);
+          c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+          const dataUrl = c.toDataURL("image/webp", 0.85);
+          if (dataUrl.length > 900000) {
+            alert("Esta imagem ficou grande demais mesmo reduzida. Escolha uma imagem menor.");
+            campoImagemArq.value = "";
+            return;
+          }
+          postImage.value = dataUrl;
+          mostrarPreviewPost(dataUrl);
+        };
+        img.onerror = () => alert("Não foi possível abrir esta imagem.");
+        img.src = leitor.result;
+      };
+      leitor.readAsDataURL(arq);
+    });
     btnCancelarPostEdicao.addEventListener("click", cancelarEdicao);
     btnImportarNoticias.addEventListener("click", importarNoticiasIniciais);
 
@@ -10502,6 +12489,35 @@
 
     // Carregar na primeira vez
     carregarPostsSite();
+  })();
+
+  // Home: carrega os posts do banco e mostra no carrosel só os que ainda não venceram.
+  // Post com data do evento já passada sai da home (continua guardado na Secretaria).
+  // Se a leitura falhar, o carrosel continua com os posts fixos da página.
+  (async () => {
+    try {
+      const hoje = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+      const snap = await getDocs(collection(db, "noticias"));
+      const todos = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+      const visiveis = todos
+        .filter((p) => !p.dataEvento || p.dataEvento >= hoje)
+        .sort((a, b) => (b.criadoEm?.toMillis?.() || 0) - (a.criadoEm?.toMillis?.() || 0));
+      const dadosHome = visiveis.map((p) => ({
+        id: p.id,
+        tag: p.tag || "Post",
+        title: p.title || "",
+        desc: p.desc || "",
+        link: p.link || "",
+        image: p.image || ""
+      }));
+      const dataScript = document.getElementById("noticias-data");
+      if (dataScript) {
+        dataScript.textContent = JSON.stringify(dadosHome);
+        if (window.__recarregarCarousel) window.__recarregarCarousel();
+      }
+    } catch (err) {
+      console.error("Posts da home:", err);
+    }
   })();
 
 </script>

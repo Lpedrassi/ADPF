@@ -53,6 +53,29 @@
   });
 })();
 
+// Faixa laranja: corre até o menu superior clicado (Site, Administração, Portal EBD) e fica embaixo dele
+(() => {
+  const menu = document.getElementById("navLinks");
+  if (!menu) return;
+  const faixa = document.createElement("div");
+  faixa.className = "nav-indicador";
+  faixa.setAttribute("aria-hidden", "true");
+  menu.appendChild(faixa);
+
+  const irPara = (botao) => {
+    if (botao.offsetParent === null) return;
+    const base = menu.getBoundingClientRect();
+    const alvo = botao.getBoundingClientRect();
+    faixa.style.left = `${alvo.left - base.left}px`;
+    faixa.style.width = `${alvo.width}px`;
+    faixa.style.opacity = "1";
+  };
+
+  menu.querySelectorAll(".nav-admin-toggle").forEach((botao) => {
+    botao.addEventListener("click", () => irPara(botao));
+  });
+})();
+
 (() => {
   const botao = document.getElementById("navMenuToggle");
   const menu = document.getElementById("navLinks");

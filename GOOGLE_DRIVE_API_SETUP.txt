@@ -1,0 +1,84 @@
+=====================================================
+SETUP: GOOGLE DRIVE API + CLOUD FUNCTION PARA UPLOAD
+=====================================================
+
+PASSO 1: ATIVAR GOOGLE DRIVE API NO FIREBASE
+=====================================================
+
+1. Acesse: https://console.firebase.google.com
+2. Selecione seu projeto "ADPF"
+3. Vá para: Extensões (lado esquerdo) > Gerenciar Extensões
+4. Procure por "Google Drive"
+5. Instale a extensão "Trigger Cloud Function on Firestore"
+   (ou configure manualmente via Google Cloud Console)
+
+ALTERNATIVA (Configuração Manual):
+1. Acesse: https://console.cloud.google.com
+2. Selecione seu projeto (mesmo do Firebase)
+3. Vá para: APIs e Serviços > Biblioteca
+4. Procure por "Google Drive API"
+5. Clique em "Ativar"
+
+PASSO 2: CRIAR CONTA DE SERVIÇO
+=====================================
+
+1. No Google Cloud Console:
+   - Vá para: APIs e Serviços > Credenciais
+   - Clique em "Criar Credenciais" > "Conta de Serviço"
+   - Preencha:
+     * Nome: "adpf-drive-uploader"
+     * ID: será gerado automaticamente
+   - Clique em "Continuar"
+   - Clique em "Concluir"
+
+2. Clique na conta criada
+3. Vá para a aba "Chaves"
+4. Clique em "Adicionar Chave" > "Nova Chave" > "JSON"
+5. Salve o arquivo JSON (chave privada)
+   - Guarde com segurança!
+   - Será usado na Cloud Function
+
+PASSO 3: COMPARTILHAR PASTA NO GOOGLE DRIVE COM A CONTA DE SERVIÇO
+=====================================================================
+
+1. No seu Google Drive pessoal:
+   - Crie/abra a pasta "ADB Floripa - Revistas EBD"
+
+2. Clique em "Compartilhar"
+3. Copie o email da conta de serviço (encontra no JSON baixado, campo "client_email")
+   - Exemplo: adpf-drive-uploader@your-project.iam.gserviceaccount.com
+
+4. Cole o email e compartilhe com permissão de "Editor"
+
+PASSO 4: ADICIONAR CHAVE AO FIREBASE
+====================================
+
+1. No Firebase Console:
+   - Vá para: Extensões > Configurações
+   - Ou Settings > Service Accounts
+
+2. Guarde o ID do Projeto (você precisará)
+
+3. Copie o JSON da chave privada para usar na Cloud Function
+
+PASSO 5: FAZER DEPLOY DA CLOUD FUNCTION
+========================================
+
+A Cloud Function está no arquivo: "firebase-functions-upload.js"
+
+Deploy via Firebase CLI:
+```
+firebase deploy --only functions:uploadRevistaToGoogleDrive
+```
+
+Ou copie o código para seu projeto Firebase.
+
+=====================================================
+
+VERIFICAÇÃO:
+- Google Drive API ativada? ✓
+- Conta de Serviço criada? ✓
+- Pasta compartilhada com a conta? ✓
+- Cloud Function deployed? ✓
+
+Se tudo estiver certo, o upload funcionará!

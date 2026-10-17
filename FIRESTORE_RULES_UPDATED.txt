@@ -1,0 +1,157 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAdmin() {
+      return request.auth != null &&
+        get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.perfil == "admin";
+    }
+
+    function isAdministrativo() {
+      return request.auth != null &&
+        get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.perfil == "administrativo";
+    }
+
+    function podeEscalarNaSala(salaId) {
+      let sala = get(/databases/$(database)/documents/salas/$(salaId)).data;
+      return sala.professorUid == request.auth.uid ||
+        (sala.professoresUids is list && sala.professoresUids.hasAny([request.auth.uid]));
+    }
+
+    // Usuários
+    match /usuarios/{userId} {
+      allow get: if request.auth != null && (request.auth.uid == userId || isAdmin());
+      allow list: if request.auth != null && (
+        isAdmin() ||
+        get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.perfil == "professor" ||
+        get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.perfil == "administrativo"
+      );
+      allow create: if request.auth != null && request.auth.uid == userId;
+      allow update: if request.auth != null
+                    && (
+                      (request.auth.uid == userId && request.resource.data.perfil == resource.data.perfil)
+                      || isAdmin()
+                    );
+    }
+
+    match /agenda/{eventoId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    match /agenda_meta/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    match /salas/{salaId} {
+      allow read: if request.auth != null;
+      allow write: if isAdmin();
+    }
+    match /relatoriosAula/{relatorioId} {
+      allow read: if request.auth != null;
+      allow create, update: if request.auth != null && (
+        isAdmin() ||
+        get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.perfil == "administrativo" ||
+        podeEscalarNaSala(request.resource.data.salaId)
+      );
+    }
+    match /matriculas/{matriculaId} {
+      allow read: if request.auth != null;
+      allow create, update: if request.auth != null && (
+        isAdmin() ||
+        get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.perfil == "administrativo" ||
+        podeEscalarNaSala(request.resource.data.salaId)
+      );
+    }
+    match /licoes/{licaoId} {
+      allow read: if request.auth != null;
+      allow write: if isAdmin();
+    }
+    match /arquivosSala/{arquivoId} {
+      allow read: if request.auth != null;
+      allow create, update: if request.auth != null && (
+        isAdmin() ||
+        get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.perfil == "administrativo" ||
+        podeEscalarNaSala(request.resource.data.salaId)
+      );
+    }
+    match /escalaEbd/{escalaId} {
+      allow read: if request.auth != null;
+      allow write: if isAdmin();
+    }
+    match /caixaMovimentacoes/{movimentacaoId} {
+      allow read, write: if request.auth != null && (isAdmin() || isAdministrativo());
+    }
+    // Agendas da Secretaria (compromissos): só admin e administrativo
+    match /compromissosSecretaria/{compromissoId} {
+      allow read, write: if request.auth != null && (isAdmin() || isAdministrativo());
+    }
+    // Avisos para usuários (convites de compromisso): admin e administrativo criam;
+    // o destinatário lê o próprio aviso e só pode marcá-lo como lido
+    match /avisosUsuarios/{avisoId} {
+      allow read: if request.auth != null && resource.data.uidDestino == request.auth.uid;
+      allow create: if request.auth != null && (isAdmin() || isAdministrativo());
+      allow update: if request.auth != null && resource.data.uidDestino == request.auth.uid
+                    && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['lido']);
+      allow delete: if request.auth != null && (isAdmin() || isAdministrativo());
+    }
+    // Perfis de acesso (Gerenciar Perfis): todos os logados leem (para montar o menu);
+    // só o Administrador Master cria, edita e exclui
+    match /perfisAcesso/{perfilId} {
+      allow read: if request.auth != null;
+      allow write: if isAdmin();
+    }
+    // Categorias dos posts do carrosel (Secretaria/Administração editam)
+    match /configPosts/{docId} {
+      allow read: if request.auth != null && (isAdmin() || isAdministrativo());
+      allow write: if request.auth != null && (isAdmin() || isAdministrativo());
+    }
+    match /materiaisEstoque/{materialId} {
+      allow read, write: if request.auth != null && (isAdmin() || isAdministrativo());
+    }
+    match /materiaisMovimentacoes/{movimentacaoId} {
+      allow read, write: if request.auth != null && (isAdmin() || isAdministrativo());
+    }
+    // Pedidos de revista: o aluno cria só o próprio pedido e lê o próprio;
+    // a Secretaria lê todos e corrige (pagamento, status)
+    match /pedidosRevistas/{pedidoId} {
+      allow create: if request.auth != null && (
+        request.resource.data.uid == request.auth.uid ||
+        isAdmin() || isAdministrativo()
+      );
+      allow read: if request.auth != null && (
+        (resource != null && resource.data.uid == request.auth.uid) ||
+        isAdmin() || isAdministrativo()
+      );
+      allow update, delete: if request.auth != null && (isAdmin() || isAdministrativo());
+    }
+    // Valores das revistas (Secretaria cadastra; alunos leem para ver o total do pedido)
+    match /configRevistas/{docId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && (isAdmin() || isAdministrativo());
+    }
+
+    // ===== NOVO: Turmas EBD (Escalas de Professores) =====
+    match /turmas/{turmaId} {
+      allow read: if true; // Public read for viewing EBD classes
+      allow write: if isAdmin();
+
+      // 13 lições por turma
+      match /licoes/{licaoId} {
+        allow read: if true;
+        allow write: if isAdmin();
+      }
+
+      // 12 escalas mensais por turma
+      match /escalas/{escalaId} {
+        allow read: if true;
+        allow write: if isAdmin();
+      }
+    }
+
+    // ===== Posts/Notícias do Carousel =====
+    match /noticias/{noticiaId} {
+      allow read: if true; // Public read for carousel posts
+      allow create, update, delete: if isAdmin();
+    }
+  }
+}

@@ -1,0 +1,117 @@
+===============================================
+GUIA: ADICIONAR REVISTAS E TÍTULOS DE LIÇÕES
+===============================================
+
+PASSO 1: FAZER UPLOAD DAS REVISTAS PARA GOOGLE DRIVE
+=====================================================
+
+1. Abra Google Drive (https://drive.google.com)
+2. Crie uma pasta: "ADB Floripa - Revistas EBD"
+3. Dentro dela, crie 5 subpastas:
+   - Cordeirinhos de Cristo (Jardim)
+   - Estrela da Manhã (Juniores)
+   - Adolescentes (Juvenis)
+   - Renascer em Cristo (Jovens)
+   - Colunas da Verdade + Sacerdotes de Cristo (Adultos)
+
+4. Em cada pasta, faça upload dos PDFs:
+
+   📂 Cordeirinhos de Cristo
+   ├── ALUNO - Revista Jardim 4º trimestre 2026.pdf
+   └── PROFESSOR - Revista Jardim 4º trimestre 2026.pdf
+
+   📂 Estrela da Manhã
+   ├── ALUNO - Revista Juniores 4º trimestre 2026.pdf
+   └── PROFESSOR - Revista Juniores 4º trimestre 2026.pdf
+
+   📂 Adolescentes
+   ├── ALUNO - Revista Juvenis 4º trimestre 2026.pdf
+   └── PROFESSOR - Revista Juvenis 4º trimestre 2026.pdf
+
+   📂 Renascer em Cristo
+   ├── ALUNO - Revista Jovens 4º trimestre 2026.pdf
+   └── PROFESSOR - Revista Jovens 4º trimestre 2026.pdf
+
+   📂 Colunas da Verdade / Sacerdotes de Cristo
+   ├── ALUNO - Revista Adultos 4º trimestre 2026.pdf
+   ├── PROFESSOR - Revista Adultos 4º trimestre 2026.pdf
+   └── APOIO - Revista Adultos 4º trimestre 2026.pdf
+
+
+PASSO 2: COPIAR LINKS DOS ARQUIVOS
+===================================
+
+Para cada PDF:
+1. Clique com botão direito no arquivo
+2. Selecione "Compartilhar"
+3. Copie o link (deve estar compartilhado)
+4. O link terá formato: https://drive.google.com/file/d/[ID]/view
+
+
+PASSO 3: ACESSAR O PAINEL ADMIN DO SITE
+========================================
+
+1. Abra: http://localhost:8000
+2. Clique em "ADMINISTRAÇÃO" > "Posts do Site"
+3. No fim da página, vá em "Gerenciar Lições"
+4. Selecione a Sala em "SALA"
+5. Selecione o Ano (2026) e Trimestre (4)
+6. Preencha os 13 títulos das lições
+7. Salve as lições (botão "Salvar Lições")
+8. Cole o link da Revista do Aluno em "Revista em PDF (Aluno)"
+9. Cole o link da Revista do Professor em "Revista do Professor"
+
+
+PASSO 4: TÍTULOS DE LIÇÕES (Template para cada sala)
+====================================================
+
+Os 13 títulos devem ser extraídos de cada revista.
+Cada sala tem 13 lições (uma por domingo do trimestre).
+
+FORMATO ESPERADO:
+Lição 1 — Domingo [data]: [Título da lição]
+Lição 2 — Domingo [data]: [Título da lição]
+...
+Lição 13 — Domingo [data]: [Título da lição]
+
+
+PASSO 5: VERIFICAR NO SITE
+==========================
+
+Após salvar:
+1. Vá para "PORTAL EBD"
+2. Clique em uma Sala (ex: "Cordeirinhos de Cristo")
+3. Você deve ver:
+   - ✅ Capa da revista (imagem)
+   - ✅ 13 lições com títulos
+   - ✅ Link para revista do aluno
+   - ✅ Link para revista do professor (apenas para professores)
+
+
+NOTAS IMPORTANTES
+=================
+
+⚠️ Os links de Google Drive devem ser compartilhados publicamente
+⚠️ Cada sala pode ter múltiplos trimestres (mude Ano/Trimestre)
+⚠️ A Revista do Professor aparece apenas para usuários com perfil "professor"
+⚠️ As mudanças são salvas em tempo real no Firestore
+⚠️ Os 13 títulos devem coincidir com os domingos do trimestre
+
+ESTRUTURA NO FIRESTORE
+======================
+
+Cada sala/trimestre é armazenado como:
+{
+  "salaId": "id-da-sala",
+  "ano": 2026,
+  "trimestre": 4,
+  "revistaNome": "Revista Cordeirinhos de Cristo - 4º trimestre",
+  "revistaCapaUrl": "https://...",
+  "revistaPdfUrl": "https://drive.google.com/file/d/...",
+  "revistaProUrl": "https://drive.google.com/file/d/...",
+  "licoes": [
+    { "data": "2026-10-05", "titulo": "Lição 1 - ..." },
+    { "data": "2026-10-12", "titulo": "Lição 2 - ..." },
+    ...
+  ]
+}
