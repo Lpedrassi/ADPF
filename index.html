@@ -1268,40 +1268,114 @@
   .alunos-sala-nome { text-align: center; margin: 4px 0 6px; font-weight: 700; font-size: 16px; color: var(--laranja); text-transform: uppercase; letter-spacing: .02em; }
   .alunos-sala-nome:empty { display: none; }
   @media (max-width: 560px) { .professor-canvas-painel { padding: 16px 16px 18px; } }
-  .relatorio-sala-dash { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-top: 14px; }
-  .relatorio-sala-dash .professor-resumo-card { text-align: center; }
-  .relatorio-sala-dash .relatorio-sala-cheio { grid-column: 1 / -1; }
-  .relatorio-sala-texto { font-size: 16px; line-height: 1.3; }
-  .relatorio-ausentes-lista { display: flex; flex-direction: column; gap: 8px; }
-  .relatorio-ausente-linha { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; padding: 10px 12px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface-2); }
-  .relatorio-ausente-linha strong { flex: 1; min-width: 150px; }
-  .relatorio-motivo-novo { display: flex; gap: 6px; width: 100%; }
-  .relatorio-motivo-novo input { flex: 1; padding: 8px 12px; border-radius: 10px; background: var(--surface); border: 1px solid var(--border); color: var(--ink); font-family: "Plus Jakarta Sans", sans-serif; }
-  .relatorio-notas { width: 100%; min-height: 120px; margin-top: 4px; padding: 12px 14px; border-radius: 14px; background: var(--surface-2); border: 1px solid var(--border); color: var(--ink); font-family: "Plus Jakarta Sans", sans-serif; font-size: 14.5px; resize: vertical; }
-  .relatorio-notas:focus { outline: none; border-color: var(--azul); }
-  .relatorio-integrantes-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; margin-top: 18px; }
-  .relatorio-integrantes h4 { margin: 0 0 8px; }
-  .relatorio-integrantes-lista { display: flex; flex-direction: column; gap: 6px; }
-  .relatorio-integrante-linha { display: flex; justify-content: space-between; gap: 8px; align-items: center; padding: 8px 12px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface-2); }
-  .relatorio-badge { font-size: 12px; font-weight: 700; padding: 3px 9px; border-radius: 999px; border: 1px solid var(--border); white-space: nowrap; }
-  .relatorio-badge.presente { color: #34D399; border-color: #34D399; }
-  .relatorio-badge.falta { color: #FF3B52; border-color: #FF3B52; }
-  .relatorio-badge.visitante { color: var(--azul); border-color: var(--azul); }
-  .relatorio-indicadores { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; margin-top: 10px; }
-  .relatorio-indicador { border: 1px solid var(--border-strong); border-radius: 16px; padding: 14px 16px; background: var(--surface-2); display: flex; flex-direction: column; }
-  .relatorio-indicador h5 { margin: 0 0 10px; font-size: 14px; text-align: center; }
-  .relatorio-indicador-corpo { flex: 1; display: flex; align-items: center; justify-content: center; }
-  .relatorio-indicador-corpo .rel-grafico-svg { width: 100%; height: auto; max-width: 320px; }
-  .relatorio-indicador-rodape { margin: 10px 0 0; font-size: 12.5px; color: var(--muted); text-align: center; }
+  /* ===== Relatório da Sala: escala de textos padronizada =====
+     Título 16 · Data 11 · Rótulo 10 · Valor 13 · Seção 14 · Texto 12 · Detalhe 11 · Número 22 */
+  #canvasPainelRelatorioSala { container-type: inline-size; --rel-fs-titulo: 16px; --rel-fs-seccao: 14px; --rel-fs-texto: 12px; --rel-fs-valor: 13px; --rel-fs-rotulo: 10px; --rel-fs-detalhe: 11px; --rel-fs-numero: 22px; }
+  .rel-cabecalho { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-bottom: 14px; }
+  .rel-cabecalho-icone { width: 56px; height: 56px; border-radius: 14px; background: linear-gradient(145deg, #4C8DFF, #1D5BD8); color: #fff; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 6px 18px rgba(59, 130, 255, .3); }
+  .rel-cabecalho-icone svg { width: 30px; height: 30px; }
+  .rel-cabecalho-texto { flex: 1; min-width: 200px; }
+  .rel-cabecalho-texto h4 { margin: 0; font-size: var(--rel-fs-titulo); font-weight: 700; line-height: 1.2; text-align: left; }
+  .rel-cabecalho-texto p { margin: 3px 0 0; font-size: var(--rel-fs-texto); color: var(--muted); }
+  .rel-caixa-dia { display: flex; align-items: center; gap: 10px; padding: 0 12px 0 12px; min-width: 190px; min-height: 40px; border-radius: 12px; background: var(--surface-2); border: 1px solid var(--border-strong); cursor: pointer; }
+  .rel-caixa-dia:focus-within { border-color: var(--azul); }
+  .rel-caixa-dia-icone { color: #3B82FF; display: flex; }
+  .rel-caixa-dia-icone svg { width: 16px; height: 16px; }
+  .rel-select-dia { flex: 1; min-width: 0; padding: 8px 0; background: transparent; border: none; color: var(--ink); font-family: "Plus Jakarta Sans", sans-serif; font-size: var(--rel-fs-detalhe); font-weight: 600; cursor: pointer; }
+  .rel-select-dia:focus { outline: none; }
+
+  .rel-faixa { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); background: var(--surface-2); border: 1px solid var(--border-strong); border-radius: 14px; padding: 14px 8px; margin-bottom: 12px; }
+  .rel-faixa-campo { display: flex; align-items: center; gap: 10px; padding: 2px 14px; border-left: 1px solid var(--border); min-width: 0; }
+  .rel-faixa-campo:first-child { border-left: none; }
+  .rel-faixa-icone { color: #3B82FF; display: flex; flex-shrink: 0; }
+  .rel-faixa-icone svg { width: 22px; height: 22px; }
+  .rel-faixa-texto { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .rel-faixa-rotulo { font-size: var(--rel-fs-rotulo); text-transform: uppercase; letter-spacing: .06em; color: #8FB4FF; }
+  .rel-faixa-valor { font-size: var(--rel-fs-valor); font-weight: 600; line-height: 1.3; overflow-wrap: anywhere; }
+  .rel-faixa-sub { font-size: var(--rel-fs-detalhe); color: var(--muted); }
+
+  .rel-secao { background: var(--surface-2); border: 1px solid var(--border-strong); border-radius: 14px; padding: 14px; margin-bottom: 12px; }
+  .rel-secao-cabecalho { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .rel-secao-cabecalho h4 { margin: 0; font-size: var(--rel-fs-seccao); font-weight: 700; text-align: left; }
+  .rel-secao-cabecalho p { margin: 2px 0 0; font-size: var(--rel-fs-detalhe); color: var(--muted); }
+  .rel-icone-redondo { width: 32px; height: 32px; border-radius: 50%; background: rgba(59, 130, 255, .15); color: #3B82FF; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .rel-icone-redondo svg { width: 16px; height: 16px; }
+  .rel-tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+  .rel-tile { --cor: #3B82FF; display: flex; align-items: center; gap: 10px; padding: 12px; border-radius: 12px; border: 1.5px solid var(--cor); background: color-mix(in srgb, var(--cor) 8%, transparent); min-width: 0; }
+  .rel-tile-verde { --cor: #34D399; }
+  .rel-tile-vermelho { --cor: #FF3B52; }
+  .rel-tile-amarelo { --cor: #FF7A33; }
+  .rel-tile-azul { --cor: #3B82FF; }
+  .rel-tile-icone { width: 40px; height: 40px; border-radius: 50%; background: var(--cor); color: #fff; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .rel-tile-icone svg { width: 20px; height: 20px; }
+  .rel-tile-texto { display: flex; flex-direction: column; min-width: 0; }
+  .rel-tile-valor { font-size: var(--rel-fs-numero); font-weight: 800; line-height: 1; color: var(--cor); }
+  .rel-tile-rotulo { font-size: var(--rel-fs-texto); font-weight: 600; margin-top: 3px; }
+  .rel-tile-sub { font-size: var(--rel-fs-detalhe); color: var(--cor); }
+
+  .rel-grade { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; align-items: start; }
+  .rel-coluna { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+  .rel-card { background: var(--surface-2); border: 1px solid var(--border-strong); border-radius: 14px; padding: 12px; min-width: 0; }
+  .rel-card-titulo { margin: 0; font-size: var(--rel-fs-seccao); font-weight: 700; text-align: left; text-transform: uppercase; }
+  .rel-card-cabecalho { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .rel-lista { display: flex; flex-direction: column; gap: 6px; }
+  .rel-lista-duas { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .rel-linha { display: flex; align-items: center; gap: 8px; padding: 6px 8px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); min-width: 0; }
+  .rel-linha > strong { flex: 1; min-width: 0; font-size: var(--rel-fs-texto); font-weight: 400; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .rel-avatar { width: 26px; height: 26px; border-radius: 50%; color: #fff; font-weight: 700; font-size: var(--rel-fs-detalhe); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .rel-pill { font-size: var(--rel-fs-detalhe); font-weight: 400; padding: 3px 9px; border-radius: 999px; color: #fff; white-space: nowrap; }
+  .rel-pill.presente { background: #34D399; }
+  .rel-pill.falta { background: #FF3B52; }
+  .rel-pill.visitante { background: #FF7A33; color: var(--laranja-ink); }
+  .rel-check { width: 18px; height: 18px; border-radius: 50%; background: #34D399; color: #fff; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .rel-check svg { width: 11px; height: 11px; }
+  .rel-motivo { position: relative; flex-shrink: 0; width: 132px; display: flex; }
+  .rel-motivo-texto { display: block; width: 100%; padding: 5px 9px; border-radius: 10px; background: #FF3B52; color: #fff; font-size: var(--rel-fs-detalhe); font-weight: 400; line-height: 1.25; text-align: center; overflow-wrap: anywhere; }
+  .rel-motivo-select { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; font-size: 16px; }
   .rel-rosca-wrap { display: flex; flex-direction: column; align-items: center; gap: 10px; }
-  .rel-rosca-legenda { display: flex; gap: 14px; font-size: 13px; }
-  .rel-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; }
+  .rel-rosca-svg { width: 150px; height: 150px; display: block; }
+  .rel-legenda { display: flex; flex-direction: column; gap: 5px; font-size: var(--rel-fs-texto); align-self: stretch; }
+  .rel-legenda span { display: flex; align-items: center; gap: 8px; }
+  .rel-dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; }
   .rel-dot.presente { background: #34D399; }
   .rel-dot.falta { background: #FF3B52; }
-  .rel-barra-linha { display: grid; grid-template-columns: minmax(90px, 1.2fr) 2fr auto; gap: 8px; align-items: center; margin: 6px 0; font-size: 13px; }
-  .rel-barra-trilho { height: 10px; border-radius: 999px; background: var(--border); overflow: hidden; }
+  .rel-dot.visitante { background: #FF7A33; }
+  .rel-grafico-svg { width: 100%; height: auto; display: block; }
+  .rel-grafico-rodape { margin: 8px 0 0; font-size: var(--rel-fs-detalhe); color: var(--muted); text-align: left; }
+  .rel-barra-linha { display: grid; grid-template-columns: minmax(80px, 1.2fr) 2fr auto; gap: 8px; align-items: center; margin: 5px 0; font-size: var(--rel-fs-detalhe); }
+  .rel-barra-trilho { height: 8px; border-radius: 999px; background: var(--border); overflow: hidden; }
   .rel-barra-preench { height: 100%; background: var(--laranja); border-radius: 999px; }
   .rel-barra-valor { font-weight: 700; }
+  .rel-notas { margin-top: 12px; }
+  .relatorio-notas { width: 100%; min-height: 96px; padding: 10px 12px; border-radius: 12px; background: var(--surface); border: 1px solid var(--border); color: var(--ink); font-family: "Plus Jakarta Sans", sans-serif; font-size: var(--rel-fs-texto); resize: vertical; }
+  .relatorio-notas:focus { outline: none; border-color: var(--azul); }
+
+  @container (max-width: 720px) {
+    .rel-grade { grid-template-columns: 1fr; }
+  }
+  @container (max-width: 820px) {
+    .rel-faixa { grid-template-columns: repeat(3, minmax(0, 1fr)); row-gap: 12px; }
+    .rel-faixa-campo:nth-child(4) { border-left: none; }
+  }
+  @container (max-width: 520px) {
+    .rel-faixa { grid-template-columns: 1fr 1fr; }
+    .rel-faixa-campo { border-left: none; }
+    .rel-lista-duas { grid-template-columns: 1fr; }
+    .rel-caixa-dia { min-width: 0; width: 100%; }
+  }
+  .gr-edicao { margin: 14px 0; padding: 14px; border: 1px solid var(--border-strong); border-radius: 14px; background: var(--surface-2); display: flex; flex-direction: column; gap: 12px; }
+  .gr-edicao[hidden] { display: none; }
+  .gr-edicao-titulo { margin: 0; font-size: var(--rel-fs-seccao, 14px); font-weight: 700; text-align: left; }
+  .gr-campo { display: flex; flex-direction: column; gap: 4px; font-size: var(--rel-fs-texto, 12px); color: var(--muted); }
+  .gr-campo input { padding: 8px 10px; border-radius: 10px; background: var(--surface); border: 1px solid var(--border); color: var(--ink); font-family: "Plus Jakarta Sans", sans-serif; font-size: 13px; }
+  .gr-campo textarea { padding: 10px 12px; border-radius: 12px; background: var(--surface); border: 1px solid var(--border); color: var(--ink); font-family: "Plus Jakarta Sans", sans-serif; font-size: 12px; min-height: 80px; resize: vertical; }
+  .gr-lista { display: flex; flex-direction: column; gap: 6px; }
+  .gr-linha { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 8px 10px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); }
+  .gr-linha strong { flex: 1; min-width: 140px; font-size: var(--rel-fs-texto, 12px); font-weight: 400; }
+  .gr-presenca { display: flex; align-items: center; gap: 6px; font-size: var(--rel-fs-texto, 12px); cursor: pointer; }
+  .rel-motivo-select-gr { min-width: 170px; padding: 6px 10px; border-radius: 10px; background: var(--surface-2); border: 1px solid #FF3B52; color: #FF3B52; font-family: "Plus Jakarta Sans", sans-serif; font-size: var(--rel-fs-detalhe, 11px); }
+  .rel-motivo-select-gr:disabled { opacity: .4; }
+  .gr-botoes { display: flex; gap: 8px; flex-wrap: wrap; }
   .chamada-motivo { display: flex; align-items: center; gap: 8px; margin-top: 6px; flex-wrap: wrap; }
   .chamada-motivo-rotulo { font-size: 12px; color: var(--muted); }
   .motivos-tab td.motivo-acoes { white-space: nowrap; }
@@ -1437,7 +1511,7 @@
             <button class="nav-admin-dropdown-item" data-area="areaGerenciarPerfis"><svg class="nav-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="5.5" width="13" height="11" rx="2"/><circle cx="6.5" cy="10" r="1.6"/><path d="M4.2 14.2a2.4 2.4 0 0 1 4.6 0"/><path d="M11.5 9h2.5M11.5 12h2.5"/><circle cx="18" cy="16.5" r="2.4"/><path d="M18 12.6v1.2M18 19.2v1.2M14.7 16.5h1.2M20.1 16.5h1.2"/></svg>Gerenciar Perfis</button>
             <button class="nav-admin-dropdown-item" data-area="areaAgenda"><svg class="nav-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4.5" width="18" height="16" rx="2"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4"/><circle cx="16.5" cy="16.5" r="3.5"/><path d="M16.5 14.8v1.8l1.2.9"/></svg>Agenda de Cultos</button>
             <button class="nav-admin-dropdown-item" data-area="areaPostsSite"><svg class="nav-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10v4a1 1 0 0 0 1 1h2l6 4V5L6 9H4a1 1 0 0 0-1 1z"/><path d="M16 8.5a4.5 4.5 0 0 1 0 7"/><path d="M19 6a8 8 0 0 1 0 12"/><path d="M7 15l1.2 4.5h2.2L9.5 15"/></svg>Posts do Site</button>
-            <button class="nav-admin-dropdown-item" data-area="areaCadastroSalas"><svg class="nav-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="10" height="18" rx="1"/><path d="M14 3h6v18h-6"/><path d="M4 21h16"/><circle cx="11" cy="12" r="0.8"/></svg>Gerenciar Salas</button>
+            <button class="nav-admin-dropdown-item" data-area="areaCadastroSalas"><svg class="nav-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="10" height="18" rx="1"/><path d="M14 3h6v18h-6"/><path d="M4 21h16"/><circle cx="11" cy="12" r="0.8"/></svg>Gerenciar EBD</button>
           </div>
         </div>
 
@@ -1843,7 +1917,7 @@
     <button class="sidebar-link" type="button" data-area="areaAluno">Sala do Aluno</button>
     <button class="sidebar-link" type="button" data-area="areaProfessor">Sala do Professor</button>
     <button class="sidebar-link" type="button" data-area="areaAdministrativo">Sala da Secretaria</button>
-    <button class="sidebar-link" type="button" data-area="areaCadastroSalas">Gerenciar Salas</button>
+    <button class="sidebar-link" type="button" data-area="areaCadastroSalas">Gerenciar EBD</button>
   </nav>
   <div class="portal-main-wrap" id="portalMainWrap">
   <div class="site-home-conteudo ativo" id="siteHome">
@@ -2586,7 +2660,7 @@
 
     <p id="professorRevistaPdf" class="admin-agenda-info" hidden></p>
 
-    <p id="professorSemSalaAviso" class="admin-agenda-vazio" hidden>Você ainda não está escalado em nenhuma Sala. Peça para o Administrador Master te atribuir em "Gerenciar Salas" (Professores por Turma).</p>
+    <p id="professorSemSalaAviso" class="admin-agenda-vazio" hidden>Você ainda não está escalado em nenhuma Sala. Peça para o Administrador Master te atribuir em "Gerenciar EBD" (Professores por Turma).</p>
 
     <div id="professorConteudo" hidden>
 
@@ -2731,7 +2805,6 @@
       </div>
 
       <div id="canvasPainelRelatorioSala" class="professor-canvas-painel" hidden>
-        <h4 style="text-align:center;">Relatório da Sala</h4>
         <div id="professorRelatorioSalaConteudo"></div>
       </div>
 
@@ -3350,7 +3423,7 @@
   </section>
 
       <section id="areaCadastroSalas" class="portal-section">
-    <h2>Gerenciar Salas</h2>
+    <h2>Gerenciar EBD</h2>
     <p class="admin-agenda-info">Organize as Salas da Escola Bíblica Dominical: crie e edite as Turmas e monte o pool de Professores de cada uma para o rodízio de Escala.</p>
 
     <div class="professor-canvas-grid">
@@ -3374,6 +3447,10 @@
         <span class="professor-canvas-titulo">Gerenciar Listas</span>
         <span class="professor-canvas-sub">Lista de ausências da EBD</span>
       </button>
+      <button type="button" class="professor-canvas-card" data-canvasala="relatorios">
+        <span class="professor-canvas-titulo">Gerenciar Relatórios</span>
+        <span class="professor-canvas-sub">Editar e excluir os relatórios de todas as Salas</span>
+      </button>
     </div>
 
     <div id="canvaSalaListas" class="canva-sanfona-conteudo">
@@ -3390,6 +3467,20 @@
       </div>
       <p id="motivosStatus" class="admin-agenda-status"></p>
       <div id="motivosTabelaWrap" class="admin-agenda-lista-wrap"></div>
+    </div>
+
+    <div id="canvaSalaRelatorios" class="canva-sanfona-conteudo">
+      <p class="admin-agenda-info"><strong>Relatórios de todas as Salas</strong>: edite a presença, os motivos das faltas, o tema e as notas, ou exclua um relatório. A exclusão não pode ser desfeita.</p>
+      <div class="admin-form">
+        <div class="admin-form-linha">
+          <label style="flex:1;">Sala
+            <select id="gerenciarRelatoriosSala"></select>
+          </label>
+        </div>
+      </div>
+      <p id="gerenciarRelatoriosStatus" class="admin-agenda-status"></p>
+      <div id="gerenciarRelatoriosEdicao" class="gr-edicao" hidden></div>
+      <div id="gerenciarRelatoriosLista" class="admin-agenda-lista-wrap"></div>
     </div>
 
     <div id="canvaSalaTurma" class="canva-sanfona-conteudo">
@@ -4269,7 +4360,7 @@
     ["prof_pedir_revista", "Professor · Pedir Revista"],
     ["areaAgenda", "Agenda de Cultos"],
     ["areaPostsSite", "Posts do Site"],
-    ["areaCadastroSalas", "Gerenciar Salas"],
+    ["areaCadastroSalas", "Gerenciar EBD"],
     ["areaAcessosUsuarios", "Usuarios"],
     ["areaGerenciarPerfis", "Gerenciar Perfis"]
   ];
@@ -4294,7 +4385,7 @@
       filhos: [
         { id: "areaAgenda", nome: "Agenda de Cultos" },
         { id: "areaPostsSite", nome: "Posts do Site" },
-        { id: "areaCadastroSalas", nome: "Gerenciar Salas" },
+        { id: "areaCadastroSalas", nome: "Gerenciar EBD" },
         { id: "areaAcessosUsuarios", nome: "Usuarios" },
         { id: "areaGerenciarPerfis", nome: "Gerenciar Perfis" }
       ]
@@ -4795,6 +4886,7 @@
     if (areasLiberadas.includes("areaCadastroSalas") && !gerenciarListasIniciado) {
       gerenciarListasIniciado = true;
       iniciarGerenciarListas();
+      iniciarGerenciarRelatorios();
     }
     if (areasLiberadas.includes("areaProfessor") && !areaProfessorIniciado) {
       areaProfessorIniciado = true;
@@ -7876,6 +7968,266 @@
   }
 
   // =================================================================
+  // Gerenciar Relatórios (só admin e administrativo) - lista todos os
+  // relatórios de chamada do site. Editar: tema, presença, motivo das
+  // faltas e notas. Excluir: pede confirmação antes.
+  // =================================================================
+  function iniciarGerenciarRelatorios() {
+    const dataBrGerenciar = (iso) => (iso ? new Date(iso + "T00:00:00").toLocaleDateString("pt-BR") : "—");
+    const vazioGerenciar = (texto) => { const p = document.createElement("p"); p.className = "admin-agenda-info"; p.textContent = texto; return p; };
+    const card = document.querySelector('#areaCadastroSalas [data-canvasala="relatorios"]');
+    const lista = document.getElementById("gerenciarRelatoriosLista");
+    const filtroSala = document.getElementById("gerenciarRelatoriosSala");
+    const status = document.getElementById("gerenciarRelatoriosStatus");
+    const edicao = document.getElementById("gerenciarRelatoriosEdicao");
+    if (!card || !lista || !filtroSala || !edicao) return;
+    let todos = [];
+    let emEdicao = null;
+
+    function avisar(texto, erro) {
+      status.textContent = texto;
+      status.className = "admin-agenda-status" + (erro ? " erro" : "");
+    }
+
+    function desenhar() {
+      const visiveis = todos.filter((r) => !filtroSala.value || r.salaId === filtroSala.value);
+      lista.innerHTML = "";
+      if (!visiveis.length) {
+        lista.innerHTML = '<div class="admin-agenda-vazio">Nenhum relatório encontrado.</div>';
+        return;
+      }
+      visiveis.forEach((r) => {
+        const item = document.createElement("div");
+        item.className = "admin-perfis-item";
+        const info = document.createElement("div");
+        info.className = "admin-perfis-item-info";
+        const nome = document.createElement("span");
+        nome.className = "admin-perfis-item-nome";
+        nome.textContent = dataBrGerenciar(r.data) + " · " + (r.salaNome || r.salaId);
+        const sub = document.createElement("span");
+        sub.className = "admin-perfis-item-sub";
+        const presentesPessoas = (r.chamada || []).filter((p) => p.presente).length;
+        sub.textContent = "Presentes: " + (r.presentes != null ? r.presentes : presentesPessoas) +
+          " · Ausentes: " + (r.ausentes != null ? r.ausentes : 0) +
+          " · Visitantes: " + (r.visitantes != null ? r.visitantes : (r.ouvintes || []).length) +
+          (r.lancadoPorNome ? " · Lançado por " + r.lancadoPorNome : "");
+        info.append(nome, sub);
+
+        const editar = document.createElement("button");
+        editar.type = "button";
+        editar.className = "admin-perfis-item-editar";
+        editar.dataset.acao = "editar";
+        editar.dataset.id = r.docId;
+        editar.title = "Editar";
+        editar.setAttribute("aria-label", "Editar relatório");
+        editar.textContent = "✏️";
+
+        const excluir = document.createElement("button");
+        excluir.type = "button";
+        excluir.className = "admin-perfis-item-remover";
+        excluir.dataset.acao = "excluir";
+        excluir.dataset.id = r.docId;
+        excluir.title = "Excluir";
+        excluir.setAttribute("aria-label", "Excluir relatório");
+        excluir.textContent = "×";
+
+        item.append(info, editar, excluir);
+        lista.appendChild(item);
+      });
+    }
+
+    async function carregar() {
+      lista.innerHTML = '<p class="admin-agenda-info">Carregando...</p>';
+      try {
+        await carregarMotivosAusencia();
+        const snap = await getDocs(collection(db, "relatoriosAula"));
+        todos = snap.docs.map((d) => Object.assign({ docId: d.id }, d.data()));
+        todos.sort((a, b) => (b.data || "").localeCompare(a.data || "") || (a.salaNome || "").localeCompare(b.salaNome || "", "pt-BR"));
+        const salas = new Map(todos.map((r) => [r.salaId, r.salaNome || r.salaId]));
+        const atual = filtroSala.value;
+        filtroSala.innerHTML = "";
+        filtroSala.appendChild(new Option("Todas as Salas", ""));
+        [...salas.entries()]
+          .sort((a, b) => a[1].localeCompare(b[1], "pt-BR"))
+          .forEach(([id, nome]) => filtroSala.appendChild(new Option(nome, id)));
+        filtroSala.value = atual;
+        avisar(todos.length + " relatório(s) no total.");
+        desenhar();
+      } catch (err) {
+        lista.innerHTML = '<p class="admin-agenda-status erro">Não foi possível carregar os relatórios.</p>';
+        console.error(err);
+      }
+    }
+
+    function linhaEdicaoPessoa(p, i) {
+      const linha = document.createElement("div");
+      linha.className = "gr-linha";
+      const nome = document.createElement("strong");
+      nome.textContent = p.nome || "(sem nome)";
+      const rotulo = document.createElement("span");
+      rotulo.className = "admin-perfis-item-sub";
+      rotulo.textContent = p.tipo === "professor" ? "Professor" : "Aluno";
+      const marca = document.createElement("label");
+      marca.className = "gr-presenca";
+      const cb = document.createElement("input");
+      cb.type = "checkbox";
+      cb.checked = !!p.presente;
+      marca.append(cb, document.createTextNode(" Presente"));
+      linha.append(nome, rotulo, marca);
+
+      cb.addEventListener("change", () => {
+        emEdicao.chamada[i].presente = cb.checked;
+        if (sel) {
+          sel.disabled = cb.checked;
+          if (cb.checked) { sel.value = ""; emEdicao.chamada[i].motivo = ""; }
+        }
+      });
+
+      let sel = null;
+      if (p.tipo === "aluno") {
+        sel = document.createElement("select");
+        sel.className = "rel-motivo-select-gr";
+        sel.setAttribute("aria-label", "Motivo da falta de " + (p.nome || ""));
+        sel.appendChild(new Option("Escolha o motivo...", ""));
+        (motivosAusenciaCache || []).forEach((m) => sel.appendChild(new Option(m.nome, m.id)));
+        sel.value = p.motivo || "";
+        sel.disabled = !!p.presente;
+        sel.addEventListener("change", () => { emEdicao.chamada[i].motivo = sel.value; });
+        linha.appendChild(sel);
+      }
+      return linha;
+    }
+
+    function abrirEdicao(rel) {
+      emEdicao = JSON.parse(JSON.stringify(rel));
+      edicao.innerHTML = "";
+      edicao.hidden = false;
+
+      const titulo = document.createElement("h4");
+      titulo.className = "gr-edicao-titulo";
+      titulo.textContent = "Editar relatório · " + dataBrGerenciar(rel.data) + " · " + (rel.salaNome || rel.salaId);
+
+      const campoTema = document.createElement("label");
+      campoTema.className = "gr-campo";
+      campoTema.textContent = "Lição / tema";
+      const inTema = document.createElement("input");
+      inTema.type = "text";
+      inTema.id = "gerenciarRelatoriosTema";
+      inTema.maxLength = 120;
+      inTema.value = rel.tema || "";
+      campoTema.appendChild(inTema);
+
+      const corpo = document.createElement("div");
+      corpo.className = "gr-lista";
+      const pessoas = emEdicao.chamada || [];
+      if (!pessoas.length) corpo.appendChild(vazioGerenciar("Este relatório não tem chamada."));
+      pessoas.forEach((p, i) => corpo.appendChild(linhaEdicaoPessoa(p, i)));
+
+      const campoNotas = document.createElement("label");
+      campoNotas.className = "gr-campo";
+      campoNotas.textContent = "Notas e observações";
+      const notas = document.createElement("textarea");
+      notas.id = "gerenciarRelatoriosNotas";
+      notas.className = "relatorio-notas";
+      notas.value = rel.notasRelatorio || "";
+      campoNotas.appendChild(notas);
+
+      const botoes = document.createElement("div");
+      botoes.className = "gr-botoes";
+      const btnSalvar = document.createElement("button");
+      btnSalvar.type = "button";
+      btnSalvar.className = "btn-admin btn-admin-primario";
+      btnSalvar.textContent = "Salvar relatório";
+      btnSalvar.addEventListener("click", salvarEdicao);
+      const btnCancelar = document.createElement("button");
+      btnCancelar.type = "button";
+      btnCancelar.className = "btn-admin";
+      btnCancelar.textContent = "Cancelar";
+      btnCancelar.addEventListener("click", fecharEdicao);
+      botoes.append(btnSalvar, btnCancelar);
+
+      edicao.append(titulo, campoTema, corpo, campoNotas, botoes);
+      edicao.scrollIntoView({ block: "nearest" });
+    }
+
+    function fecharEdicao() {
+      emEdicao = null;
+      edicao.hidden = true;
+      edicao.innerHTML = "";
+    }
+
+    async function salvarEdicao() {
+      if (!emEdicao) return;
+      const r = emEdicao;
+      const tema = document.getElementById("gerenciarRelatoriosTema").value.trim();
+      const notasRelatorio = document.getElementById("gerenciarRelatoriosNotas").value;
+      const chamada = r.chamada.map((p) => Object.assign({}, p, {
+        presente: !!p.presente,
+        motivo: p.tipo === "aluno" && !p.presente ? (p.motivo || "") : ""
+      }));
+      const alunos = chamada.filter((p) => p.tipo === "aluno");
+      const presentesPessoas = chamada.filter((p) => p.presente).length;
+      const visitantes = (r.ouvintes || []).length;
+      const dados = {
+        tema: tema,
+        notasRelatorio: notasRelatorio,
+        chamada: chamada,
+        matriculados: alunos.length,
+        presentes: presentesPessoas + visitantes,
+        ausentes: chamada.length - presentesPessoas,
+        visitantes: visitantes,
+        editadoPorUid: usuarioAtualCache ? usuarioAtualCache.uid : "",
+        editadoPorNome: usuarioAtualCache ? (usuarioAtualCache.nome || usuarioAtualCache.email || "") : "",
+        editadoEm: serverTimestamp()
+      };
+      try {
+        await setDoc(doc(db, "relatoriosAula", r.docId), dados, { merge: true });
+        const { editadoEm, ...semData } = dados;
+        const antigo = todos.find((x) => x.docId === r.docId);
+        if (antigo) Object.assign(antigo, semData);
+        fecharEdicao();
+        desenhar();
+        avisar("Relatório salvo.");
+      } catch (err) {
+        avisar("Não foi possível salvar. " + (err.message || ""), true);
+        console.error(err);
+      }
+    }
+
+    async function excluirRelatorio(rel) {
+      if (!confirm("Excluir o relatório de " + dataBrGerenciar(rel.data) + " da Sala " + (rel.salaNome || rel.salaId) + "? Essa ação não pode ser desfeita.")) return;
+      try {
+        await deleteDoc(doc(db, "relatoriosAula", rel.docId));
+        todos = todos.filter((x) => x.docId !== rel.docId);
+        if (emEdicao && emEdicao.docId === rel.docId) fecharEdicao();
+        desenhar();
+        avisar("Relatório excluído.");
+      } catch (err) {
+        avisar("Não foi possível excluir. " + (err.message || ""), true);
+        console.error(err);
+      }
+    }
+
+    lista.addEventListener("click", (e) => {
+      const btn = e.target.closest("[data-acao]");
+      if (!btn) return;
+      const rel = todos.find((x) => x.docId === btn.dataset.id);
+      if (!rel) return;
+      if (btn.dataset.acao === "editar") abrirEdicao(rel);
+      if (btn.dataset.acao === "excluir") excluirRelatorio(rel);
+    });
+
+    filtroSala.addEventListener("change", () => { fecharEdicao(); desenhar(); });
+
+    // Carrega a lista ao abrir o canvas (o clique no card é tratado por iniciarGerenciarSalas)
+    card.addEventListener("click", () => {
+      setTimeout(() => {
+        if (document.getElementById("canvaSalaRelatorios").classList.contains("aberto")) carregar();
+      }, 0);
+    });
+  }
+
+  // =================================================================
   // Gerenciar Listas (só admin) - tabela de motivos de ausência usada em
   // todo o site: adicionar, renomear e excluir.
   // =================================================================
@@ -7988,7 +8340,8 @@
       professores: "canvaSalaProfessores",
       extra: "canvaSalaExtra",
       licoes: "canvaSalaLicoes",
-      listas: "canvaSalaListas"
+      listas: "canvaSalaListas",
+      relatorios: "canvaSalaRelatorios"
     };
     const cards = grid.querySelectorAll(".professor-canvas-card");
     cards.forEach((card) => {
@@ -11050,19 +11403,6 @@
       return iso ? new Date(iso + "T00:00:00").toLocaleDateString("pt-BR") : "—";
     }
 
-    function tileRelatorioSala(rotulo, valor, classeExtra) {
-      const card = document.createElement("div");
-      card.className = "professor-resumo-card" + (classeExtra ? " " + classeExtra : "");
-      const v = document.createElement("span");
-      v.className = "professor-resumo-valor" + (classeExtra && classeExtra.includes("relatorio-sala-cheio") ? " relatorio-sala-texto" : "");
-      v.textContent = valor;
-      const r = document.createElement("span");
-      r.className = "professor-resumo-rotulo";
-      r.textContent = rotulo;
-      card.append(v, r);
-      return card;
-    }
-
     // Salva um trecho do relatório (ex.: chamada com motivos, notas) sem mexer no resto
     async function salvarRelatorioSala(rel, trecho) {
       try {
@@ -11081,15 +11421,38 @@
       await salvarRelatorioSala(rel, { chamada: novaChamada });
     }
 
-    // Linha de um aluno ausente: nome + combobox do motivo
-    function linhaAusenteRelatorio(rel, aluno, redesenhar) {
+    // Ícones e cores do Relatório da Sala
+    const ICONE_LIVRO_REL = '<svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><path d="M3 5.5C5 4.5 8 4.5 11.5 6v13c-3.5-1.5-6.5-1.5-8.5-.5z" fill="currentColor"/><path d="M21 5.5c-2-1-5-1-8.5.5v13c3.5-1.5 6.5-1.5 8.5-.5z" fill="currentColor" opacity=".7"/></svg>';
+    const ICONE_PESSOAS_REL = '<svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><circle cx="9" cy="8" r="3.4" fill="currentColor"/><path d="M3 19.5c0-3.4 2.7-5.7 6-5.7s6 2.3 6 5.7z" fill="currentColor"/><circle cx="17" cy="9" r="2.6" fill="currentColor" opacity=".7"/><path d="M15.5 14.3c2.9.2 5 2.2 5 5.2h-4.6" fill="currentColor" opacity=".7"/></svg>';
+    const ICONE_CHECK_REL = '<svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    const CORES_AVATAR_REL = ["#34D399", "#3B82FF", "#FF7A33", "#8B5CF6", "#EC4899", "#14B8A6", "#F59E0B", "#EF4444"];
+
+    function avatarRelatorio(nome, indice) {
+      const av = document.createElement("span");
+      av.className = "rel-avatar";
+      av.style.background = CORES_AVATAR_REL[indice % CORES_AVATAR_REL.length];
+      av.textContent = (nome || "?").trim().charAt(0).toUpperCase();
+      return av;
+    }
+
+    // Linha de um aluno ausente: avatar, nome e combobox do motivo (pílula vermelha)
+    function linhaAusenteRelatorio(rel, aluno, redesenhar, indice) {
       const linha = document.createElement("div");
-      linha.className = "relatorio-ausente-linha";
+      linha.className = "rel-linha";
       const nome = document.createElement("strong");
       nome.textContent = aluno.nome || "(sem nome)";
+      const selo = document.createElement("span");
+      selo.className = "rel-pill falta";
+      selo.textContent = "Ausente";
 
+      // Motivo: o texto aparece em vermelho (pode quebrar em 2 linhas); o combobox fica por cima, invisível, e abre a lista ao clicar
+      const caixa = document.createElement("span");
+      caixa.className = "rel-motivo";
+      const texto = document.createElement("span");
+      texto.className = "rel-motivo-texto";
+      texto.textContent = aluno.motivo ? nomeMotivoAusencia(aluno.motivo) : "Escolha o motivo...";
       const select = document.createElement("select");
-      select.className = "admin-perfis-item-select";
+      select.className = "rel-motivo-select";
       select.setAttribute("aria-label", "Motivo da falta de " + (aluno.nome || ""));
       select.appendChild(novaOpcaoMotivo("", "Escolha o motivo...", aluno.motivo || ""));
       (motivosAusenciaCache || []).forEach((m) => select.appendChild(novaOpcaoMotivo(m.id, m.nome, aluno.motivo || "")));
@@ -11098,7 +11461,27 @@
         await gravarMotivoRelatorio(rel, aluno.matriculaId, select.value);
         redesenhar();
       });
-      linha.append(nome, select);
+      caixa.append(texto, select);
+      linha.append(avatarRelatorio(aluno.nome, indice), nome, selo, caixa);
+      return linha;
+    }
+
+    // Linha de presente, professor ou visitante: avatar, nome e selo de status
+    function linhaPessoaRelatorio(nome, indice, rotulo, classe, comCheck) {
+      const linha = document.createElement("div");
+      linha.className = "rel-linha";
+      const n = document.createElement("strong");
+      n.textContent = nome || "(sem nome)";
+      const selo = document.createElement("span");
+      selo.className = "rel-pill " + classe;
+      selo.textContent = rotulo;
+      linha.append(avatarRelatorio(nome, indice), n, selo);
+      if (comCheck) {
+        const ck = document.createElement("span");
+        ck.className = "rel-check";
+        ck.innerHTML = ICONE_CHECK_REL;
+        linha.appendChild(ck);
+      }
       return linha;
     }
 
@@ -11110,102 +11493,173 @@
       return opt;
     }
 
-    // ----- Gráficos (SVG desenhado aqui, sem biblioteca) -----
-    // Linha: alunos matriculados em cada Domingo lançado
-    function svgLinhaMatriculados(pontos) {
-      const W = 320, H = 150, P = 26;
-      const vals = pontos.map((p) => p.valor);
-      const min = Math.min.apply(null, vals), max = Math.max.apply(null, vals);
-      const amp = max - min || 1;
-      const x = (i) => (pontos.length === 1 ? W / 2 : P + (i * (W - 2 * P)) / (pontos.length - 1));
-      const y = (v) => H - 30 - ((v - min) / amp) * (H - 60);
-      const linha = pontos.length > 1
-        ? '<polyline fill="none" stroke="var(--azul)" stroke-width="2.5" points="' + pontos.map((p, i) => x(i).toFixed(1) + "," + y(p.valor).toFixed(1)).join(" ") + '"/>'
-        : "";
-      const bolas = pontos.map((p, i) =>
-        '<circle cx="' + x(i).toFixed(1) + '" cy="' + y(p.valor).toFixed(1) + '" r="4" fill="var(--azul)"><title>' + dataBrRelatorio(p.data) + ": " + p.valor + "</title></circle>" +
-        '<text x="' + x(i).toFixed(1) + '" y="' + (y(p.valor) - 9).toFixed(1) + '" text-anchor="middle" font-size="11" fill="var(--ink)">' + p.valor + "</text>"
-      ).join("");
-      const primeira = pontos[0].data, ultima = pontos[pontos.length - 1].data;
-      return '<svg viewBox="0 0 ' + W + " " + H + '" class="rel-grafico-svg" role="img" aria-label="Alunos matriculados por Domingo">' +
-        linha + bolas +
-        '<text x="' + P + '" y="' + (H - 6) + '" font-size="10" fill="var(--muted)">' + dataBrRelatorio(primeira).slice(0, 5) + "</text>" +
-        '<text x="' + (W - P) + '" y="' + (H - 6) + '" font-size="10" text-anchor="end" fill="var(--muted)">' + dataBrRelatorio(ultima).slice(0, 5) + "</text>" +
-        "</svg>";
+    // Cartão com título e conteúdo
+    // Ícones de linha dos cartões (mesmo traço dos ícones da faixa)
+    const ICONE_CARD_REL = {
+      professores: '<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20c0-4 3.4-6.5 7.5-6.5s7.5 2.5 7.5 6.5"/><path d="M9 3.2l3 1.3 3-1.3"/></svg>',
+      alunos: '<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3 19.5c0-3.3 2.7-5.6 6-5.6s6 2.3 6 5.6"/><circle cx="17" cy="9" r="2.6"/><path d="M16 14.1c2.8.2 5 2.2 5 5.2"/></svg>',
+      visitantes: '<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8.5" r="3.5"/><path d="M5 20c0-3.8 3.1-6 7-6s7 2.2 7 6"/><path d="M19 3v4M17 5h4"/></svg>',
+      grafico: '<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4v16h16"/><rect x="7.5" y="11" width="3" height="6" rx="1"/><rect x="12.5" y="7" width="3" height="10" rx="1"/><rect x="17.5" y="13" width="2.5" height="4" rx="1"/></svg>',
+      motivos: '<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 1 0 9 9h-9z"/><path d="M15 3.5A9 9 0 0 1 20.5 9H15z"/></svg>',
+      notas: '<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h8.5L19 7.5V21H6z"/><path d="M14 3v4.5h5M9 12h7M9 15.5h7"/></svg>'
+    };
+
+    // Cabeçalho de cartão: ícone num círculo azul + título em caixa-alta (mesmo padrão de RELATÓRIO DE ASSISTÊNCIA)
+    function cabecalhoCardRelatorio(titulo) {
+      const t = titulo.toUpperCase();
+      const chave = t.startsWith("PROFESSORES") ? "professores"
+        : t.startsWith("ALUNOS MATRICULADOS") ? "grafico"
+        : t.startsWith("ALUNOS") ? "alunos"
+        : t.startsWith("VISITANTES") ? "visitantes"
+        : t.startsWith("MOTIVOS") ? "motivos"
+        : t.startsWith("NOTAS") ? "notas" : "alunos";
+      const cab = document.createElement("div");
+      cab.className = "rel-card-cabecalho";
+      const ic = document.createElement("span");
+      ic.className = "rel-icone-redondo";
+      ic.innerHTML = ICONE_CARD_REL[chave];
+      const h = document.createElement("h5");
+      h.className = "rel-card-titulo";
+      h.textContent = titulo;
+      cab.append(ic, h);
+      return cab;
     }
 
-    // Rosca: presença x falta (alunos) do Domingo escolhido
-    function svgRoscaPresenca(presentes, faltas) {
-      const total = presentes + faltas;
-      const r = 54, c = 2 * Math.PI * r;
-      const frac = total ? presentes / total : 0;
-      return '<svg viewBox="0 0 160 160" width="160" height="160" class="rel-grafico-svg" role="img" aria-label="Presença e faltas">' +
-        '<circle cx="80" cy="80" r="' + r + '" fill="none" stroke="#FF3B52" stroke-width="20"/>' +
-        '<circle cx="80" cy="80" r="' + r + '" fill="none" stroke="#34D399" stroke-width="20" stroke-dasharray="' + (c * frac).toFixed(2) + " " + c.toFixed(2) + '" transform="rotate(-90 80 80)"/>' +
-        '<text x="80" y="88" text-anchor="middle" font-size="22" font-weight="700" fill="var(--ink)">' + (total ? Math.round(frac * 100) : 0) + "%</text>" +
-        "</svg>";
-    }
-
-    // Tendência: inclinação da reta (alunos por Domingo) entre os relatórios lançados
-    function tendenciaMatriculados(pontos) {
-      if (pontos.length < 2) return { rotulo: "Precisa de pelo menos 2 Domingos lançados", seta: "", cor: "var(--muted)" };
-      const n = pontos.length;
-      const mx = pontos.reduce((s, _, i) => s + i, 0) / n;
-      const my = pontos.reduce((s, p) => s + p.valor, 0) / n;
-      let num = 0, den = 0;
-      pontos.forEach((p, i) => { num += (i - mx) * (p.valor - my); den += (i - mx) * (i - mx); });
-      const inclinacao = den ? num / den : 0;
-      if (inclinacao > 0.1) return { rotulo: "Crescendo", seta: "▲", cor: "#34D399" };
-      if (inclinacao < -0.1) return { rotulo: "Diminuindo", seta: "▼", cor: "#FF3B52" };
-      return { rotulo: "Estável", seta: "■", cor: "var(--muted)" };
-    }
-
-    function cardIndicador(titulo, conteudoHtml, rodape) {
-      const card = document.createElement("div");
-      card.className = "relatorio-indicador";
-      const t = document.createElement("h5");
-      t.textContent = titulo;
-      const corpo = document.createElement("div");
-      corpo.className = "relatorio-indicador-corpo";
-      corpo.innerHTML = conteudoHtml;
-      card.append(t, corpo);
-      if (rodape) {
-        const p = document.createElement("p");
-        p.className = "relatorio-indicador-rodape";
-        p.textContent = rodape;
-        card.appendChild(p);
-      }
+    // Cartão com cabeçalho (ícone + título) e conteúdo
+    function cardRelatorio(titulo, corpo, classeExtra) {
+      const card = document.createElement("section");
+      card.className = "rel-card" + (classeExtra ? " " + classeExtra : "");
+      card.append(cabecalhoCardRelatorio(titulo), corpo);
       return card;
     }
 
-    function listaIntegrantes(titulo, itens) {
-      const bloco = document.createElement("div");
-      bloco.className = "relatorio-integrantes";
-      const t = document.createElement("h4");
-      t.textContent = titulo + " (" + itens.length + ")";
-      bloco.appendChild(t);
-      if (!itens.length) {
-        const vazio = document.createElement("p");
-        vazio.className = "admin-agenda-info";
-        vazio.textContent = "Nenhum registro neste Domingo.";
-        bloco.appendChild(vazio);
-        return bloco;
+    function listaRelatorio(linhas, classe) {
+      const d = document.createElement("div");
+      d.className = classe || "rel-lista";
+      linhas.forEach((l) => d.appendChild(l));
+      return d;
+    }
+
+    function vazioRelatorio(texto) {
+      const p = document.createElement("p");
+      p.className = "admin-agenda-info";
+      p.textContent = texto;
+      return p;
+    }
+
+    // Bloco de presença: ícone, número, rótulo e percentual
+    function tileResumoRelatorio(valor, rotulo, sub, cor) {
+      const t = document.createElement("div");
+      t.className = "rel-tile rel-tile-" + cor;
+      const icone = document.createElement("span");
+      icone.className = "rel-tile-icone";
+      icone.innerHTML = ICONE_PESSOAS_REL;
+      const txt = document.createElement("div");
+      txt.className = "rel-tile-texto";
+      const v = document.createElement("span");
+      v.className = "rel-tile-valor";
+      v.textContent = String(valor);
+      const r = document.createElement("span");
+      r.className = "rel-tile-rotulo";
+      r.textContent = rotulo;
+      const s = document.createElement("span");
+      s.className = "rel-tile-sub";
+      s.textContent = sub;
+      txt.append(v, r, s);
+      t.append(icone, txt);
+      return t;
+    }
+
+    // Ícones de linha da faixa do topo (cor azul herdada de .rel-faixa-icone)
+    const ICONES_FAIXA_REL = {
+      data: '<svg viewBox="0 0 24 24" width="30" height="30" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>',
+      sala: '<svg viewBox="0 0 24 24" width="30" height="30" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3 19.5c0-3.3 2.7-5.6 6-5.6s6 2.3 6 5.6"/><circle cx="17" cy="9" r="2.6"/><path d="M16 14.1c2.8.2 5 2.2 5 5.2"/></svg>',
+      professor: '<svg viewBox="0 0 24 24" width="30" height="30" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8.5" r="3.8"/><path d="M4.5 20.5c0-4 3.4-6.5 7.5-6.5s7.5 2.5 7.5 6.5"/></svg>',
+      revista: '<svg viewBox="0 0 24 24" width="30" height="30" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 5.5c3-1.5 6.5-1.5 9.5 1 3-2.5 6.5-2.5 9.5-1v13c-3-1.5-6.5-1.5-9.5 1-3-2.5-6.5-2.5-9.5-1z"/><path d="M12 6.5v13"/></svg>',
+      licao: '<svg viewBox="0 0 24 24" width="30" height="30" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h8.5L19 7.5V21H6z"/><path d="M14 3v4.5h5M9 12h7M9 15.5h7M9 19h4"/></svg>'
+    };
+
+    // Campo da faixa: ícone azul à esquerda, rótulo em caixa-alta, valor e detalhe
+    function campoFaixaRel(icone, rotulo, valor, sub) {
+      const c = document.createElement("div");
+      c.className = "rel-faixa-campo";
+      const ic = document.createElement("span");
+      ic.className = "rel-faixa-icone";
+      ic.innerHTML = ICONES_FAIXA_REL[icone];
+      const txt = document.createElement("div");
+      txt.className = "rel-faixa-texto";
+      const r = document.createElement("span");
+      r.className = "rel-faixa-rotulo";
+      r.textContent = rotulo;
+      const v = document.createElement("strong");
+      v.className = "rel-faixa-valor";
+      v.textContent = valor;
+      txt.append(r, v);
+      if (sub) {
+        const s = document.createElement("span");
+        s.className = "rel-faixa-sub";
+        s.textContent = sub;
+        txt.appendChild(s);
       }
-      const lista = document.createElement("div");
-      lista.className = "relatorio-integrantes-lista";
-      itens.forEach((it) => {
-        const linha = document.createElement("div");
-        linha.className = "relatorio-integrante-linha";
-        const nome = document.createElement("span");
-        nome.textContent = it.nome;
-        const status = document.createElement("span");
-        status.className = "relatorio-badge " + (it.classe || "");
-        status.textContent = it.rotulo;
-        linha.append(nome, status);
-        lista.appendChild(linha);
-      });
-      bloco.appendChild(lista);
-      return bloco;
+      c.append(ic, txt);
+      return c;
+    }
+
+    function diaDaSemanaRel(iso) {
+      if (!iso) return "";
+      const txt = new Date(iso + "T00:00:00").toLocaleDateString("pt-BR", { weekday: "long" });
+      return txt.charAt(0).toUpperCase() + txt.slice(1);
+    }
+
+    // ----- Gráficos (SVG desenhado aqui, sem biblioteca) -----
+    // Barras: alunos matriculados mês a mês (vale o último relatório lançado em cada mês)
+    function svgBarrasMatriculadosMes(pontos) {
+      const W = 360, H = 180, P = 14, base = H - 28, topo = 24;
+      const max = Math.max(1, ...pontos.map((p) => p.valor));
+      const larg = (W - 2 * P) / pontos.length;
+      const barra = Math.min(40, larg * 0.6);
+      const barras = pontos.map((p, i) => {
+        const x = P + i * larg + (larg - barra) / 2;
+        const h = (p.valor / max) * (base - topo);
+        const y = base - h;
+        return '<rect x="' + x.toFixed(1) + '" y="' + y.toFixed(1) + '" width="' + barra.toFixed(1) + '" height="' + h.toFixed(1) + '" rx="5" fill="#3B82FF"><title>' + p.rotulo + ": " + p.valor + "</title></rect>" +
+          '<text x="' + (x + barra / 2).toFixed(1) + '" y="' + (y - 6).toFixed(1) + '" text-anchor="middle" font-size="11" font-weight="700" fill="var(--ink)">' + p.valor + "</text>" +
+          '<text x="' + (x + barra / 2).toFixed(1) + '" y="' + (H - 8) + '" text-anchor="middle" font-size="10" fill="var(--muted)">' + p.rotulo + "</text>";
+      }).join("");
+      return '<svg viewBox="0 0 ' + W + " " + H + '" class="rel-grafico-svg" role="img" aria-label="Alunos matriculados mês a mês">' +
+        '<line x1="' + P + '" x2="' + (W - P) + '" y1="' + base + '" y2="' + base + '" stroke="var(--border)"/>' + barras + "</svg>";
+    }
+
+    // Lista os meses com o último número de matriculados lançado em cada um
+    function matriculadosPorMes() {
+      const porMes = {};
+      relatoriosSalaCache
+        .slice()
+        .sort((a, b) => (a.data || "").localeCompare(b.data || ""))
+        .forEach((r) => {
+          const mes = (r.data || "").slice(0, 7);
+          if (!mes) return;
+          porMes[mes] = r.matriculados != null ? r.matriculados : (r.chamada || []).filter((p) => p.tipo === "aluno").length;
+        });
+      return Object.keys(porMes).sort().map((mes) => ({ mes: mes, rotulo: mes.slice(5) + "/" + mes.slice(2, 4), valor: porMes[mes] }));
+    }
+
+    // Barras horizontais de motivos (contagem por motivo, em porcentagem do total)
+    function barrasMotivosHtml(contagem) {
+      const total = Object.values(contagem).reduce((s, n) => s + n, 0);
+      const ids = Object.keys(contagem).sort((a, b) => contagem[b] - contagem[a]);
+      if (!ids.length) return '<p class="admin-agenda-info">Nenhuma falta neste Domingo.</p>';
+      return ids.map((id) => {
+        const pct = total ? Math.round((contagem[id] / total) * 100) : 0;
+        const nome = id ? nomeMotivoAusencia(id) : "Sem motivo informado";
+        return '<div class="rel-barra-linha"><span class="rel-barra-rotulo">' + escaparHtmlRel(nome) + '</span><div class="rel-barra-trilho"><div class="rel-barra-preench" style="width:' + pct + '%"></div></div><span class="rel-barra-valor">' + contagem[id] + "</span></div>";
+      }).join("");
+    }
+
+    function corpoHtmlRel(html) {
+      const d = document.createElement("div");
+      d.innerHTML = html;
+      return d;
     }
 
     async function desenharRelatorioSala(rel, painelDash) {
@@ -11226,113 +11680,88 @@
       const alunos = chamada.filter((p) => p.tipo === "aluno");
       const professores = chamada.filter((p) => p.tipo === "professor");
       const visitantes = rel.ouvintes || [];
-      const alunosPresentes = alunos.filter((p) => p.presente).length;
+      const presentesAlunos = alunos.filter((p) => p.presente);
       const faltas = alunos.filter((p) => !p.presente);
-      const profsPresentes = professores.filter((p) => p.presente).length;
-      const totalPresentes = visitantes.length + alunosPresentes + profsPresentes;
       const matriculados = rel.matriculados != null ? rel.matriculados : alunos.length;
+      const porcentagem = (n) => (matriculados ? Math.round((n / matriculados) * 100) : 0) + "%";
+      const porNome = (a, b) => (a.nome || "").localeCompare(b.nome || "", "pt-BR");
+      const redesenhar = () => desenharRelatorioSala(rel, painelDash);
 
-      const dash = document.createElement("div");
-      dash.className = "relatorio-sala-dash";
-      dash.append(
-        tileRelatorioSala("Dia", dataBrRelatorio(rel.data)),
-        tileRelatorioSala("Sala", rel.salaNome || "—"),
-        tileRelatorioSala("Professor", rel.lancadoPorNome || "—"),
-        tileRelatorioSala("Revista", revistaNome || "—", "relatorio-sala-cheio"),
-        tileRelatorioSala("Lição", rel.tema || "—", "relatorio-sala-cheio"),
-        tileRelatorioSala("Alunos Matriculados", String(matriculados)),
-        tileRelatorioSala("Ausentes", String(faltas.length)),
-        tileRelatorioSala("Total Presentes", String(totalPresentes))
+      // Faixa com os dados do Domingo
+      const faixa = document.createElement("div");
+      faixa.className = "rel-faixa";
+      faixa.append(
+        campoFaixaRel("data", "Data", dataBrRelatorio(rel.data), diaDaSemanaRel(rel.data)),
+        campoFaixaRel("sala", "Sala", rel.salaNome || "—"),
+        campoFaixaRel("professor", "Professor", rel.lancadoPorNome || "—"),
+        campoFaixaRel("revista", "Revista", revistaNome || "—"),
+        campoFaixaRel("licao", "Lição", rel.tema || "—")
       );
-      painelDash.appendChild(dash);
+      painelDash.appendChild(faixa);
 
-      // Integrantes: professores, alunos ausentes (com motivo) e visitantes
-      const integrantes = document.createElement("div");
-      integrantes.className = "relatorio-integrantes-grid";
-      integrantes.appendChild(listaIntegrantes("Professores da Sala", professores.map((p) => ({
-        nome: p.nome, rotulo: p.presente ? "Presente" : "Ausente", classe: p.presente ? "presente" : "falta"
-      }))));
-      integrantes.appendChild(listaIntegrantes("Visitantes", visitantes.map((v) => ({
-        nome: v.nome || "(sem nome)", rotulo: "Visitante", classe: "visitante"
-      }))));
-      painelDash.appendChild(integrantes);
+      // Relatório de assistência: totais com percentual sobre os alunos matriculados
+      const presenca = document.createElement("div");
+      presenca.className = "rel-secao";
+      presenca.innerHTML = '<div class="rel-secao-cabecalho"><span class="rel-icone-redondo">' + ICONE_PESSOAS_REL + '</span><div><h4>RELATÓRIO DE ASSISTÊNCIA</h4><p>Resumo dos alunos neste Domingo</p></div></div>';
+      const tiles = document.createElement("div");
+      tiles.className = "rel-tiles";
+      tiles.append(
+        tileResumoRelatorio(presentesAlunos.length, "Presentes", porcentagem(presentesAlunos.length), "verde"),
+        tileResumoRelatorio(faltas.length, "Ausentes", porcentagem(faltas.length), "vermelho"),
+        tileResumoRelatorio(visitantes.length, "Visitantes", porcentagem(visitantes.length), "amarelo"),
+        tileResumoRelatorio(matriculados, "Total de alunos", "Matriculados", "azul")
+      );
+      presenca.appendChild(tiles);
+      painelDash.appendChild(presenca);
 
-      const tituloAus = document.createElement("h4");
-      tituloAus.style.marginTop = "18px";
-      tituloAus.textContent = "Alunos ausentes (" + faltas.length + ")";
-      painelDash.appendChild(tituloAus);
-      if (!faltas.length) {
-        const vazio = document.createElement("p");
-        vazio.className = "admin-agenda-info";
-        vazio.textContent = "Nenhum aluno ausente neste Domingo.";
-        painelDash.appendChild(vazio);
-      } else {
-        const lista = document.createElement("div");
-        lista.className = "relatorio-ausentes-lista";
-        faltas
-          .slice()
-          .sort((a, b) => (a.nome || "").localeCompare(b.nome || "", "pt-BR"))
-          .forEach((aluno) => lista.appendChild(linhaAusenteRelatorio(rel, aluno, () => desenharRelatorioSala(rel, painelDash))));
-        painelDash.appendChild(lista);
-      }
+      const grade = document.createElement("div");
+      grade.className = "rel-grade";
 
-      // Indicadores: tendência de matriculados, presença x faltas e principais motivos
-      const tituloInd = document.createElement("h4");
-      tituloInd.style.marginTop = "22px";
-      tituloInd.textContent = "Indicadores da Sala";
-      painelDash.appendChild(tituloInd);
+      // Canvas da esquerda: professores, alunos e visitantes (cada um em seu canvas)
+      const colEsq = document.createElement("div");
+      colEsq.className = "rel-coluna";
+      colEsq.appendChild(cardRelatorio("Professores (" + professores.length + ")",
+        professores.length
+          ? listaRelatorio(professores.map((p, i) => linhaPessoaRelatorio(p.nome, i, p.presente ? "Presente" : "Ausente", p.presente ? "presente" : "falta", p.presente)))
+          : vazioRelatorio("Nenhum professor registrado neste Domingo.")));
+      colEsq.appendChild(cardRelatorio("Alunos (" + alunos.length + ")",
+        alunos.length
+          ? listaRelatorio(alunos.slice().sort(porNome).map((a, i) => a.presente
+              ? linhaPessoaRelatorio(a.nome, i, "Presente", "presente", true)
+              : linhaAusenteRelatorio(rel, a, redesenhar, i)))
+          : vazioRelatorio("Nenhum aluno registrado neste Domingo.")));
+      colEsq.appendChild(cardRelatorio("Visitantes (" + visitantes.length + ")",
+        visitantes.length
+          ? listaRelatorio(visitantes.map((v, i) => linhaPessoaRelatorio(v.nome, i, "Visitante", "visitante", false)))
+          : vazioRelatorio("Nenhum visitante neste Domingo.")));
 
-      const pontos = relatoriosSalaCache
-        .slice()
-        .sort((a, b) => (a.data || "").localeCompare(b.data || ""))
-        .map((r) => ({ data: r.data, valor: r.matriculados != null ? r.matriculados : (r.chamada || []).filter((p) => p.tipo === "aluno").length }));
-      const tend = tendenciaMatriculados(pontos);
-
+      // Canvas da direita: matriculados mês a mês e motivos das faltas deste Domingo
+      const colDir = document.createElement("div");
+      colDir.className = "rel-coluna";
+      const mensal = matriculadosPorMes();
+      colDir.appendChild(cardRelatorio("Alunos matriculados (mês a mês)",
+        corpoHtmlRel(mensal.length ? svgBarrasMatriculadosMes(mensal) : '<p class="admin-agenda-info">Sem relatórios lançados.</p>')));
       const contagemMotivos = {};
-      relatoriosSalaCache.forEach((r) => {
-        (r.chamada || []).forEach((p) => {
-          if (p.tipo !== "aluno" || p.presente) return;
-          const chave = p.motivo || "";
-          contagemMotivos[chave] = (contagemMotivos[chave] || 0) + 1;
-        });
+      faltas.forEach((p) => {
+        const chave = p.motivo || "";
+        contagemMotivos[chave] = (contagemMotivos[chave] || 0) + 1;
       });
-      const totalFaltas = Object.values(contagemMotivos).reduce((s, n) => s + n, 0);
-      const motivosOrdenados = Object.keys(contagemMotivos).sort((a, b) => contagemMotivos[b] - contagemMotivos[a]);
-      const barras = motivosOrdenados.length
-        ? motivosOrdenados.map((id) => {
-            const pct = totalFaltas ? Math.round((contagemMotivos[id] / totalFaltas) * 100) : 0;
-            const nome = id ? nomeMotivoAusencia(id) : "Sem motivo informado";
-            return '<div class="rel-barra-linha"><span class="rel-barra-rotulo">' + escaparHtmlRel(nome) + '</span><div class="rel-barra-trilho"><div class="rel-barra-preench" style="width:' + pct + '%"></div></div><span class="rel-barra-valor">' + contagemMotivos[id] + "</span></div>";
-          }).join("")
-        : '<p class="admin-agenda-info">Nenhuma falta registrada ainda.</p>';
+      colDir.appendChild(cardRelatorio("Motivos de falta neste Domingo",
+        corpoHtmlRel(barrasMotivosHtml(contagemMotivos))));
 
-      const presentesAlunos = alunosPresentes;
-      const faltasAlunos = faltas.length;
-      const indicadores = document.createElement("div");
-      indicadores.className = "relatorio-indicadores";
-      indicadores.append(
-        cardIndicador("Alunos matriculados",
-          pontos.length < 1 ? '<p class="admin-agenda-info">Sem relatórios.</p>' : svgLinhaMatriculados(pontos),
-          tend.seta + " " + tend.rotulo + (pontos.length >= 2 ? " (" + pontos.length + " Domingos)" : "")),
-        cardIndicador("Presença x Faltas (este Domingo)",
-          '<div class="rel-rosca-wrap">' + svgRoscaPresenca(presentesAlunos, faltasAlunos) +
-          '<div class="rel-rosca-legenda"><span><i class="rel-dot presente"></i>Presentes: ' + presentesAlunos + '</span><span><i class="rel-dot falta"></i>Faltas: ' + faltasAlunos + "</span></div></div>",
-          "Considera só os alunos matriculados."),
-        cardIndicador("Principais motivos de falta", barras,
-          "Soma de todos os Domingos lançados desta Sala.")
-      );
-      painelDash.appendChild(indicadores);
+      grade.append(colEsq, colDir);
+      painelDash.appendChild(grade);
 
-      const tituloNotas = document.createElement("h4");
-      tituloNotas.style.marginTop = "18px";
-      tituloNotas.textContent = "Notas";
-      painelDash.appendChild(tituloNotas);
+      // Notas e observações (abaixo dos dois canvas; salvam ao sair do campo)
+      const cardNotas = document.createElement("section");
+      cardNotas.className = "rel-card rel-notas";
       const notas = document.createElement("textarea");
       notas.className = "relatorio-notas";
-      notas.placeholder = "Anote aqui o que aconteceu no Domingo...";
+      notas.placeholder = "Anotar o que aconteceu no Domingo...";
       notas.value = rel.notasRelatorio || "";
       notas.addEventListener("change", () => salvarRelatorioSala(rel, { notasRelatorio: notas.value }));
-      painelDash.appendChild(notas);
+      cardNotas.append(cabecalhoCardRelatorio("Notas e Observações"), notas);
+      painelDash.appendChild(cardNotas);
     }
 
     function escaparHtmlRel(texto) {
@@ -11358,24 +11787,29 @@
 
         const escolhido = relatoriosSalaCache.find((r) => r.data === dataEscolhida) || relatoriosSalaCache[0];
 
-        // Combobox com os Domingos lançados: o professor elege o relatório
-        const linhaSeletor = document.createElement("div");
-        linhaSeletor.className = "admin-form-linha";
-        const rotuloSeletor = document.createElement("label");
-        rotuloSeletor.textContent = "Domingo:";
+        // Cabeçalho da tela: ícone, título e combobox com os Domingos lançados na Chamada
+        const cabecalho = document.createElement("div");
+        cabecalho.className = "rel-cabecalho";
+        cabecalho.innerHTML = '<span class="rel-cabecalho-icone">' + ICONE_LIVRO_REL + '</span>' +
+          '<div class="rel-cabecalho-texto"><h4>Relatório da Sala</h4><p>Visão geral das atividades da sala neste Domingo</p></div>';
+        const caixaDia = document.createElement("label");
+        caixaDia.className = "rel-caixa-dia";
+        caixaDia.innerHTML = '<span class="rel-caixa-dia-icone">' + ICONES_FAIXA_REL.data + '</span>';
         const seletorDia = document.createElement("select");
         seletorDia.id = "relatorioSalaDia";
-        seletorDia.className = "admin-perfis-item-select";
+        seletorDia.className = "rel-select-dia";
+        seletorDia.setAttribute("aria-label", "Escolher o Domingo");
         relatoriosSalaCache.forEach((r) => {
           const opt = document.createElement("option");
           opt.value = r.data;
-          opt.textContent = dataBrRelatorio(r.data);
+          opt.textContent = diaDaSemanaRel(r.data) + ", " + dataBrRelatorio(r.data);
           if (r.data === escolhido.data) opt.selected = true;
           seletorDia.appendChild(opt);
         });
-        rotuloSeletor.appendChild(seletorDia);
-        linhaSeletor.appendChild(rotuloSeletor);
-        painel.appendChild(linhaSeletor);
+        caixaDia.appendChild(seletorDia);
+        cabecalho.appendChild(caixaDia);
+
+        painel.appendChild(cabecalho);
 
         const painelDash = document.createElement("div");
         painel.appendChild(painelDash);

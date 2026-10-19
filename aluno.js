@@ -419,10 +419,9 @@ async function carregarAvisos() {
 // Com pedido feito no trimestre, aparece também o cartão "Meu pedido" (somente leitura)
 async function carregarRecursos() {
   const el = document.getElementById("alunoRecursos");
-  const periodo = proximoTrimestre();
   let temPedido = false;
   try {
-    temPedido = (await buscarPedidosAluno(periodo.ano, periodo.trimestre)).length > 0;
+    temPedido = (await buscarPedidosEmAbertoAluno(uidAluno)).length > 0;
   } catch (err) {
     console.error("Erro ao verificar pedidos:", err);
   }
@@ -798,22 +797,32 @@ function confirmarMaisRevistas() {
   });
 }
 
-// Meu pedido (somente leitura): tudo o que o aluno pediu no trimestre, com o valor total
+// Pedidos ainda não entregues (a Secretaria dá baixa com status "entregue"), de qualquer trimestre
+async function buscarPedidosEmAbertoAluno(uid) {
+  if (!uid) return [];
+  const snap = await getDocs(query(collection(db, "pedidosRevistas"), where("uid", "==", uid)));
+  return snap.docs
+    .map((d) => ({ id: d.id, ...d.data() }))
+    .filter((p) => p.status !== "entregue")
+    .sort((a, b) => (a.ano - b.ano) || (a.trimestre - b.trimestre));
+}
+
+// Preços das revistas de um trimestre (vazio se ainda não cadastrados)
+async function precosDoTrimestre(ano, trimestre) {
+  const snap = await getDoc(doc(db, "configRevistas", `precos_${ano}_${trimestre}`)).catch(() => null);
+  return snap && snap.exists() && snap.data().precos ? snap.data().precos : {};
+}
+
+// Meu pedido (somente leitura): tudo o que o aluno pediu e ainda não foi entregue, de qualquer trimestre, com o valor total
 async function abrirMeuPedido(sol = solicitanteAluno()) {
   if (!sol) return;
-  const periodo = proximoTrimestre();
   const lista = document.getElementById("alunoMeuPedidoLista");
   const total = document.getElementById("alunoMeuPedidoTotal");
   lista.textContent = "Carregando...";
   total.textContent = "";
   abrirModalAluno("alunoMeuPedidoModal");
   try {
-    const [pedidos, revSnap, precosSnap] = await Promise.all([
-      buscarPedidosAluno(periodo.ano, periodo.trimestre, sol.uid),
-      getDoc(doc(db, "licoes", "_revistas")),
-      getDoc(doc(db, "configRevistas", `precos_${periodo.ano}_${periodo.trimestre}`)).catch(() => null)
-    ]);
-    const precos = precosSnap && precosSnap.exists() && precosSnap.data().precos ? precosSnap.data().precos : {};
+    const pedidos = await buscarPedidosEmAbertoAluno(sol.uid);
     lista.textContent = "";
 
     const cabecalho = document.createElement("div");
@@ -825,9 +834,27 @@ async function abrirMeuPedido(sol = solicitanteAluno()) {
     });
     lista.appendChild(cabecalho);
 
+    if (!pedidos.length) {
+      const vazio = document.createElement("div");
+      vazio.className = "aluno-pedido-vazio";
+      vazio.textContent = "Nenhum pedido em aberto.";
+      lista.appendChild(vazio);
+    }
+
     let soma = 0;
     let semPreco = false;
-    pedidos.forEach((p) => {
+    const precosPorTrimestre = {};
+    for (const p of pedidos) {
+      const chave = p.ano + "_" + p.trimestre;
+      if (!precosPorTrimestre[chave]) precosPorTrimestre[chave] = await precosDoTrimestre(p.ano, p.trimestre);
+      const precos = precosPorTrimestre[chave];
+
+      // Cabeçalho do trimestre do pedido (cada pedido tem o seu preço)
+      const trimestre = document.createElement("div");
+      trimestre.className = "aluno-pedido-trim";
+      trimestre.textContent = p.trimestre + "º trimestre de " + p.ano;
+      lista.appendChild(trimestre);
+
       (p.itens || []).forEach((i) => {
         const qAluno = i.qtdAluno !== undefined ? Number(i.qtdAluno) : Number(i.quantidade) || 0;
         const qProfessor = Number(i.qtdProfessor) || 0;
@@ -850,7 +877,7 @@ async function abrirMeuPedido(sol = solicitanteAluno()) {
           lista.appendChild(linha);
         });
       });
-    });
+    }
     total.textContent = formatarReal(soma) + (semPreco ? " (alguns sem preço)" : "");
   } catch (err) {
     console.error("Erro ao carregar seu pedido:", err);
@@ -955,6 +982,5 @@ export function abrirMeuPedidoComo(sol) {
   return abrirMeuPedido(sol);
 }
 export async function temPedidoRevistaComo(sol) {
-  const periodo = proximoTrimestre();
-  return (await buscarPedidosAluno(periodo.ano, periodo.trimestre, sol.uid)).length > 0;
+  return (await buscarPedidosEmAbertoAluno(sol.uid)).length > 0;
 }

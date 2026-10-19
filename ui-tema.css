@@ -1491,6 +1491,8 @@ body::after {
 /* Pedido do aluno em formato de tabela: Revista | Qtd. | Tipo | Valor total */
 .aluno-pedido-grade { display: grid; grid-template-columns: minmax(0, 1.7fr) 70px 110px minmax(0, 1fr); gap: 10px; align-items: center; }
 .aluno-pedido-grade-cab { padding: 8px 0; border-bottom: 1px solid var(--border-strong); font-size: 11px; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+.aluno-pedido-trim { margin-top: 14px; font-size: 12px; font-weight: 800; color: var(--laranja); text-transform: uppercase; letter-spacing: .04em; }
+.aluno-pedido-vazio { padding: 14px 0; font-size: 13px; color: var(--muted); }
 .admin-form .aluno-pedido-grade input[type=number] { width: 70px; padding: 6px 8px; }
 .admin-form .aluno-pedido-grade select { width: 100%; padding: 6px 8px; }
 .aluno-pedido-valor { font-size: 13px; color: var(--ink); }

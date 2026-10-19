@@ -60,6 +60,7 @@ service cloud.firestore {
         get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.perfil == "administrativo" ||
         podeEscalarNaSala(request.resource.data.salaId)
       );
+      allow delete: if request.auth != null && (isAdmin() || isAdministrativo());
     }
     match /matriculas/{matriculaId} {
       allow read: if request.auth != null;
