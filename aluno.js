@@ -35,6 +35,15 @@ let uidAluno = null;
 // Sala onde o aluno está matriculado (a que vale para o pedido de revista, não a que ele escolhe na Sala de Aula)
 let matriculaAluno = null; // { salaId, salaNome, nome }
 
+// Quem pede a revista. O pop-up é o mesmo para o aluno (matrícula) e para o professor
+// (Sala do Professor); só muda o solicitante e o tipo padrão da revista.
+// { uid, nome, salaId, salaNome, tipoPadrao, aoMudar? }
+let solicitanteModal = null;
+function solicitanteAluno() {
+  if (!matriculaAluno) return null;
+  return { uid: uidAluno, nome: matriculaAluno.nome || "", salaId: matriculaAluno.salaId, salaNome: matriculaAluno.salaNome || "", tipoPadrao: "aluno" };
+}
+
 // Carrega a Área do Aluno quando logado
 onAuthStateChanged(auth, async (user) => {
   if (user && document.getElementById("areaAluno")) {
@@ -433,8 +442,8 @@ async function carregarRecursos() {
       </button>` : ""}
     </div>`;
 
-  document.getElementById("btnAlunoSolicitarRevista").addEventListener("click", abrirSolicitarRevista);
-  if (temPedido) document.getElementById("btnAlunoMeuPedido").addEventListener("click", abrirMeuPedido);
+  document.getElementById("btnAlunoSolicitarRevista").addEventListener("click", () => abrirSolicitarRevista());
+  if (temPedido) document.getElementById("btnAlunoMeuPedido").addEventListener("click", () => abrirMeuPedido());
 }
 
 // ---------- Pedido de revista (pop-up) ----------
@@ -450,9 +459,9 @@ function proximoTrimestre() {
 }
 
 // Pedidos deste aluno no trimestre (pode haver mais de um, se ele pediu de novo). Lista vazia se não pediu.
-async function buscarPedidosAluno(ano, trimestre) {
-  if (!uidAluno) return [];
-  const snap = await getDocs(query(collection(db, "pedidosRevistas"), where("uid", "==", uidAluno)));
+async function buscarPedidosAluno(ano, trimestre, uid = uidAluno) {
+  if (!uid) return [];
+  const snap = await getDocs(query(collection(db, "pedidosRevistas"), where("uid", "==", uid)));
   return snap.docs.map((d) => ({ id: d.id, ...d.data() })).filter((p) => p.ano === ano && p.trimestre === trimestre);
 }
 
@@ -490,12 +499,15 @@ function fecharPedidoRevista() {
 }
 
 // Abre o pop-up: trimestre, sala, revistas (checklist + quantidade), custo e Fazer o Pedido
-async function abrirSolicitarRevista() {
+async function abrirSolicitarRevista(sol = solicitanteAluno()) {
   const status = document.getElementById("alunoPedidoStatus");
-  if (!matriculaAluno) {
-    alert("Solicite ao professor ou à Secretaria matricular você antes de pedir a revista.");
+  if (!sol || !sol.salaId) {
+    alert(sol && sol.tipoPadrao === "professor"
+      ? "Escolha uma Sala antes de pedir a revista."
+      : "Solicite ao professor ou à Secretaria matricular você antes de pedir a revista.");
     return;
   }
+  solicitanteModal = sol;
 
   const periodo = proximoTrimestre();
   document.getElementById("alunoPedidoTrimestreTexto").textContent = `${periodo.trimestre}º Trimestre ${periodo.ano}`;
@@ -598,6 +610,7 @@ function desenharListaRevistas() {
       opt.textContent = textoOpcao;
       tipo.appendChild(opt);
     });
+    tipo.value = solicitanteModal && solicitanteModal.tipoPadrao ? solicitanteModal.tipoPadrao : "aluno";
     tipo.disabled = true;
 
     // Valor total desta revista (preenchido por atualizarCustoRevista)
@@ -786,7 +799,8 @@ function confirmarMaisRevistas() {
 }
 
 // Meu pedido (somente leitura): tudo o que o aluno pediu no trimestre, com o valor total
-async function abrirMeuPedido() {
+async function abrirMeuPedido(sol = solicitanteAluno()) {
+  if (!sol) return;
   const periodo = proximoTrimestre();
   const lista = document.getElementById("alunoMeuPedidoLista");
   const total = document.getElementById("alunoMeuPedidoTotal");
@@ -795,7 +809,7 @@ async function abrirMeuPedido() {
   abrirModalAluno("alunoMeuPedidoModal");
   try {
     const [pedidos, revSnap, precosSnap] = await Promise.all([
-      buscarPedidosAluno(periodo.ano, periodo.trimestre),
+      buscarPedidosAluno(periodo.ano, periodo.trimestre, sol.uid),
       getDoc(doc(db, "licoes", "_revistas")),
       getDoc(doc(db, "configRevistas", `precos_${periodo.ano}_${periodo.trimestre}`)).catch(() => null)
     ]);
@@ -894,19 +908,21 @@ async function enviarPedidoRevista() {
   });
 
   // Já fez pedido neste trimestre: pergunta antes de pedir mais (a secretaria cancela, se precisar)
-  const anteriores = await buscarPedidosAluno(periodo.ano, periodo.trimestre);
+  const sol = solicitanteModal;
+  if (!sol) return;
+  const anteriores = await buscarPedidosAluno(periodo.ano, periodo.trimestre, sol.uid);
   if (anteriores.length && !(await confirmarMaisRevistas())) return;
 
   enviar.disabled = true;
   try {
     // Pedido novo do trimestre: o id é único (o primeiro usa o id padrão do trimestre)
-    const base = `${uidAluno}_${periodo.ano}_${periodo.trimestre}`;
+    const base = `${sol.uid}_${periodo.ano}_${periodo.trimestre}`;
     const idPedido = anteriores.length ? `${base}_${Date.now()}` : base;
     await setDoc(doc(db, "pedidosRevistas", idPedido), {
-      uid: uidAluno,
-      alunoNome: matriculaAluno.nome || "",
-      salaId: matriculaAluno.salaId,
-      salaNome: matriculaAluno.salaNome || "",
+      uid: sol.uid,
+      alunoNome: sol.nome || "",
+      salaId: sol.salaId,
+      salaNome: sol.salaNome || "",
       ano: periodo.ano,
       trimestre: periodo.trimestre,
       itens: itens,
@@ -915,8 +931,12 @@ async function enviarPedidoRevista() {
     });
     limparListaPedido();
     fecharPedidoRevista();
-    carregarAvisos();
-    carregarRecursos();
+    if (sol.aoMudar) {
+      sol.aoMudar();
+    } else {
+      carregarAvisos();
+      carregarRecursos();
+    }
     window.notificar("Confirmado! Seu pedido de revista foi enviado à Secretaria da EBD.", "success");
   } catch (err) {
     console.error("Erro ao fazer o pedido de revista:", err);
@@ -924,4 +944,17 @@ async function enviarPedidoRevista() {
     window.notificar("Não foi possível fazer o pedido. Tente de novo.", "error");
     enviar.disabled = false;
   }
+}
+
+// ---------- Sala do Professor: mesmo pop-up de pedido, com o professor como solicitante ----------
+// sol = { uid, nome, salaId, salaNome, tipoPadrao: "professor", aoMudar }
+export function abrirSolicitarRevistaComo(sol) {
+  return abrirSolicitarRevista(sol);
+}
+export function abrirMeuPedidoComo(sol) {
+  return abrirMeuPedido(sol);
+}
+export async function temPedidoRevistaComo(sol) {
+  const periodo = proximoTrimestre();
+  return (await buscarPedidosAluno(periodo.ano, periodo.trimestre, sol.uid)).length > 0;
 }

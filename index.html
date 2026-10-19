@@ -198,6 +198,7 @@
   .nav-login:hover {
     border-color: rgba(255,196,61,0.7); background: rgba(255,196,61,0.2); transform: translateY(-1px);
   }
+  /* Com foto: sem fundo amarelo; a foto ocupa toda a área do botão */
   .nav-login-label {
     background: linear-gradient(100deg, #FFE38A 0%, #FFB100 100%);
     -webkit-background-clip: text; background-clip: text; color: transparent;
@@ -279,6 +280,15 @@
   }
   .login-form select:focus { outline: none; border-color: var(--azul); }
     .login-form input:focus { outline: none; border-color: var(--azul); } .login-senha-wrap { position: relative; } .login-senha-wrap input { padding-right: 44px; } .toggle-senha { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); width: 30px; height: 30px; border: none; background: transparent; color: var(--muted); cursor: pointer; display: flex; align-items: center; justify-content: center; border-radius: 8px; transition: color 0.2s ease; } .toggle-senha:hover { color: var(--ink); }
+  #loginModal .login-form input.campo-erro { border-color: var(--vermelho) !important; box-shadow: 0 0 0 3px rgba(255,59,82,0.18); }
+  .login-card.tremer { animation: loginTremer 0.45s ease; }
+  @keyframes loginTremer {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-10px); }
+    40% { transform: translateX(10px); }
+    60% { transform: translateX(-6px); }
+    80% { transform: translateX(6px); }
+  }
   .login-forgot { display: block; text-align: right; margin-top: 10px; font-size: 12.5px; font-weight: 600; color: var(--laranja); text-decoration: none; }
   .login-forgot:hover { text-decoration: underline; }
   .login-btn-row { display: flex; gap: 10px; margin-top: 4px; }
@@ -301,6 +311,52 @@
   .perfil-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
   @media (max-width: 480px) { .perfil-grid-2 { grid-template-columns: 1fr; } }
   .perfil-foto-row { display: flex; align-items: center; gap: 14px; }
+  .perfil-dados-lado { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 12px; }
+  .perfil-dados-lado .perfil-grid-2 { margin: 0; }
+  .perfil-foto-bloco { display: flex; flex-direction: column; align-items: center; gap: 8px; flex-shrink: 0; }
+  .perfil-foto-preview-grande { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; background: var(--surface-2); border: 1px solid var(--border-strong); }
+  .perfil-foto-botao { padding: 6px 12px; border-radius: 10px; border: 1px solid var(--border-strong); background: var(--surface-2); color: var(--ink); font-size: 12.5px; font-weight: 600; cursor: pointer; font-family: inherit; }
+  .perfil-foto-botao:hover { border-color: var(--azul); }
+  .perfil-foto-circulo { position: relative; width: 120px; height: 120px; border-radius: 50%; flex-shrink: 0; }
+  .perfil-foto-circulo .perfil-foto-preview-grande { display: block; width: 100%; height: 100%; border: none; }
+  .foto-remover-badge { position: absolute; top: -4px; right: -4px; width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--surface); background: var(--vermelho); color: #fff; font-size: 15px; font-weight: 800; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; box-shadow: 0 2px 6px rgba(0,0,0,.35); font-family: inherit; }
+  .foto-remover-badge[hidden] { display: none; }
+  /* Balão vermelho com X centralizado */
+  .foto-remover-badge { position: absolute; top: -4px; right: -4px; z-index: 2; width: 26px; height: 26px; border-radius: 50%; border: 2px solid var(--surface); padding: 0; cursor: pointer; background: radial-gradient(circle at 35% 30%, #ff8a94 0%, #f2384f 55%, #c81d34 100%); box-shadow: 0 3px 8px rgba(0,0,0,.45); }
+  .foto-remover-badge::before, .foto-remover-badge::after { content: ""; position: absolute; left: 50%; top: 50%; width: 12px; height: 3px; border-radius: 2px; background: #fff; box-shadow: 0 1px 1px rgba(0,0,0,.25); transform: translate(-50%, -50%) rotate(45deg); }
+  .foto-remover-badge::after { transform: translate(-50%, -50%) rotate(-45deg); }
+  .foto-remover-badge:hover { filter: brightness(1.08); }
+  .foto-remover-badge:hover { filter: brightness(1.1); }
+  .perfil-foto-circulo .perfil-foto-preview-grande { border-radius: 50%; }
+  .perfil-foto-circulo .perfil-foto-botao { position: absolute; inset: 0; width: 100%; height: 100%; border-radius: 50%; border: none; padding: 0; transform: none; background: rgba(10,12,18,0.55); color: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; font-size: 12px; font-weight: 700; line-height: 1.2; cursor: pointer; font-family: inherit; transition: background .2s ease, opacity .2s ease; }
+  .perfil-foto-circulo .perfil-foto-botao .txt-alterar { display: none; }
+  /* Com foto: o botão some e aparece só ao passar o mouse, com "Alterar foto" */
+  .perfil-foto-circulo .foto-remover-badge:not([hidden]) ~ .perfil-foto-botao { background: rgba(10,12,18,0.6); opacity: 0; }
+  .perfil-foto-circulo .foto-remover-badge:not([hidden]) ~ .perfil-foto-botao:hover { opacity: 1; }
+  .perfil-foto-circulo .foto-remover-badge:not([hidden]) ~ .perfil-foto-botao .txt-enviar { display: none; }
+  .perfil-foto-circulo .foto-remover-badge:not([hidden]) ~ .perfil-foto-botao .txt-alterar { display: inline; }
+  .perfil-foto-circulo .foto-remover-badge:not([hidden]) ~ .perfil-foto-botao svg { display: none; }
+  .usuario-nome-linha { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .usuario-status { flex-shrink: 0; width: 26px; height: 26px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; line-height: 1; }
+  .usuario-status.ok { background: #34D399; color: #0b1f16; }
+  .usuarios-filtros { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px 12px; margin: 14px 0 10px; }
+  .usuarios-filtro-campo { display: flex; flex-direction: column; gap: 5px; font-size: 11.5px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; min-width: 0; }
+  .usuarios-filtro-campo input,
+  .usuarios-filtro-campo select { box-sizing: border-box; width: 100%; height: 40px; padding: 0 12px; border-radius: 12px; background: var(--surface); border: 1px solid var(--border); color: var(--ink); font-family: "Plus Jakarta Sans", sans-serif; font-size: 14px; font-weight: 500; text-transform: none; letter-spacing: normal; margin: 0; }
+  .usuarios-filtro-campo input:focus,
+  .usuarios-filtro-campo select:focus { outline: none; border-color: var(--azul); }
+  .usuarios-filtro-busca { grid-column: span 2; }
+  @media (max-width: 760px) { .usuarios-filtro-busca { grid-column: 1 / -1; } }
+  .usuarios-ordenar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; font-size: 13px; color: var(--muted); }
+  .usuarios-ordenar button.is-ativo { border-color: var(--azul); color: var(--ink); }
+  .pendencia-usuarios { display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: #FFD60A; margin-left: 8px; vertical-align: middle; box-shadow: 0 0 0 3px rgba(255,214,10,.22); }
+  .pendencia-usuarios[hidden] { display: none; }
+  .nav-admin-dropdown-item .pendencia-usuarios { margin-left: auto; }
+  .usuario-status.inativo { background: #FF3B52; color: #fff; }
+  .usuario-status.pendente { background: transparent; color: #FFD60A; cursor: help; }
+  #areaAcessosUsuarios .admin-perfis-item.usuario-pendente, .admin-perfis-item.usuario-pendente { border: 2px solid #FFD60A !important; }
+  .admin-perfis-item.usuario-inativo { opacity: .75; }
+  #gerenciarPerfilEditTitulo { font-size: 13px; font-weight: 600; text-transform: none; letter-spacing: normal; white-space: normal; line-height: 1.4; height: auto; padding: 8px 14px; border-radius: 14px; max-width: 100%; }
   .perfil-foto-preview { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; background: var(--surface-2); border: 1px solid var(--border-strong); flex-shrink: 0; }
   .perfil-secao-titulo { font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin-top: 4px; }
   .licoes-conteudo { overflow: hidden; max-height: 0; transition: max-height 0.35s ease; }
@@ -321,6 +377,13 @@
   .perfil-header-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
   .perfil-tipo-label { font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; white-space: nowrap; }
   .perfil-excluir-row { margin-top: 2px; }
+  .perfil-acoes-redondas { display: flex; gap: 10px; align-items: stretch; margin-top: 10px; }
+  .perfil-acao-redonda { flex: 1; min-width: 0; height: 44px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--border-strong); background: var(--surface-2); color: var(--ink); font-family: inherit; font-size: 13.5px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; text-decoration: none; cursor: pointer; transition: border-color .2s ease, background .2s ease; }
+  .perfil-acao-redonda:hover { border-color: var(--azul); }
+  .perfil-acao-salvar { border-color: var(--azul); background: rgba(59,130,255,.14); }
+  .perfil-acao-excluir { border-color: var(--vermelho); color: var(--vermelho); background: rgba(255,59,82,.08); }
+  .perfil-acao-excluir:hover { background: rgba(255,59,82,.16); border-color: var(--vermelho); }
+  @media (max-width: 560px) { .perfil-acoes-redondas { flex-direction: column; } }
   .btn-danger { background: rgba(255,59,59,0.08); color: var(--vermelho); border-color: var(--vermelho); }
   .btn-danger:hover { background: var(--vermelho); color: #fff; transform: translateY(-2px); }
 
@@ -963,7 +1026,7 @@
     background: var(--bg); border: 1px solid var(--border-strong); border-radius: 8px; color: var(--ink);
     padding: 7px 10px; font-size: 13px; font-family: inherit;
   }
-  .admin-agenda-filtro input[type="date"] { min-width: 130px; }
+  .admin-agenda-filtro input[data-data-br] { min-width: 130px; }
   .admin-agenda-filtro input[type="text"] { min-width: 170px; }
   .admin-agenda-lista { display: flex; flex-direction: column; gap: 8px; max-height: 480px; overflow-y: auto; }
   .admin-agenda-item {
@@ -994,7 +1057,7 @@
   .admin-form-linha[hidden], .admin-outras-datas[hidden] { display: none; }
   .admin-outras-datas { display: flex; flex-direction: column; gap: 8px; }
   .outra-data-linha { display: flex; align-items: center; gap: 8px; }
-  .outra-data-linha input[type="date"] { flex: 1; max-width: 220px; }
+  .outra-data-linha input[data-data-br] { flex: 1; max-width: 220px; }
   .btn-admin-mini {
     background: var(--surface-2); color: var(--ink); border: 1px solid var(--border-strong);
     border-radius: 8px; width: 34px; height: 34px; flex-shrink: 0; font-size: 16px; font-weight: 700;
@@ -1186,9 +1249,64 @@
   .escala-stepper span { min-width: 110px; text-align: center; font-family: "Unbounded", sans-serif; font-size: 14px; font-weight: 700; }
   .professor-canvas-sub { font-size: 12px; color: var(--muted); }
   .professor-canvas-painel { border-top: 1px solid var(--border-strong); padding: 20px 22px 22px; margin-top: 4px; }
+  .alunos-quadros { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 18px; align-items: stretch; }
+  .aluno-quadro { display: flex; flex-direction: column; gap: 14px; padding: 22px 22px 20px; border: 1px solid var(--azul); border-radius: 18px; background: var(--surface-2); }
+  .aluno-quadro h4 { margin: 0; text-align: center; font-size: 17px; }
+  .aluno-quadro-texto { margin: 0; min-height: 120px; font-size: 13.5px; line-height: 1.5; color: var(--muted); text-align: center; }
+  .aluno-quadro-campos { display: flex; flex-direction: column; gap: 12px; }
+  .aluno-quadro-campos .admin-form-linha { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin: 0; }
+  .aluno-quadro-campos .admin-form-linha[hidden] { display: none; }
+  .aluno-quadro-campos label { display: flex; flex-direction: column; gap: 6px; min-width: 0; font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+  .aluno-quadro-campos input,
+  .aluno-quadro-campos select { box-sizing: border-box; width: 100%; height: 42px; padding: 0 12px; border-radius: 12px; background: var(--surface); border: 1px solid var(--border); color: var(--ink); font-family: "Plus Jakarta Sans", sans-serif; font-size: 14px; font-weight: 500; text-transform: none; letter-spacing: normal; margin: 0; }
+  .aluno-quadro-campos input::placeholder { color: var(--muted-2); }
+  .aluno-quadro-campos input:focus,
+  .aluno-quadro-campos select:focus { outline: none; border-color: var(--azul); }
+  .aluno-quadro-botoes { display: flex; justify-content: center; margin-top: auto; padding-top: 6px; }
+  .aluno-quadro-botoes .btn-admin { min-width: 150px; }
+  @media (max-width: 760px) { .alunos-quadros { grid-template-columns: 1fr; } }
   .alunos-sala-nome { text-align: center; margin: 4px 0 6px; font-weight: 700; font-size: 16px; color: var(--laranja); text-transform: uppercase; letter-spacing: .02em; }
   .alunos-sala-nome:empty { display: none; }
   @media (max-width: 560px) { .professor-canvas-painel { padding: 16px 16px 18px; } }
+  .relatorio-sala-dash { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-top: 14px; }
+  .relatorio-sala-dash .professor-resumo-card { text-align: center; }
+  .relatorio-sala-dash .relatorio-sala-cheio { grid-column: 1 / -1; }
+  .relatorio-sala-texto { font-size: 16px; line-height: 1.3; }
+  .relatorio-ausentes-lista { display: flex; flex-direction: column; gap: 8px; }
+  .relatorio-ausente-linha { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; padding: 10px 12px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface-2); }
+  .relatorio-ausente-linha strong { flex: 1; min-width: 150px; }
+  .relatorio-motivo-novo { display: flex; gap: 6px; width: 100%; }
+  .relatorio-motivo-novo input { flex: 1; padding: 8px 12px; border-radius: 10px; background: var(--surface); border: 1px solid var(--border); color: var(--ink); font-family: "Plus Jakarta Sans", sans-serif; }
+  .relatorio-notas { width: 100%; min-height: 120px; margin-top: 4px; padding: 12px 14px; border-radius: 14px; background: var(--surface-2); border: 1px solid var(--border); color: var(--ink); font-family: "Plus Jakarta Sans", sans-serif; font-size: 14.5px; resize: vertical; }
+  .relatorio-notas:focus { outline: none; border-color: var(--azul); }
+  .relatorio-integrantes-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; margin-top: 18px; }
+  .relatorio-integrantes h4 { margin: 0 0 8px; }
+  .relatorio-integrantes-lista { display: flex; flex-direction: column; gap: 6px; }
+  .relatorio-integrante-linha { display: flex; justify-content: space-between; gap: 8px; align-items: center; padding: 8px 12px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface-2); }
+  .relatorio-badge { font-size: 12px; font-weight: 700; padding: 3px 9px; border-radius: 999px; border: 1px solid var(--border); white-space: nowrap; }
+  .relatorio-badge.presente { color: #34D399; border-color: #34D399; }
+  .relatorio-badge.falta { color: #FF3B52; border-color: #FF3B52; }
+  .relatorio-badge.visitante { color: var(--azul); border-color: var(--azul); }
+  .relatorio-indicadores { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; margin-top: 10px; }
+  .relatorio-indicador { border: 1px solid var(--border-strong); border-radius: 16px; padding: 14px 16px; background: var(--surface-2); display: flex; flex-direction: column; }
+  .relatorio-indicador h5 { margin: 0 0 10px; font-size: 14px; text-align: center; }
+  .relatorio-indicador-corpo { flex: 1; display: flex; align-items: center; justify-content: center; }
+  .relatorio-indicador-corpo .rel-grafico-svg { width: 100%; height: auto; max-width: 320px; }
+  .relatorio-indicador-rodape { margin: 10px 0 0; font-size: 12.5px; color: var(--muted); text-align: center; }
+  .rel-rosca-wrap { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+  .rel-rosca-legenda { display: flex; gap: 14px; font-size: 13px; }
+  .rel-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; }
+  .rel-dot.presente { background: #34D399; }
+  .rel-dot.falta { background: #FF3B52; }
+  .rel-barra-linha { display: grid; grid-template-columns: minmax(90px, 1.2fr) 2fr auto; gap: 8px; align-items: center; margin: 6px 0; font-size: 13px; }
+  .rel-barra-trilho { height: 10px; border-radius: 999px; background: var(--border); overflow: hidden; }
+  .rel-barra-preench { height: 100%; background: var(--laranja); border-radius: 999px; }
+  .rel-barra-valor { font-weight: 700; }
+  .chamada-motivo { display: flex; align-items: center; gap: 8px; margin-top: 6px; flex-wrap: wrap; }
+  .chamada-motivo-rotulo { font-size: 12px; color: var(--muted); }
+  .motivos-tab td.motivo-acoes { white-space: nowrap; }
+  .motivos-tab td.motivo-acoes .btn-admin { margin: 2px 0; }
+  .motivos-tab td input { width: 100%; padding: 6px 10px; border-radius: 8px; background: var(--surface); border: 1px solid var(--border); color: var(--ink); font-family: "Plus Jakarta Sans", sans-serif; }
   .professor-resumo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 10px; }
   .professor-resumo-card {
     background: var(--surface-2); border: 1px solid var(--border-strong); border-radius: 10px;
@@ -1315,7 +1433,7 @@
         <div class="nav-admin-menu-item">
           <button class="nav-admin-toggle" id="navAdminToggle" type="button">Administração</button>
           <div class="nav-admin-dropdown" id="navAdminDropdown">
-            <button class="nav-admin-dropdown-item" data-area="areaAcessosUsuarios"><svg class="nav-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="7.5" r="4"/><path d="M3.5 20.5v-1a5.5 5.5 0 0 1 9-4.2"/><rect x="14.5" y="13.5" width="6.5" height="6" rx="1"/><path d="M16 13.5V12a2.25 2.25 0 0 1 4.5 0v1.5"/></svg>Acessos de Usuários</button>
+            <button class="nav-admin-dropdown-item" data-area="areaAcessosUsuarios"><svg class="nav-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="7.5" r="4"/><path d="M3.5 20.5v-1a5.5 5.5 0 0 1 9-4.2"/><rect x="14.5" y="13.5" width="6.5" height="6" rx="1"/><path d="M16 13.5V12a2.25 2.25 0 0 1 4.5 0v1.5"/></svg>Usuarios</button>
             <button class="nav-admin-dropdown-item" data-area="areaGerenciarPerfis"><svg class="nav-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="5.5" width="13" height="11" rx="2"/><circle cx="6.5" cy="10" r="1.6"/><path d="M4.2 14.2a2.4 2.4 0 0 1 4.6 0"/><path d="M11.5 9h2.5M11.5 12h2.5"/><circle cx="18" cy="16.5" r="2.4"/><path d="M18 12.6v1.2M18 19.2v1.2M14.7 16.5h1.2M20.1 16.5h1.2"/></svg>Gerenciar Perfis</button>
             <button class="nav-admin-dropdown-item" data-area="areaAgenda"><svg class="nav-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4.5" width="18" height="16" rx="2"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4"/><circle cx="16.5" cy="16.5" r="3.5"/><path d="M16.5 14.8v1.8l1.2.9"/></svg>Agenda de Cultos</button>
             <button class="nav-admin-dropdown-item" data-area="areaPostsSite"><svg class="nav-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10v4a1 1 0 0 0 1 1h2l6 4V5L6 9H4a1 1 0 0 0-1 1z"/><path d="M16 8.5a4.5 4.5 0 0 1 0 7"/><path d="M19 6a8 8 0 0 1 0 12"/><path d="M7 15l1.2 4.5h2.2L9.5 15"/></svg>Posts do Site</button>
@@ -1412,27 +1530,32 @@
     <p class="perfil-step-indicator" id="perfilStepIndicador" hidden>Passo 1 de 3</p>
     <form class="login-form" id="perfilForm">
       <div class="perfil-foto-row" data-show="editar step3">
-        <img id="perfilFotoPreview" class="perfil-foto-preview" alt="Foto do perfil">
-        <div style="flex:1;">
-          <label for="perfilFotoInput">Foto</label>
-          <input id="perfilFotoInput" type="file" accept="image/*">
+        <div class="perfil-foto-bloco">
+          <div class="perfil-foto-circulo">
+            <img id="perfilFotoPreview" class="perfil-foto-preview-grande" alt="Foto do perfil">
+            <button type="button" class="foto-remover-badge" id="perfilFotoRemover" title="Remover foto" aria-label="Remover foto" hidden></button>
+            <button type="button" class="perfil-foto-botao" id="perfilFotoBtn"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" aria-hidden="true"><path d="M3 14v4.5A2.5 2.5 0 0 0 5.5 21h13a2.5 2.5 0 0 0 2.5-2.5V14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M12 16V4" stroke="#FAC34B" stroke-width="2.6" stroke-linecap="round"/><path d="M7.5 8.5 12 4l4.5 4.5" stroke="#FAC34B" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="txt-enviar">Enviar foto</span><span class="txt-alterar">Alterar foto</span></button>
+          </div>
+          <input id="perfilFotoInput" type="file" accept="image/*" hidden>
         </div>
-      </div>
-
-      <div data-show="editar">
-        <label for="perfilUsuario">Usuário</label>
-        <input id="perfilUsuario" type="text" placeholder="nome de usuário">
-      </div>
-
-      <div class="perfil-grid-2" id="perfilNomeGrupo" data-show="editar step1">
-        <div>
-          <label for="perfilNome">Nome</label>
-          <input id="perfilNome" type="text" placeholder="seu nome" required>
+        <div class="perfil-dados-lado">
+        <div data-show="editar">
+          <label for="perfilUsuario">Usuário</label>
+          <input id="perfilUsuario" type="text" placeholder="nome de usuário">
         </div>
-        <div>
-          <label for="perfilSobrenome">Sobrenome</label>
-          <input id="perfilSobrenome" type="text" placeholder="seu sobrenome">
+  
+          <div class="perfil-grid-2" id="perfilNomeGrupo" data-show="editar step1">
+          <div>
+            <label for="perfilNome">Nome</label>
+            <input id="perfilNome" type="text" placeholder="seu nome" required>
+          </div>
+          <div>
+            <label for="perfilSobrenome">Sobrenome</label>
+            <input id="perfilSobrenome" type="text" placeholder="seu sobrenome">
+          </div>
         </div>
+  
+          </div>
       </div>
 
       <div data-show="editar step1">
@@ -1464,7 +1587,6 @@
         <label for="perfilDataNascimento">Data de nascimento</label>
         <input id="perfilDataNascimento" type="text" placeholder="dd/mm/aaaa" inputmode="numeric" maxlength="10">
       </div>
-      <p class="login-note" id="perfilIdade" data-show="editar step2" hidden style="margin-top:0;"></p>
 
       <p class="login-note" data-show="step2" style="margin-top:0;">Endereço: você pode preencher depois, no menu da sua conta.</p>
       <div class="perfil-secao-titulo" data-show="nenhum">Endereço</div>
@@ -1497,17 +1619,12 @@
         </div>
       </div>
 
-      <div class="perfil-excluir-row" id="perfilTrocarSenhaRow" data-show="editar">
-        <a href="#" class="login-forgot" id="perfilTrocarSenhaLink" style="text-align:left;display:inline-block;">Trocar senha</a>
-      </div>
-
       <p class="login-note" id="perfilMensagem" style="margin-top:0;"></p>
 
-      <div class="login-btn-row" data-show="editar">
-        <button type="submit" class="btn btn-blue-grad" id="perfilBtnSalvar" style="flex:1;justify-content:center;">Salvar</button>
-      </div>
-      <div class="perfil-excluir-row" id="perfilExcluirRow" data-show="editar">
-        <button type="button" class="btn btn-danger" id="perfilBtnExcluir" style="width:100%;justify-content:center;">Excluir Conta!</button>
+      <div class="perfil-acoes-redondas" data-show="editar">
+        <a href="#" class="perfil-acao-redonda perfil-acao-trocar" id="perfilTrocarSenhaLink">Trocar senha</a>
+        <button type="submit" class="perfil-acao-redonda perfil-acao-salvar" id="perfilBtnSalvar">Salvar</button>
+        <button type="button" class="perfil-acao-redonda perfil-acao-excluir" id="perfilBtnExcluir">Excluir Conta!</button>
       </div>
 
       <div class="login-btn-row" data-show="step1">
@@ -1578,10 +1695,17 @@
     <span class="pill eyebrow" id="gerenciarPerfilEditTitulo"><span class="dot"></span>Editar usuário</span>
     <form class="login-form" id="gerenciarPerfilEditForm">
       <div class="perfil-foto-row">
-        <img id="gerenciarPerfilEditFotoPreview" class="perfil-foto-preview" alt="Foto do perfil">
+        <div class="perfil-foto-bloco">
+          <div class="perfil-foto-circulo">
+            <img id="gerenciarPerfilEditFotoPreview" class="perfil-foto-preview-grande" alt="Foto do perfil">
+            <button type="button" class="foto-remover-badge" id="gerenciarPerfilEditFotoRemover" title="Remover foto" aria-label="Remover foto" hidden></button>
+            <button type="button" class="perfil-foto-botao" id="gerenciarPerfilEditFotoBtn"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" aria-hidden="true"><path d="M3 14v4.5A2.5 2.5 0 0 0 5.5 21h13a2.5 2.5 0 0 0 2.5-2.5V14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M12 16V4" stroke="#FAC34B" stroke-width="2.6" stroke-linecap="round"/><path d="M7.5 8.5 12 4l4.5 4.5" stroke="#FAC34B" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="txt-enviar">Enviar foto</span><span class="txt-alterar">Alterar foto</span></button>
+          </div>
+          <input id="gerenciarPerfilEditFotoInput" type="file" accept="image/*" hidden>
+        </div>
         <div style="flex:1;">
-          <label for="gerenciarPerfilEditFotoInput">Foto</label>
-          <input id="gerenciarPerfilEditFotoInput" type="file" accept="image/*">
+          <label for="gerenciarPerfilEditFamilia">Família</label>
+          <select id="gerenciarPerfilEditFamilia"><option value="">Selecione...</option></select>
         </div>
       </div>
 
@@ -1710,7 +1834,7 @@
     <button class="sidebar-link active" type="button" data-area="siteHome">Início (site)</button>
 
     <div class="sidebar-category">Administração</div>
-    <button class="sidebar-link" type="button" data-area="areaAcessosUsuarios">Acessos de Usuários</button>
+    <button class="sidebar-link" type="button" data-area="areaAcessosUsuarios">Usuarios</button>
     <button class="sidebar-link" type="button" data-area="areaGerenciarPerfis">Gerenciar Perfis</button>
     <button class="sidebar-link" type="button" data-area="areaAgenda">Agenda de Cultos e Eventos</button>
     <button class="sidebar-link" type="button" data-area="areaPostsSite">Post's do Site!</button>
@@ -2185,8 +2309,39 @@
   </div>
 
   <section id="areaAcessosUsuarios" class="portal-section">
-    <h2>Acessos de Usuários</h2>
+    <h2>Usuarios e Perfil de acesso</h2>
     <p class="admin-agenda-info">Defina o perfil de acesso de cada pessoa cadastrada no site. Contas novas entram como "Convidado" até serem revisadas aqui.</p>
+    <div class="usuarios-filtros">
+      <label class="usuarios-filtro-campo usuarios-filtro-busca">Usuarios
+        <input type="text" id="filtroUsuariosBusca" placeholder="Digite o nome ou o e-mail..." autocomplete="off">
+      </label>
+      <label class="usuarios-filtro-campo">E-mail
+        <input type="text" id="filtroUsuariosEmail" placeholder="e-mail" autocomplete="off">
+      </label>
+      <label class="usuarios-filtro-campo">Telefone
+        <input type="text" id="filtroUsuariosTelefone" placeholder="DD 0000-0000" inputmode="numeric" autocomplete="off">
+      </label>
+      <label class="usuarios-filtro-campo">Família
+        <select id="filtroUsuariosFamilia"><option value="">Todas</option></select>
+      </label>
+      <label class="usuarios-filtro-campo">Perfil
+        <select id="filtroUsuariosPerfil"><option value="">Todos</option></select>
+      </label>
+      <label class="usuarios-filtro-campo">Status
+        <select id="filtroUsuariosStatus">
+          <option value="">Todos</option>
+          <option value="pendente">Pendente</option>
+          <option value="ativo">Ativo</option>
+          <option value="inativo">Inativo</option>
+        </select>
+      </label>
+    </div>
+    <div class="usuarios-ordenar" id="usuariosOrdenar">
+      <span>Ordenar por:</span>
+      <button type="button" class="btn-admin" data-ordem="nome">Nome</button>
+      <button type="button" class="btn-admin" data-ordem="email">Email</button>
+      <button type="button" class="btn-admin" data-ordem="status">Status</button>
+    </div>
     <p id="gerenciarPerfisStatus" class="admin-agenda-status"></p>
     <div id="gerenciarPerfisLista" class="admin-perfis-lista">Carregando...</div>
   </section>
@@ -2260,7 +2415,7 @@
       </div>
       <div class="admin-form-linha">
         <label>Data início
-          <input type="date" id="eventoDataInicio" required>
+          <input type="text" id="eventoDataInicio" data-data-br placeholder="Ex.: 15/03/2010" inputmode="numeric" maxlength="10" autocomplete="off" required>
         </label>
         <label>Horário (opcional)
           <input type="text" id="eventoHora" placeholder="Ex: 18h">
@@ -2296,8 +2451,8 @@
         <select id="filtroDepartamento">
           <option value="todos">Todos os departamentos</option>
         </select>
-        <input type="date" id="filtroDataInicio" title="De">
-        <input type="date" id="filtroDataFim" title="Até">
+        <input type="text" id="filtroDataInicio" data-data-br placeholder="Ex.: 15/03/2010" inputmode="numeric" maxlength="10" autocomplete="off" title="De">
+        <input type="text" id="filtroDataFim" data-data-br placeholder="Ex.: 15/03/2010" inputmode="numeric" maxlength="10" autocomplete="off" title="Até">
         <input type="text" id="filtroTitulo" placeholder="Buscar por título...">
       </div>
       <div id="adminAgendaLista" class="admin-agenda-lista">Carregando...</div>
@@ -2446,6 +2601,16 @@
           <span class="professor-canvas-titulo">Chamada</span>
           <span class="professor-canvas-sub">Presença e ofertas da aula</span>
         </button>
+        <button type="button" class="professor-canvas-card" data-canvas="relatorioSala">
+          <span class="professor-canvas-icone"><img src="icones-secretaria/dashboard.webp" alt=""></span>
+          <span class="professor-canvas-titulo">Relatório da Sala</span>
+          <span class="professor-canvas-sub">Resumo do domingo e alunos presentes</span>
+        </button>
+        <button type="button" class="professor-canvas-card" data-canvas="pedirRevista">
+          <span class="professor-canvas-icone"><img src="icones-secretaria/revistas-coloridas.webp" alt=""></span>
+          <span class="professor-canvas-titulo">Pedir Revista</span>
+          <span class="professor-canvas-sub">Solicitar a sua revista e ver seu pedido</span>
+        </button>
         <button type="button" class="professor-canvas-card" data-canvas="arquivos">
           <span class="professor-canvas-icone"><img src="icones-professor/estante.webp" alt=""></span>
           <span class="professor-canvas-titulo">Arquivos e documentos</span>
@@ -2460,43 +2625,53 @@
 
         <div id="salaAlunosLista" class="admin-perfis-lista"></div>
 
-        <div class="admin-form-linha" style="margin-top:10px;">
-          <label style="flex:2;">Adicionar Aluno
-            <select id="salaAlunoCandidato" class="admin-perfis-item-select"></select>
-          </label>
-          <div style="display:flex; align-items:flex-end;">
-            <button type="button" id="btnAdicionarAlunoConta" class="btn-admin">+ Adicionar</button>
-          </div>
-        </div>
+        <div class="alunos-quadros">
+          <section class="aluno-quadro" aria-labelledby="tituloAdicionarAluno">
+            <h4 id="tituloAdicionarAluno">Adicionar aluno já cadastrado</h4>
+            <p class="aluno-quadro-texto">Caso o seu aluno já fez o Cadastro no portal da EBD, procure-o na lista abaixo.</p>
+            <div class="aluno-quadro-campos">
+              <label>Aluno
+                <select id="salaAlunoCandidato" class="admin-perfis-item-select"></select>
+              </label>
+            </div>
+            <div class="aluno-quadro-botoes">
+              <button type="button" id="btnAdicionarAlunoConta" class="btn-admin btn-admin-primario">Adicionar</button>
+            </div>
+          </section>
 
-        <div class="admin-form" style="margin-top:22px;">
-          <div class="admin-form-linha">
-            <label style="flex:1;">Adicionar Aluno sem cadastro
-              <input type="text" id="salaAlunoAvulsoNome" placeholder="Nome do aluno">
-            </label>
-          </div>
-          <div class="admin-form-linha" style="align-items:flex-end;">
-            <label style="flex:1;">Data de nascimento (Opcional)
-              <input type="date" id="salaAlunoAvulsoNascimento">
-            </label>
-            <label style="flex:1;">É uma criança?
-              <select id="salaAlunoAvulsoCrianca">
-                <option value="nao">Não</option>
-                <option value="sim">Sim</option>
-              </select>
-            </label>
-          </div>
-          <div id="salaAlunoAvulsoResponsaveisWrap" class="admin-form-linha" hidden>
-            <label style="flex:1;">Pai/Responsável
-              <input type="text" id="salaAlunoAvulsoPai" placeholder="Nome do pai ou responsável">
-            </label>
-            <label style="flex:1;">Mãe/Responsável
-              <input type="text" id="salaAlunoAvulsoMae" placeholder="Nome da mãe ou responsável">
-            </label>
-          </div>
-          <div class="admin-form-botoes">
-            <button type="button" id="btnAdicionarAlunoAvulso" class="btn-admin btn-admin-primario">+ Adicionar Aluno sem cadastro</button>
-          </div>
+          <section class="aluno-quadro" aria-labelledby="tituloCadastrarAluno">
+            <h4 id="tituloCadastrarAluno">Cadastrar Novo Aluno</h4>
+            <p class="aluno-quadro-texto">Caso seu aluno seja uma criança, idoso ou uma pessoa que não tenha email ou não tenha como fazer um cadastro no site, preencha os dados abaixo.<br>Se o seu aluno apenas estiver com dificuldades de criar, peça para procurar a secretaria para efetuar o cadastro.</p>
+            <div class="aluno-quadro-campos">
+              <div class="admin-form-linha">
+                <label style="flex:1;">Nome
+                  <input type="text" id="salaAlunoAvulsoNome" placeholder="Nome">
+                </label>
+                <label style="flex:1;">Sobrenome
+                  <input type="text" id="salaAlunoAvulsoSobrenome" placeholder="Sobrenome">
+                </label>
+              </div>
+              <div class="admin-form-linha">
+                <label style="flex:1;">Data de Nascimento
+                  <input type="text" id="salaAlunoAvulsoNascimento" data-data-br placeholder="Ex.: 15/03/2010" inputmode="numeric" maxlength="10" autocomplete="off">
+                </label>
+                <label style="flex:1;">Criança
+                  <select id="salaAlunoAvulsoCrianca">
+                    <option value="nao">Não</option>
+                    <option value="sim">Sim</option>
+                  </select>
+                </label>
+              </div>
+              <div id="salaAlunoAvulsoResponsaveisWrap" class="admin-form-linha" hidden>
+                <label style="flex:1;">Nome do Pai ou Mãe
+                  <input type="text" id="salaAlunoAvulsoPai" placeholder="Nome do pai ou da mãe">
+                </label>
+              </div>
+            </div>
+            <div class="aluno-quadro-botoes">
+              <button type="button" id="btnAdicionarAlunoAvulso" class="btn-admin btn-admin-primario">Cadastrar</button>
+            </div>
+          </section>
         </div>
         <p id="salaAlunosStatus" class="admin-agenda-status"></p>
       </div>
@@ -2553,6 +2728,17 @@
           </div>
 
         </form>
+      </div>
+
+      <div id="canvasPainelRelatorioSala" class="professor-canvas-painel" hidden>
+        <h4 style="text-align:center;">Relatório da Sala</h4>
+        <div id="professorRelatorioSalaConteudo"></div>
+      </div>
+
+      <div id="canvasPainelPedirRevista" class="professor-canvas-painel" hidden>
+        <h4 style="text-align:center;">Pedir Revista</h4>
+        <p class="admin-agenda-info">Peça a revista do próximo trimestre. O pedido é enviado à Secretaria da EBD.</p>
+        <div id="professorRecursosRevista" class="professor-canvas-grid aluno-recursos-grid"></div>
       </div>
 
       <div id="canvasPainelArquivos" class="professor-canvas-painel" hidden>
@@ -3184,6 +3370,26 @@
         <span class="professor-canvas-titulo">Gerenciar Lições</span>
         <span class="professor-canvas-sub">Títulos das lições e revistas por Sala/Trimestre</span>
       </button>
+      <button type="button" class="professor-canvas-card" data-canvasala="listas">
+        <span class="professor-canvas-titulo">Gerenciar Listas</span>
+        <span class="professor-canvas-sub">Lista de ausências da EBD</span>
+      </button>
+    </div>
+
+    <div id="canvaSalaListas" class="canva-sanfona-conteudo">
+      <p class="admin-agenda-info"><strong>Lista de ausências da EBD</strong>: os motivos aparecem na Chamada do Professor e nos relatórios de todo o site. Ao renomear ou excluir um motivo, os relatórios antigos são mantidos.</p>
+      <div class="admin-form">
+        <div class="admin-form-linha">
+          <label style="flex:1;">Novo motivo
+            <input type="text" id="motivoNovoInput" maxlength="60" placeholder="Ex.: Viagem">
+          </label>
+          <div style="display:flex; align-items:flex-end;">
+            <button type="button" id="btnAdicionarMotivo" class="btn-admin">+ Adicionar motivo</button>
+          </div>
+        </div>
+      </div>
+      <p id="motivosStatus" class="admin-agenda-status"></p>
+      <div id="motivosTabelaWrap" class="admin-agenda-lista-wrap"></div>
     </div>
 
     <div id="canvaSalaTurma" class="canva-sanfona-conteudo">
@@ -3855,6 +4061,7 @@
   } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
   import { firebaseConfig } from "./firebase-config.js";
   import { buscarTodosEventos, salvarEvento, excluirEvento, buscarDepartamentosAgenda, salvarDepartamentosAgenda, renomearCategoriaEventos } from "./agenda.js";
+  import { abrirSolicitarRevistaComo, abrirMeuPedidoComo, temPedidoRevistaComo } from "./aluno.js";
 
   // auth.js e agenda.js (importados acima via <script src>) ja podem ter
   // inicializado o Firebase primeiro - por isso reaproveita o app existente.
@@ -3874,6 +4081,78 @@
     const snap = await getDoc(doc(db, "licoes", "_revistas"));
     const item = snap.exists() ? (snap.data().itens || []).find((r) => r.id === revistaId) : null;
     return item ? item.nome : "";
+  }
+
+  // Código interno de cadastro (oculto na tela): 8 caracteres, sem O/0 nem I/1 para não confundir na leitura
+  function gerarCodigoCadastro() {
+    const letras = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+    let codigo = "";
+    const bytes = crypto.getRandomValues(new Uint8Array(8));
+    bytes.forEach((b) => { codigo += letras[b % letras.length]; });
+    return codigo;
+  }
+
+  // ===== Bolinha amarela: cadastros pendentes de validação =====
+  // Aparece no menu Administração e no item Usuarios quando há cadastro novo a verificar.
+  function criarBolinhasPendencia() {
+    const alvos = [
+      document.getElementById("navAdminToggle"),
+      document.querySelector('.nav-admin-dropdown-item[data-area="areaAcessosUsuarios"]'),
+      document.querySelector('.sidebar-link[data-area="areaAcessosUsuarios"]')
+    ];
+    alvos.forEach((el) => {
+      if (!el) return;
+      const dot = document.createElement("span");
+      dot.className = "pendencia-usuarios";
+      dot.hidden = true;
+      dot.title = "Cadastros pendentes de validação";
+      el.appendChild(dot);
+    });
+  }
+  function marcarPendenciasUsuarios(qtd) {
+    document.querySelectorAll(".pendencia-usuarios").forEach((el) => { el.hidden = !(qtd > 0); });
+  }
+  async function contarPendenciasUsuarios() {
+    try {
+      const snap = await getDocs(query(collection(db, "usuarios"), where("cadastroPendente", "==", true)));
+      let n = 0;
+      snap.forEach((d) => { if (d.data().ativo !== false) n++; });
+      marcarPendenciasUsuarios(n);
+    } catch (err) {
+      marcarPendenciasUsuarios(0);
+    }
+  }
+  criarBolinhasPendencia();
+
+  // ===== Listas compartilhadas do site (motivos de ausência) =====
+  // Ficam em configListas/motivosAusencia. Todo o site lê; só o Administrador grava
+  // (Gerenciar Salas > Gerenciar Listas). Enquanto a lista não existe, valem os padrões abaixo.
+  const MOTIVOS_AUSENCIA_PADRAO = [
+    { id: "falta", nome: "Falta (Sem motivo claro)" },
+    { id: "doente", nome: "Doente" },
+    { id: "estudando-trabalhando", nome: "Estudando ou Trabalhando" }
+  ];
+  let motivosAusenciaCache = null;
+
+  async function carregarMotivosAusencia() {
+    try {
+      const snap = await getDoc(doc(db, "configListas", "motivosAusencia"));
+      motivosAusenciaCache = snap.exists() && Array.isArray(snap.data().itens)
+        ? snap.data().itens.filter((m) => m && m.id && m.nome)
+        : MOTIVOS_AUSENCIA_PADRAO.slice();
+    } catch (err) {
+      console.error("Motivos de ausência:", err);
+      if (!motivosAusenciaCache) motivosAusenciaCache = MOTIVOS_AUSENCIA_PADRAO.slice();
+    }
+    return motivosAusenciaCache;
+  }
+
+  // Nome do motivo pelo id. Se o motivo foi excluído da lista, o relatório antigo mostra "(motivo removido)".
+  function nomeMotivoAusencia(id) {
+    if (!id) return "";
+    const lista = motivosAusenciaCache || MOTIVOS_AUSENCIA_PADRAO;
+    const m = lista.find((x) => x.id === id);
+    return m ? m.nome : "(motivo removido)";
   }
 
   // ===== Google Drive (upload de arquivos da Sala do Professor) =====
@@ -3986,15 +4265,17 @@
     ["prof_alunos", "Professor · Alunos matriculados"],
     ["prof_chamada", "Professor · Chamada"],
     ["prof_arquivos", "Professor · Arquivos"],
+    ["prof_relatorio", "Professor · Relatório da Sala"],
+    ["prof_pedir_revista", "Professor · Pedir Revista"],
     ["areaAgenda", "Agenda de Cultos"],
     ["areaPostsSite", "Posts do Site"],
     ["areaCadastroSalas", "Gerenciar Salas"],
-    ["areaAcessosUsuarios", "Acessos de Usuários"],
+    ["areaAcessosUsuarios", "Usuarios"],
     ["areaGerenciarPerfis", "Gerenciar Perfis"]
   ];
   const ROTULO_AREA = Object.fromEntries(AREAS_CATALOGO);
   const SEC_PAGINAS = ["sec_caixa", "sec_estoque", "sec_revistas", "sec_dominical", "sec_aniversariantes", "sec_agenda"];
-  const PROF_PAGINAS = ["prof_alunos", "prof_chamada", "prof_arquivos"];
+  const PROF_PAGINAS = ["prof_alunos", "prof_chamada", "prof_relatorio", "prof_pedir_revista", "prof_arquivos"];
   // Árvore mostrada em Gerenciar Perfis (pasta = tela que tem páginas dentro)
   const ARVORE_AREAS = [
     { id: "siteHome", nome: "Início (site)" },
@@ -4014,7 +4295,7 @@
         { id: "areaAgenda", nome: "Agenda de Cultos" },
         { id: "areaPostsSite", nome: "Posts do Site" },
         { id: "areaCadastroSalas", nome: "Gerenciar Salas" },
-        { id: "areaAcessosUsuarios", nome: "Acessos de Usuários" },
+        { id: "areaAcessosUsuarios", nome: "Usuarios" },
         { id: "areaGerenciarPerfis", nome: "Gerenciar Perfis" }
       ]
     }
@@ -4069,13 +4350,25 @@
           id: d.id,
           nome: v.nome || d.id,
           areas: Array.isArray(v.areas) ? v.areas.slice() : [],
-          sistema: NOMES_PERFIS_SISTEMA[d.id] !== undefined
+          sistema: NOMES_PERFIS_SISTEMA[d.id] !== undefined,
+          telasConhecidas: Array.isArray(v.telasConhecidas) ? v.telasConhecidas.slice() : null
         };
       });
     } catch (err) {
       // Sem leitura (regra ainda não publicada): usa os padrões
       console.error("Perfis de acesso:", err);
     }
+    // Telas criadas depois que o perfil foi salvo: os perfis do sistema recebem as novas
+    // telas que o padrão deles inclui (ex.: Administrador ganha todas). Quem já salvou sem
+    // o registro de telas conhecidas é tratado como salvo antes das telas de Relatório da Sala e Pedir Revista.
+    const TELAS_ANTES_DA_ULTIMA_ATUALIZACAO = AREAS_CATALOGO.map(([id]) => id).filter((id) => !["prof_relatorio", "prof_pedir_revista"].includes(id));
+    Object.values(base).forEach((p) => {
+      if (!p.sistema || !AREAS_POR_PERFIL[p.id]) return;
+      const conhecidas = p.telasConhecidas || TELAS_ANTES_DA_ULTIMA_ATUALIZACAO;
+      AREAS_POR_PERFIL[p.id].forEach((id) => {
+        if (!conhecidas.includes(id) && !p.areas.includes(id)) p.areas.push(id);
+      });
+    });
     if (base.admin) AREAS_FIXAS_ADMIN.forEach((a) => { if (!base.admin.areas.includes(a)) base.admin.areas.push(a); });
     perfisCache = base;
     return base;
@@ -4166,7 +4459,7 @@
         const snap = await getDocs(collection(db, "usuarios"));
         const usando = snap.docs.filter((d) => d.data().perfil === p.id && d.data().ativo !== false).length;
         if (usando) {
-          status.textContent = "Não é possível excluir \"" + p.nome + "\": " + usando + " usuário(s) usam este perfil. Troque o perfil deles em Acessos de Usuários antes.";
+          status.textContent = "Não é possível excluir \"" + p.nome + "\": " + usando + " usuário(s) usam este perfil. Troque o perfil deles em Usuarios antes.";
           status.className = "admin-agenda-status erro";
           return;
         }
@@ -4252,6 +4545,7 @@
           await setDoc(doc(db, "perfisAcesso", id), {
             nome: nome,
             areas: areas,
+            telasConhecidas: AREAS_CATALOGO.map(([id]) => id),
             atualizadoPorNome: usuarioAtualCache ? (usuarioAtualCache.nome || usuarioAtualCache.email || "") : "",
             atualizadoEmMs: Date.now()
           }, { merge: true });
@@ -4280,6 +4574,10 @@
 
   const portalLayout = document.getElementById("portalLayout");
   const loginLabel = document.querySelector("#loginBtn .nav-login-label");
+  // Botão do login: sempre o padrão (ícone + "Olá Nome" ou "Entrar")
+  function atualizarBotaoLogin(texto) {
+    document.querySelector("#loginBtn .nav-login-label").textContent = texto;
+  }
 
   function mostrarArea(areaId) {
     document.getElementById("siteHome").classList.toggle("ativo", areaId === "siteHome");
@@ -4314,6 +4612,7 @@
   let gerenciarPerfisIniciado = false;
   let gerenciarSalasIniciado = false;
   let gerenciarLicoesIniciado = false;
+  let gerenciarListasIniciado = false;
   let areaProfessorIniciado = false;
   let secretariaIniciada = false;
   let usuarioAtualCache = null;
@@ -4327,6 +4626,12 @@
       campo.value = d.length > 4 ? d.slice(0, 2) + "/" + d.slice(2, 4) + "/" + d.slice(4) : d.length > 2 ? d.slice(0, 2) + "/" + d.slice(2) : d;
     });
   }
+  // Máscara automática em todos os campos com data-data-br (dd/mm/aaaa)
+  document.querySelectorAll("input[data-data-br]").forEach(mascaraDataBrInput);
+  // Lê o campo de data como AAAA-MM-DD ("" se estiver vazio ou incompleto)
+  function lerDataIso(campo) { return dataBrParaIsoLocal(campo.value); }
+  // Escreve uma data AAAA-MM-DD no campo, mostrando dd/mm/aaaa
+  function definirDataIso(campo, iso) { campo.value = isoParaDataBrLocal(iso); }
   // "16/10/2026" -> "2026-10-16" (ou "" se a data não existir)
   function dataBrParaIsoLocal(br) {
     const m = String(br || "").match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
@@ -4381,7 +4686,7 @@
       const navEbdToggle = document.getElementById("navEbdToggle");
       if (navAdminToggle) navAdminToggle.classList.remove("open");
       if (navEbdToggle) navEbdToggle.classList.remove("open");
-      loginLabel.textContent = "Entrar";
+      atualizarBotaoLogin("Entrar");
       window.__loginBtnAcao = null;
       window.__logoutAcao = null;
       usuarioAtualCache = null;
@@ -4407,13 +4712,20 @@
       return;
     }
 
+    // Código interno do cadastro (oculto): contas antigas ganham o código no primeiro login
+    if (!dadosUsuario.codigo) {
+      dadosUsuario.codigo = gerarCodigoCadastro();
+      setDoc(doc(db, "usuarios", user.uid), { codigo: dadosUsuario.codigo }, { merge: true })
+        .catch((err) => console.error("Código do cadastro:", err));
+    }
+
     const perfil = dadosUsuario.perfil || "convidado";
     const nome = dadosUsuario.nome || (user.email ? user.email.split("@")[0] : "Usuário");
     usuarioAtualCache = Object.assign({ uid: user.uid, email: user.email }, dadosUsuario);
     // Convites de compromisso (sem travar o login se a leitura falhar)
     verificarConvitesAgenda(user.uid).catch((err) => console.error("Convites:", err));
 
-    loginLabel.textContent = "Olá " + nome;
+    atualizarBotaoLogin("Olá " + nome);
     window.__loginBtnAcao = () => { if (window.__toggleUserMenu) window.__toggleUserMenu(); };
     window.__logoutAcao = () => signOut(auth);
 
@@ -4426,6 +4738,9 @@
     document.querySelectorAll(".nav-admin-dropdown-item[data-area]").forEach((item) => {
       item.hidden = !areasLiberadas.includes(item.dataset.area);
     });
+    // Bolinha amarela só para quem vê a tela de Usuarios
+    if (areasLiberadas.includes("areaAcessosUsuarios")) contarPendenciasUsuarios();
+    else marcarPendenciasUsuarios(0);
     // Cards da tela inicial da Secretaria: só aparecem as páginas liberadas
     const cardsSecretaria = {
       secNivelLivroCaixa: "sec_caixa",
@@ -4436,7 +4751,7 @@
       secNivelAgendas: "sec_agenda"
     };
     // Opções da Sala do Professor (Alunos matriculados, Chamada, Arquivos)
-    const cardsProfessor = { alunos: "prof_alunos", chamada: "prof_chamada", arquivos: "prof_arquivos" };
+    const cardsProfessor = { alunos: "prof_alunos", chamada: "prof_chamada", relatorioSala: "prof_relatorio", pedirRevista: "prof_pedir_revista", arquivos: "prof_arquivos" };
     document.querySelectorAll("#areaProfessor [data-canvas]").forEach((card) => {
       const pagina = cardsProfessor[card.dataset.canvas];
       if (pagina) card.style.display = areasLiberadas.includes(pagina) ? "" : "none";
@@ -4476,6 +4791,10 @@
     if (areasLiberadas.includes("areaCadastroSalas") && !gerenciarLicoesIniciado) {
       gerenciarLicoesIniciado = true;
       iniciarGerenciarLicoes();
+    }
+    if (areasLiberadas.includes("areaCadastroSalas") && !gerenciarListasIniciado) {
+      gerenciarListasIniciado = true;
+      iniciarGerenciarListas();
     }
     if (areasLiberadas.includes("areaProfessor") && !areaProfessorIniciado) {
       areaProfessorIniciado = true;
@@ -7139,7 +7458,7 @@
         snap.forEach((d) => usuarios.push(Object.assign({ uid: d.id }, d.data())));
         // Contas com ativo:false foram excluídas pela própria pessoa (ver
         // "Excluir Conta" no modal de Perfil) - não aparecem aqui.
-        const usuariosAtivos = usuarios.filter((u) => u.ativo !== false);
+        const usuariosAtivos = usuarios;
         usuariosAtivos.sort((a, b) => (a.nome || a.email || "").localeCompare(b.nome || b.email || ""));
 
         if (!usuariosAtivos.length) {
@@ -7147,8 +7466,94 @@
           return;
         }
 
-        listaEl.innerHTML = "";
-        usuariosAtivos.forEach((u) => {
+        usuariosCache = usuariosAtivos;
+        marcarPendenciasUsuarios(usuariosAtivos.filter((u) => u.cadastroPendente === true).length);
+        atualizarOpcoesFiltros();
+        desenharLista();
+      } catch (err) {
+        listaEl.innerHTML = '<div class="admin-agenda-vazio">Não foi possível carregar a lista de usuários.</div>';
+        console.error(err);
+      }
+    }
+
+    // ===== Filtros e ordenação da lista de Usuarios =====
+    let usuariosCache = [];
+    let ordemAtual = { campo: "nome", direcao: 1 };
+    const ORDEM_STATUS = { pendente: 0, ativo: 1, inativo: 2 };
+    const ROTULO_ORDEM = { nome: "Nome", email: "Email", status: "Status" };
+
+    function normalizarTexto(s) {
+      return String(s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+    }
+    // Ativo, Inativo ou Pendente (cadastro novo que ainda precisa ser validado)
+    function statusDoUsuario(u) {
+      return u.ativo === false ? "inativo" : (u.cadastroPendente === true ? "pendente" : "ativo");
+    }
+
+    function filtrarOrdenarUsuarios(lista) {
+      // Cada palavra digitada precisa aparecer no nome, usuário ou e-mail
+      const palavras = normalizarTexto(document.getElementById("filtroUsuariosBusca").value).split(/\s+/).filter(Boolean);
+      const email = normalizarTexto(document.getElementById("filtroUsuariosEmail").value).trim();
+      const telDigitos = document.getElementById("filtroUsuariosTelefone").value.replace(/\D/g, "");
+      const familia = document.getElementById("filtroUsuariosFamilia").value;
+      const perfil = document.getElementById("filtroUsuariosPerfil").value;
+      const status = document.getElementById("filtroUsuariosStatus").value;
+      const filtrados = lista.filter((u) => {
+        const alvo = normalizarTexto([[u.nome, u.sobrenome].filter(Boolean).join(" "), u.usuario, u.email].filter(Boolean).join(" "));
+        if (!palavras.every((p) => alvo.includes(p))) return false;
+        if (email && !normalizarTexto(u.email).includes(email)) return false;
+        if (telDigitos && !String(u.telefone || "").replace(/\D/g, "").includes(telDigitos)) return false;
+        if (familia && (u.familia || "") !== familia) return false;
+        if (perfil && (u.perfil || "convidado") !== perfil) return false;
+        if (status && statusDoUsuario(u) !== status) return false;
+        return true;
+      });
+      const chaveDe = {
+        nome: (u) => normalizarTexto([u.nome, u.sobrenome].filter(Boolean).join(" ") || u.email || ""),
+        email: (u) => normalizarTexto(u.email || ""),
+        status: (u) => ORDEM_STATUS[statusDoUsuario(u)]
+      }[ordemAtual.campo];
+      filtrados.sort((x, y) => {
+        const cx = chaveDe(x), cy = chaveDe(y);
+        const r = typeof cx === "number" ? cx - cy : String(cx).localeCompare(String(cy), "pt-BR");
+        return r * ordemAtual.direcao;
+      });
+      return filtrados;
+    }
+
+    // Preenche os combobox de Perfil e Família com o que existe hoje (mantém a escolha atual)
+    function atualizarOpcoesFiltros() {
+      const perfilSel = document.getElementById("filtroUsuariosPerfil");
+      const famSel = document.getElementById("filtroUsuariosFamilia");
+      const perfilAtual = perfilSel.value, famAtual = famSel.value;
+      perfilSel.innerHTML = "";
+      perfilSel.appendChild(new Option("Todos", ""));
+      Object.keys(ROTULOS_GERENCIAR).forEach((v) => perfilSel.appendChild(new Option(ROTULOS_GERENCIAR[v], v)));
+      perfilSel.value = perfilAtual;
+      famSel.innerHTML = "";
+      famSel.appendChild(new Option("Todas", ""));
+      [...new Set(usuariosCache.map((u) => u.familia).filter(Boolean))].sort((x, y) => x.localeCompare(y, "pt-BR"))
+        .forEach((f) => famSel.appendChild(new Option(f, f)));
+      famSel.value = famAtual;
+    }
+
+    function atualizarBotoesOrdem() {
+      document.querySelectorAll("#usuariosOrdenar [data-ordem]").forEach((btn) => {
+        const campo = btn.dataset.ordem;
+        const ativo = ordemAtual.campo === campo;
+        btn.textContent = ROTULO_ORDEM[campo] + (ativo ? (ordemAtual.direcao > 0 ? " ▲" : " ▼") : "");
+        btn.classList.toggle("is-ativo", ativo);
+      });
+    }
+
+    function desenharLista() {
+      const visiveis = filtrarOrdenarUsuarios(usuariosCache);
+      listaEl.innerHTML = "";
+      if (!visiveis.length) {
+        listaEl.innerHTML = '<div class="admin-agenda-vazio">Nenhum usuário encontrado com esses filtros.</div>';
+        return;
+      }
+        visiveis.forEach((u) => {
           const item = document.createElement("div");
           item.className = "admin-perfis-item";
 
@@ -7209,14 +7614,48 @@
           });
 
           item.appendChild(info);
+          // Status à direita: ✓ verde (OK), ⚠ amarelo (cadastro novo a validar), × vermelho (inativo)
+          const indicador = document.createElement("span");
+          if (u.ativo === false) {
+            indicador.className = "usuario-status inativo";
+            indicador.title = "Inativo";
+            indicador.setAttribute("aria-label", "Inativo");
+            indicador.textContent = "×";
+            item.classList.add("usuario-inativo");
+          } else if (u.cadastroPendente === true) {
+            indicador.className = "usuario-status pendente";
+            indicador.title = "Novo Usuario adicionado, verificar e validar";
+            indicador.setAttribute("aria-label", "Novo Usuario adicionado, verificar e validar");
+            indicador.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01" stroke-linecap="round"/></svg>';
+            item.classList.add("usuario-pendente");
+          } else {
+            indicador.className = "usuario-status ok";
+            indicador.title = "Cadastro OK";
+            indicador.setAttribute("aria-label", "Cadastro OK");
+            indicador.textContent = "✓";
+          }
+          item.appendChild(indicador);
           item.appendChild(select);
           item.appendChild(btnEditar);
           listaEl.appendChild(item);
         });
-      } catch (err) {
-        listaEl.innerHTML = '<div class="admin-agenda-vazio">Não foi possível carregar a lista de usuários.</div>';
-        console.error(err);
-      }
+    }
+
+    function ligarFiltrosUsuarios() {
+      ["filtroUsuariosBusca", "filtroUsuariosEmail", "filtroUsuariosTelefone"].forEach((id) =>
+        document.getElementById(id).addEventListener("input", desenharLista));
+      ["filtroUsuariosFamilia", "filtroUsuariosPerfil", "filtroUsuariosStatus"].forEach((id) =>
+        document.getElementById(id).addEventListener("change", desenharLista));
+      document.querySelectorAll("#usuariosOrdenar [data-ordem]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const campo = btn.dataset.ordem;
+          if (ordemAtual.campo === campo) ordemAtual.direcao = -ordemAtual.direcao;
+          else ordemAtual = { campo: campo, direcao: 1 };
+          atualizarBotoesOrdem();
+          desenharLista();
+        });
+      });
+      atualizarBotoesOrdem();
     }
 
     // Modal de edição avançada (Perfil, Endereço, Ativo) - aberto pelo botão de lápis.
@@ -7249,6 +7688,7 @@
       );
       let usuarioEditandoUid = null;
       let fotoBase64Editar = "";
+      let fotoRemovidaEditar = false;
 
       function dataIsoParaBrEditar(iso) {
         const partes = (iso || "").split("-");
@@ -7314,10 +7754,24 @@
             ctx.drawImage(img, (tamanho - w) / 2, (tamanho - h) / 2, w, h);
             fotoBase64Editar = canvas.toDataURL("image/jpeg", 0.7);
             editarFotoPreview.src = fotoBase64Editar;
+            editarFotoRemover.hidden = false;
           };
           img.src = leitor.result;
         };
         leitor.readAsDataURL(arquivo);
+      });
+
+      // Foto: o círculo e o botão "Enviar foto" abrem o seletor de arquivo
+      document.getElementById("gerenciarPerfilEditFotoBtn").addEventListener("click", () => editarFotoInput.click());
+      editarFotoPreview.addEventListener("click", () => editarFotoInput.click());
+      // Remove a foto: volta ao desenho padrão e, ao salvar, apaga a foto do cadastro
+      const editarFotoRemover = document.getElementById("gerenciarPerfilEditFotoRemover");
+      editarFotoRemover.addEventListener("click", () => {
+        fotoBase64Editar = "";
+        fotoRemovidaEditar = true;
+        editarFotoInput.value = "";
+        editarFotoPreview.src = FOTO_PADRAO_EDITAR;
+        editarFotoRemover.hidden = true;
       });
 
       editarCep.addEventListener("input", () => {
@@ -7351,6 +7805,8 @@
           dataNascimento: dataBrParaIsoEditar(editarDataNascimento.value),
           perfil: editarPerfilSelect.value,
           ativo: editarAtivo.checked,
+          // Salvar no modal valida o cadastro: some o alerta de "novo usuário"
+          cadastroPendente: false,
           endereco: {
             cep: editarCep.value.trim(),
             numero: editarNumero.value.trim(),
@@ -7361,6 +7817,7 @@
           }
         };
         if (fotoBase64Editar) dadosUsuario.foto = fotoBase64Editar;
+        else if (fotoRemovidaEditar) dadosUsuario.foto = "";
         editarBtnSalvar.disabled = true;
         try {
           await setDoc(doc(db, "usuarios", usuarioEditandoUid), dadosUsuario, { merge: true });
@@ -7379,10 +7836,19 @@
       window.__abrirGerenciarPerfilEdit = function (usuario) {
         usuarioEditandoUid = usuario.uid;
         fotoBase64Editar = "";
+        fotoRemovidaEditar = false;
         editarMensagem.textContent = "";
         editarMensagem.className = "login-note";
-        editarTitulo.textContent = [usuario.nome, usuario.sobrenome].filter(Boolean).join(" ") || usuario.email || usuario.uid;
+        // Topo do modal: de onde veio este cadastro
+        if (usuario.origemCadastro === "professor") {
+          const quem = usuario.cadastradoPorPerfil === "administrativo" ? "Secretário(a)"
+            : usuario.cadastradoPorPerfil === "admin" ? "Administrador(a)" : "Professor(a)";
+          editarTitulo.textContent = "O " + quem + " " + (usuario.cadastradoPorNome || "") + " cadastrou este aluno.";
+        } else {
+          editarTitulo.textContent = "Usuário cadastrado no Site" + (usuario.codigo ? " - Código do cadastro: " + usuario.codigo : "");
+        }
         editarFotoPreview.src = usuario.foto || FOTO_PADRAO_EDITAR;
+        editarFotoRemover.hidden = !usuario.foto;
         editarUsuario.value = usuario.usuario || "";
         editarNome.value = usuario.nome || "";
         editarSobrenome.value = usuario.sobrenome || "";
@@ -7404,8 +7870,108 @@
       };
     }
 
+    ligarFiltrosUsuarios();
     window.__recarregarGerenciarPerfis = carregar;
     carregar();
+  }
+
+  // =================================================================
+  // Gerenciar Listas (só admin) - tabela de motivos de ausência usada em
+  // todo o site: adicionar, renomear e excluir.
+  // =================================================================
+  function iniciarGerenciarListas() {
+    const wrap = document.getElementById("motivosTabelaWrap");
+    if (!wrap) return;
+    const status = document.getElementById("motivosStatus");
+    const input = document.getElementById("motivoNovoInput");
+    const btnAdicionar = document.getElementById("btnAdicionarMotivo");
+    let itens = [];
+    let editandoId = null;
+
+    function avisar(texto, erro) {
+      status.textContent = texto;
+      status.className = "admin-agenda-status" + (erro ? " erro" : "");
+    }
+
+    function desenhar() {
+      const linhas = itens.map((m) => {
+        const editando = m.id === editandoId;
+        const nomeCelula = editando
+          ? '<input type="text" maxlength="60" value="' + escaparHtmlAdmin(m.nome) + '" data-motivo-edit="' + m.id + '" aria-label="Novo nome do motivo">'
+          : escaparHtmlAdmin(m.nome);
+        const acoes = editando
+          ? '<button type="button" class="btn-admin btn-admin-primario" data-acao="salvar-nome" data-id="' + m.id + '">Salvar</button> ' +
+            '<button type="button" class="btn-admin" data-acao="cancelar">Cancelar</button>'
+          : '<button type="button" class="admin-perfis-item-editar" data-acao="renomear" data-id="' + m.id + '" title="Editar" aria-label="Editar motivo">✏️</button> ' +
+            '<button type="button" class="admin-perfis-item-remover" data-acao="excluir" data-id="' + m.id + '" title="Excluir" aria-label="Excluir motivo">×</button>';
+        return "<tr><td>" + nomeCelula + "</td><td class=\"motivo-acoes\">" + acoes + "</td></tr>";
+      }).join("");
+      wrap.innerHTML = itens.length
+        ? '<table class="aniv-tab motivos-tab"><thead><tr><th>Motivo</th><th>Ações</th></tr></thead><tbody>' + linhas + "</tbody></table>"
+        : '<p class="admin-agenda-info">Nenhum motivo cadastrado. Adicione acima.</p>';
+    }
+
+    async function gravar(novosItens) {
+      try {
+        await setDoc(doc(db, "configListas", "motivosAusencia"), {
+          itens: novosItens,
+          atualizadoEm: serverTimestamp(),
+          atualizadoPorUid: usuarioAtualCache ? usuarioAtualCache.uid : ""
+        }, { merge: true });
+        itens = novosItens.slice();
+        motivosAusenciaCache = itens.slice();
+        desenhar();
+        avisar("Lista salva.");
+        return true;
+      } catch (err) {
+        avisar("Não foi possível salvar a lista. " + (err.message || ""), true);
+        console.error(err);
+        return false;
+      }
+    }
+
+    async function carregar() {
+      itens = (await carregarMotivosAusencia()).slice();
+      desenhar();
+    }
+
+    btnAdicionar.addEventListener("click", async () => {
+      const nome = input.value.trim();
+      if (!nome) { avisar("Digite o nome do motivo.", true); return; }
+      if (itens.some((m) => m.nome.toLowerCase() === nome.toLowerCase())) { avisar("Esse motivo já existe.", true); return; }
+      const id = "m" + Date.now().toString(36);
+      if (await gravar(itens.concat([{ id: id, nome: nome }]))) input.value = "";
+    });
+
+    wrap.addEventListener("click", async (e) => {
+      const btn = e.target.closest("[data-acao]");
+      if (!btn) return;
+      const acao = btn.dataset.acao;
+      const id = btn.dataset.id;
+      if (acao === "renomear") { editandoId = id; desenhar(); return; }
+      if (acao === "cancelar") { editandoId = null; desenhar(); return; }
+      if (acao === "salvar-nome") {
+        const campo = wrap.querySelector('[data-motivo-edit="' + id + '"]');
+        const novo = campo ? campo.value.trim() : "";
+        if (!novo) { avisar("O nome do motivo não pode ficar vazio.", true); return; }
+        if (itens.some((m) => m.id !== id && m.nome.toLowerCase() === novo.toLowerCase())) { avisar("Já existe um motivo com esse nome.", true); return; }
+        const ok = await gravar(itens.map((m) => (m.id === id ? { id: m.id, nome: novo } : m)));
+        if (ok) editandoId = null;
+        desenhar();
+        return;
+      }
+      if (acao === "excluir") {
+        const atual = itens.find((m) => m.id === id);
+        if (!confirm("Excluir o motivo \"" + (atual ? atual.nome : "") + "\"? Os relatórios antigos que usam esse motivo vão mostrar \"(motivo removido)\".")) return;
+        await gravar(itens.filter((m) => m.id !== id));
+      }
+    });
+
+    carregar();
+  }
+
+  function escaparHtmlAdmin(texto) {
+    return String(texto).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
   }
 
   // =================================================================
@@ -7421,7 +7987,8 @@
       turma: "canvaSalaTurma",
       professores: "canvaSalaProfessores",
       extra: "canvaSalaExtra",
-      licoes: "canvaSalaLicoes"
+      licoes: "canvaSalaLicoes",
+      listas: "canvaSalaListas"
     };
     const cards = grid.querySelectorAll(".professor-canvas-card");
     cards.forEach((card) => {
@@ -8017,8 +8584,12 @@
 
         corpo.appendChild(criarRotulo("A partir de qual data?"));
         const inputData = document.createElement("input");
-        inputData.type = "date";
-        inputData.min = hojeISO();
+        inputData.type = "text";
+        inputData.setAttribute("data-data-br", "");
+        inputData.placeholder = "Ex.: 15/03/2010";
+        inputData.inputMode = "numeric";
+        inputData.maxLength = 10;
+        mascaraDataBrInput(inputData);
         inputData.style.marginTop = "8px";
         const lerData = criarEscolhas(corpo, "pool-data", [
           { value: "imediato", label: "Imediato (a escala muda do próximo domingo em diante)" },
@@ -8047,9 +8618,9 @@
           } else if (modo === "trimestre") {
             efetivoEm = inicioProximoTrimestre();
           } else {
-            if (!inputData.value) { alert("Escolha a data a partir de quando a escala muda."); return null; }
-            if (inputData.value < hojeISO()) { alert("A data não pode ser anterior a hoje."); return null; }
-            efetivoEm = domingoNaOuDepois(inputData.value);
+            if (!lerDataIso(inputData)) { alert("Escolha a data a partir de quando a escala muda (formato 15/03/2010)."); return null; }
+            if (lerDataIso(inputData) < hojeISO()) { alert("A data não pode ser anterior a hoje."); return null; }
+            efetivoEm = domingoNaOuDepois(lerDataIso(inputData));
           }
           const saida = lerSair() === "sim" && selSair ? selSair.value : "";
           return { novo: novo, efetivoEm: efetivoEm, saida: saida };
@@ -9318,7 +9889,7 @@
     const salaAlunoAvulsoCrianca = document.getElementById("salaAlunoAvulsoCrianca");
     const salaAlunoAvulsoResponsaveisWrap = document.getElementById("salaAlunoAvulsoResponsaveisWrap");
     const salaAlunoAvulsoPai = document.getElementById("salaAlunoAvulsoPai");
-    const salaAlunoAvulsoMae = document.getElementById("salaAlunoAvulsoMae");
+    const salaAlunoAvulsoSobrenome = document.getElementById("salaAlunoAvulsoSobrenome");
     const btnAdicionarAlunoAvulso = document.getElementById("btnAdicionarAlunoAvulso");
     const salaAlunosStatus = document.getElementById("salaAlunosStatus");
     const alunosSalaNome = document.getElementById("alunosSalaNome");
@@ -9339,6 +9910,8 @@
     const canvasPaineis = {
       alunos: document.getElementById("canvasPainelAlunos"),
       chamada: document.getElementById("canvasPainelChamada"),
+      relatorioSala: document.getElementById("canvasPainelRelatorioSala"),
+      pedirRevista: document.getElementById("canvasPainelPedirRevista"),
       arquivos: document.getElementById("canvasPainelArquivos")
     };
     const professorBoasVindas = document.querySelector("#areaProfessor .professor-boas-vindas");
@@ -9385,6 +9958,8 @@
       if (professorBoasVindas) professorBoasVindas.classList.add("recolhido");
       if (nome === "arquivos") carregarArquivosSala();
       if (nome === "alunos") recarregarTudo();
+      if (nome === "relatorioSala") carregarRelatorioSala();
+      if (nome === "pedirRevista") renderPedirRevista();
     }
     canvasBotoes.forEach((b) => b.addEventListener("click", () => mostrarCanvas(b.dataset.canvas)));
 
@@ -9593,7 +10168,13 @@
         const checkbox = document.createElement("input");
         checkbox.type = "checkbox";
         checkbox.checked = !!st.presente;
-        checkbox.addEventListener("change", () => { st.presente = checkbox.checked; recalcularResumo(); salvarRelatorio(); });
+        checkbox.addEventListener("change", () => {
+          st.presente = checkbox.checked;
+          // Presente não tem motivo de falta; ausente pede o motivo (aparece logo abaixo)
+          if (st.presente) st.motivo = "";
+          renderChamada();
+          salvarRelatorio();
+        });
 
         const nomeWrap = document.createElement("span");
         const nomeEl = document.createElement("span");
@@ -9613,6 +10194,23 @@
         direita.style.display = "flex";
         direita.style.gap = "8px";
         direita.style.alignItems = "center";
+        // Aluno com falta: combobox com o motivo (lista de Gerenciar Listas)
+        if (aluno.tipo === "aluno" && !st.presente) {
+          const motivoWrap = document.createElement("div");
+          motivoWrap.className = "chamada-motivo";
+          const rotuloMotivo = document.createElement("span");
+          rotuloMotivo.className = "chamada-motivo-rotulo";
+          rotuloMotivo.textContent = "Motivo da falta:";
+          const seletorMotivo = document.createElement("select");
+          seletorMotivo.className = "admin-perfis-item-select";
+          seletorMotivo.setAttribute("aria-label", "Motivo da falta de " + aluno.nome);
+          seletorMotivo.appendChild(novaOpcaoMotivo("", "Escolha o motivo...", st.motivo || ""));
+          (motivosAusenciaCache || []).forEach((m) => seletorMotivo.appendChild(novaOpcaoMotivo(m.id, m.nome, st.motivo || "")));
+          seletorMotivo.addEventListener("change", () => { st.motivo = seletorMotivo.value; salvarRelatorio(); });
+          motivoWrap.append(rotuloMotivo, seletorMotivo);
+          nomeWrap.appendChild(motivoWrap);
+        }
+
         direita.appendChild(novoCampoOferta(st.ofertaValor, (v) => { st.ofertaValor = v; recalcularResumo(); }));
         direita.appendChild(novoSeletorMetodo(st.ofertaMetodo, (v) => { st.ofertaMetodo = v; }));
 
@@ -9699,7 +10297,9 @@
         const candidatos = [];
         usuariosSnap.forEach((d) => {
           const u = d.data();
-          if (u.ativo !== false && !jaVinculados.has(d.id)) {
+          // Alunos e cadastros feitos pelo site (perfil Convidado). Professores, secretaria e administradores não entram.
+          const eCandidato = u.perfil === "aluno" || u.perfil === "convidado";
+          if (u.ativo !== false && eCandidato && !jaVinculados.has(d.id)) {
             candidatos.push({
               uid: d.id,
               nome: [u.nome, u.sobrenome].filter(Boolean).join(" ") || u.email || d.id,
@@ -10182,7 +10782,7 @@
           const r = snap.data();
           campoTema.value = r.tema || "";
           (r.chamada || []).forEach((c) => {
-            chamadaEstado[c.matriculaId] = { presente: !!c.presente, ofertaValor: c.ofertaValor || 0, ofertaMetodo: c.ofertaMetodo || "" };
+            chamadaEstado[c.matriculaId] = { presente: !!c.presente, ofertaValor: c.ofertaValor || 0, ofertaMetodo: c.ofertaMetodo || "", motivo: c.motivo || "" };
           });
           ouvintes = (r.ouvintes || []).map((o) => Object.assign({}, o));
         }
@@ -10199,10 +10799,13 @@
       const opcaoSala = seletor.options[seletor.selectedIndex];
       if (alunosSalaNome) alunosSalaNome.textContent = opcaoSala ? "Sala: " + opcaoSala.textContent : "";
       campoData.value = hojeISO();
+      await carregarMotivosAusencia();
       await carregarAlunosDaSala(salaId);
       await carregarRelatorio(salaId, campoData.value);
       await carregarInfoAulaHoje();
       if (!canvasPaineis.arquivos.hidden) await carregarArquivosSala();
+      if (!canvasPaineis.relatorioSala.hidden) await carregarRelatorioSala();
+      if (!canvasPaineis.pedirRevista.hidden) await renderPedirRevista();
     }
 
     async function montarSeletor() {
@@ -10307,29 +10910,55 @@
 
     btnAdicionarAlunoAvulso.addEventListener("click", async () => {
       const nome = salaAlunoAvulsoNome.value.trim();
-      if (!nome) return;
+      if (!nome) {
+        salaAlunosStatus.textContent = "Informe o nome do aluno.";
+        salaAlunosStatus.className = "admin-agenda-status erro";
+        return;
+      }
+      const sobrenome = salaAlunoAvulsoSobrenome.value.trim();
+      const nomeCompleto = [nome, sobrenome].filter(Boolean).join(" ");
+      if (salaAlunoAvulsoNascimento.value.trim() && !lerDataIso(salaAlunoAvulsoNascimento)) {
+        salaAlunosStatus.textContent = "Data de nascimento inválida. Use o formato 15/03/2010.";
+        salaAlunosStatus.className = "admin-agenda-status erro";
+        return;
+      }
       const eCrianca = salaAlunoAvulsoCrianca.value === "sim";
       btnAdicionarAlunoAvulso.disabled = true;
       try {
-        await setDoc(doc(collection(db, "matriculas")), {
-          salaId: seletor.value,
-          tipo: "avulso",
-          uid: null,
+        // O cadastro vai para o banco (usuarios) como pendente de verificação; a matrícula liga a conta à Sala
+        const novoUsuario = doc(collection(db, "usuarios"));
+        await setDoc(novoUsuario, {
           nome: nome,
-          dataNascimento: salaAlunoAvulsoNascimento.value || "",
+          sobrenome: sobrenome,
+          dataNascimento: lerDataIso(salaAlunoAvulsoNascimento) || "",
           eCrianca: eCrianca,
           paiResponsavel: eCrianca ? salaAlunoAvulsoPai.value.trim() : "",
-          maeResponsavel: eCrianca ? salaAlunoAvulsoMae.value.trim() : "",
+          perfil: "aluno",
+          ativo: true,
+          codigo: gerarCodigoCadastro(),
+          cadastroPendente: true,
+          origemCadastro: "professor",
+          cadastradoPorUid: usuarioAtualCache.uid,
+          cadastradoPorNome: usuarioAtualCache.nome || usuarioAtualCache.email || "",
+          cadastradoPorPerfil: usuarioAtualCache.perfil || "",
+          origemTela: "sala-professor",
+          criadoEm: serverTimestamp()
+        });
+        await setDoc(doc(collection(db, "matriculas")), {
+          salaId: seletor.value,
+          tipo: "conta",
+          uid: novoUsuario.id,
+          nome: nomeCompleto,
           ativo: true,
           criadoEm: serverTimestamp(),
           criadoPorUid: usuarioAtualCache.uid
         });
         salaAlunoAvulsoNome.value = "";
+        salaAlunoAvulsoSobrenome.value = "";
         salaAlunoAvulsoNascimento.value = "";
         salaAlunoAvulsoCrianca.value = "nao";
         salaAlunoAvulsoResponsaveisWrap.hidden = true;
         salaAlunoAvulsoPai.value = "";
-        salaAlunoAvulsoMae.value = "";
         salaAlunosStatus.textContent = "Aluno adicionado à Sala.";
         salaAlunosStatus.className = "admin-agenda-status ok";
         await recarregarTudo();
@@ -10384,7 +11013,8 @@
             nome: a.nome,
             presente: !!st.presente,
             ofertaValor: Number(st.ofertaValor) || 0,
-            ofertaMetodo: st.ofertaMetodo || ""
+            ofertaMetodo: st.ofertaMetodo || "",
+            motivo: a.tipo === "aluno" && !st.presente ? (st.motivo || "") : ""
           };
         });
         await setDoc(doc(db, "relatoriosAula", salaId + "_" + data), {
@@ -10408,6 +11038,392 @@
         window.notificar("Não foi possível salvar o relatório. " + (err.message || ""), "error");
         console.error(err);
       }
+    }
+
+    // ===== Relatório da Sala (canvas do Professor) =====
+    // Dashboard de cada Domingo lançado na Chamada. O professor escolhe o Domingo no combobox.
+    // Ausentes têm motivo (lista de motivos gerenciada em Administração > Gerenciar Salas > Gerenciar Listas).
+    // Os motivos ficam dentro de cada aluno da chamada (campo "motivo"), então nada precisa de regra nova.
+    let relatoriosSalaCache = []; // relatórios da Sala, do mais recente para o mais antigo
+
+    function dataBrRelatorio(iso) {
+      return iso ? new Date(iso + "T00:00:00").toLocaleDateString("pt-BR") : "—";
+    }
+
+    function tileRelatorioSala(rotulo, valor, classeExtra) {
+      const card = document.createElement("div");
+      card.className = "professor-resumo-card" + (classeExtra ? " " + classeExtra : "");
+      const v = document.createElement("span");
+      v.className = "professor-resumo-valor" + (classeExtra && classeExtra.includes("relatorio-sala-cheio") ? " relatorio-sala-texto" : "");
+      v.textContent = valor;
+      const r = document.createElement("span");
+      r.className = "professor-resumo-rotulo";
+      r.textContent = rotulo;
+      card.append(v, r);
+      return card;
+    }
+
+    // Salva um trecho do relatório (ex.: chamada com motivos, notas) sem mexer no resto
+    async function salvarRelatorioSala(rel, trecho) {
+      try {
+        await setDoc(doc(db, "relatoriosAula", rel.docId), trecho, { merge: true });
+        Object.assign(rel, trecho);
+        window.notificar("Salvo automaticamente.", "success");
+      } catch (err) {
+        window.notificar("Não foi possível salvar. " + (err.message || ""), "error");
+        console.error(err);
+      }
+    }
+
+    // Grava o motivo de um aluno ausente, reescrevendo só a chamada desse Domingo
+    async function gravarMotivoRelatorio(rel, matriculaId, motivo) {
+      const novaChamada = (rel.chamada || []).map((p) => (p.matriculaId === matriculaId ? Object.assign({}, p, { motivo: motivo }) : p));
+      await salvarRelatorioSala(rel, { chamada: novaChamada });
+    }
+
+    // Linha de um aluno ausente: nome + combobox do motivo
+    function linhaAusenteRelatorio(rel, aluno, redesenhar) {
+      const linha = document.createElement("div");
+      linha.className = "relatorio-ausente-linha";
+      const nome = document.createElement("strong");
+      nome.textContent = aluno.nome || "(sem nome)";
+
+      const select = document.createElement("select");
+      select.className = "admin-perfis-item-select";
+      select.setAttribute("aria-label", "Motivo da falta de " + (aluno.nome || ""));
+      select.appendChild(novaOpcaoMotivo("", "Escolha o motivo...", aluno.motivo || ""));
+      (motivosAusenciaCache || []).forEach((m) => select.appendChild(novaOpcaoMotivo(m.id, m.nome, aluno.motivo || "")));
+      select.addEventListener("change", async () => {
+        if (!select.value) return;
+        await gravarMotivoRelatorio(rel, aluno.matriculaId, select.value);
+        redesenhar();
+      });
+      linha.append(nome, select);
+      return linha;
+    }
+
+    function novaOpcaoMotivo(valor, texto, atual) {
+      const opt = document.createElement("option");
+      opt.value = valor;
+      opt.textContent = texto;
+      if (valor === atual) opt.selected = true;
+      return opt;
+    }
+
+    // ----- Gráficos (SVG desenhado aqui, sem biblioteca) -----
+    // Linha: alunos matriculados em cada Domingo lançado
+    function svgLinhaMatriculados(pontos) {
+      const W = 320, H = 150, P = 26;
+      const vals = pontos.map((p) => p.valor);
+      const min = Math.min.apply(null, vals), max = Math.max.apply(null, vals);
+      const amp = max - min || 1;
+      const x = (i) => (pontos.length === 1 ? W / 2 : P + (i * (W - 2 * P)) / (pontos.length - 1));
+      const y = (v) => H - 30 - ((v - min) / amp) * (H - 60);
+      const linha = pontos.length > 1
+        ? '<polyline fill="none" stroke="var(--azul)" stroke-width="2.5" points="' + pontos.map((p, i) => x(i).toFixed(1) + "," + y(p.valor).toFixed(1)).join(" ") + '"/>'
+        : "";
+      const bolas = pontos.map((p, i) =>
+        '<circle cx="' + x(i).toFixed(1) + '" cy="' + y(p.valor).toFixed(1) + '" r="4" fill="var(--azul)"><title>' + dataBrRelatorio(p.data) + ": " + p.valor + "</title></circle>" +
+        '<text x="' + x(i).toFixed(1) + '" y="' + (y(p.valor) - 9).toFixed(1) + '" text-anchor="middle" font-size="11" fill="var(--ink)">' + p.valor + "</text>"
+      ).join("");
+      const primeira = pontos[0].data, ultima = pontos[pontos.length - 1].data;
+      return '<svg viewBox="0 0 ' + W + " " + H + '" class="rel-grafico-svg" role="img" aria-label="Alunos matriculados por Domingo">' +
+        linha + bolas +
+        '<text x="' + P + '" y="' + (H - 6) + '" font-size="10" fill="var(--muted)">' + dataBrRelatorio(primeira).slice(0, 5) + "</text>" +
+        '<text x="' + (W - P) + '" y="' + (H - 6) + '" font-size="10" text-anchor="end" fill="var(--muted)">' + dataBrRelatorio(ultima).slice(0, 5) + "</text>" +
+        "</svg>";
+    }
+
+    // Rosca: presença x falta (alunos) do Domingo escolhido
+    function svgRoscaPresenca(presentes, faltas) {
+      const total = presentes + faltas;
+      const r = 54, c = 2 * Math.PI * r;
+      const frac = total ? presentes / total : 0;
+      return '<svg viewBox="0 0 160 160" width="160" height="160" class="rel-grafico-svg" role="img" aria-label="Presença e faltas">' +
+        '<circle cx="80" cy="80" r="' + r + '" fill="none" stroke="#FF3B52" stroke-width="20"/>' +
+        '<circle cx="80" cy="80" r="' + r + '" fill="none" stroke="#34D399" stroke-width="20" stroke-dasharray="' + (c * frac).toFixed(2) + " " + c.toFixed(2) + '" transform="rotate(-90 80 80)"/>' +
+        '<text x="80" y="88" text-anchor="middle" font-size="22" font-weight="700" fill="var(--ink)">' + (total ? Math.round(frac * 100) : 0) + "%</text>" +
+        "</svg>";
+    }
+
+    // Tendência: inclinação da reta (alunos por Domingo) entre os relatórios lançados
+    function tendenciaMatriculados(pontos) {
+      if (pontos.length < 2) return { rotulo: "Precisa de pelo menos 2 Domingos lançados", seta: "", cor: "var(--muted)" };
+      const n = pontos.length;
+      const mx = pontos.reduce((s, _, i) => s + i, 0) / n;
+      const my = pontos.reduce((s, p) => s + p.valor, 0) / n;
+      let num = 0, den = 0;
+      pontos.forEach((p, i) => { num += (i - mx) * (p.valor - my); den += (i - mx) * (i - mx); });
+      const inclinacao = den ? num / den : 0;
+      if (inclinacao > 0.1) return { rotulo: "Crescendo", seta: "▲", cor: "#34D399" };
+      if (inclinacao < -0.1) return { rotulo: "Diminuindo", seta: "▼", cor: "#FF3B52" };
+      return { rotulo: "Estável", seta: "■", cor: "var(--muted)" };
+    }
+
+    function cardIndicador(titulo, conteudoHtml, rodape) {
+      const card = document.createElement("div");
+      card.className = "relatorio-indicador";
+      const t = document.createElement("h5");
+      t.textContent = titulo;
+      const corpo = document.createElement("div");
+      corpo.className = "relatorio-indicador-corpo";
+      corpo.innerHTML = conteudoHtml;
+      card.append(t, corpo);
+      if (rodape) {
+        const p = document.createElement("p");
+        p.className = "relatorio-indicador-rodape";
+        p.textContent = rodape;
+        card.appendChild(p);
+      }
+      return card;
+    }
+
+    function listaIntegrantes(titulo, itens) {
+      const bloco = document.createElement("div");
+      bloco.className = "relatorio-integrantes";
+      const t = document.createElement("h4");
+      t.textContent = titulo + " (" + itens.length + ")";
+      bloco.appendChild(t);
+      if (!itens.length) {
+        const vazio = document.createElement("p");
+        vazio.className = "admin-agenda-info";
+        vazio.textContent = "Nenhum registro neste Domingo.";
+        bloco.appendChild(vazio);
+        return bloco;
+      }
+      const lista = document.createElement("div");
+      lista.className = "relatorio-integrantes-lista";
+      itens.forEach((it) => {
+        const linha = document.createElement("div");
+        linha.className = "relatorio-integrante-linha";
+        const nome = document.createElement("span");
+        nome.textContent = it.nome;
+        const status = document.createElement("span");
+        status.className = "relatorio-badge " + (it.classe || "");
+        status.textContent = it.rotulo;
+        linha.append(nome, status);
+        lista.appendChild(linha);
+      });
+      bloco.appendChild(lista);
+      return bloco;
+    }
+
+    async function desenharRelatorioSala(rel, painelDash) {
+      painelDash.innerHTML = "";
+      let revistaNome = "";
+      try {
+        const dObjRel = new Date(rel.data + "T00:00:00");
+        const trimestre = Math.floor(dObjRel.getMonth() / 3) + 1;
+        const { ref: licRef, revistaId } = await refLicoesDaSala(rel.salaId, dObjRel.getFullYear(), trimestre);
+        revistaNome = await nomeDaRevistaPorId(revistaId);
+        if (!revistaNome) {
+          const licSnap = await getDoc(licRef);
+          if (licSnap.exists()) revistaNome = licSnap.data().revistaNome || "";
+        }
+      } catch (err) { console.error(err); }
+
+      const chamada = rel.chamada || [];
+      const alunos = chamada.filter((p) => p.tipo === "aluno");
+      const professores = chamada.filter((p) => p.tipo === "professor");
+      const visitantes = rel.ouvintes || [];
+      const alunosPresentes = alunos.filter((p) => p.presente).length;
+      const faltas = alunos.filter((p) => !p.presente);
+      const profsPresentes = professores.filter((p) => p.presente).length;
+      const totalPresentes = visitantes.length + alunosPresentes + profsPresentes;
+      const matriculados = rel.matriculados != null ? rel.matriculados : alunos.length;
+
+      const dash = document.createElement("div");
+      dash.className = "relatorio-sala-dash";
+      dash.append(
+        tileRelatorioSala("Dia", dataBrRelatorio(rel.data)),
+        tileRelatorioSala("Sala", rel.salaNome || "—"),
+        tileRelatorioSala("Professor", rel.lancadoPorNome || "—"),
+        tileRelatorioSala("Revista", revistaNome || "—", "relatorio-sala-cheio"),
+        tileRelatorioSala("Lição", rel.tema || "—", "relatorio-sala-cheio"),
+        tileRelatorioSala("Alunos Matriculados", String(matriculados)),
+        tileRelatorioSala("Ausentes", String(faltas.length)),
+        tileRelatorioSala("Total Presentes", String(totalPresentes))
+      );
+      painelDash.appendChild(dash);
+
+      // Integrantes: professores, alunos ausentes (com motivo) e visitantes
+      const integrantes = document.createElement("div");
+      integrantes.className = "relatorio-integrantes-grid";
+      integrantes.appendChild(listaIntegrantes("Professores da Sala", professores.map((p) => ({
+        nome: p.nome, rotulo: p.presente ? "Presente" : "Ausente", classe: p.presente ? "presente" : "falta"
+      }))));
+      integrantes.appendChild(listaIntegrantes("Visitantes", visitantes.map((v) => ({
+        nome: v.nome || "(sem nome)", rotulo: "Visitante", classe: "visitante"
+      }))));
+      painelDash.appendChild(integrantes);
+
+      const tituloAus = document.createElement("h4");
+      tituloAus.style.marginTop = "18px";
+      tituloAus.textContent = "Alunos ausentes (" + faltas.length + ")";
+      painelDash.appendChild(tituloAus);
+      if (!faltas.length) {
+        const vazio = document.createElement("p");
+        vazio.className = "admin-agenda-info";
+        vazio.textContent = "Nenhum aluno ausente neste Domingo.";
+        painelDash.appendChild(vazio);
+      } else {
+        const lista = document.createElement("div");
+        lista.className = "relatorio-ausentes-lista";
+        faltas
+          .slice()
+          .sort((a, b) => (a.nome || "").localeCompare(b.nome || "", "pt-BR"))
+          .forEach((aluno) => lista.appendChild(linhaAusenteRelatorio(rel, aluno, () => desenharRelatorioSala(rel, painelDash))));
+        painelDash.appendChild(lista);
+      }
+
+      // Indicadores: tendência de matriculados, presença x faltas e principais motivos
+      const tituloInd = document.createElement("h4");
+      tituloInd.style.marginTop = "22px";
+      tituloInd.textContent = "Indicadores da Sala";
+      painelDash.appendChild(tituloInd);
+
+      const pontos = relatoriosSalaCache
+        .slice()
+        .sort((a, b) => (a.data || "").localeCompare(b.data || ""))
+        .map((r) => ({ data: r.data, valor: r.matriculados != null ? r.matriculados : (r.chamada || []).filter((p) => p.tipo === "aluno").length }));
+      const tend = tendenciaMatriculados(pontos);
+
+      const contagemMotivos = {};
+      relatoriosSalaCache.forEach((r) => {
+        (r.chamada || []).forEach((p) => {
+          if (p.tipo !== "aluno" || p.presente) return;
+          const chave = p.motivo || "";
+          contagemMotivos[chave] = (contagemMotivos[chave] || 0) + 1;
+        });
+      });
+      const totalFaltas = Object.values(contagemMotivos).reduce((s, n) => s + n, 0);
+      const motivosOrdenados = Object.keys(contagemMotivos).sort((a, b) => contagemMotivos[b] - contagemMotivos[a]);
+      const barras = motivosOrdenados.length
+        ? motivosOrdenados.map((id) => {
+            const pct = totalFaltas ? Math.round((contagemMotivos[id] / totalFaltas) * 100) : 0;
+            const nome = id ? nomeMotivoAusencia(id) : "Sem motivo informado";
+            return '<div class="rel-barra-linha"><span class="rel-barra-rotulo">' + escaparHtmlRel(nome) + '</span><div class="rel-barra-trilho"><div class="rel-barra-preench" style="width:' + pct + '%"></div></div><span class="rel-barra-valor">' + contagemMotivos[id] + "</span></div>";
+          }).join("")
+        : '<p class="admin-agenda-info">Nenhuma falta registrada ainda.</p>';
+
+      const presentesAlunos = alunosPresentes;
+      const faltasAlunos = faltas.length;
+      const indicadores = document.createElement("div");
+      indicadores.className = "relatorio-indicadores";
+      indicadores.append(
+        cardIndicador("Alunos matriculados",
+          pontos.length < 1 ? '<p class="admin-agenda-info">Sem relatórios.</p>' : svgLinhaMatriculados(pontos),
+          tend.seta + " " + tend.rotulo + (pontos.length >= 2 ? " (" + pontos.length + " Domingos)" : "")),
+        cardIndicador("Presença x Faltas (este Domingo)",
+          '<div class="rel-rosca-wrap">' + svgRoscaPresenca(presentesAlunos, faltasAlunos) +
+          '<div class="rel-rosca-legenda"><span><i class="rel-dot presente"></i>Presentes: ' + presentesAlunos + '</span><span><i class="rel-dot falta"></i>Faltas: ' + faltasAlunos + "</span></div></div>",
+          "Considera só os alunos matriculados."),
+        cardIndicador("Principais motivos de falta", barras,
+          "Soma de todos os Domingos lançados desta Sala.")
+      );
+      painelDash.appendChild(indicadores);
+
+      const tituloNotas = document.createElement("h4");
+      tituloNotas.style.marginTop = "18px";
+      tituloNotas.textContent = "Notas";
+      painelDash.appendChild(tituloNotas);
+      const notas = document.createElement("textarea");
+      notas.className = "relatorio-notas";
+      notas.placeholder = "Anote aqui o que aconteceu no Domingo...";
+      notas.value = rel.notasRelatorio || "";
+      notas.addEventListener("change", () => salvarRelatorioSala(rel, { notasRelatorio: notas.value }));
+      painelDash.appendChild(notas);
+    }
+
+    function escaparHtmlRel(texto) {
+      return String(texto).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+    }
+
+    async function carregarRelatorioSala(dataEscolhida) {
+      const salaId = seletor.value;
+      const painel = document.getElementById("professorRelatorioSalaConteudo");
+      if (!salaId || !painel) return;
+      painel.innerHTML = '<p class="admin-agenda-info">Carregando...</p>';
+      try {
+        await carregarMotivosAusencia();
+        const snap = await getDocs(query(collection(db, "relatoriosAula"), where("salaId", "==", salaId)));
+        relatoriosSalaCache = [];
+        snap.forEach((d) => relatoriosSalaCache.push(Object.assign({ docId: d.id }, d.data())));
+        relatoriosSalaCache.sort((a, b) => (b.data || "").localeCompare(a.data || ""));
+        painel.innerHTML = "";
+        if (!relatoriosSalaCache.length) {
+          painel.innerHTML = '<p class="admin-agenda-info">Nenhum relatório lançado ainda para esta Sala — assim que a Chamada de um Domingo for feita, o relatório aparece aqui.</p>';
+          return;
+        }
+
+        const escolhido = relatoriosSalaCache.find((r) => r.data === dataEscolhida) || relatoriosSalaCache[0];
+
+        // Combobox com os Domingos lançados: o professor elege o relatório
+        const linhaSeletor = document.createElement("div");
+        linhaSeletor.className = "admin-form-linha";
+        const rotuloSeletor = document.createElement("label");
+        rotuloSeletor.textContent = "Domingo:";
+        const seletorDia = document.createElement("select");
+        seletorDia.id = "relatorioSalaDia";
+        seletorDia.className = "admin-perfis-item-select";
+        relatoriosSalaCache.forEach((r) => {
+          const opt = document.createElement("option");
+          opt.value = r.data;
+          opt.textContent = dataBrRelatorio(r.data);
+          if (r.data === escolhido.data) opt.selected = true;
+          seletorDia.appendChild(opt);
+        });
+        rotuloSeletor.appendChild(seletorDia);
+        linhaSeletor.appendChild(rotuloSeletor);
+        painel.appendChild(linhaSeletor);
+
+        const painelDash = document.createElement("div");
+        painel.appendChild(painelDash);
+
+        seletorDia.addEventListener("change", () => {
+          const rel = relatoriosSalaCache.find((r) => r.data === seletorDia.value);
+          if (rel) desenharRelatorioSala(rel, painelDash);
+        });
+        await desenharRelatorioSala(escolhido, painelDash);
+      } catch (err) {
+        painel.innerHTML = '<p class="admin-agenda-status erro">Não foi possível carregar o relatório desta Sala.</p>';
+        console.error(err);
+      }
+    }
+
+    // ===== Pedir Revista (canvas do Professor) =====
+    // Mesmos botões da Área do Aluno (Solicitar Revista e Meu pedido), com o professor como solicitante
+    function solicitantePedidoProfessor() {
+      const sala = minhasSalas.find((s) => s.id === seletor.value);
+      return {
+        uid: usuarioAtualCache.uid,
+        nome: usuarioAtualCache.nome || usuarioAtualCache.email || "",
+        salaId: seletor.value,
+        salaNome: sala ? sala.nome : "",
+        tipoPadrao: "professor",
+        aoMudar: renderPedirRevista
+      };
+    }
+
+    async function renderPedirRevista() {
+      const grid = document.getElementById("professorRecursosRevista");
+      if (!grid || !usuarioAtualCache) return;
+      const sol = solicitantePedidoProfessor();
+      const temPedido = await temPedidoRevistaComo(sol).catch((err) => { console.error(err); return false; });
+      grid.innerHTML = `
+        <button type="button" class="professor-canvas-card" id="btnProfSolicitarRevista" aria-label="Solicitar Revista">
+          <span class="professor-canvas-icone"><img src="icones-secretaria/revistas-coloridas.webp" alt=""></span>
+          <span class="professor-canvas-titulo">Solicitar Revista</span>
+          <span class="professor-canvas-sub">Revista do próximo trimestre</span>
+        </button>
+        ${temPedido ? `
+        <button type="button" class="professor-canvas-card" id="btnProfMeuPedido" aria-label="Meu pedido">
+          <span class="professor-canvas-icone"><img src="icones-secretaria/meu-pedido.webp" alt=""></span>
+          <span class="professor-canvas-titulo">Meu pedido</span>
+          <span class="professor-canvas-sub">Veja o que você pediu</span>
+        </button>` : ""}`;
+      document.getElementById("btnProfSolicitarRevista").addEventListener("click", () => abrirSolicitarRevistaComo(solicitantePedidoProfessor()));
+      if (temPedido) document.getElementById("btnProfMeuPedido").addEventListener("click", () => abrirMeuPedidoComo(solicitantePedidoProfessor()));
     }
 
     // Enter nos campos não deve recarregar a página
@@ -10448,6 +11464,17 @@
     const campoDataNascimento = document.getElementById("perfilDataNascimento");
     const fotoInput = document.getElementById("perfilFotoInput");
     const fotoPreview = document.getElementById("perfilFotoPreview");
+    const fotoRemover = document.getElementById("perfilFotoRemover");
+    // O × vermelho só aparece quando existe foto
+    function atualizarRemoverFoto() { fotoRemover.hidden = !fotoBase64Atual; }
+    document.getElementById("perfilFotoBtn").addEventListener("click", () => fotoInput.click());
+    fotoPreview.addEventListener("click", () => fotoInput.click());
+    fotoRemover.addEventListener("click", () => {
+      fotoBase64Atual = "";
+      fotoInput.value = "";
+      fotoPreview.src = FOTO_PADRAO;
+      atualizarRemoverFoto();
+    });
     const campoCep = document.getElementById("perfilCep");
     const campoNumero = document.getElementById("perfilNumero");
     const campoRua = document.getElementById("perfilRua");
@@ -10515,6 +11542,7 @@
 
     function atualizarIdade() {
       const elIdade = document.getElementById("perfilIdade");
+      if (!elIdade) return; // a linha "Idade" foi removida da tela
       const iso = dataBrParaIso(campoDataNascimento.value);
       const nasc = iso ? new Date(iso + "T00:00:00") : null;
       if (!nasc || isNaN(nasc)) { elIdade.hidden = true; return; }
@@ -10577,7 +11605,7 @@
         tipoLabel.textContent = rotuloPerfil(usuarioAtualCache.perfil);
         tipoLabel.hidden = false;
         fotoBase64Atual = usuarioAtualCache.foto || "";
-        fotoPreview.src = fotoBase64Atual || FOTO_PADRAO;
+        fotoPreview.src = fotoBase64Atual || FOTO_PADRAO; atualizarRemoverFoto();
       } else if (modoAtual === "completar-google") {
         titulo.innerHTML = '<span class="dot"></span>Complete seu Cadastro';
         tipoLabel.hidden = true;
@@ -10586,7 +11614,7 @@
         campoSobrenome.value = partesNome.slice(1).join(" ");
         campoEmail.value = (dadosGoogle && dadosGoogle.email) || "";
         fotoBase64Atual = (dadosGoogle && dadosGoogle.foto) || "";
-        fotoPreview.src = fotoBase64Atual || FOTO_PADRAO;
+        fotoPreview.src = fotoBase64Atual || FOTO_PADRAO; atualizarRemoverFoto();
       } else {
         titulo.innerHTML = '<span class="dot"></span>Criar Conta';
         tipoLabel.hidden = true;
@@ -10653,6 +11681,7 @@
           ctx.drawImage(img, (tamanho - w) / 2, (tamanho - h) / 2, w, h);
           fotoBase64Atual = canvas.toDataURL("image/jpeg", 0.7);
           fotoPreview.src = fotoBase64Atual;
+          atualizarRemoverFoto();
         };
         img.src = leitor.result;
       };
@@ -10744,7 +11773,7 @@
         await setDoc(doc(db, "usuarios", auth.currentUser.uid), dadosPerfil, { merge: true });
         const perfilFinal = (usuarioAtualCache && usuarioAtualCache.perfil) || "convidado";
         usuarioAtualCache = Object.assign({}, usuarioAtualCache, dadosPerfil, { perfil: perfilFinal });
-        loginLabel.textContent = "Olá " + (dadosPerfil.nome || (usuarioAtualCache.email || "").split("@")[0]);
+        atualizarBotaoLogin("Olá " + (dadosPerfil.nome || (usuarioAtualCache.email || "").split("@")[0]));
         fecharModal();
       } catch (err) {
         mensagemEl.textContent = "Não foi possível salvar. " + (err.message || "");
@@ -10793,6 +11822,9 @@
           sobrenome: campoSobrenome.value.trim(),
           perfil: "convidado",
           ativo: true,
+          codigo: gerarCodigoCadastro(),
+          cadastroPendente: true,
+          origemCadastro: "site",
           criadoEm: serverTimestamp()
         });
         wizardPasso = 2;
@@ -11086,9 +12118,14 @@
         linha.className = "outra-data-linha";
 
         const input = document.createElement("input");
-        input.type = "date";
-        input.value = valor;
-        input.addEventListener("change", () => { outrasDatasState[indice] = input.value; });
+        input.type = "text";
+        input.setAttribute("data-data-br", "");
+        input.placeholder = "Ex.: 15/03/2010";
+        input.inputMode = "numeric";
+        input.maxLength = 10;
+        mascaraDataBrInput(input);
+        definirDataIso(input, valor);
+        input.addEventListener("change", () => { outrasDatasState[indice] = lerDataIso(input); });
 
         const ultima = indice === outrasDatasState.length - 1;
         const botao = document.createElement("button");
@@ -11314,7 +12351,7 @@
       }
 
       sincronizarComboDep();
-      campoDataInicio.value = ev.dataInicio;
+      definirDataIso(campoDataInicio, ev.dataInicio);
       campoHora.value = ev.hora || "";
       campoTitulo.value = ev.titulo;
       campoObservacao.value = ev.observacao || "";
@@ -11370,8 +12407,8 @@
     function aplicarFiltrosERenderizar() {
       const escopo = filtroEscopo.value;
       const departamento = filtroDepartamento.value;
-      const dataDe = filtroDataInicio.value;
-      const dataAte = filtroDataFim.value;
+      const dataDe = lerDataIso(filtroDataInicio);
+      const dataAte = lerDataIso(filtroDataFim);
       const buscaTitulo = filtroTitulo.value.trim().toLowerCase();
 
       const filtrados = eventosCache.filter((ev) => {
@@ -11514,8 +12551,10 @@
         }
       }
 
-      const outrasDatas = outrasDatasState.filter((d) => d && d !== campoDataInicio.value);
-      const todasDatas = [campoDataInicio.value, ...outrasDatas].sort();
+      if (!lerDataIso(campoDataInicio)) { alert("Informe a data de início no formato 15/03/2010."); return; }
+      const dataInicioIso = lerDataIso(campoDataInicio);
+      const outrasDatas = outrasDatasState.filter((d) => d && d !== dataInicioIso);
+      const todasDatas = [dataInicioIso, ...outrasDatas].sort();
       const dataFimCalculada = todasDatas[todasDatas.length - 1];
       const ehEventoNovo = !campoId.value;
       const envolvePqFlorianopolis = ehSetor && congregacoesSetor.includes(CONGREGACAO_LOCAL);
@@ -11539,7 +12578,7 @@
           escopo: campoEscopo.value,
           tipo: campoTipo.value,
           categoria: categoria,
-          dataInicio: campoDataInicio.value,
+          dataInicio: dataInicioIso,
           dataFim: dataFimCalculada,
           outrasDatas: outrasDatas,
           hora: campoHora.value.trim(),
@@ -11554,7 +12593,7 @@
             escopo: "congregacao",
             tipo: "evento",
             categoria: categoria,
-            dataInicio: campoDataInicio.value,
+            dataInicio: dataInicioIso,
             dataFim: dataFimCalculada,
             outrasDatas: outrasDatas,
             hora: campoHora.value.trim(),

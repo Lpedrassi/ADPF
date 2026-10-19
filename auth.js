@@ -26,6 +26,14 @@ const db = getFirestore(app);
 
 const PERFIL_PADRAO = "convidado";
 
+// Código interno do cadastro (oculto na tela), igual ao gerarCodigoCadastro() do index.html
+function gerarCodigoCadastro() {
+  const letras = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  let codigo = "";
+  crypto.getRandomValues(new Uint8Array(8)).forEach((b) => { codigo += letras[b % letras.length]; });
+  return codigo;
+}
+
 // Depois do login/cadastro, o usuario continua na mesma pagina (index.html):
 // o menu lateral e a saudacao aparecem sozinhos (ver o <script type="module">
 // no fim do index.html, que escuta onAuthStateChanged). Aqui so fechamos o modal.
@@ -36,17 +44,41 @@ function fecharModalLogin() {
 const form = document.querySelector(".login-form");
 
 if (form) {
+  const campoEmail = document.getElementById("loginEmail");
+  const campoSenha = document.getElementById("loginSenha");
+  const cardLogin = form.closest(".login-card");
+
+  // Tira a borda vermelha assim que a pessoa volta a digitar
+  [campoEmail, campoSenha].forEach((campo) => {
+    campo.addEventListener("input", () => campo.classList.remove("campo-erro"));
+  });
+
+  // Erro de e-mail/senha: borda vermelha nos dois campos e a tela treme
+  function sinalizarErroLogin() {
+    campoEmail.classList.add("campo-erro");
+    campoSenha.classList.add("campo-erro");
+    if (cardLogin) {
+      cardLogin.classList.remove("tremer");
+      void cardLogin.offsetWidth; // reinicia a animacao se errar de novo
+      cardLogin.classList.add("tremer");
+    }
+  }
+
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
-    const email = document.getElementById("loginEmail").value.trim();
-    const senha = document.getElementById("loginSenha").value;
+    const email = campoEmail.value.trim();
+    const senha = campoSenha.value;
 
     try {
       const cred = await signInWithEmailAndPassword(auth, email, senha);
       fecharModalLogin();
     } catch (err) {
-      alert("Nao foi possivel entrar. Confira seu e-mail e senha.");
       console.error(err);
+      if (err.code === "auth/too-many-requests") {
+        alert("Muitas tentativas seguidas. Aguarde alguns minutos e tente de novo.");
+      } else {
+        sinalizarErroLogin();
+      }
     }
   });
 
@@ -100,6 +132,9 @@ window.entrarComGoogle = async function () {
         foto: cred.user.photoURL || "",
         perfil: PERFIL_PADRAO,
         ativo: true,
+        codigo: gerarCodigoCadastro(),
+        cadastroPendente: true,
+        origemCadastro: "site",
         criadoEm: serverTimestamp()
       });
       if (window.__abrirPerfilModal) {

@@ -26,7 +26,14 @@ service cloud.firestore {
         get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.perfil == "professor" ||
         get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.perfil == "administrativo"
       );
-      allow create: if request.auth != null && request.auth.uid == userId;
+      // Cadastro de um novo usuário: a própria pessoa, ou a equipe criando um aluno pendente de verificação
+      allow create: if request.auth != null && (
+        request.auth.uid == userId ||
+        ((isAdmin() || isAdministrativo() ||
+          get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.perfil == "professor")
+          && request.resource.data.cadastroPendente == true
+          && request.resource.data.perfil == "aluno")
+      );
       allow update: if request.auth != null
                     && (
                       (request.auth.uid == userId && request.resource.data.perfil == resource.data.perfil)
@@ -125,6 +132,11 @@ service cloud.firestore {
       allow update, delete: if request.auth != null && (isAdmin() || isAdministrativo());
     }
     // Valores das revistas (Secretaria cadastra; alunos leem para ver o total do pedido)
+    // Listas compartilhadas do site (ex.: motivos de ausência). Todos leem; só o Administrador grava.
+    match /configListas/{docId} {
+      allow read: if request.auth != null;
+      allow write: if isAdmin();
+    }
     match /configRevistas/{docId} {
       allow read: if request.auth != null;
       allow write: if request.auth != null && (isAdmin() || isAdministrativo());
