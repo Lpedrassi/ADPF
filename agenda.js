@@ -375,11 +375,11 @@ async function iniciarAgendaPublica() {
 async function preencherProximosCultos() {
   const el = (id) => document.getElementById(id);
   const cards = [
-    { tag: el("cultoCardCultoTag"), titulo: el("cultoCardCultoTitulo"), desc: el("cultoCardCultoDesc") },
-    { tag: el("cultoCardEventoTag"), titulo: el("cultoCardEventoTitulo"), desc: el("cultoCardEventoDesc") },
-    { tag: el("cultoCardSetorTag"), titulo: el("cultoCardSetorTitulo"), desc: el("cultoCardSetorDesc") }
+    { hora: el("cultoCardCultoHora"), dia: el("cultoCardCultoDia"), data: el("cultoCardCultoData"), titulo: el("cultoCardCultoTitulo"), desc: el("cultoCardCultoDesc") },
+    { hora: el("cultoCardEventoHora"), dia: el("cultoCardEventoDia"), data: el("cultoCardEventoData"), titulo: el("cultoCardEventoTitulo"), desc: el("cultoCardEventoDesc") },
+    { hora: el("cultoCardSetorHora"), dia: el("cultoCardSetorDia"), data: el("cultoCardSetorData"), titulo: el("cultoCardSetorTitulo"), desc: el("cultoCardSetorDesc") }
   ];
-  if (cards.some((c) => !c.tag)) return; // não está nesta página
+  if (cards.some((c) => !c.hora)) return; // não está nesta página
 
   let todos;
   try {
@@ -400,10 +400,12 @@ async function preencherProximosCultos() {
     ordenarProximos(doSetor, hoje)[0] || null
   ];
 
-  const rotuloData = (ev) => {
-    const [, mes, dia] = ev.dataInicio.split("-");
-    const data = `${nomeDiaDaSemana(ev.dataInicio)} ${dia}/${mes}`;
-    return ev.hora ? `${data} · ${ev.hora}` : data;
+  // "18:00" ou "18h" -> "18h"; "18:30" -> "18h30"
+  const horaFormatada = (h) => {
+    if (!h) return "—";
+    const m = String(h).match(/^(\d{1,2})(?::(\d{2}))?/);
+    if (!m) return h;
+    return m[2] && m[2] !== "00" ? m[1] + "h" + m[2] : m[1] + "h";
   };
 
   const descricao = (ev) => {
@@ -416,11 +418,16 @@ async function preencherProximosCultos() {
   cards.forEach((card, idx) => {
     const ev = proximos[idx];
     if (ev) {
-      card.tag.textContent = rotuloData(ev);
+      const [, mes, dia] = ev.dataInicio.split("-");
+      card.hora.textContent = horaFormatada(ev.hora);
+      card.dia.textContent = nomeDiaDaSemana(ev.dataInicio);
+      card.data.textContent = `${dia}/${mes}`;
       card.titulo.textContent = ev.titulo;
       card.desc.textContent = descricao(ev);
     } else {
-      card.tag.textContent = "Em breve";
+      card.hora.textContent = "—";
+      card.dia.textContent = "";
+      card.data.textContent = "Em breve";
       card.titulo.textContent = "Nenhum agendamento";
       card.desc.textContent = "Confira a Agenda em breve.";
     }

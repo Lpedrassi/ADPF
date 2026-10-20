@@ -824,6 +824,11 @@ async function abrirMeuPedido(sol = solicitanteAluno()) {
   try {
     const pedidos = await buscarPedidosEmAbertoAluno(sol.uid);
     lista.textContent = "";
+    // Sem pedido pendente: o botão Meu pedido some (a baixa da Secretaria já aconteceu)
+    if (!pedidos.length) {
+      document.getElementById("btnAlunoMeuPedido")?.remove();
+      document.getElementById("btnProfMeuPedido")?.remove();
+    }
 
     const cabecalho = document.createElement("div");
     cabecalho.className = "aluno-pedido-grade aluno-pedido-grade-cab";
@@ -984,3 +989,6 @@ export function abrirMeuPedidoComo(sol) {
 export async function temPedidoRevistaComo(sol) {
   return (await buscarPedidosEmAbertoAluno(sol.uid)).length > 0;
 }
+
+// Área do Aluno reaberta: recalcula o botão Meu pedido (index.html chama em mostrarArea)
+window.__recarregarRecursosAluno = () => carregarRecursos();
