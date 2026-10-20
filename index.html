@@ -423,9 +423,12 @@
   @media (max-width: 560px) {
     .hero { padding: 48px 0 0; }
     .hero-inner { padding-top: 20px; }
-    .hero h1 { font-size: clamp(18px, 4.5vw, 36px); margin-top: 14px; }
+    .hero h1 { font-size: clamp(30px, 9vw, 44px); line-height: 1.1; margin-top: 14px; }
     .hero-sub { font-size: 13.5px; margin: 14px auto 0; }
-    .hero-actions { margin-top: 20px; flex-direction: column; gap: 8px; }
+    .hero-actions { margin-top: 20px; padding: 0 16px; flex-direction: row; flex-wrap: nowrap; gap: 10px; }
+    .hero-actions > a { flex: 1 1 0; min-width: 0; justify-content: center; text-align: center; }
+    .hero-actions .btn { padding: 12px 8px; font-size: 14px; white-space: nowrap; }
+    .hero-actions .btn-dourado { padding: 12px 8px; font-size: 14px; white-space: nowrap; }
   }
 
   .btn {
@@ -449,6 +452,38 @@
   .qlink.c-azul:hover { border-color: var(--azul); }
   .qlink.c-vermelho:hover { border-color: var(--vermelho); }
   .qlink.c-laranja:hover { border-color: var(--laranja); }
+  /* Botões do topo: vidro, texto branco em maiúsculas. No hover, a borda vira um gradiente na cor do botão (--c e --c2) */
+  .glass-btn {
+    position: relative; isolation: isolate;
+    background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.22);
+    -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.12);
+    color: #fff; text-transform: uppercase; letter-spacing: 0.04em;
+    transition: transform 0.15s ease, border-color 0.2s ease, background 0.2s ease;
+  }
+  .glass-btn::before {
+    content: ""; position: absolute; inset: -1px; border-radius: inherit; padding: 1px; pointer-events: none; z-index: -1;
+    background: linear-gradient(120deg, var(--c), var(--c2));
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor; mask-composite: exclude;
+    opacity: 0; transition: opacity 0.2s ease;
+  }
+  .glass-btn:hover { color: #fff; border-color: transparent; background: rgba(255,255,255,0.1); transform: translateY(-2px); }
+  .glass-btn:hover::before { opacity: 1; }
+  /* Horários de cultos: mesmo visual do botão Olá Lucas (fundo, borda e texto dourado em gradiente) */
+  .btn-dourado {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 15px 28px; border-radius: 999px; text-decoration: none; text-align: center;
+    background: rgba(255,196,61,0.12); border: 1px solid rgba(255,196,61,0.4);
+    font-family: "Plus Jakarta Sans", sans-serif; font-size: 15px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.04em;
+    transition: border-color 0.2s ease, background 0.2s ease, transform 0.15s ease;
+  }
+  .btn-dourado > span {
+    background: linear-gradient(100deg, #FFE38A 0%, #FFB100 100%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .btn-dourado:hover { border-color: rgba(255,196,61,0.7); background: rgba(255,196,61,0.2); transform: translateY(-1px); }
 
   .emblem-row { margin: 60px 0 148px; display: flex; justify-content: center; position: relative; z-index: 2; }
   .emblem-social { position: relative; width: 200px; height: 200px; }
@@ -1801,7 +1836,7 @@
 
       <div>
         <label for="gerenciarPerfilEditEmail">E-mail</label>
-        <input id="gerenciarPerfilEditEmail" type="email" disabled>
+        <input id="gerenciarPerfilEditEmail" type="email" autocomplete="off">
       </div>
 
       <div class="perfil-grid-2">
@@ -1933,14 +1968,14 @@
     <h1>Assembleia de Deus Belém<br><span class="grad-text">Pq Florianópolis</span></h1>
     <p class="hero-sub">Uma congregação que ensina a Palavra, fé, comunhão para toda a familia!</p>
     <div class="hero-actions">
-      <a class="btn btn-primary" href="#cultos">Horários de cultos</a>
-      <a class="btn btn-ghost" href="#ebd">Conheça a EBD</a>
+      <a class="btn-dourado" href="#cultos"><span>Horários de cultos</span></a>
+      <a class="btn glass-btn" style="--c:#34D399;--c2:#A7F3D0" href="#ebd">Conheça a EBD</a>
     </div>
     <div class="quicklinks">
-      <a class="qlink c-azul" href="#sobre">Quem somos</a>
-      <a class="qlink c-vermelho" href="#ebd">Escola Bíblica</a>
-      <a class="qlink c-laranja" href="#cultos">Programação</a>
-      <a class="qlink c-azul" href="#contato">Localização</a>
+      <a class="qlink glass-btn" style="--c:#8B5CF6;--c2:#C4B5FD" href="#sobre">Quem somos</a>
+      <a class="qlink glass-btn" style="--c:#FF3B52;--c2:#FF8A99" href="#departamentos">Departamentos</a>
+      <a class="qlink glass-btn" style="--c:#3B82FF;--c2:#93C5FD" href="#cultos">Programação</a>
+      <a class="qlink glass-btn" style="--c:#EC4899;--c2:#F9A8D4" href="#contato">Localização</a>
     </div>
     <div class="emblem-row">
       <div class="emblem-social" id="emblemSocial">
@@ -3473,8 +3508,11 @@
       <p class="admin-agenda-info"><strong>Relatórios de todas as Salas</strong>: edite a presença, os motivos das faltas, o tema e as notas, ou exclua um relatório. A exclusão não pode ser desfeita.</p>
       <div class="admin-form">
         <div class="admin-form-linha">
-          <label style="flex:1;">Sala
+          <label style="flex:2;">Sala
             <select id="gerenciarRelatoriosSala"></select>
+          </label>
+          <label style="flex:1;">Data
+            <select id="gerenciarRelatoriosData"></select>
           </label>
         </div>
       </div>
@@ -7908,6 +7946,15 @@
             cidade: editarCidade.value.trim()
           }
         };
+        if (!editarEmail.disabled) {
+          const email = editarEmail.value.trim().toLowerCase();
+          if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            editarMensagem.textContent = "Digite um e-mail válido (ex.: nome@dominio.com.br).";
+            editarMensagem.className = "login-note erro";
+            return;
+          }
+          dadosUsuario.email = email;
+        }
         if (fotoBase64Editar) dadosUsuario.foto = fotoBase64Editar;
         else if (fotoRemovidaEditar) dadosUsuario.foto = "";
         editarBtnSalvar.disabled = true;
@@ -7945,6 +7992,7 @@
         editarNome.value = usuario.nome || "";
         editarSobrenome.value = usuario.sobrenome || "";
         editarEmail.value = usuario.email || "";
+        editarEmail.disabled = !(usuarioAtualCache && usuarioAtualCache.perfil === "admin");
         editarTelefone.value = usuario.telefone || "";
         editarDataNascimento.value = dataIsoParaBrEditar(usuario.dataNascimento);
         editarPerfilSelect.value = usuario.perfil || "convidado";
@@ -7980,6 +8028,28 @@
     const filtroSala = document.getElementById("gerenciarRelatoriosSala");
     const status = document.getElementById("gerenciarRelatoriosStatus");
     const edicao = document.getElementById("gerenciarRelatoriosEdicao");
+    const campoData = document.getElementById("gerenciarRelatoriosData");
+    // Data escolhida no combobox (aaaa-mm-dd), ou "" para todas
+    function dataIsoDoFiltro() {
+      return campoData ? campoData.value : "";
+    }
+    // "2026-10-19" -> "Segunda 19/10/2026" (dia da semana real da data)
+    function rotuloDataRel(iso) {
+      const nomes = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"];
+      const dia = new Date(iso + "T00:00:00").getDay();
+      return nomes[dia] + " " + dataBrGerenciar(iso);
+    }
+    // Opções de data: só os Domingos lançados na Sala escolhida (mantém a escolha se ainda existir)
+    function atualizarOpcoesData() {
+      const sala = filtroSala.value;
+      const atual = campoData.value;
+      const datas = [...new Set(todos.filter((r) => !sala || r.salaId === sala).map((r) => r.data).filter(Boolean))]
+        .sort((x, y) => y.localeCompare(x));
+      campoData.innerHTML = "";
+      campoData.appendChild(new Option("Todas as datas", ""));
+      datas.forEach((iso) => campoData.appendChild(new Option(rotuloDataRel(iso), iso)));
+      campoData.value = datas.includes(atual) ? atual : "";
+    }
     if (!card || !lista || !filtroSala || !edicao) return;
     let todos = [];
     let emEdicao = null;
@@ -7990,7 +8060,8 @@
     }
 
     function desenhar() {
-      const visiveis = todos.filter((r) => !filtroSala.value || r.salaId === filtroSala.value);
+      const iso = dataIsoDoFiltro();
+      const visiveis = todos.filter((r) => (!filtroSala.value || r.salaId === filtroSala.value) && (!iso || r.data === iso));
       lista.innerHTML = "";
       if (!visiveis.length) {
         lista.innerHTML = '<div class="admin-agenda-vazio">Nenhum relatório encontrado.</div>';
@@ -8052,6 +8123,7 @@
           .forEach(([id, nome]) => filtroSala.appendChild(new Option(nome, id)));
         filtroSala.value = atual;
         avisar(todos.length + " relatório(s) no total.");
+        atualizarOpcoesData();
         desenhar();
       } catch (err) {
         lista.innerHTML = '<p class="admin-agenda-status erro">Não foi possível carregar os relatórios.</p>';
@@ -8217,7 +8289,8 @@
       if (btn.dataset.acao === "excluir") excluirRelatorio(rel);
     });
 
-    filtroSala.addEventListener("change", () => { fecharEdicao(); desenhar(); });
+    filtroSala.addEventListener("change", () => { fecharEdicao(); atualizarOpcoesData(); desenhar(); });
+    campoData.addEventListener("change", desenhar);
 
     // Carrega a lista ao abrir o canvas (o clique no card é tratado por iniciarGerenciarSalas)
     card.addEventListener("click", () => {
