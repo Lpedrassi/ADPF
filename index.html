@@ -1411,6 +1411,8 @@
   .rel-motivo-select-gr { min-width: 170px; padding: 6px 10px; border-radius: 10px; background: var(--surface-2); border: 1px solid #FF3B52; color: #FF3B52; font-family: "Plus Jakarta Sans", sans-serif; font-size: var(--rel-fs-detalhe, 11px); }
   .rel-motivo-select-gr:disabled { opacity: .4; }
   .gr-botoes { display: flex; gap: 8px; flex-wrap: wrap; }
+  .gr-confirma { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 6px 0; padding: 10px 12px; border: 1px solid #FF3B52; border-radius: 12px; background: rgba(255,59,82,0.08); font-size: var(--rel-fs-texto, 12px); }
+  .gr-confirma-sim { color: #FF3B52; border-color: #FF3B52; }
   .chamada-motivo { display: flex; align-items: center; gap: 8px; margin-top: 6px; flex-wrap: wrap; }
   .chamada-motivo-rotulo { font-size: 12px; color: var(--muted); }
   .motivos-tab td.motivo-acoes { white-space: nowrap; }
@@ -1643,7 +1645,7 @@
           <div class="perfil-foto-circulo">
             <img id="perfilFotoPreview" class="perfil-foto-preview-grande" alt="Foto do perfil">
             <button type="button" class="foto-remover-badge" id="perfilFotoRemover" title="Remover foto" aria-label="Remover foto" hidden></button>
-            <button type="button" class="perfil-foto-botao" id="perfilFotoBtn"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" aria-hidden="true"><path d="M3 14v4.5A2.5 2.5 0 0 0 5.5 21h13a2.5 2.5 0 0 0 2.5-2.5V14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M12 16V4" stroke="#FAC34B" stroke-width="2.6" stroke-linecap="round"/><path d="M7.5 8.5 12 4l4.5 4.5" stroke="#FAC34B" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="txt-enviar">Enviar foto</span><span class="txt-alterar">Alterar foto</span></button>
+            <button type="button" class="perfil-foto-botao" id="perfilFotoBtn"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" aria-hidden="true"><path d="M3 14v4.5A2.5 2.5 0 0 0 5.5 21h13a2.5 2.5 0 0 0 2.5-2.5V14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M12 16V4" stroke="#FAC34B" stroke-width="2.6" stroke-linecap="round"/><path d="M7.5 8.5 12 4l4.5 4.5" stroke="#FAC34B" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="txt-enviar">SUBIR IMAGEM</span><span class="txt-alterar">Alterar foto</span></button>
           </div>
           <input id="perfilFotoInput" type="file" accept="image/*" hidden>
         </div>
@@ -1689,7 +1691,7 @@
 
       <div data-show="editar step2">
         <label for="perfilTelefone">Telefone</label>
-        <input id="perfilTelefone" type="tel" placeholder="DD - 0000-0000" inputmode="numeric">
+        <input id="perfilTelefone" type="tel" placeholder="(00)  0 0000-0000" inputmode="numeric">
       </div>
 
       <div data-show="editar step2">
@@ -1808,7 +1810,7 @@
           <div class="perfil-foto-circulo">
             <img id="gerenciarPerfilEditFotoPreview" class="perfil-foto-preview-grande" alt="Foto do perfil">
             <button type="button" class="foto-remover-badge" id="gerenciarPerfilEditFotoRemover" title="Remover foto" aria-label="Remover foto" hidden></button>
-            <button type="button" class="perfil-foto-botao" id="gerenciarPerfilEditFotoBtn"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" aria-hidden="true"><path d="M3 14v4.5A2.5 2.5 0 0 0 5.5 21h13a2.5 2.5 0 0 0 2.5-2.5V14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M12 16V4" stroke="#FAC34B" stroke-width="2.6" stroke-linecap="round"/><path d="M7.5 8.5 12 4l4.5 4.5" stroke="#FAC34B" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="txt-enviar">Enviar foto</span><span class="txt-alterar">Alterar foto</span></button>
+            <button type="button" class="perfil-foto-botao" id="gerenciarPerfilEditFotoBtn"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" aria-hidden="true"><path d="M3 14v4.5A2.5 2.5 0 0 0 5.5 21h13a2.5 2.5 0 0 0 2.5-2.5V14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M12 16V4" stroke="#FAC34B" stroke-width="2.6" stroke-linecap="round"/><path d="M7.5 8.5 12 4l4.5 4.5" stroke="#FAC34B" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="txt-enviar">SUBIR IMAGEM</span><span class="txt-alterar">Alterar foto</span></button>
           </div>
           <input id="gerenciarPerfilEditFotoInput" type="file" accept="image/*" hidden>
         </div>
@@ -1842,7 +1844,7 @@
       <div class="perfil-grid-2">
         <div>
           <label for="gerenciarPerfilEditTelefone">Telefone</label>
-          <input id="gerenciarPerfilEditTelefone" type="tel" placeholder="DD - 0000-0000" inputmode="numeric">
+          <input id="gerenciarPerfilEditTelefone" type="tel" placeholder="(00)  0 0000-0000" inputmode="numeric">
         </div>
         <div>
           <label for="gerenciarPerfilEditDataNascimento">Data de nascimento</label>
@@ -7844,13 +7846,17 @@
       document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !modalEditar.hidden) fecharEditar(); });
       editarForm.addEventListener("submit", (e) => { e.preventDefault(); });
 
+      function formatarTelefoneDDD(valor) {
+        const d = String(valor || "").replace(/\D/g, "").slice(0, 11);
+        if (!d) return "";
+        let f = "(" + d.slice(0, 2) + (d.length >= 2 ? ")" : "");
+        if (d.length > 2) f += "  " + d.slice(2, 3);
+        if (d.length > 3) f += " " + d.slice(3, 7);
+        if (d.length > 7) f += "-" + d.slice(7, 11);
+        return f;
+      }
       editarTelefone.addEventListener("input", () => {
-        const digitos = editarTelefone.value.replace(/\D/g, "").slice(0, 10);
-        let formatado = "";
-        if (digitos.length > 0) formatado = digitos.slice(0, 2);
-        if (digitos.length > 2) formatado += " - " + digitos.slice(2, 6);
-        if (digitos.length > 6) formatado += "-" + digitos.slice(6, 10);
-        editarTelefone.value = formatado;
+        editarTelefone.value = formatarTelefoneDDD(editarTelefone.value);
       });
 
       editarDataNascimento.addEventListener("input", () => {
@@ -7988,7 +7994,7 @@
         editarSobrenome.value = usuario.sobrenome || "";
         editarEmail.value = usuario.email || "";
         editarEmail.disabled = !(usuarioAtualCache && usuarioAtualCache.perfil === "admin");
-        editarTelefone.value = usuario.telefone || "";
+        editarTelefone.value = formatarTelefoneDDD(usuario.telefone || "");
         editarDataNascimento.value = dataIsoParaBrEditar(usuario.dataNascimento);
         editarPerfilSelect.value = usuario.perfil || "convidado";
         const end = usuario.endereco || {};
@@ -8261,12 +8267,40 @@
       }
     }
 
-    async function excluirRelatorio(rel) {
-      if (!confirm("Excluir o relatório de " + dataBrGerenciar(rel.data) + " da Sala " + (rel.salaNome || rel.salaId) + "? Essa ação não pode ser desfeita.")) return;
+    // Confirmação dentro da tela (window.confirm pode ser bloqueado em alguns navegadores e no painel de pré-visualização)
+    let caixaConfirma = null;
+    function fecharConfirmacao() {
+      if (caixaConfirma) caixaConfirma.remove();
+      caixaConfirma = null;
+    }
+
+    function pedirConfirmacaoExclusao(rel, item) {
+      fecharConfirmacao();
+      caixaConfirma = document.createElement("div");
+      caixaConfirma.className = "gr-confirma";
+      const texto = document.createElement("span");
+      texto.textContent = "Excluir o relatório de " + dataBrGerenciar(rel.data) + " da Sala " + (rel.salaNome || rel.salaId) + "? Não pode ser desfeito.";
+      const sim = document.createElement("button");
+      sim.type = "button";
+      sim.className = "btn-admin gr-confirma-sim";
+      sim.textContent = "Sim, excluir";
+      sim.addEventListener("click", () => { fecharConfirmacao(); executarExclusao(rel); });
+      const nao = document.createElement("button");
+      nao.type = "button";
+      nao.className = "btn-admin";
+      nao.textContent = "Cancelar";
+      nao.addEventListener("click", fecharConfirmacao);
+      caixaConfirma.append(texto, sim, nao);
+      (item || lista).after(caixaConfirma);
+      caixaConfirma.scrollIntoView({ block: "nearest" });
+    }
+
+    async function executarExclusao(rel) {
       try {
         await deleteDoc(doc(db, "relatoriosAula", rel.docId));
         todos = todos.filter((x) => x.docId !== rel.docId);
         if (emEdicao && emEdicao.docId === rel.docId) fecharEdicao();
+        atualizarOpcoesData();
         desenhar();
         avisar("Relatório excluído.");
       } catch (err) {
@@ -8281,7 +8315,7 @@
       const rel = todos.find((x) => x.docId === btn.dataset.id);
       if (!rel) return;
       if (btn.dataset.acao === "editar") abrirEdicao(rel);
-      if (btn.dataset.acao === "excluir") excluirRelatorio(rel);
+      if (btn.dataset.acao === "excluir") pedirConfirmacaoExclusao(rel, btn.closest(".admin-perfis-item"));
     });
 
     filtroSala.addEventListener("change", () => { fecharEdicao(); atualizarOpcoesData(); desenhar(); });
@@ -12095,7 +12129,7 @@
         campoNome.value = usuarioAtualCache.nome || "";
         campoSobrenome.value = usuarioAtualCache.sobrenome || "";
         campoEmail.value = usuarioAtualCache.email || "";
-        campoTelefone.value = usuarioAtualCache.telefone || "";
+        campoTelefone.value = formatarTelefoneDDD(usuarioAtualCache.telefone || "");
         campoDataNascimento.value = dataIsoParaBr(usuarioAtualCache.dataNascimento);
         const end = usuarioAtualCache.endereco || {};
         campoCep.value = end.cep || "";
@@ -12143,14 +12177,18 @@
     document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !modal.hidden) fecharModal(); });
     form.addEventListener("submit", (e) => { e.preventDefault(); });
 
-    // Mascara simples de telefone: DD - 0000-0000
+    // Telefone: (DD)  0 0000-0000 (11 dígitos com o DD)
+    function formatarTelefoneDDD(valor) {
+      const d = String(valor || "").replace(/\D/g, "").slice(0, 11);
+      if (!d) return "";
+      let f = "(" + d.slice(0, 2) + (d.length >= 2 ? ")" : "");
+      if (d.length > 2) f += "  " + d.slice(2, 3);
+      if (d.length > 3) f += " " + d.slice(3, 7);
+      if (d.length > 7) f += "-" + d.slice(7, 11);
+      return f;
+    }
     campoTelefone.addEventListener("input", () => {
-      const digitos = campoTelefone.value.replace(/\D/g, "").slice(0, 10);
-      let formatado = "";
-      if (digitos.length > 0) formatado = digitos.slice(0, 2);
-      if (digitos.length > 2) formatado += " - " + digitos.slice(2, 6);
-      if (digitos.length > 6) formatado += "-" + digitos.slice(6, 10);
-      campoTelefone.value = formatado;
+      campoTelefone.value = formatarTelefoneDDD(campoTelefone.value);
     });
 
     // Mascara de data de nascimento: dd/mm/aaaa
