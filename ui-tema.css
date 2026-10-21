@@ -591,8 +591,8 @@ body::after {
 #areaProfessor .professor-canvas-icone img,
 #areaAluno .professor-canvas-icone img {
   display: block;
-  width: 96px;
-  height: 96px;
+  width: 120px;
+  height: 120px;
   object-fit: contain;
 }
 #areaProfessor .professor-canvas-titulo,

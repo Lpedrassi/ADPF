@@ -12,7 +12,7 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Serif+Display&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg: #09090E;
@@ -646,20 +646,50 @@
   }
 
   /* ---------- Departamentos ---------- */
-  .departamentos-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
-  @media (max-width: 920px) { .departamentos-grid { grid-template-columns: repeat(2, 1fr); } }
-  @media (max-width: 560px) { .departamentos-grid { grid-template-columns: 1fr; } }
-  .dept-card {
-    display: flex; align-items: center; gap: 14px;
-    background: var(--surface); border: 1px solid var(--border); border-radius: 22px;
-    padding: 20px 22px; text-decoration: none; color: var(--ink);
-    transition: transform 0.2s ease, background 0.2s ease;
+  #departamentos .section-head { text-align: center; margin-bottom: 44px; }
+  #departamentos .section-head h2 {
+    font-family: "Plus Jakarta Sans", sans-serif; font-weight: 800;
+    font-size: clamp(34px, 5.2vw, 64px); line-height: 1.04; letter-spacing: -0.02em; color: #FFFFFF;
   }
-  .dept-card:hover { transform: translateY(-4px); background: var(--surface-2); }
-  .dept-icon { font-size: 24px; flex-shrink: 0; }
-  .dept-card h3 { font-size: 15px; font-weight: 700; font-family: "Plus Jakarta Sans", sans-serif; flex: 1; }
-  .dept-arrow { color: var(--muted); font-size: 16px; flex-shrink: 0; transition: transform 0.2s ease; }
-  .dept-card:hover .dept-arrow { transform: translateX(3px); color: var(--ink); }
+  #departamentos .section-head h2 span {
+    background: linear-gradient(100deg, #FFE38A 0%, #FFB100 100%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  #departamentos .section-head p { margin-top: 18px; font-size: 16px; color: rgba(245,245,248,0.82); }
+  .departamentos-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+  @media (max-width: 900px) { .departamentos-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 560px) { .departamentos-grid { grid-template-columns: minmax(0, 1fr); } }
+  /* Cada cartão: foto de fundo (--foto, quando existir) sobre um tom da própria cor */
+  #departamentos .dept-card {
+    position: relative; isolation: isolate; overflow: hidden;
+    display: flex; align-items: center; gap: 18px;
+    width: 100%; aspect-ratio: 5 / 2; min-height: 160px; min-width: 0; padding: 24px 28px; border-radius: 22px;
+    border: 1px solid rgba(255,255,255,0.1); color: #FFFFFF; text-decoration: none;
+    background:
+      linear-gradient(90deg, rgba(8,8,12,0.88) 0%, rgba(8,8,12,0.45) 60%, rgba(8,8,12,0.25) 100%),
+      var(--foto, none) center / cover no-repeat,
+      linear-gradient(135deg, var(--tom1), var(--tom2));
+    box-shadow: 0 12px 30px rgba(0,0,0,0.4);
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+  #departamentos .dept-card:hover {
+    transform: translateY(-3px); border-color: rgba(255,255,255,0.24); box-shadow: 0 18px 40px rgba(0,0,0,0.5);
+  }
+  #departamentos .dept-icon { width: 76px; height: 76px; flex-shrink: 0; }
+  #departamentos .dept-icon img { width: 100%; height: 100%; object-fit: contain; display: block; }
+  #departamentos .dept-card h3 {
+    flex: 1; min-width: 0; font-family: "DM Serif Display", serif; font-weight: 400; font-size: 24px; line-height: 1.1; color: #FFFFFF;
+  }
+  #departamentos .dept-card h3::after {
+    content: ""; display: block; width: 28px; height: 2px; margin-top: 10px; border-radius: 2px; background: #E3B341;
+  }
+  #departamentos .dept-arrow {
+    position: absolute; right: 22px; bottom: 18px; line-height: 0;
+    transition: transform 0.2s ease;
+  }
+  #departamentos .dept-arrow img { height: 40px; width: auto; display: block; }
+  #departamentos .dept-card:hover .dept-arrow { transform: translateX(3px); }
+  @media (max-width: 560px) { #departamentos .dept-card { aspect-ratio: auto; min-height: 150px; padding: 20px; } #departamentos .dept-icon { width: 64px; height: 64px; } }
 
   /* ---------- EBD ---------- */
   .ebd-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
@@ -2230,40 +2260,39 @@
 <section id="departamentos">
   <div class="wrap">
     <div class="section-head reveal">
-      <span class="pill eyebrow"><span class="dot"></span>Nossos Departamentos</span>
-      <h2>Encontre seu lugar para servir</h2>
+      <h2>Encontre seu<br>lugar <span>para servir</span></h2>
       <p>Conheça os departamentos da nossa congregação e saiba mais sobre cada um deles.</p>
     </div>
     <div class="departamentos-grid reveal">
-      <a class="dept-card" href="https://claude.ai/code/artifact/22615238-e343-4d66-aede-89d93b99b00f">
-        <span class="dept-icon">🧸</span>
+      <a class="dept-card" href="https://claude.ai/code/artifact/22615238-e343-4d66-aede-89d93b99b00f" style="--foto:url('fotos-departamentos/infantil.webp');--tom1:#4a3320;--tom2:#c0883e">
+        <span class="dept-icon"><img src="icones-departamentos/infantil.png" alt="" /></span>
         <h3>Infantil</h3>
-        <span class="dept-arrow">→</span>
+        <span class="dept-arrow"><img src="icones-departamentos/seta.png" alt=""></span>
       </a>
-      <a class="dept-card" href="https://claude.ai/code/artifact/1525bff6-5361-4a41-aa4e-9c5197b5f63c">
-        <span class="dept-icon">🎧</span>
+      <a class="dept-card" href="https://claude.ai/code/artifact/1525bff6-5361-4a41-aa4e-9c5197b5f63c" style="--foto:url('fotos-departamentos/adolescentes.webp');--tom1:#2b2119;--tom2:#7a5a3a">
+        <span class="dept-icon"><img src="icones-departamentos/adolescentes.png" alt="" /></span>
         <h3>Adolescentes</h3>
-        <span class="dept-arrow">→</span>
+        <span class="dept-arrow"><img src="icones-departamentos/seta.png" alt=""></span>
       </a>
-      <a class="dept-card" href="https://claude.ai/code/artifact/6fb57abb-e021-4a62-b57c-ed5f1e35c0dd">
-        <span class="dept-icon">🔥</span>
+      <a class="dept-card" href="https://claude.ai/code/artifact/6fb57abb-e021-4a62-b57c-ed5f1e35c0dd" style="--foto:url('fotos-departamentos/jovens.webp');--tom1:#2a1a12;--tom2:#a8582a">
+        <span class="dept-icon"><img src="icones-departamentos/jovens.png" alt="" /></span>
         <h3>Jovens</h3>
-        <span class="dept-arrow">→</span>
+        <span class="dept-arrow"><img src="icones-departamentos/seta.png" alt=""></span>
       </a>
-      <a class="dept-card" href="https://claude.ai/code/artifact/233d317f-e13f-4999-a814-48e61db1f40c">
-        <span class="dept-icon">🛡️</span>
+      <a class="dept-card" href="https://claude.ai/code/artifact/233d317f-e13f-4999-a814-48e61db1f40c" style="--foto:url('fotos-departamentos/varoes.webp');--tom1:#1a1514;--tom2:#5a4330">
+        <span class="dept-icon"><img src="icones-departamentos/varoes.png" alt="" /></span>
         <h3>Varões</h3>
-        <span class="dept-arrow">→</span>
+        <span class="dept-arrow"><img src="icones-departamentos/seta.png" alt=""></span>
       </a>
-      <a class="dept-card" href="https://claude.ai/code/artifact/3a6b0bda-55c6-4185-9c57-d2f9ce5b8be6">
-        <span class="dept-icon">🌸</span>
-        <h3>Feminina</h3>
-        <span class="dept-arrow">→</span>
+      <a class="dept-card" href="https://claude.ai/code/artifact/3a6b0bda-55c6-4185-9c57-d2f9ce5b8be6" style="--foto:url('fotos-departamentos/feminina.webp');--tom1:#4a1830;--tom2:#c04c86">
+        <span class="dept-icon"><img src="icones-departamentos/feminina.png" alt="" /></span>
+        <h3>Feminino</h3>
+        <span class="dept-arrow"><img src="icones-departamentos/seta.png" alt=""></span>
       </a>
-      <a class="dept-card" href="https://claude.ai/code/artifact/2908094b-92f3-441a-a7e2-e4e6c39604c3">
-        <span class="dept-icon">🌍</span>
+      <a class="dept-card" href="https://claude.ai/code/artifact/2908094b-92f3-441a-a7e2-e4e6c39604c3" style="--foto:url('fotos-departamentos/missoes.webp');--tom1:#1a2230;--tom2:#7a6246">
+        <span class="dept-icon"><img src="icones-departamentos/missoes.png" alt="" /></span>
         <h3>Missões</h3>
-        <span class="dept-arrow">→</span>
+        <span class="dept-arrow"><img src="icones-departamentos/seta.png" alt=""></span>
       </a>
     </div>
   </div>
