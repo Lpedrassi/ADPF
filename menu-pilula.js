@@ -3,6 +3,8 @@
   if (!menu) return;
   const fundo = menu.querySelector(".fundo-movel");
   const itens = () => menu.querySelectorAll("a, .nav-admin-toggle");
+  // Botão do menu superior (Site, Administração, Portal EBD) que está com o dropdown aberto
+  const abertoAgora = () => menu.querySelector(".nav-admin-toggle.open");
 
   const mover = (item) => {
     if (item.offsetParent === null) return;
@@ -23,8 +25,19 @@
     itens().forEach((el) => el.classList.remove("is-sobre-fundo"));
   };
 
+  // Sem mouse sobre o menu, a cápsula fica sob a opção aberta (ou some, se nenhuma estiver aberta)
+  const voltarParaAberto = () => {
+    const aberto = abertoAgora();
+    if (aberto) mover(aberto);
+    else esconder();
+  };
+
   itens().forEach((item) => item.addEventListener("mouseenter", () => mover(item)));
-  menu.addEventListener("mouseleave", esconder);
+  menu.addEventListener("mouseleave", voltarParaAberto);
+  // Clique abre ou fecha o dropdown; depois do ajuste de classe, a cápsula vai para a opção aberta
+  menu.querySelectorAll(".nav-admin-toggle").forEach((botao) => {
+    botao.addEventListener("click", () => setTimeout(voltarParaAberto, 0));
+  });
 })();
 
 (() => {
@@ -50,29 +63,6 @@
       fundo.style.opacity = "0";
       itens.forEach((el) => el.classList.remove("is-sobre-fundo"));
     });
-  });
-})();
-
-// Faixa laranja: corre até o menu superior clicado (Site, Administração, Portal EBD) e fica embaixo dele
-(() => {
-  const menu = document.getElementById("navLinks");
-  if (!menu) return;
-  const faixa = document.createElement("div");
-  faixa.className = "nav-indicador";
-  faixa.setAttribute("aria-hidden", "true");
-  menu.appendChild(faixa);
-
-  const irPara = (botao) => {
-    if (botao.offsetParent === null) return;
-    const base = menu.getBoundingClientRect();
-    const alvo = botao.getBoundingClientRect();
-    faixa.style.left = `${alvo.left - base.left}px`;
-    faixa.style.width = `${alvo.width}px`;
-    faixa.style.opacity = "1";
-  };
-
-  menu.querySelectorAll(".nav-admin-toggle").forEach((botao) => {
-    botao.addEventListener("click", () => irPara(botao));
   });
 })();
 
