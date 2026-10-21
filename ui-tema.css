@@ -1111,6 +1111,19 @@ body::after {
 }
 .nav-links.aberto > .nav-indicador { display: none; }
 
+/* Item ativo do menu: vidro escuro com borda clara (sem pílula branca chapada) */
+.nav .nav-links a.is-active {
+  background: linear-gradient(180deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.06) 100%);
+  color: var(--ink);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.3), 0 0 0 1px rgba(255,255,255,0.14);
+}
+.nav .nav-links a.is-active:hover {
+  background: linear-gradient(180deg, rgba(255,255,255,0.24) 0%, rgba(255,255,255,0.1) 100%);
+}
+
+/* Faixa laranja só existe logado (menu Site / Administração / Portal EBD) */
+.nav-links:not(.logado) > .nav-indicador { display: none; }
+
 /* Menu superior: ao passar o mouse, o texto cresce aos poucos e volta ao normal ao sair */
 .nav-links a,
 .nav-links .nav-admin-toggle {
