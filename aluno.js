@@ -34,6 +34,8 @@ let controlesLigados = false;
 let uidAluno = null;
 // Sala onde o aluno está matriculado (a que vale para o pedido de revista, não a que ele escolhe na Sala de Aula)
 let matriculaAluno = null; // { salaId, salaNome, nome }
+// Modo da Sala de Aula: false = revista do aluno; true = revista de professor (aberta pela Sala do Professor)
+let modoRevistaProfessor = false;
 
 // Quem pede a revista. O pop-up é o mesmo para o aluno (matrícula) e para o professor
 // (Sala do Professor); só muda o solicitante e o tipo padrão da revista.
@@ -162,7 +164,7 @@ async function carregarAulasDoTrimestre() {
     const revistaIdAluno = salaSnap.exists() ? (salaSnap.data().revistaId || "") : "";
     const licaoSnap = await getDoc(doc(db, "licoes", `${revistaIdAluno || salaIdAluno}_${ANO}_${trimestre}`));
     const licoes = licaoSnap.exists() && Array.isArray(licaoSnap.data().licoes) ? licaoSnap.data().licoes : [];
-    revistaDriveId = licaoSnap.exists() ? (licaoSnap.data().revistaPdfDriveId || "") : "";
+    revistaDriveId = licaoSnap.exists() ? (licaoSnap.data()[modoRevistaProfessor ? "revistaProDriveId" : "revistaPdfDriveId"] || "") : "";
 
     if (!licoes.length) {
       const opt = document.createElement("option");
@@ -208,6 +210,7 @@ function abrirSalaDeAula() {
   const detalhe = document.getElementById("alunoSalaDetalhe");
   detalhe.innerHTML = "";
   const linhas = [["Sala", nomeSalaAluno || "Sua Sala"]];
+  if (modoRevistaProfessor) linhas.unshift(["Revista", "Professor"]);
   if (opcao && aulaData) {
     linhas.push(["Lição", `${opcao.dataset.numero} · ${opcao.dataset.titulo}`]);
   }
@@ -237,6 +240,12 @@ function voltarParaPainel() {
   document.getElementById("alunoSalaAula").hidden = true;
   document.getElementById("alunoPainelPrincipal").hidden = false;
   if (leitor) leitor.fechar();
+  // Saindo da revista de professor: volta ao painel da Sala do Professor e restaura a Sala de Aula do aluno
+  if (modoRevistaProfessor) {
+    modoRevistaProfessor = false;
+    if (uidAluno) iniciarSalaDeAula(uidAluno).catch((err) => console.error(err));
+    if (window.__mostrarArea) window.__mostrarArea("areaProfessor");
+  }
 }
 
 // Revista da lição: abre dentro da Sala de Aula, já na primeira página
@@ -381,38 +390,57 @@ async function carregarArquivosAula(trimestre, aulaData) {
 }
 
 // 2. Avisos (estático, exceto a revista: se o aluno já pediu, a mensagem muda)
+// 2. Avisos: dinâmicos. Mostra eventos da Agenda dos próximos 7 dias (ex.: Santa Ceia, congressos)
+// e o aviso de revista enquanto houver pedido que ainda não foi entregue pela Secretaria.
 async function carregarAvisos() {
   const el = document.getElementById("alunoAvisos");
+  const avisos = [];
 
-  let pediuRevista = false;
   try {
-    const periodo = proximoTrimestre();
-    pediuRevista = (await buscarPedidosAluno(periodo.ano, periodo.trimestre)).length > 0;
+    const ate = new Date(HOJE_ISO + "T00:00:00");
+    ate.setDate(ate.getDate() + 7);
+    const ateISO = `${ate.getFullYear()}-${String(ate.getMonth() + 1).padStart(2, "0")}-${String(ate.getDate()).padStart(2, "0")}`;
+    const snap = await getDocs(collection(db, "agenda"));
+    const proximos = [];
+    snap.forEach((d) => {
+      const ev = d.data();
+      if (ev.dataInicio && ev.dataInicio >= HOJE_ISO && ev.dataInicio <= ateISO) proximos.push(ev);
+    });
+    proximos.sort((x, y) => x.dataInicio.localeCompare(y.dataInicio));
+    proximos.forEach((ev) => {
+      const [, mes, dia] = ev.dataInicio.split("-");
+      const diaSemana = new Date(ev.dataInicio + "T00:00:00").toLocaleDateString("pt-BR", { weekday: "long" });
+      const hora = ev.hora ? " às " + ev.hora : "";
+      avisos.push({
+        icone: /santa ceia/i.test(ev.titulo || "") ? "🔔" : "📢",
+        titulo: ev.titulo || "Evento",
+        detalhe: diaSemana.charAt(0).toUpperCase() + diaSemana.slice(1) + " " + dia + "/" + mes + hora
+      });
+    });
+  } catch (err) {
+    console.error("Erro ao carregar avisos da Agenda:", err);
+  }
+
+  // Pedido de revista ainda não entregue (qualquer trimestre)
+  try {
+    const pendentes = await buscarPedidosEmAbertoAluno(uidAluno);
+    if (pendentes.length) {
+      avisos.push({ icone: "📚", titulo: "Você já solicitou a sua revista", detalhe: "Em breve será entregue pela secretaria da EBD." });
+    }
   } catch (err) {
     console.error("Erro ao verificar pedido de revista:", err);
   }
 
-  const avisoRevista = pediuRevista
-    ? { icone: "📚", titulo: "Você já solicitou a sua revista", detalhe: "Em breve será entregue pela secretaria da EBD." }
-    : { icone: "📚", titulo: "Revista da EBD disponível", detalhe: "Pegue com seu professor" };
-
-  const avisos = [
-    { icone: "🔔", titulo: "Santa Ceia", detalhe: "Próximo domingo (29/09)" },
-    { icone: "📢", titulo: "Congresso UFADEJ", detalhe: "28 a 30 de Setembro" },
-    avisoRevista
-  ];
-
-  const html = avisos.map(aviso =>
-    `<div class="aluno-card-lista-item">
-      <div class="aluno-card-lista-icon">${aviso.icone}</div>
-      <div class="aluno-aviso-texto">
-        <strong>${aviso.titulo}</strong>
-        <span>${aviso.detalhe}</span>
-      </div>
-    </div>`
-  ).join("");
-
-  el.innerHTML = `<div style="margin-top: 8px;">${html}</div>`;
+  el.innerHTML = avisos.length
+    ? `<div style="margin-top: 8px;">${avisos.map((aviso) =>
+      `<div class="aluno-card-lista-item">
+        <div class="aluno-card-lista-icon">${aviso.icone}</div>
+        <div class="aluno-aviso-texto">
+          <strong>${aviso.titulo}</strong>
+          <span>${aviso.detalhe}</span>
+        </div>
+      </div>`).join("")}</div>`
+    : '<p class="admin-agenda-info">Nenhum aviso no momento.</p>';
 }
 
 // 3. Recursos (links/materiais)
@@ -992,3 +1020,35 @@ export async function temPedidoRevistaComo(sol) {
 
 // Área do Aluno reaberta: recalcula o botão Meu pedido (index.html chama em mostrarArea)
 window.__recarregarRecursosAluno = () => carregarRecursos();
+
+// Revista de professor: abre a Sala de Aula (leitor, lições, Bíblia e anexos) com a revista do professor
+// Chamada pelo botão "Acessar Revista de Professor" da Sala do Professor
+async function abrirRevistaProfessor(salaId, nomeSala) {
+  if (!salaId) return;
+  modoRevistaProfessor = true;
+  await preencherSeletorDeSalas();
+  const selTrimestre = document.getElementById("alunoTrimestre");
+  selTrimestre.innerHTML = "";
+  for (let k = 1; k <= 4; k++) {
+    const opt = document.createElement("option");
+    opt.value = String(k);
+    opt.textContent = `${k}º Trimestre ${ANO}`;
+    selTrimestre.appendChild(opt);
+  }
+  if (!controlesLigados) {
+    controlesLigados = true;
+    selTrimestre.addEventListener("change", carregarAulasDoTrimestre);
+    document.getElementById("alunoSala").addEventListener("change", (e) => selecionarSala(e.target.value));
+    document.getElementById("btnAlunoEntrar").addEventListener("click", abrirSalaDeAula);
+    document.getElementById("btnAlunoVoltar").addEventListener("click", voltarParaPainel);
+  }
+  salaIdAluno = salaId;
+  nomeSalaAluno = nomeSala || "";
+  document.getElementById("alunoSala").value = salaId;
+  document.getElementById("btnAlunoEntrar").disabled = false;
+  selTrimestre.value = String(TRIMESTRE_ATUAL);
+  await carregarAulasDoTrimestre();
+  if (window.__mostrarArea) window.__mostrarArea("areaAluno");
+  abrirSalaDeAula();
+}
+window.__abrirRevistaProfessor = abrirRevistaProfessor;

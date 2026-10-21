@@ -1455,6 +1455,24 @@
   .cal-dia.is-hoje { border-color: var(--laranja); }
   .cal-dia.is-sel { background: var(--azul); color: #fff; }
   .cal-rodape { display: flex; justify-content: space-between; margin-top: 10px; }
+  /* Relatório da Sala: cores em degradê escuro (menos vibrantes) */
+  .rel-card, .rel-linha { background: linear-gradient(160deg, #16181f 0%, #0d0e14 100%); }
+  .rel-linha { border-color: #262a35; }
+  .rel-pill.presente, .rel-check, .rel-dot.presente { background: linear-gradient(135deg, #123d25 0%, #1d5c39 100%); color: #d7f3e4; }
+  .rel-dot.presente { border: 1px solid #2e7d52; }
+  .rel-pill.falta, .rel-dot.falta { background: linear-gradient(135deg, #5c1a1f 0%, #852329 100%); color: #f6dadd; }
+  .rel-dot.falta { border: 1px solid #a53a42; }
+  .rel-pill.visitante, .rel-dot.visitante { background: linear-gradient(135deg, #5a2a12 0%, #7e3d1a 100%); color: #f6e2d2; }
+  .rel-dot.visitante { border: 1px solid #a25428; }
+  .rel-motivo-texto { background: linear-gradient(135deg, #5c1a1f 0%, #852329 100%); color: #f6dadd; }
+  .rel-tile { border: 1px solid color-mix(in srgb, var(--cor) 35%, #000); background: linear-gradient(135deg, #15171f 0%, color-mix(in srgb, var(--cor) 12%, #0c0d12) 100%); }
+  .rel-tile-icone { background: linear-gradient(135deg, color-mix(in srgb, var(--cor) 45%, #000), color-mix(in srgb, var(--cor) 70%, #000)); }
+  .rel-tile-valor { color: color-mix(in srgb, var(--cor) 65%, #fff); }
+  .rel-tile-sub { color: color-mix(in srgb, var(--cor) 60%, #fff); }
+  .rel-avatar { filter: brightness(0.7) saturate(0.75); }
+  .rel-barra-preench { background: linear-gradient(90deg, #5a2a12 0%, #8a4a22 100%); }
+  .rel-icone-redondo { background: #1b2233; color: #6a9be0; }
+  .rel-cabecalho-icone { background: linear-gradient(145deg, #1f3a6b 0%, #142a52 100%); box-shadow: none; }
   .chamada-motivo { display: flex; align-items: center; gap: 8px; margin-top: 6px; flex-wrap: wrap; }
   .chamada-motivo-rotulo { font-size: 12px; color: var(--muted); }
   .motivos-tab td.motivo-acoes { white-space: nowrap; }
@@ -1597,7 +1615,7 @@
         <div class="nav-admin-menu-item">
           <button class="nav-admin-toggle" id="navEbdToggle" type="button">Portal EBD</button>
           <div class="nav-admin-dropdown" id="navEbdDropdown">
-            <button class="nav-admin-dropdown-item" data-area="areaAluno"><svg class="nav-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 5.5c2.5-1.2 5.5-1.2 10 1.2 4.5-2.4 7.5-2.4 10-1.2V19c-2.5-1.2-5.5-1.2-10 1.2-4.5-2.4-7.5-2.4-10-1.2z"/><path d="M12 6.7V20"/></svg>Sala do Aluno</button>
+            <button class="nav-admin-dropdown-item" data-area="areaAluno"><svg class="nav-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 5.5c2.5-1.2 5.5-1.2 10 1.2 4.5-2.4 7.5-2.4 10-1.2V19c-2.5-1.2-5.5-1.2-10 1.2-4.5-2.4-7.5-2.4-10-1.2z"/><path d="M12 6.7V20"/></svg>Área do Aluno</button>
             <button class="nav-admin-dropdown-item" data-area="areaProfessor"><svg class="nav-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="3.5" width="14" height="10" rx="1"/><path d="M12 9.5h4"/><circle cx="4.5" cy="9" r="2.2"/><path d="M1 21v-2.5a3.5 3.5 0 0 1 7 0V21"/></svg>Sala do Professor</button>
             <button class="nav-admin-dropdown-item" data-area="areaAdministrativo"><svg class="nav-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="13" height="18" rx="2"/><path d="M7 2h5v3H7z"/><path d="M6.5 10h6M6.5 13.5h6M6.5 17h4"/><path d="M18.5 8h2v10l-1 2.5-1-2.5z"/><path d="M18.5 11h2"/></svg>Sala da Secretaria</button>
           </div>
@@ -1993,7 +2011,7 @@
     <button class="sidebar-link" type="button" data-area="areaPostsSite">Post's do Site!</button>
 
     <div class="sidebar-category">Portal EBD</div>
-    <button class="sidebar-link" type="button" data-area="areaAluno">Sala do Aluno</button>
+    <button class="sidebar-link" type="button" data-area="areaAluno">Área do Aluno</button>
     <button class="sidebar-link" type="button" data-area="areaProfessor">Sala do Professor</button>
     <button class="sidebar-link" type="button" data-area="areaAdministrativo">Sala da Secretaria</button>
     <button class="sidebar-link" type="button" data-area="areaCadastroSalas">Gerenciar EBD</button>
@@ -2626,8 +2644,7 @@
 
     <form id="formPostSite" class="admin-noticia-form">
       <!-- Linha 1: imagem à esquerda; categoria (e ID) à direita -->
-      <div>
-        <span class="post-imagem-rotulo">Imagem do post</span>
+      <div class="post-coluna-imagem">
         <div class="post-imagem-wrap">
         <div class="post-imagem-canva" id="postImagemCanva">
           <div id="postImagemVazio" class="post-imagem-vazio">
@@ -2690,6 +2707,7 @@
         </label>
       </div>
       <div class="admin-noticia-acoes">
+        <button type="button" id="btnNovoPost" class="btn btn-ghost">+ Novo post</button>
         <button type="submit" class="btn btn-blue-grad">Adicionar Post</button>
         <button type="button" id="btnCancelarPostEdicao" hidden class="btn btn-ghost">Cancelar edição</button>
       </div>
@@ -2766,13 +2784,18 @@
         </button>
         <button type="button" class="professor-canvas-card" data-canvas="pedirRevista">
           <span class="professor-canvas-icone"><img src="icones-secretaria/revistas-coloridas.webp" alt=""></span>
-          <span class="professor-canvas-titulo">Pedir Revista</span>
-          <span class="professor-canvas-sub">Solicitar a sua revista e ver seu pedido</span>
+          <span class="professor-canvas-titulo">Revista</span>
+          <span class="professor-canvas-sub">Acesso às revistas e livros</span>
         </button>
         <button type="button" class="professor-canvas-card" data-canvas="arquivos">
           <span class="professor-canvas-icone"><img src="icones-professor/estante.webp" alt=""></span>
           <span class="professor-canvas-titulo">Arquivos e documentos</span>
           <span class="professor-canvas-sub">Materiais de apoio da Sala</span>
+        </button>
+        <button type="button" class="professor-canvas-card" data-canvas="avisos">
+          <span class="professor-canvas-icone aviso-sino"><img src="icones-professor/avisos-comunicados.png" alt=""></span>
+          <span class="professor-canvas-titulo">Avisos e Comunicados</span>
+          <span class="professor-canvas-sub">Avisos da Sala para os alunos</span>
         </button>
       </div>
 
@@ -2893,9 +2916,14 @@
       </div>
 
       <div id="canvasPainelPedirRevista" class="professor-canvas-painel" hidden>
-        <h4 style="text-align:center;">Pedir Revista</h4>
-        <p class="admin-agenda-info">Peça a revista do próximo trimestre. O pedido é enviado à Secretaria da EBD.</p>
+        <h4 class="pedir-revista-titulo">PEDIR REVISTA</h4>
+        <p class="admin-agenda-info">Acesse sua Revista de Professor e peça a revista do próximo trimestre. O pedido é enviado à Secretaria da EBD.</p>
         <div id="professorRecursosRevista" class="professor-canvas-grid aluno-recursos-grid"></div>
+      </div>
+
+      <div id="canvasPainelAvisos" class="professor-canvas-painel" hidden>
+        <h4 style="text-align:center;">Avisos e Comunicados</h4>
+        <p class="admin-agenda-info">Aqui ficam os avisos e comunicados da Sala para os alunos.</p>
       </div>
 
       <div id="canvasPainelArquivos" class="professor-canvas-painel" hidden>
@@ -3174,11 +3202,22 @@
           <span class="professor-canvas-titulo">Agenda</span>
           <span class="professor-canvas-sub">Agenda de compromissos da Secretaria</span>
         </button>
+        <button type="button" class="professor-canvas-card" data-abrir="secNivelAvisos" data-ocultar="secNivel0">
+          <span class="professor-canvas-icone aviso-sino"><img src="icones-professor/avisos-comunicados.png" alt=""></span>
+          <span class="professor-canvas-titulo">Avisos e Comunicados</span>
+          <span class="professor-canvas-sub">Avisos da Secretaria para os alunos</span>
+        </button>
       </div>
     </div>
 
+    <div id="secNivelAvisos" class="secretaria-nivel-wrap" hidden>
+      <button type="button" class="secretaria-voltar-icone" data-tip="VOLTAR" aria-label="Voltar" title="Voltar" data-abrir="secNivel0" data-ocultar="secNivelAvisos"><img src="icones-secretaria/voltar.png" alt=""></button>
+      <div class="secretaria-nivel-titulo">Avisos e Comunicados</div>
+      <p class="admin-agenda-info">Aqui ficam os avisos e comunicados da Secretaria para os alunos.</p>
+    </div>
+
     <div id="secNivelLivroCaixa" class="secretaria-nivel-wrap" hidden>
-      <button type="button" class="btn btn-ghost secretaria-voltar" data-abrir="secNivel0" data-ocultar="secNivelLivroCaixa">← Voltar</button>
+      <button type="button" class="secretaria-voltar-icone" data-tip="VOLTAR" aria-label="Voltar" title="Voltar" data-abrir="secNivel0" data-ocultar="secNivelLivroCaixa"><img src="icones-secretaria/voltar.png" alt=""></button>
       <div class="secretaria-nivel-titulo">Livro Caixa</div>
       <div id="canvaSecCaixaEntradas" class="canva-sanfona-conteudo aberto">
         <div class="lc-cabecalho">
@@ -3257,7 +3296,7 @@
     </div>
 
     <div id="secNivelEstoque" class="secretaria-nivel-wrap" hidden>
-      <button type="button" class="btn btn-ghost secretaria-voltar" data-abrir="secNivel0" data-ocultar="secNivelEstoque">← Voltar</button>
+      <button type="button" class="secretaria-voltar-icone" data-tip="VOLTAR" aria-label="Voltar" title="Voltar" data-abrir="secNivel0" data-ocultar="secNivelEstoque"><img src="icones-secretaria/voltar.png" alt=""></button>
       <div class="secretaria-nivel-titulo">Estoque de Materiais</div>
       <div id="canvaSecCaixaInsumos" class="canva-sanfona-conteudo aberto">
         <form id="secEstoqueForm" class="admin-form">
@@ -3288,7 +3327,7 @@
     </div>
 
     <div id="secNivelRevistas" class="secretaria-nivel-wrap" hidden>
-      <button type="button" class="btn btn-ghost secretaria-voltar" data-abrir="secNivel0" data-ocultar="secNivelRevistas">← Voltar</button>
+      <button type="button" class="secretaria-voltar-icone" data-tip="VOLTAR" aria-label="Voltar" title="Voltar" data-abrir="secNivel0" data-ocultar="secNivelRevistas"><img src="icones-secretaria/voltar.png" alt=""></button>
       <div class="secretaria-nivel-titulo sec-revistas-titulo">Controle de Revistas</div>
       <div class="sec-resumo-grid">
         <div class="sec-resumo-canvas">
@@ -3316,8 +3355,17 @@
           <label>Revista <select id="secFiltroRevista" class="sec-pedido-select"></select></label>
           <label>Aluno <select id="secFiltroAluno" class="sec-pedido-select"></select></label>
           <label>Status <select id="secFiltroStatus" class="sec-pedido-select"></select></label>
-          <label>Pagamento <select id="secFiltroPago" class="sec-pedido-select"></select></label>
+          <label>Pago <select id="secFiltroPago" class="sec-pedido-select"></select></label>
           <label>Forma de pagamento <select id="secFiltroForma" class="sec-pedido-select"></select></label>
+        </div>
+        <div class="sec-revistas-exportar">
+          <div class="lc-exportar">
+            <button type="button" class="btn btn-ghost" id="secRevExportarBtn" aria-haspopup="true" aria-expanded="false">Exportar</button>
+            <div id="secRevExportarMenu" class="lc-exportar-menu" hidden>
+              <button type="button" data-formato="pdf">PDF</button>
+              <button type="button" data-formato="excel">Excel</button>
+            </div>
+          </div>
         </div>
         <p id="secPedidosRevistasStatus" class="admin-agenda-info"></p>
         <div id="secPedidosRevistasLista" class="sec-pedidos-lista"></div>
@@ -3325,7 +3373,7 @@
     </div>
 
     <div id="secNivelRelatoriosGrid" class="secretaria-nivel-wrap" hidden>
-      <button type="button" class="btn btn-ghost secretaria-voltar" data-abrir="secNivel0" data-ocultar="secNivelRelatoriosGrid">← Voltar</button>
+      <button type="button" class="secretaria-voltar-icone" data-tip="VOLTAR" aria-label="Voltar" title="Voltar" data-abrir="secNivel0" data-ocultar="secNivelRelatoriosGrid"><img src="icones-secretaria/voltar.png" alt=""></button>
       <div class="secretaria-nivel-titulo">Relatórios</div>
       <div class="professor-canvas-grid">
         <button type="button" class="professor-canvas-card" data-abrir="secNivelRelatorioDominical" data-ocultar="secNivelRelatoriosGrid">
@@ -3352,7 +3400,7 @@
     </div>
 
     <div id="secNivelRelatorioDominical" class="secretaria-nivel-wrap" hidden>
-      <button type="button" class="btn btn-ghost secretaria-voltar" data-abrir="secNivel0" data-ocultar="secNivelRelatorioDominical">← Voltar</button>
+      <button type="button" class="secretaria-voltar-icone" data-tip="VOLTAR" aria-label="Voltar" title="Voltar" data-abrir="secNivel0" data-ocultar="secNivelRelatorioDominical"><img src="icones-secretaria/voltar.png" alt=""></button>
       <div class="secretaria-nivel-titulo">Relatório Dominical</div>
       <div class="aniv-aviso">
         <div class="aniv-aviso-titulo">Aniversariantes da semana</div>
@@ -3378,7 +3426,7 @@
     </div>
 
     <div id="secNivelRelatorioCaixa" class="secretaria-nivel-wrap" hidden>
-      <button type="button" class="btn btn-ghost secretaria-voltar" data-abrir="secNivelRelatoriosGrid" data-ocultar="secNivelRelatorioCaixa">← Voltar</button>
+      <button type="button" class="secretaria-voltar-icone" data-tip="VOLTAR" aria-label="Voltar" title="Voltar" data-abrir="secNivelRelatoriosGrid" data-ocultar="secNivelRelatorioCaixa"><img src="icones-secretaria/voltar.png" alt=""></button>
       <div class="secretaria-nivel-titulo">Relatório do Caixa</div>
       <div class="rc-filtros">
         <label>Ano <select id="rcAno"></select></label>
@@ -3422,19 +3470,19 @@
     </div>
 
     <div id="secNivelRelatorioRevistas" class="secretaria-nivel-wrap" hidden>
-      <button type="button" class="btn btn-ghost secretaria-voltar" data-abrir="secNivelRelatoriosGrid" data-ocultar="secNivelRelatorioRevistas">← Voltar</button>
+      <button type="button" class="secretaria-voltar-icone" data-tip="VOLTAR" aria-label="Voltar" title="Voltar" data-abrir="secNivelRelatoriosGrid" data-ocultar="secNivelRelatorioRevistas"><img src="icones-secretaria/voltar.png" alt=""></button>
       <div class="secretaria-nivel-titulo">Relatório de Revistas</div>
       <p class="admin-agenda-info">Em breve.</p>
     </div>
 
     <div id="secNivelOutrosRelatorios" class="secretaria-nivel-wrap" hidden>
-      <button type="button" class="btn btn-ghost secretaria-voltar" data-abrir="secNivelRelatoriosGrid" data-ocultar="secNivelOutrosRelatorios">← Voltar</button>
+      <button type="button" class="secretaria-voltar-icone" data-tip="VOLTAR" aria-label="Voltar" title="Voltar" data-abrir="secNivelRelatoriosGrid" data-ocultar="secNivelOutrosRelatorios"><img src="icones-secretaria/voltar.png" alt=""></button>
       <div class="secretaria-nivel-titulo">Outros Relatórios</div>
       <p class="admin-agenda-info">Em breve.</p>
     </div>
 
     <div id="secNivelAniversariantes" class="secretaria-nivel-wrap" hidden>
-      <button type="button" class="btn btn-ghost secretaria-voltar" data-abrir="secNivel0" data-ocultar="secNivelAniversariantes">← Voltar</button>
+      <button type="button" class="secretaria-voltar-icone" data-tip="VOLTAR" aria-label="Voltar" title="Voltar" data-abrir="secNivel0" data-ocultar="secNivelAniversariantes"><img src="icones-secretaria/voltar.png" alt=""></button>
       <div class="secretaria-nivel-titulo">Aniversariantes</div>
       <div class="ag-filtros aniv-filtros">
         <label>Mês <select id="anivMes" aria-label="Mês"></select></label>
@@ -3444,7 +3492,7 @@
     </div>
 
     <div id="secNivelAgendas" class="secretaria-nivel-wrap" hidden>
-      <button type="button" class="btn btn-ghost secretaria-voltar" data-abrir="secNivel0" data-ocultar="secNivelAgendas">← Voltar</button>
+      <button type="button" class="secretaria-voltar-icone" data-tip="VOLTAR" aria-label="Voltar" title="Voltar" data-abrir="secNivel0" data-ocultar="secNivelAgendas"><img src="icones-secretaria/voltar.png" alt=""></button>
       <div class="secretaria-nivel-titulo">Agenda</div>
       <div class="ag-topo">
         <div class="ag-filtros">
@@ -3481,10 +3529,10 @@
           </label>
           <div class="admin-form-linha">
             <label>De
-              <input type="text" id="agData" inputmode="numeric" placeholder="dd/mm/aaaa" maxlength="10" required>
+              <input type="text" id="agData" data-data-br inputmode="numeric" placeholder="dd/mm/aaaa" maxlength="10" required>
             </label>
             <label>Até
-              <input type="text" id="agDataFim" inputmode="numeric" placeholder="dd/mm/aaaa" maxlength="10" required>
+              <input type="text" id="agDataFim" data-data-br inputmode="numeric" placeholder="dd/mm/aaaa" maxlength="10" required>
             </label>
           </div>
           <label>Hora (opcional)
@@ -3975,12 +4023,6 @@
         img.src = item.image;
         img.alt = item.title || '';
         card.appendChild(img);
-        // A moldura assume a proporção do banner (largura fixa de 231px), entre 180px e 380px de altura
-        img.addEventListener('load', function () {
-          if (img.naturalWidth && img.naturalHeight) {
-            card.style.height = Math.max(180, Math.min(380, Math.round(231 * img.naturalHeight / img.naturalWidth))) + 'px';
-          }
-        });
 
         card.addEventListener('click', function () {
           if (wrapOffset(i, cfIndex, newsItems.length) !== 0) goTo(i);
@@ -4437,7 +4479,7 @@
   // "sec_*" são as páginas dentro da Sala da Secretaria (cada uma pode ser liberada separadamente)
   const AREAS_CATALOGO = [
     ["siteHome", "Início (site)"],
-    ["areaAluno", "Sala do Aluno"],
+    ["areaAluno", "Área do Aluno"],
     ["areaProfessor", "Sala do Professor"],
     ["areaAdministrativo", "Sala da Secretaria"],
     ["sec_caixa", "Secretaria · Caixa"],
@@ -4463,7 +4505,7 @@
   // Árvore mostrada em Gerenciar Perfis (pasta = tela que tem páginas dentro)
   const ARVORE_AREAS = [
     { id: "siteHome", nome: "Início (site)" },
-    { id: "areaAluno", nome: "Sala do Aluno" },
+    { id: "areaAluno", nome: "Área do Aluno" },
     {
       id: "areaProfessor", nome: "Sala do Professor",
       filhos: PROF_PAGINAS.map((id) => ({ id: id, nome: ROTULO_AREA[id].replace("Professor · ", "") }))
@@ -4763,6 +4805,7 @@
     document.querySelector("#loginBtn .nav-login-label").textContent = texto;
   }
 
+  window.__mostrarArea = (id) => mostrarArea(id);
   function mostrarArea(areaId) {
     document.getElementById("siteHome").classList.toggle("ativo", areaId === "siteHome");
     document.querySelectorAll(".portal-section").forEach((secao) => {
@@ -5221,6 +5264,81 @@
       setTimeout(() => URL.revokeObjectURL(url), 1000);
     }
 
+    // PDF do Livro Caixa (mês escolhido): resumo do mês e a tabela de movimentações
+    function carregarBibliotecaPdfCaixa() {
+      const carregar = (src) => new Promise((resolve, reject) => {
+        const script = document.createElement("script");
+        script.src = src;
+        script.onload = () => resolve();
+        script.onerror = () => reject(new Error("Não foi possível carregar o gerador de PDF."));
+        document.head.appendChild(script);
+      });
+      return (async () => {
+        if (!(window.jspdf && window.jspdf.jsPDF)) await carregar("https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js");
+        if (!(window.jspdf.jsPDF.API && window.jspdf.jsPDF.API.autoTable)) await carregar("https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js");
+      })();
+    }
+
+    async function exportarPdfCaixa() {
+      const mes = document.getElementById("lcMes").value;
+      const doMes = caixaMovsCache.filter((m) => mesISOCaixa(m.data) === mes);
+      if (!doMes.length) {
+        window.notificar("Não há movimentações neste mês para exportar.", "error");
+        return;
+      }
+      try {
+        await carregarBibliotecaPdfCaixa();
+      } catch (err) {
+        window.notificar(err.message, "error");
+        return;
+      }
+      const reais = (n) => "R$ " + Number(n || 0).toFixed(2).replace(".", ",");
+      const entradas = doMes.filter((m) => m.tipo !== "saida").reduce((soma, m) => soma + (Number(m.valor) || 0), 0);
+      const saidas = doMes.filter((m) => m.tipo === "saida").reduce((soma, m) => soma + (Number(m.valor) || 0), 0);
+      const [ano, mesNum] = mes.split("-");
+      const nomeMes = new Date(Number(ano), Number(mesNum) - 1, 1).toLocaleDateString("pt-BR", { month: "long", year: "numeric" });
+
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(16);
+      doc.text("Livro Caixa - " + nomeMes, 14, 16);
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(10);
+      doc.text("Gerado em " + new Date().toLocaleDateString("pt-BR"), 14, 22);
+
+      doc.autoTable({
+        startY: 28,
+        head: [["Entradas", "Saídas", "Saldo do mês"]],
+        body: [[reais(entradas), reais(saidas), reais(entradas - saidas)]],
+        theme: "grid",
+        headStyles: { fillColor: [40, 44, 56] },
+        styles: { fontSize: 11, halign: "center" },
+      });
+
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(12);
+      doc.text("Movimentações", 14, doc.lastAutoTable.finalY + 12);
+      doc.autoTable({
+        startY: doc.lastAutoTable.finalY + 16,
+        head: [["Data", "Tipo", "Forma de pagamento", "Descrição", "Valor", "Origem", "Lançado por"]],
+        body: doMes.map((m) => [
+          dataBrRC(m.data),
+          m.tipo === "saida" ? "Saída" : "Entrada",
+          ROTULO_MEIO_CAIXA[m.meio] || "",
+          m.descricao || "",
+          (m.tipo === "saida" ? "- " : "") + reais(m.valor),
+          m.origem === "pagamentoRevista" ? "Revista" : "Manual",
+          m.lancadoPorNome || ""
+        ]),
+        theme: "striped",
+        headStyles: { fillColor: [40, 44, 56] },
+        styles: { fontSize: 8.5 },
+      });
+
+      doc.save("livro-caixa-" + mes + ".pdf");
+    }
+
     function ligarExportarCaixa() {
       const botao = document.getElementById("lcExportarBtn");
       const menu = document.getElementById("lcExportarMenu");
@@ -5233,7 +5351,7 @@
       menu.querySelectorAll("button[data-formato]").forEach((b) => {
         b.addEventListener("click", () => {
           fechar();
-          if (b.dataset.formato === "pdf") window.print();
+          if (b.dataset.formato === "pdf") exportarPdfCaixa();
           else exportarExcelCaixa();
         });
       });
@@ -6523,6 +6641,181 @@
     }
 
     // Pagamento de um pedido: pendente | feito | doacao. Pedidos antigos têm só "pago" (sim/não).
+    // Exportar (Controle de Revistas): mesmo menu do Livro Caixa. PDF = impressão; Excel = planilha com RESUMO e DETALHES
+    const secRevExportarBtn = document.getElementById("secRevExportarBtn");
+    const secRevExportarMenu = document.getElementById("secRevExportarMenu");
+    const fecharMenuSecRev = () => { secRevExportarMenu.hidden = true; secRevExportarBtn.setAttribute("aria-expanded", "false"); };
+    secRevExportarBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      secRevExportarMenu.hidden = !secRevExportarMenu.hidden;
+      secRevExportarBtn.setAttribute("aria-expanded", String(!secRevExportarMenu.hidden));
+    });
+    secRevExportarMenu.querySelectorAll("button[data-formato]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        fecharMenuSecRev();
+        if (btn.dataset.formato === "pdf") exportarPdfRevistasSec();
+        else exportarExcelRevistasSec();
+      });
+    });
+    document.addEventListener("click", (e) => { if (!e.target.closest(".lc-exportar")) fecharMenuSecRev(); });
+
+    // Bibliotecas do PDF (jsPDF e autoTable), carregadas só na primeira exportação
+    function carregarScript(src) {
+      return new Promise((resolve, reject) => {
+        const script = document.createElement("script");
+        script.src = src;
+        script.onload = () => resolve();
+        script.onerror = () => reject(new Error("Não foi possível carregar o gerador de PDF."));
+        document.head.appendChild(script);
+      });
+    }
+
+    async function exportarPdfRevistasSec() {
+      if (!linhasRevistasSecTela.length) {
+        window.notificar("Não há pedidos para exportar com esses filtros.", "error");
+        return;
+      }
+      try {
+        if (!(window.jspdf && window.jspdf.jsPDF)) await carregarScript("https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js");
+        if (!(window.jspdf.jsPDF.API && window.jspdf.jsPDF.API.autoTable)) await carregarScript("https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js");
+      } catch (err) {
+        window.notificar(err.message, "error");
+        return;
+      }
+      const linhas = linhasRevistasSecTela;
+      const rotuloPago = { pendente: "Pendente", feito: "Sim", doacao: "Doação" };
+      const rotuloForma = { pix: "Pix", dinheiro: "Dinheiro" };
+      const reais = (n) => "R$ " + Number(n || 0).toFixed(2).replace(".", ",");
+
+      // Resumo: agrupa por tipo e revista (mesmo critério da tela)
+      const grupos = new Map();
+      linhas.forEach((l) => {
+        const chave = l.tipo + "|" + l.revista;
+        const g = grupos.get(chave) || { tipo: l.tipo, revista: l.revista, qtd: 0, valor: 0 };
+        g.qtd += l.qtd;
+        g.valor += l.valorNum || 0;
+        grupos.set(chave, g);
+      });
+      const itens = [...grupos.values()].sort((x, y) => x.tipo.localeCompare(y.tipo, "pt-BR") || x.revista.localeCompare(y.revista, "pt-BR"));
+      const valorTotal = linhas.reduce((soma, l) => soma + (l.valorNum || 0), 0);
+      const qtdTotal = linhas.reduce((soma, l) => soma + l.qtd, 0);
+
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(16);
+      doc.text("Controle de Revistas", 14, 16);
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(10);
+      doc.text("Gerado em " + new Date().toLocaleDateString("pt-BR"), 14, 22);
+
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(12);
+      doc.text("Resumo do pedido", 14, 32);
+      doc.autoTable({
+        startY: 36,
+        head: [["Tipo de revista", "Revista", "QTD", "Valor total"]],
+        body: itens.map((g) => [g.tipo, g.revista, String(g.qtd), reais(g.valor)]),
+        foot: [[{ content: "Valor total", colSpan: 3, styles: { halign: "right" } }, reais(valorTotal)], [{ content: "Quantidade total", colSpan: 3, styles: { halign: "right" } }, qtdTotal + " revistas"]],
+        theme: "grid",
+        headStyles: { fillColor: [40, 44, 56] },
+        footStyles: { fillColor: [235, 235, 240], textColor: [20, 20, 20], fontStyle: "bold" },
+        styles: { fontSize: 9 },
+      });
+
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(12);
+      doc.text("Detalhes", 14, doc.lastAutoTable.finalY + 12);
+      doc.autoTable({
+        startY: doc.lastAutoTable.finalY + 16,
+        head: [["Aluno", "Revista", "Tipo de revista", "Trimestre", "Qtd.", "Valor", "Status", "Pago", "Forma de pagamento"]],
+        body: linhas.map((l) => {
+          const p = l.pedido;
+          return [
+            l.aluno, l.revista, l.tipo, l.trimestre, String(l.qtd), l.valorNum === null ? "Sem preço" : reais(l.valorNum),
+            p.status === "entregue" ? "Entregue" : "Solicitado",
+            rotuloPago[pagamentoDoPedido(p)] || "",
+            rotuloForma[p.formaPagamento] || (p.formaPagamento || "")
+          ];
+        }),
+        theme: "striped",
+        headStyles: { fillColor: [40, 44, 56] },
+        styles: { fontSize: 8.5 },
+      });
+
+      doc.save("controle-revistas-" + new Date().toISOString().slice(0, 10) + ".pdf");
+    }
+
+    // Biblioteca que gera o .xlsx (SheetJS), carregada só na primeira exportação
+    function carregarSheetJS() {
+      if (window.XLSX) return Promise.resolve(window.XLSX);
+      return new Promise((resolve, reject) => {
+        const script = document.createElement("script");
+        script.src = "https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js";
+        script.onload = () => resolve(window.XLSX);
+        script.onerror = () => reject(new Error("Não foi possível carregar o gerador de Excel."));
+        document.head.appendChild(script);
+      });
+    }
+
+    async function exportarExcelRevistasSec() {
+      if (!linhasRevistasSecTela.length) {
+        window.notificar("Não há pedidos para exportar com esses filtros.", "error");
+        return;
+      }
+      let XLSX;
+      try {
+        XLSX = await carregarSheetJS();
+      } catch (err) {
+        window.notificar(err.message, "error");
+        return;
+      }
+      const linhas = linhasRevistasSecTela;
+      const rotuloPago = { pendente: "Pendente", feito: "Sim", doacao: "Doação" };
+      const rotuloForma = { pix: "Pix", dinheiro: "Dinheiro" };
+
+      // RESUMO: agrupa por tipo e revista (mesmo critério da tela)
+      const grupos = new Map();
+      linhas.forEach((l) => {
+        const chave = l.tipo + "|" + l.revista;
+        const g = grupos.get(chave) || { tipo: l.tipo, revista: l.revista, qtd: 0, valor: 0 };
+        g.qtd += l.qtd;
+        g.valor += l.valorNum || 0;
+        grupos.set(chave, g);
+      });
+      const itens = [...grupos.values()].sort((x, y) => x.tipo.localeCompare(y.tipo, "pt-BR") || x.revista.localeCompare(y.revista, "pt-BR"));
+      const valorTotal = linhas.reduce((soma, l) => soma + (l.valorNum || 0), 0);
+      const qtdTotal = linhas.reduce((soma, l) => soma + l.qtd, 0);
+      const resumo = [
+        ["Resumo do pedido"],
+        [],
+        ["Tipo de revista", "Revista", "QTD", "Valor total (R$)"],
+        ...itens.map((g) => [g.tipo, g.revista, g.qtd, g.valor]),
+        [],
+        ["Valor total (R$)", valorTotal],
+        ["Quantidade total", qtdTotal]
+      ];
+
+      // DETALHES: uma linha por pedido, como a tabela da tela
+      const detalhes = [
+        ["Aluno", "Revista", "Tipo de revista", "Trimestre", "Qtd.", "Valor (R$)", "Status", "Pago", "Forma de pagamento"],
+        ...linhas.map((l) => {
+          const p = l.pedido;
+          return [
+            l.aluno, l.revista, l.tipo, l.trimestre, l.qtd, l.valorNum,
+            p.status === "entregue" ? "Entregue" : "Solicitado",
+            rotuloPago[pagamentoDoPedido(p)] || "",
+            rotuloForma[p.formaPagamento] || (p.formaPagamento || "")
+          ];
+        })
+      ];
+
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(resumo), "RESUMO");
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(detalhes), "DETALHES");
+      XLSX.writeFile(wb, "controle-revistas-" + new Date().toISOString().slice(0, 10) + ".xlsx");
+    }
+
     function pagamentoDoPedido(p) {
       if (p.pagamento) return p.pagamento;
       return (p.pago === true || p.pago === "sim") ? "feito" : "pendente";
@@ -6530,6 +6823,8 @@
 
     // Pedidos com pagamento incompleto (id -> { pagamento, forma }): avisa antes de sair da página
     const pendenciasSec = new Map();
+    // Linhas da tabela de Controle de Revistas que estão na tela (filtradas), para exportar
+    let linhasRevistasSecTela = [];
 
     // Combobox pequeno da tabela de pedidos (status, pago, forma de pagamento)
     function criarSelectSec(opcoes, valor) {
@@ -6830,7 +7125,7 @@
     // Trocar de tela pelo menu ou pelo "Voltar": pergunta antes de sair
     document.addEventListener("click", (e) => {
       if (!pendenciasSec.size) return;
-      const alvo = e.target.closest("[data-area], .secretaria-voltar, .nav a, .nav button, .sidebar-link, .nav-admin-dropdown-item");
+      const alvo = e.target.closest("[data-area], .secretaria-voltar, .secretaria-voltar-icone, .nav a, .nav button, .sidebar-link, .nav-admin-dropdown-item");
       if (!alvo) return;
       if (!window.confirm(MSG_INCOMPLETO_SEC)) {
         e.preventDefault();
@@ -6869,7 +7164,7 @@
       linhas.forEach((l) => trims.set(`${l.pedido.ano}-${l.pedido.trimestre}`, { ano: l.pedido.ano, trimestre: l.pedido.trimestre }));
       const trimOrdenados = [...trims.values()].sort((a, b) => a.ano - b.ano || a.trimestre - b.trimestre);
       preencherFiltroSec("secFiltroTrimestre",
-        [["", "Todos"]].concat(trimOrdenados.map((t) => [`${t.ano}-${t.trimestre}`, `${t.trimestre}º/${String(t.ano).slice(-2)}`])),
+        [["", "Todos"]].concat(trimOrdenados.map((t) => [`${t.ano}-${t.trimestre}`, `${t.trimestre}º T/${String(t.ano).slice(-2)}`])),
         `${prox.ano}-${prox.trimestre}`);
 
       const revistas = [...new Set(linhas.map((l) => l.revista))].sort((a, b) => a.localeCompare(b, "pt-BR"));
@@ -6879,7 +7174,7 @@
       preencherFiltroSec("secFiltroAluno", [["", "Todos"]].concat(alunos.map((a) => [a, a])));
 
       preencherFiltroSec("secFiltroStatus", [["", "Todos"], ["solicitado", "Solicitado"], ["entregue", "Entregue"]]);
-      preencherFiltroSec("secFiltroPago", [["", "Todos"], ["feito", "Feito"], ["pendente", "Pendente"], ["doacao", "Doação"]]);
+      preencherFiltroSec("secFiltroPago", [["", "Todos"], ["feito", "Sim"], ["pendente", "Pendente"], ["doacao", "Doação"]]);
       preencherFiltroSec("secFiltroForma", [["", "Todos"], ["pix", "Pix"], ["dinheiro", "Dinheiro"]]);
     }
 
@@ -6992,7 +7287,7 @@
                 aluno: p.alunoNome || "",
                 revista: i.nome || "",
                 tipo: tipo,
-                trimestre: p.trimestre + "º/" + String(p.ano).slice(-2),
+                trimestre: p.trimestre + "º T/" + String(p.ano).slice(-2),
                 qtd: qtd,
                 valorNum: preco === null ? null : preco * qtd,
                 valor: preco === null ? "Sem preço no momento" : "R$ " + (preco * qtd).toFixed(2).replace(".", ","),
@@ -7007,12 +7302,13 @@
         // Filtros: as opções vêm destes dados; a tabela mostra só o que passa nos filtros
         atualizarFiltrosPedidosSec(linhas);
         const linhasFiltradas = linhas.filter((l) => linhaPassaFiltrosSec(l));
+        linhasRevistasSecTela = linhasFiltradas;
         status.textContent = linhasFiltradas.length ? "" : "Nenhum pedido com esses filtros.";
         desenharResumoSec(linhasFiltradas);
 
         const cabecalho = document.createElement("div");
         cabecalho.className = "sec-pedido-linha sec-pedido-cabecalho";
-        ["Aluno", "Revista", "Tipo de revista", "Trim", "Qtd.", "Valor", "Status", "Pagamento", "Forma de pagamento", "Ações"].forEach((titulo) => {
+        ["Aluno", "Revista", "Tipo de revista", "Trim", "Qtd.", "Valor", "Status", "Pago", "Forma de pagamento", "Ações"].forEach((titulo) => {
           const celula = document.createElement("span");
           celula.textContent = titulo;
           cabecalho.appendChild(celula);
@@ -7033,7 +7329,7 @@
           const selStatus = criarSelectSec([["solicitado", "Solicitado"], ["entregue", "Entregue"]], situacao.status === "entregue" ? "entregue" : "solicitado");
           // Pendência: se o usuário deixou o pagamento incompleto, a tela mantém a escolha dele
           const pend = pendenciasSec.get(situacao.id) || null;
-          const selPago = criarSelectSec([["pendente", "Pendente"], ["feito", "Feito"], ["doacao", "Doação"]], pend ? pend.pagamento : pagamentoDoPedido(situacao));
+          const selPago = criarSelectSec([["pendente", "Pendente"], ["feito", "Sim"], ["doacao", "Doação"]], pend ? pend.pagamento : pagamentoDoPedido(situacao));
           const selForma = criarSelectSec([["", "—"], ["pix", "Pix"], ["dinheiro", "Dinheiro"]], pend ? pend.forma : (situacao.formaPagamento || ""));
           if (pend && pend.pagamento === "feito" && !selForma.value) selForma.classList.add("campo-invalido");
           selForma.disabled = (pend ? pend.pagamento : pagamentoDoPedido(situacao)) !== "feito";
@@ -10428,7 +10724,8 @@
       chamada: document.getElementById("canvasPainelChamada"),
       relatorioSala: document.getElementById("canvasPainelRelatorioSala"),
       pedirRevista: document.getElementById("canvasPainelPedirRevista"),
-      arquivos: document.getElementById("canvasPainelArquivos")
+      arquivos: document.getElementById("canvasPainelArquivos"),
+      avisos: document.getElementById("canvasPainelAvisos")
     };
     const professorBoasVindas = document.querySelector("#areaProfessor .professor-boas-vindas");
     const arquivoSalaInput = document.getElementById("arquivoSalaInput");
@@ -12018,9 +12315,18 @@
           <span class="professor-canvas-icone"><img src="icones-secretaria/meu-pedido.webp" alt=""></span>
           <span class="professor-canvas-titulo">Meu pedido</span>
           <span class="professor-canvas-sub">Veja o que você pediu</span>
-        </button>` : ""}`;
+        </button>` : ""}
+        <button type="button" class="professor-canvas-card" id="btnProfRevistaProf" aria-label="Acessar Revista de Professor">
+          <span class="professor-canvas-icone"><img src="icones-secretaria/revistas-coloridas.webp" alt=""></span>
+          <span class="professor-canvas-titulo">Acessar Revista de Professor</span>
+          <span class="professor-canvas-sub">Leitor, lições, Bíblia e anexos</span>
+        </button>`;
       document.getElementById("btnProfSolicitarRevista").addEventListener("click", () => abrirSolicitarRevistaComo(solicitantePedidoProfessor()));
       if (temPedido) document.getElementById("btnProfMeuPedido").addEventListener("click", () => abrirMeuPedidoComo(solicitantePedidoProfessor()));
+      document.getElementById("btnProfRevistaProf").addEventListener("click", () => {
+        const sala = minhasSalas.find((x) => x.id === seletor.value);
+        if (window.__abrirRevistaProfessor) window.__abrirRevistaProfessor(seletor.value, sala ? sala.nome : "");
+      });
     }
 
     // Enter nos campos não deve recarregar a página
@@ -13631,13 +13937,25 @@
         area.innerHTML = '<p class="admin-agenda-info">Nenhum post encerrado.</p>';
         return;
       }
-      const ordenados = encerrados.slice().sort((a, b) => (b.dataEvento || "").localeCompare(a.dataEvento || ""));
-      area.innerHTML = '<table class="aniv-tab"><thead><tr><th>Data do evento</th><th>Tag</th><th>Título</th></tr></thead><tbody>' +
+      const ordenados = encerrados.slice().sort((x, y) => (y.dataEvento || "").localeCompare(x.dataEvento || ""));
+      area.innerHTML = '<table class="aniv-tab"><thead><tr><th>Data do evento</th><th>Tag</th><th>Título</th><th>Ações</th></tr></thead><tbody>' +
         ordenados.map((p) =>
-          "<tr><td>" + isoParaDataBrLocal(p.dataEvento) + "</td><td>" + escaparTextoPosts(p.tag || "Post") + "</td><td>" + escaparTextoPosts(p.title || "Sem título") + "</td></tr>"
+          "<tr><td>" + isoParaDataBrLocal(p.dataEvento) + "</td><td>" + escaparTextoPosts(p.tag || "Post") + "</td><td>" + escaparTextoPosts(p.title || "Sem título") + "</td>" +
+          '<td><div class="admin-noticia-actions">' +
+          '<button class="sec-caixa-editar admin-noticia-edit" data-id="' + escaparTextoPosts(p.id) + '" title="Editar" aria-label="Editar post">✏️</button>' +
+          '<button class="admin-perfis-item-remover admin-noticia-delete" data-id="' + escaparTextoPosts(p.id) + '" title="Excluir" aria-label="Excluir post">×</button>' +
+          "</div></td></tr>"
         ).join("") +
         "</tbody></table>";
+      // Mesmos botões de Editar e Excluir dos posts ativos
+      area.querySelectorAll(".admin-noticia-edit").forEach((btn) => {
+        btn.addEventListener("click", () => editarPost(encerrados.find((p) => p.id === btn.dataset.id)));
+      });
+      area.querySelectorAll(".admin-noticia-delete").forEach((btn) => {
+        btn.addEventListener("click", () => deletarPost(btn.dataset.id));
+      });
     }
+
     function escaparTextoPosts(t) {
       return String(t == null ? "" : t).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
     }
@@ -14053,12 +14371,26 @@
     const trocarImagemEl = document.getElementById("postImagemTrocar");
     // A moldura assume a proporção da própria imagem (retangular, quadrada ou vertical)
     const canvaImagemEl = document.getElementById("postImagemCanva");
-    previewImg.addEventListener("load", () => {
-      if (previewImg.naturalWidth && previewImg.naturalHeight) canvaImagemEl.style.aspectRatio = previewImg.naturalWidth + " / " + previewImg.naturalHeight;
-    });
+    // Moldura da imagem: a área máxima é a altura de Tag/Categoria até Link; a moldura assume a forma da imagem (horizontal, vertical ou quadrada)
+    const colunaImagemEl = document.querySelector(".post-coluna-imagem");
+    const wrapImagemEl = document.querySelector(".post-coluna-imagem .post-imagem-wrap");
+    const btnNovoPostEl = document.getElementById("btnNovoPost");
+    function ajustarMolduraPost() {
+      if (previewImg.hidden || !previewImg.naturalWidth || !previewImg.naturalHeight) return;
+      const maxW = colunaImagemEl.clientWidth;
+      const maxH = colunaImagemEl.clientHeight;
+      const proporcao = previewImg.naturalWidth / previewImg.naturalHeight;
+      let w = maxW, h = w / proporcao;
+      if (h > maxH) { h = maxH; w = h * proporcao; }
+      wrapImagemEl.style.flex = "none";
+      wrapImagemEl.style.width = Math.round(w) + "px";
+      wrapImagemEl.style.height = Math.round(h) + "px";
+    }
+    previewImg.addEventListener("load", ajustarMolduraPost);
+    window.addEventListener("resize", ajustarMolduraPost);
     function mostrarPreviewPost(src) {
       const mostrar = !!src;
-      if (!mostrar) canvaImagemEl.style.aspectRatio = "";
+      if (!mostrar) { wrapImagemEl.style.flex = ""; wrapImagemEl.style.width = ""; wrapImagemEl.style.height = ""; }
       previewImg.src = mostrar ? src : "";
       previewImg.hidden = !mostrar;
       vazioImagemEl.hidden = mostrar;
@@ -14171,6 +14503,7 @@
       leitor.readAsDataURL(arq);
     });
     btnCancelarPostEdicao.addEventListener("click", cancelarEdicao);
+    btnNovoPostEl.addEventListener("click", cancelarEdicao);
     btnImportarNoticias.addEventListener("click", importarNoticiasIniciais);
 
     // Atualizar carousel dinamicamente

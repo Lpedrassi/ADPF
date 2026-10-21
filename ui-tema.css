@@ -918,6 +918,27 @@ body::after {
 }
 .post-imagem-trocar[hidden] { display: none; }
 .post-imagem-wrap { position: relative; width: 100%; max-width: 340px; }
+/* Coluna da imagem: botão Novo post no topo e a moldura ocupando a altura de Tag/Categoria até Link */
+.post-coluna-imagem { display: flex; flex-direction: column; gap: 10px; min-height: 0; }
+.post-novo-post { align-self: flex-start; }
+.post-coluna-imagem .post-imagem-wrap { flex: 1 1 auto; min-height: 0; max-width: none; width: 100%; }
+.post-coluna-imagem .post-imagem-canva { width: 100%; height: 100%; max-width: none; aspect-ratio: auto; }
+/* Título da tela Gerenciar Posts do Carrosel: maior e centralizado */
+#areaPostsSite > h2 { text-align: center; font-size: 28px; }
+/* Ícone de sino dos Avisos e Comunicados: quadrado escuro com sino dourado (referência do Lucas) */
+.aviso-sino img { width: 64px; height: 64px; object-fit: contain; display: block; }
+/* Botão voltar da Secretaria: só o ícone, com a palavra VOLTAR ao passar o mouse */
+/* Canto superior esquerdo da Secretaria, 40px (igual à referência do Lucas) */
+#areaAdministrativo { position: relative; }
+.secretaria-voltar-icone { position: absolute; top: 14px; left: 14px; z-index: 5; display: block; width: 40px; height: 40px; padding: 0; margin: 0; background: none; border: 0; cursor: pointer; }
+.secretaria-voltar-icone img { width: 40px; height: 40px; object-fit: contain; display: block; transition: transform .15s ease; }
+.secretaria-voltar-icone:hover img { transform: scale(1.08); }
+.secretaria-voltar-icone::after { content: attr(data-tip); position: absolute; left: 50px; top: 50%; transform: translateY(-50%); padding: 5px 10px; border-radius: 8px; background: #14161d; color: #fff; font-size: 11px; font-weight: 700; letter-spacing: .06em; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity .15s ease; }
+.secretaria-voltar-icone:hover::after, .secretaria-voltar-icone:focus-visible::after { opacity: 1; }
+/* Título do painel Pedir Revista: 16px, centralizado */
+.pedir-revista-titulo { text-align: center; font-size: 16px; font-weight: 700; margin: 0 0 8px; }
+/* Subtítulos de Posts cadastrados e Posts encerrados: mesmo tamanho e fonte */
+.admin-noticias-list > h4, .admin-noticia-encerrados-titulo { font-family: "Plus Jakarta Sans", sans-serif; font-size: 18px; font-weight: 700; letter-spacing: 0; text-transform: none; color: var(--ink); margin: 0 0 12px; }
 /* Botão de contorno azul; ao passar o mouse fica dourado (mesmo tom do botão Olá Lucas) */
 .btn.btn-contorno-azul {
   background: #111827; color: #ffffff; border: 1px solid var(--azul);
@@ -1558,7 +1579,9 @@ body::after {
 /* Campo obrigatório que ainda não foi preenchido */
 .sec-pedido-select.campo-invalido { border-color: var(--vermelho); box-shadow: 0 0 0 1px var(--vermelho); }
 .sec-pedido-select:disabled { opacity: .5; }
-.sec-pedido-acoes { display: flex; gap: 6px; align-items: center; justify-content: flex-end; }
+.sec-pedido-acoes { display: flex; gap: 6px; align-items: center; justify-content: center; }
+.sec-pedido-acoes .sec-caixa-editar { width: 30px; height: 30px; padding: 0; display: inline-flex; align-items: center; justify-content: center; line-height: 1; }
+.sec-pedido-acoes .sec-pedido-excluir { display: inline-flex; align-items: center; justify-content: center; }
 /* Valores das revistas: revista | valor aluno | valor professor */
 .sec-valores-linha { display: grid; grid-template-columns: minmax(0, 1fr) 150px 150px; gap: 12px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border-strong); }
 .sec-valores-cabecalho { padding: 8px 0; font-size: 12px; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
@@ -1571,7 +1594,10 @@ body::after {
 .sec-pedido-acoes .sec-pedido-excluir:hover { color: var(--vermelho); border-color: var(--vermelho); }
 .sec-pedido-acoes .sec-pedido-excluir:hover, .sec-pedido-acoes .sec-pedido-excluir.armado { background: var(--vermelho); color: #fff; }
 .sec-pedido-acoes .sec-pedido-excluir:disabled { opacity: .5; cursor: default; }
-.sec-pedido-cabecalho { font-weight: 800; color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .04em; }
+.sec-pedido-cabecalho { font-weight: 800; color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .04em; align-items: end; }
+.sec-pedido-cabecalho span { white-space: normal; line-height: 1.2; min-width: 0; overflow-wrap: anywhere; }
+.sec-pedido-cabecalho span:last-child { text-align: center; }
+.sec-revistas-exportar { display: flex; justify-content: flex-end; margin: 12px 0 4px; }
 @media (max-width: 560px) {
   .sec-pedido-linha { grid-template-columns: 1fr; gap: 2px; }
   .sec-pedido-cabecalho { display: none; }
@@ -1730,14 +1756,16 @@ body::after {
   border: 1px solid var(--border-strong);
   background: rgba(9,9,14,0.6);
   color: var(--ink);
-  font-size: 15px;
-  line-height: 1.75;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 16px;
+  line-height: 1.85;
+  letter-spacing: 0.01em;
 }
 #areaAluno .biblia-texto:empty { display: none; }
 #areaAluno .biblia-versiculo { margin: 0 0 8px; border-radius: 8px; padding: 2px 4px; cursor: pointer; }
 #areaAluno .biblia-versiculo sup { font-size: 11px; color: var(--muted); }
 #areaAluno .biblia-versiculo.is-destacado {
-  font-weight: 800;
+  font-weight: 600;
   color: var(--ink);
   background: linear-gradient(90deg, rgba(57,255,20,0.22), rgba(57,255,20,0.08));
   box-shadow: 0 0 14px rgba(57,255,20,0.18), inset 0 0 0 1px rgba(57,255,20,0.25);

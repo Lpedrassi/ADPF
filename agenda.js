@@ -402,7 +402,7 @@ async function preencherProximosCultos() {
 
   // "18:00" ou "18h" -> "18h"; "18:30" -> "18h30"
   const horaFormatada = (h) => {
-    if (!h) return "—";
+    if (!h) return "";
     const m = String(h).match(/^(\d{1,2})(?::(\d{2}))?/);
     if (!m) return h;
     return m[2] && m[2] !== "00" ? m[1] + "h" + m[2] : m[1] + "h";
@@ -425,7 +425,7 @@ async function preencherProximosCultos() {
       card.titulo.textContent = ev.titulo;
       card.desc.textContent = descricao(ev);
     } else {
-      card.hora.textContent = "—";
+      card.hora.textContent = "";
       card.dia.textContent = "";
       card.data.textContent = "Em breve";
       card.titulo.textContent = "Nenhum agendamento";
