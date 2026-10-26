@@ -41,6 +41,26 @@ service cloud.firestore {
                     );
     }
 
+    // Índice do celular (hash -> { uid, email }), usado só para validar duplicidade no Perfil.
+    // Leitura só para quem está logado; gravação só pelo dono da conta (ou admin).
+    match /loginCelular/{hash} {
+      allow get: if request.auth != null;
+      allow create: if request.auth != null
+                    && (request.resource.data.uid == request.auth.uid || isAdmin());
+      allow update, delete: if request.auth != null
+                    && (resource.data.uid == request.auth.uid || isAdmin());
+    }
+
+    // Índice de nome de usuário (nome -> { uid, email }), usado só para validar duplicidade no Perfil.
+    // Leitura só para quem está logado; gravação só pelo dono (ou admin).
+    match /loginUsuario/{nome} {
+      allow get: if request.auth != null;
+      allow create: if request.auth != null
+                    && (request.resource.data.uid == request.auth.uid || isAdmin());
+      allow update, delete: if request.auth != null
+                    && (resource.data.uid == request.auth.uid || isAdmin());
+    }
+
     match /agenda/{eventoId} {
       allow read: if true;
       allow write: if isAdmin();

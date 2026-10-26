@@ -1645,7 +1645,7 @@
         <div class="nav-admin-menu-item">
           <button class="nav-admin-toggle" id="navEbdToggle" type="button">Portal EBD</button>
           <div class="nav-admin-dropdown" id="navEbdDropdown">
-            <button class="nav-admin-dropdown-item" data-area="areaAluno"><svg class="nav-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 5.5c2.5-1.2 5.5-1.2 10 1.2 4.5-2.4 7.5-2.4 10-1.2V19c-2.5-1.2-5.5-1.2-10 1.2-4.5-2.4-7.5-2.4-10-1.2z"/><path d="M12 6.7V20"/></svg>Área do Aluno</button>
+            <button class="nav-admin-dropdown-item" data-area="areaAluno"><svg class="nav-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 5.5c2.5-1.2 5.5-1.2 10 1.2 4.5-2.4 7.5-2.4 10-1.2V19c-2.5-1.2-5.5-1.2-10 1.2-4.5-2.4-7.5-2.4-10-1.2z"/><path d="M12 6.7V20"/></svg>Área do Aluno EBD</button>
             <button class="nav-admin-dropdown-item" data-area="areaProfessor"><svg class="nav-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="3.5" width="14" height="10" rx="1"/><path d="M12 9.5h4"/><circle cx="4.5" cy="9" r="2.2"/><path d="M1 21v-2.5a3.5 3.5 0 0 1 7 0V21"/></svg>Sala do Professor</button>
             <button class="nav-admin-dropdown-item" data-area="areaAdministrativo"><svg class="nav-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="13" height="18" rx="2"/><path d="M7 2h5v3H7z"/><path d="M6.5 10h6M6.5 13.5h6M6.5 17h4"/><path d="M18.5 8h2v10l-1 2.5-1-2.5z"/><path d="M18.5 11h2"/></svg>Sala da Secretaria</button>
           </div>
@@ -1762,6 +1762,10 @@
       <div data-show="editar step1">
         <label for="perfilEmail">E-mail</label>
         <input id="perfilEmail" type="email" placeholder="seu e-mail" autocomplete="email" required>
+      </div>
+      <div id="perfilSenhaAtualGrupo" hidden>
+        <label for="perfilSenhaAtual">Senha atual (para trocar o e-mail)</label>
+        <input id="perfilSenhaAtual" type="password" placeholder="••••••••" autocomplete="current-password">
       </div>
       <div id="perfilSenhaGrupo" data-show="step1">
         <label for="perfilSenha">Senha</label>
@@ -2041,7 +2045,7 @@
     <button class="sidebar-link" type="button" data-area="areaPostsSite">Post's do Site!</button>
 
     <div class="sidebar-category">Portal EBD</div>
-    <button class="sidebar-link" type="button" data-area="areaAluno">Área do Aluno</button>
+    <button class="sidebar-link" type="button" data-area="areaAluno">Área do Aluno EBD</button>
     <button class="sidebar-link" type="button" data-area="areaProfessor">Sala do Professor</button>
     <button class="sidebar-link" type="button" data-area="areaAdministrativo">Sala da Secretaria</button>
     <button class="sidebar-link" type="button" data-area="areaCadastroSalas">Gerenciar EBD</button>
@@ -3410,21 +3414,6 @@
           <span class="professor-canvas-titulo">Relatório Dominical</span>
           <span class="professor-canvas-sub">Relatório dominical das salas</span>
         </button>
-        <button type="button" class="professor-canvas-card" data-abrir="secNivelRelatorioCaixa" data-ocultar="secNivelRelatoriosGrid">
-          <span class="professor-canvas-icone"><img src="icones-secretaria/pasta-financeira.webp" alt=""></span>
-          <span class="professor-canvas-titulo">Relatório do Caixa</span>
-          <span class="professor-canvas-sub">Entradas e saídas do período</span>
-        </button>
-        <button type="button" class="professor-canvas-card" data-abrir="secNivelRelatorioRevistas" data-ocultar="secNivelRelatoriosGrid">
-          <span class="professor-canvas-icone"><img src="icones-secretaria/revistas-coloridas.webp" alt=""></span>
-          <span class="professor-canvas-titulo">Relatório de Revistas</span>
-          <span class="professor-canvas-sub">Pedidos e entregas de revista</span>
-        </button>
-        <button type="button" class="professor-canvas-card" data-abrir="secNivelOutrosRelatorios" data-ocultar="secNivelRelatoriosGrid">
-          <span class="professor-canvas-icone"><img src="icones-secretaria/pasta-amarela.webp" alt=""></span>
-          <span class="professor-canvas-titulo">Outros Relatórios</span>
-          <span class="professor-canvas-sub">Demais relatórios da Secretaria</span>
-        </button>
       </div>
     </div>
 
@@ -3452,62 +3441,6 @@
 
       <div id="secRelatorioDominicalTurmas" class="professor-canvas-grid">Carregando...</div>
       <div id="secRelatorioDominicalPaineis"></div>
-    </div>
-
-    <div id="secNivelRelatorioCaixa" class="secretaria-nivel-wrap" hidden>
-      <button type="button" class="secretaria-voltar-icone" data-tip="VOLTAR" aria-label="Voltar" title="Voltar" data-abrir="secNivelRelatoriosGrid" data-ocultar="secNivelRelatorioCaixa"><img src="icones-secretaria/voltar.png" alt=""></button>
-      <div class="secretaria-nivel-titulo">Relatório do Caixa</div>
-      <div class="rc-filtros">
-        <label>Ano <select id="rcAno"></select></label>
-        <label>Mês <select id="rcMes"></select></label>
-        <button type="button" class="btn btn-ghost" id="rcAtualizar">Atualizar</button>
-      </div>
-      <p id="rcStatus" class="admin-agenda-info">Carregando...</p>
-      <div id="rcKpis" class="rc-kpis"></div>
-      <div id="rcAlertas" class="rc-alertas"></div>
-      <div class="rc-graficos">
-        <div class="rc-canvas rc-largo">
-          <div class="rc-canvas-titulo">
-            <span>Entradas × Saídas por mês</span>
-            <span class="rc-legenda"><span style="--cor:#7CD992">Entradas</span><span style="--cor:var(--vermelho)">Saídas</span></span>
-          </div>
-          <div id="rcGraficoMeses"></div>
-        </div>
-        <div class="rc-canvas rc-largo">
-          <div class="rc-canvas-titulo"><span>Saldo acumulado no ano</span></div>
-          <div id="rcGraficoSaldo"></div>
-        </div>
-        <div class="rc-canvas">
-          <div class="rc-canvas-titulo"><span>Por forma de pagamento (período)</span></div>
-          <div id="rcFormas"></div>
-        </div>
-        <div class="rc-canvas">
-          <div class="rc-canvas-titulo"><span>Por origem (período)</span></div>
-          <div id="rcOrigens"></div>
-        </div>
-      </div>
-      <div class="rc-listas">
-        <div class="rc-canvas">
-          <div class="rc-canvas-titulo"><span>Maiores saídas do período</span></div>
-          <div id="rcMaioresSaidas"></div>
-        </div>
-        <div class="rc-canvas">
-          <div class="rc-canvas-titulo"><span>Últimos lançamentos do período</span></div>
-          <div id="rcUltimos"></div>
-        </div>
-      </div>
-    </div>
-
-    <div id="secNivelRelatorioRevistas" class="secretaria-nivel-wrap" hidden>
-      <button type="button" class="secretaria-voltar-icone" data-tip="VOLTAR" aria-label="Voltar" title="Voltar" data-abrir="secNivelRelatoriosGrid" data-ocultar="secNivelRelatorioRevistas"><img src="icones-secretaria/voltar.png" alt=""></button>
-      <div class="secretaria-nivel-titulo">Relatório de Revistas</div>
-      <p class="admin-agenda-info">Em breve.</p>
-    </div>
-
-    <div id="secNivelOutrosRelatorios" class="secretaria-nivel-wrap" hidden>
-      <button type="button" class="secretaria-voltar-icone" data-tip="VOLTAR" aria-label="Voltar" title="Voltar" data-abrir="secNivelRelatoriosGrid" data-ocultar="secNivelOutrosRelatorios"><img src="icones-secretaria/voltar.png" alt=""></button>
-      <div class="secretaria-nivel-titulo">Outros Relatórios</div>
-      <p class="admin-agenda-info">Em breve.</p>
     </div>
 
     <div id="secNivelAniversariantes" class="secretaria-nivel-wrap" hidden>
@@ -4308,7 +4241,8 @@
   import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
   import {
     getAuth, onAuthStateChanged, signOut,
-    createUserWithEmailAndPassword, sendPasswordResetEmail
+    createUserWithEmailAndPassword, sendPasswordResetEmail,
+    EmailAuthProvider, reauthenticateWithCredential, verifyBeforeUpdateEmail
   } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
   import {
     getFirestore, doc, getDoc, setDoc, serverTimestamp,
@@ -4317,6 +4251,7 @@
   import { firebaseConfig } from "./firebase-config.js";
   import { buscarTodosEventos, salvarEvento, excluirEvento, buscarDepartamentosAgenda, salvarDepartamentosAgenda, renomearCategoriaEventos } from "./agenda.js";
   import { abrirSolicitarRevistaComo, abrirMeuPedidoComo, temPedidoRevistaComo } from "./aluno.js";
+  import { sincronizarCelularLogin, sincronizarNomeUsuario, validarDadosUnicos, atualizarEmailNosIndices } from "./celular-login.js";
 
   // auth.js e agenda.js (importados acima via <script src>) ja podem ter
   // inicializado o Firebase primeiro - por isso reaproveita o app existente.
@@ -4979,6 +4914,18 @@
     const perfil = dadosUsuario.perfil || "convidado";
     const nome = dadosUsuario.nome || (user.email ? user.email.split("@")[0] : "Usuário");
     usuarioAtualCache = Object.assign({ uid: user.uid, email: user.email }, dadosUsuario);
+    // E-mail trocado pelo link de confirmação: o cadastro e os índices de login (celular, usuário) passam a usar o novo e-mail
+    // Os índices (celular e nome de usuário) são conferidos a cada login: são idempotentes e cobrem cadastros antigos
+    if (user.email) {
+      const emailMudou = dadosUsuario.email !== user.email;
+      try {
+        if (emailMudou) await setDoc(doc(db, "usuarios", user.uid), { email: user.email }, { merge: true });
+        await atualizarEmailNosIndices({ uid: user.uid, email: user.email, celularHash: dadosUsuario.celularHash, usuario: dadosUsuario.usuario });
+        if (emailMudou) usuarioAtualCache.email = user.email;
+      } catch (err) {
+        console.error("Não foi possível atualizar o e-mail do cadastro:", err);
+      }
+    }
     // Convites de compromisso (sem travar o login se a leitura falhar)
     verificarConvitesAgenda(user.uid).catch((err) => console.error("Convites:", err));
 
@@ -5902,260 +5849,11 @@
       carregarEstoqueMateriais();
     }
 
-    // ===== Relatório do Caixa (dashboard de monitoramento) =====
-    // Lê o Livro Caixa e os pedidos de revista pendentes e desenha tudo com SVG/CSS.
-    // Os filtros de Mês e Ano só redesenham (sem nova leitura do banco).
-    const MESES_RC = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
+    // Nomes dos meses e data em dd/mm/aaaa, usados pelo Livro Caixa e por outras telas
     const MESES_RC_LONGO = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
-    let rcDados = null;
-    let rcLigado = false;
-
-    function valorRC(m) { return Number(m.valor) || 0; }
-    function partesRC(m) {
-      const p = String(m.data || "").split("-");
-      return { ano: Number(p[0]) || 0, mes: Number(p[1]) || 0 };
-    }
     function dataBrRC(iso) {
       const p = String(iso || "").split("-");
       return p.length === 3 ? p[2] + "/" + p[1] + "/" + p[0] : "";
-    }
-    function moedaRC(v) { return "R$ " + formatarMoedaCaixa(v); }
-    // 1234 -> "1,2 mil" (eixos e rótulos curtos)
-    function abreviarRC(v) {
-      const a = Math.abs(v);
-      const texto = a >= 1000 ? (a / 1000).toFixed(a >= 10000 ? 0 : 1).replace(".", ",") + " mil" : String(Math.round(a));
-      return (v < 0 ? "-" : "") + texto;
-    }
-    function somaRC(lista, tipo) {
-      return lista.filter((m) => (m.tipo === "saida" ? "saida" : "entrada") === tipo).reduce((t, m) => t + valorRC(m), 0);
-    }
-    function filtrarRC(movs, ano, mes) {
-      return movs.filter((m) => {
-        const p = partesRC(m);
-        return p.ano === ano && (!mes || p.mes === mes);
-      });
-    }
-    function ordenarRC(lista) {
-      return lista.slice().sort((a, b) => (b.data || "").localeCompare(a.data || "") || (b.criadoEmMs || 0) - (a.criadoEmMs || 0));
-    }
-
-    async function buscarDadosRelatorioCaixa() {
-      const [snapMovs, snapPedidos] = await Promise.all([
-        getDocs(collection(db, "caixaMovimentacoes")),
-        getDocs(collection(db, "pedidosRevistas"))
-      ]);
-      const movs = [];
-      snapMovs.forEach((d) => movs.push(Object.assign({ id: d.id }, d.data())));
-      const pendentes = snapPedidos.docs.map((d) => ({ id: d.id, ...d.data() })).filter((p) => pagamentoDoPedido(p) === "pendente");
-      const valores = await Promise.all(pendentes.map((p) => valorDoPedidoSec(p).catch(() => null)));
-      let pendentesValor = 0;
-      let pendentesSemPreco = 0;
-      valores.forEach((v) => { if (v === null) pendentesSemPreco++; else pendentesValor += v; });
-      return { movs, pendentesQtd: pendentes.length, pendentesValor, pendentesSemPreco };
-    }
-
-    // Entradas e saídas de cada mês do ano (barras agrupadas)
-    function graficoMesesRC(ano) {
-      const ent = Array(12).fill(0);
-      const sai = Array(12).fill(0);
-      rcDados.movs.forEach((m) => {
-        const p = partesRC(m);
-        if (p.ano !== ano || p.mes < 1) return;
-        if (m.tipo === "saida") sai[p.mes - 1] += valorRC(m);
-        else ent[p.mes - 1] += valorRC(m);
-      });
-      const max = Math.max(1, ...ent, ...sai);
-      const W = 640, H = 250, L = 52, R = 8, T = 10, B = 26;
-      const iw = W - L - R, ih = H - T - B, slot = iw / 12, bw = slot * 0.36;
-      let s = '<svg viewBox="0 0 ' + W + " " + H + '" class="rc-svg" role="img" aria-label="Entradas e saídas por mês em ' + ano + '">';
-      [0, 0.5, 1].forEach((f) => {
-        const y = (T + ih - ih * f).toFixed(1);
-        s += '<line class="rc-grade" x1="' + L + '" x2="' + (W - R) + '" y1="' + y + '" y2="' + y + '"/>' +
-             '<text class="rc-eixo" x="' + (L - 6) + '" y="' + y + '" dy="4" text-anchor="end">' + abreviarRC(max * f) + "</text>";
-      });
-      for (let i = 0; i < 12; i++) {
-        const x0 = L + i * slot + (slot - bw * 2 - 3) / 2;
-        [[ent[i], "rc-barra-entrada", "entradas", x0], [sai[i], "rc-barra-saida", "saídas", x0 + bw + 3]].forEach(([v, cls, nome, x]) => {
-          const h = ih * v / max;
-          s += '<rect class="' + cls + '" x="' + x.toFixed(1) + '" y="' + (T + ih - h).toFixed(1) + '" width="' + bw.toFixed(1) + '" height="' + h.toFixed(1) + '" rx="3">' +
-               "<title>" + MESES_RC[i] + ": " + nome + " " + moedaRC(v) + "</title></rect>";
-        });
-        s += '<text class="rc-eixo" x="' + (L + i * slot + slot / 2).toFixed(1) + '" y="' + (H - 8) + '" text-anchor="middle">' + MESES_RC[i] + "</text>";
-      }
-      return s + "</svg>";
-    }
-
-    // Saldo no fim de cada mês do ano (linha com área). Não desenha meses que ainda não chegaram.
-    function graficoSaldoRC(ano) {
-      const hoje = new Date();
-      const anoHoje = hoje.getFullYear();
-      const nMeses = ano > anoHoje ? 0 : (ano === anoHoje ? hoje.getMonth() + 1 : 12);
-      if (!nMeses) return '<p class="admin-agenda-info">Este ano ainda não começou.</p>';
-      let base = 0;
-      const delta = Array(12).fill(0);
-      rcDados.movs.forEach((m) => {
-        const p = partesRC(m);
-        const v = (m.tipo === "saida" ? -1 : 1) * valorRC(m);
-        if (p.ano < ano) base += v;
-        else if (p.ano === ano && p.mes >= 1) delta[p.mes - 1] += v;
-      });
-      let acumulado = base;
-      const pontos = [];
-      for (let i = 0; i < nMeses; i++) { acumulado += delta[i]; pontos.push(acumulado); }
-      const todos = [0, ...pontos];
-      const minV = Math.min(...todos), maxV = Math.max(...todos);
-      const faixa = (maxV - minV) || 1;
-      const W = 640, H = 250, L = 52, R = 8, T = 10, B = 26;
-      const iw = W - L - R, ih = H - T - B, slot = iw / 12;
-      const x = (i) => L + i * slot + slot / 2;
-      const y = (v) => T + ih - ((v - minV) / faixa) * ih;
-      let s = '<svg viewBox="0 0 ' + W + " " + H + '" class="rc-svg" role="img" aria-label="Saldo acumulado em ' + ano + '">';
-      [minV, (minV + maxV) / 2, maxV].forEach((v) => {
-        s += '<line class="rc-grade" x1="' + L + '" x2="' + (W - R) + '" y1="' + y(v).toFixed(1) + '" y2="' + y(v).toFixed(1) + '"/>' +
-             '<text class="rc-eixo" x="' + (L - 6) + '" y="' + y(v).toFixed(1) + '" dy="4" text-anchor="end">' + abreviarRC(v) + "</text>";
-      });
-      const linha = pontos.map((v, i) => (i ? "L" : "M") + x(i).toFixed(1) + " " + y(v).toFixed(1)).join(" ");
-      s += '<path class="rc-area-saldo" d="' + linha + " L" + x(nMeses - 1).toFixed(1) + " " + y(0).toFixed(1) + " L" + x(0).toFixed(1) + " " + y(0).toFixed(1) + ' Z"/>';
-      s += '<path class="rc-linha-saldo" d="' + linha + '"/>';
-      pontos.forEach((v, i) => {
-        s += '<circle class="rc-ponto-saldo" cx="' + x(i).toFixed(1) + '" cy="' + y(v).toFixed(1) + '" r="4"><title>Fim de ' + MESES_RC[i] + ": " + moedaRC(v) + "</title></circle>";
-      });
-      for (let i = 0; i < 12; i++) {
-        s += '<text class="rc-eixo" x="' + x(i).toFixed(1) + '" y="' + (H - 8) + '" text-anchor="middle">' + MESES_RC[i] + "</text>";
-      }
-      return s + "</svg>";
-    }
-
-    // Barras horizontais: uma linha por categoria, com entradas (verde) e saídas (vermelho)
-    function barrasRC(linhas, vazio) {
-      if (linhas.every((l) => !l.entrada && !l.saida)) return '<p class="admin-agenda-info">' + vazio + "</p>";
-      const max = Math.max(1, ...linhas.flatMap((l) => [l.entrada, l.saida]));
-      return linhas.map((l) =>
-        '<div class="rc-barra-linha">' +
-          '<span class="rc-barra-rotulo">' + escaparTextoCaixa(l.rotulo) + "</span>" +
-          '<div class="rc-barra-pares">' +
-            '<div class="rc-barra-trilho"><span class="rc-barra-fill" style="width:' + (l.entrada / max * 100).toFixed(1) + '%;--cor:#7CD992"></span></div>' +
-            '<div class="rc-barra-trilho"><span class="rc-barra-fill" style="width:' + (l.saida / max * 100).toFixed(1) + '%;--cor:var(--vermelho)"></span></div>' +
-          "</div>" +
-          '<div class="rc-barra-valores"><span class="rc-pos">+ ' + moedaRC(l.entrada) + '</span><span class="rc-neg">- ' + moedaRC(l.saida) + "</span></div>" +
-        "</div>"
-      ).join("");
-    }
-
-    function listaRC(lista, vazio) {
-      if (!lista.length) return '<p class="admin-agenda-info">' + vazio + "</p>";
-      return lista.map((m) => {
-        const ehSaida = m.tipo === "saida";
-        const detalhe = [dataBrRC(m.data), ROTULO_MEIO_CAIXA[m.meio] || "", m.origem === "pagamentoRevista" ? "revista" : ""].filter(Boolean).join(" · ");
-        return '<div class="rc-linha"><div class="rc-linha-info"><span>' + escaparTextoCaixa(m.descricao || "(sem descrição)") +
-          "</span><small>" + escaparTextoCaixa(detalhe) + '</small></div><span class="' + (ehSaida ? "rc-neg" : "rc-pos") + '">' +
-          (ehSaida ? "- " : "+ ") + moedaRC(valorRC(m)) + "</span></div>";
-      }).join("");
-    }
-
-    function kpiRC(rotulo, valor, classe, sub) {
-      return '<div class="rc-kpi"><span class="rc-kpi-rotulo">' + rotulo + '</span><strong class="rc-kpi-valor ' + classe + '">' + valor +
-        '</strong><span class="rc-kpi-sub">' + sub + "</span></div>";
-    }
-
-    function desenharRelatorioCaixa() {
-      if (!rcDados) return;
-      const ano = Number(document.getElementById("rcAno").value);
-      const mes = Number(document.getElementById("rcMes").value);
-      const movs = rcDados.movs;
-      const periodo = filtrarRC(movs, ano, mes);
-      const entradas = somaRC(periodo, "entrada");
-      const saidas = somaRC(periodo, "saida");
-      const resultado = entradas - saidas;
-      const saldoAtual = somaRC(movs, "entrada") - somaRC(movs, "saida");
-      const rotuloPeriodo = mes ? MESES_RC_LONGO[mes - 1] + " de " + ano : "Ano " + ano;
-      const qtdEntradas = periodo.filter((m) => m.tipo !== "saida").length;
-      const qtdSaidas = periodo.length - qtdEntradas;
-
-      document.getElementById("rcKpis").innerHTML =
-        kpiRC("Saldo atual", moedaRC(saldoAtual), saldoAtual < 0 ? "negativo" : "positivo", "Entradas menos saídas, desde o início") +
-        kpiRC("Entradas", moedaRC(entradas), "positivo", qtdEntradas + " lançamento(s) · " + rotuloPeriodo) +
-        kpiRC("Saídas", moedaRC(saidas), "negativo", qtdSaidas + " lançamento(s) · " + rotuloPeriodo) +
-        kpiRC("Resultado do período", moedaRC(resultado), resultado < 0 ? "negativo" : "positivo", rotuloPeriodo) +
-        kpiRC("A receber (revistas)", moedaRC(rcDados.pendentesValor), "", rcDados.pendentesQtd + " pedido(s) pendente(s)" +
-          (rcDados.pendentesSemPreco ? " · " + rcDados.pendentesSemPreco + " sem preço" : ""));
-
-      // Alertas de monitoramento
-      const alertas = [];
-      if (saldoAtual < 0) alertas.push(["As saídas já superam as entradas no total. Confira os lançamentos."]);
-      let mesesNegativos = 0;
-      for (let i = 1; i <= 12; i++) {
-        const doMes = movs.filter((m) => partesRC(m).ano === ano && partesRC(m).mes === i);
-        if (doMes.length && somaRC(doMes, "entrada") < somaRC(doMes, "saida")) mesesNegativos++;
-      }
-      if (mesesNegativos) alertas.push([mesesNegativos + " mês(es) de " + ano + " terminaram com saídas maiores que entradas."]);
-      if (rcDados.pendentesQtd) {
-        alertas.push([rcDados.pendentesQtd + " revista(s) ainda não paga(s): " + moedaRC(rcDados.pendentesValor) +
-          " a receber. Ao marcar como Feito na Secretaria, o valor entra no caixa."]);
-      }
-      if (movs.length) {
-        const ultimo = movs.map((m) => m.data || "").sort().pop();
-        const dias = Math.floor((Date.now() - new Date(ultimo + "T00:00:00").getTime()) / 86400000);
-        if (dias > 30) alertas.push(["Sem lançamentos há " + dias + " dias (último em " + dataBrRC(ultimo) + ")."]);
-      }
-      if (!alertas.length) alertas.push(["Nenhum alerta. O caixa está em dia.", true]);
-      document.getElementById("rcAlertas").innerHTML = alertas.map((a) =>
-        '<div class="rc-alerta' + (a[1] ? " ok" : "") + '">' + escaparTextoCaixa(a[0]) + "</div>"
-      ).join("");
-
-      document.getElementById("rcGraficoMeses").innerHTML = graficoMesesRC(ano);
-      document.getElementById("rcGraficoSaldo").innerHTML = graficoSaldoRC(ano);
-
-      const formas = ["dinheiro", "pix", "cartao"].map((k) => {
-        const lista = periodo.filter((m) => m.meio === k);
-        return { rotulo: ROTULO_MEIO_CAIXA[k], entrada: somaRC(lista, "entrada"), saida: somaRC(lista, "saida") };
-      });
-      document.getElementById("rcFormas").innerHTML = barrasRC(formas, "Nenhum lançamento neste período.");
-
-      const daRevista = (m) => m.origem === "pagamentoRevista";
-      const origens = [
-        { rotulo: "Revistas (pagamentos e doações)", lista: periodo.filter(daRevista) },
-        { rotulo: "Lançamentos manuais", lista: periodo.filter((m) => !daRevista(m)) }
-      ].map((o) => ({ rotulo: o.rotulo, entrada: somaRC(o.lista, "entrada"), saida: somaRC(o.lista, "saida") }));
-      document.getElementById("rcOrigens").innerHTML = barrasRC(origens, "Nenhum lançamento neste período.");
-
-      const maioresSaidas = periodo.filter((m) => m.tipo === "saida").sort((a, b) => valorRC(b) - valorRC(a)).slice(0, 5);
-      document.getElementById("rcMaioresSaidas").innerHTML = listaRC(maioresSaidas, "Nenhuma saída neste período.");
-      document.getElementById("rcUltimos").innerHTML = listaRC(ordenarRC(periodo).slice(0, 6), "Nenhum lançamento neste período.");
-    }
-
-    function ligarRelatorioCaixa() {
-      if (rcLigado) return;
-      rcLigado = true;
-      const selMes = document.getElementById("rcMes");
-      selMes.innerHTML = '<option value="0">Todos os meses</option>' +
-        MESES_RC_LONGO.map((nome, i) => '<option value="' + (i + 1) + '">' + nome + "</option>").join("");
-      selMes.value = "0";
-      document.getElementById("rcAno").addEventListener("change", desenharRelatorioCaixa);
-      selMes.addEventListener("change", desenharRelatorioCaixa);
-      document.getElementById("rcAtualizar").addEventListener("click", carregarRelatorioCaixa);
-    }
-
-    async function carregarRelatorioCaixa() {
-      ligarRelatorioCaixa();
-      const status = document.getElementById("rcStatus");
-      const selAno = document.getElementById("rcAno");
-      status.textContent = "Carregando...";
-      status.className = "admin-agenda-info";
-      try {
-        rcDados = await buscarDadosRelatorioCaixa();
-        const anoHoje = new Date().getFullYear();
-        const anos = [...new Set([anoHoje, ...rcDados.movs.map((m) => partesRC(m).ano).filter((a) => a > 0)])].sort((a, b) => b - a);
-        const anoAtual = Number(selAno.value);
-        selAno.innerHTML = anos.map((a) => '<option value="' + a + '">' + a + "</option>").join("");
-        selAno.value = String(anos.includes(anoAtual) ? anoAtual : anoHoje);
-        status.textContent = rcDados.movs.length ? "" : "Nenhuma movimentação lançada ainda.";
-        desenharRelatorioCaixa();
-      } catch (err) {
-        status.textContent = "Não foi possível carregar o relatório.";
-        status.className = "admin-agenda-status erro";
-        console.error(err);
-      }
     }
 
     // ===== Agendas da Secretaria (calendário de compromissos) =====
@@ -7928,11 +7626,6 @@
       }
     }
 
-    const btnAbrirRelatorioCaixa = raiz.querySelector('[data-abrir="secNivelRelatorioCaixa"]');
-    if (btnAbrirRelatorioCaixa) {
-      btnAbrirRelatorioCaixa.addEventListener("click", () => carregarRelatorioCaixa());
-    }
-
     const btnAbrirRelatorioDominical = raiz.querySelector('[data-abrir="secNivelRelatorioDominical"]');
     if (btnAbrirRelatorioDominical) {
       btnAbrirRelatorioDominical.addEventListener("click", () => {
@@ -8200,6 +7893,10 @@
         '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%239aa0ad" stroke-width="1.6"><circle cx="12" cy="8" r="3.4"/><path d="M5 20c0-3.9 3.1-7 7-7s7 3.1 7 7"/></svg>'
       );
       let usuarioEditandoUid = null;
+      // E-mail com que a conta faz login (o do cadastro, não o editado) e o índice do celular atual
+      let usuarioEditandoEmail = "";
+      let usuarioEditandoHash = "";
+      let usuarioEditandoUsuario = "";
       let fotoBase64Editar = "";
       let fotoRemovidaEditar = false;
 
@@ -8346,6 +8043,25 @@
         else if (fotoRemovidaEditar) dadosUsuario.foto = "";
         editarBtnSalvar.disabled = true;
         try {
+          const erroUnico = await validarDadosUnicos({
+            uid: usuarioEditandoUid,
+            usuario: dadosUsuario.usuario,
+            telefone: dadosUsuario.telefone,
+            email: dadosUsuario.email
+          });
+          if (erroUnico) {
+            editarMensagem.textContent = erroUnico;
+            editarMensagem.className = "login-note erro";
+            editarBtnSalvar.disabled = false;
+            return;
+          }
+          await sincronizarNomeUsuario({ uid: usuarioEditandoUid, usuario: dadosUsuario.usuario, usuarioAnterior: usuarioEditandoUsuario, email: usuarioEditandoEmail });
+          dadosUsuario.celularHash = await sincronizarCelularLogin({
+            uid: usuarioEditandoUid,
+            email: usuarioEditandoEmail,
+            telefone: dadosUsuario.telefone,
+            hashAnterior: usuarioEditandoHash
+          });
           await setDoc(doc(db, "usuarios", usuarioEditandoUid), dadosUsuario, { merge: true });
           editarMensagem.textContent = "Salvo com sucesso.";
           editarMensagem.className = "login-note ok";
@@ -8361,6 +8077,9 @@
 
       window.__abrirGerenciarPerfilEdit = function (usuario) {
         usuarioEditandoUid = usuario.uid;
+        usuarioEditandoEmail = usuario.email || "";
+        usuarioEditandoHash = usuario.celularHash || "";
+        usuarioEditandoUsuario = usuario.usuario || "";
         fotoBase64Editar = "";
         fotoRemovidaEditar = false;
         editarMensagem.textContent = "";
@@ -8379,7 +8098,8 @@
         editarNome.value = usuario.nome || "";
         editarSobrenome.value = usuario.sobrenome || "";
         editarEmail.value = usuario.email || "";
-        editarEmail.disabled = !(usuarioAtualCache && usuarioAtualCache.perfil === "admin");
+        // E-mail de login não é trocado aqui: a troca de outra conta exige o servidor (Admin SDK). Só a própria pessoa troca, em Meu Perfil.
+        editarEmail.disabled = true;
         editarTelefone.value = formatarTelefoneDDD(usuario.telefone || "");
         editarDataNascimento.value = dataIsoParaBrEditar(usuario.dataNascimento);
         editarPerfilSelect.value = usuario.perfil || "convidado";
@@ -12392,6 +12112,12 @@
     const campoNome = document.getElementById("perfilNome");
     const campoSobrenome = document.getElementById("perfilSobrenome");
     const campoEmail = document.getElementById("perfilEmail");
+    // Mostra a "senha atual" só quando o e-mail é diferente do da conta
+    campoEmail.addEventListener("input", () => {
+      const emailConta = ((auth.currentUser && auth.currentUser.email) || "").toLowerCase();
+      const mudou = modoAtual === "editar" && campoEmail.value.trim().toLowerCase() !== emailConta;
+      document.getElementById("perfilSenhaAtualGrupo").hidden = !mudou;
+    });
     const campoTelefone = document.getElementById("perfilTelefone");
     const campoDataNascimento = document.getElementById("perfilDataNascimento");
     const fotoInput = document.getElementById("perfilFotoInput");
@@ -12460,7 +12186,10 @@
       });
       googleNota.hidden = !(modoAtual === "completar-google" && ctx === "step2");
       if (btnVoltar2) btnVoltar2.hidden = ctx !== "step2" || modoAtual === "completar-google";
-      campoEmail.readOnly = modoAtual !== "criar";
+      // E-mail é editável no cadastro e em "Meu Perfil" (a troca é confirmada com a senha atual)
+      campoEmail.readOnly = modoAtual !== "criar" && modoAtual !== "editar";
+      document.getElementById("perfilSenhaAtual").value = "";
+      document.getElementById("perfilSenhaAtualGrupo").hidden = true;
       stepIndicador.hidden = modoAtual === "editar";
       if (!stepIndicador.hidden) stepIndicador.textContent = "Passo " + wizardPasso + " de 3";
       // No Google, o bloco Nome/Sobrenome só aparece se faltar algum dos dois
@@ -12706,11 +12435,56 @@
 
       btnSalvar.disabled = true;
       try {
+        const erroUnico = await validarDadosUnicos({ uid: auth.currentUser.uid, usuario: dadosPerfil.usuario, telefone: dadosPerfil.telefone });
+        if (erroUnico) {
+          mensagemEl.textContent = erroUnico;
+          return;
+        }
+        // Troca de e-mail: confirma com a senha atual e envia link para o NOVO e-mail (o Firebase exige a confirmação).
+        // A troca vale depois do clique no link; no próximo login os índices são atualizados.
+        let emailFinal = auth.currentUser.email || "";
+        let emailPendente = "";
+        const emailNovo = campoEmail.value.trim().toLowerCase();
+        if (modoAtual === "editar" && emailNovo && emailNovo !== emailFinal.toLowerCase()) {
+          const senhaAtual = document.getElementById("perfilSenhaAtual").value;
+          if (!senhaAtual) {
+            mensagemEl.textContent = "Digite sua senha atual para trocar o e-mail.";
+            document.getElementById("perfilSenhaAtualGrupo").hidden = false;
+            return;
+          }
+          try {
+            await reauthenticateWithCredential(auth.currentUser, EmailAuthProvider.credential(emailFinal, senhaAtual));
+            await verifyBeforeUpdateEmail(auth.currentUser, emailNovo);
+          } catch (errEmail) {
+            const mensagens = {
+              "auth/wrong-password": "Senha atual incorreta.",
+              "auth/invalid-credential": "Senha atual incorreta.",
+              "auth/email-already-in-use": "Esse e-mail já está em uso em outra conta.",
+              "auth/invalid-email": "Digite um e-mail válido.",
+              "auth/requires-recent-login": "Saia da conta, entre de novo e tente trocar o e-mail.",
+              "auth/operation-not-allowed": "Esta conta entra com o Google. Troque o e-mail na conta Google."
+            };
+            mensagemEl.textContent = mensagens[errEmail.code] || "Não foi possível trocar o e-mail.";
+            console.error(errEmail);
+            return;
+          }
+          emailPendente = emailNovo;
+        }
+        await sincronizarNomeUsuario({ uid: auth.currentUser.uid, usuario: dadosPerfil.usuario, usuarioAnterior: usuarioAtualCache && usuarioAtualCache.usuario, email: emailFinal });
+        dadosPerfil.celularHash = await sincronizarCelularLogin({
+          uid: auth.currentUser.uid,
+          email: emailFinal,
+          telefone: dadosPerfil.telefone,
+          hashAnterior: usuarioAtualCache && usuarioAtualCache.celularHash
+        });
         await setDoc(doc(db, "usuarios", auth.currentUser.uid), dadosPerfil, { merge: true });
         const perfilFinal = (usuarioAtualCache && usuarioAtualCache.perfil) || "convidado";
         usuarioAtualCache = Object.assign({}, usuarioAtualCache, dadosPerfil, { perfil: perfilFinal });
         atualizarBotaoLogin("Olá " + (dadosPerfil.nome || (usuarioAtualCache.email || "").split("@")[0]));
         fecharModal();
+        if (emailPendente) {
+          alert("Enviamos um link de confirmação para " + emailPendente + ". A troca do e-mail vale depois que você clicar nele. Até lá, continue entrando com o e-mail atual.");
+        }
       } catch (err) {
         mensagemEl.textContent = "Não foi possível salvar. " + (err.message || "");
         console.error(err);
@@ -12793,6 +12567,18 @@
       const dadosPerfil = coletarDadosPessoais();
       btnAvancar2.disabled = true;
       try {
+        const erroUnico = await validarDadosUnicos({ uid: auth.currentUser.uid, usuario: dadosPerfil.usuario, telefone: dadosPerfil.telefone });
+        if (erroUnico) {
+          mensagemEl.textContent = erroUnico;
+          return;
+        }
+        await sincronizarNomeUsuario({ uid: auth.currentUser.uid, usuario: dadosPerfil.usuario, usuarioAnterior: usuarioAtualCache && usuarioAtualCache.usuario, email: auth.currentUser.email });
+        dadosPerfil.celularHash = await sincronizarCelularLogin({
+          uid: auth.currentUser.uid,
+          email: auth.currentUser.email,
+          telefone: dadosPerfil.telefone,
+          hashAnterior: usuarioAtualCache && usuarioAtualCache.celularHash
+        });
         await setDoc(doc(db, "usuarios", auth.currentUser.uid), dadosPerfil, { merge: true });
         wizardPasso = 3;
         aplicarVisibilidade();

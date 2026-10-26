@@ -77,7 +77,7 @@
     background: var(--bg); border: 1px solid var(--border-strong); border-radius: 8px; color: var(--ink);
     padding: 7px 10px; font-size: 13px; font-family: inherit;
   }
-  .admin-agenda-filtro input[type="date"] { min-width: 130px; }
+  .admin-agenda-filtro input[data-data-br] { min-width: 130px; }
   .admin-agenda-filtro input[type="text"] { min-width: 170px; }
   .admin-agenda-lista { display: flex; flex-direction: column; gap: 8px; max-height: 480px; overflow-y: auto; }
   .admin-agenda-item {
@@ -108,7 +108,7 @@
   .admin-form-linha[hidden], .admin-outras-datas[hidden] { display: none; }
   .admin-outras-datas { display: flex; flex-direction: column; gap: 8px; }
   .outra-data-linha { display: flex; align-items: center; gap: 8px; }
-  .outra-data-linha input[type="date"] { flex: 1; max-width: 220px; }
+  .outra-data-linha input[data-data-br] { flex: 1; max-width: 220px; }
   .btn-admin-mini {
     background: var(--surface-2); color: var(--ink); border: 1px solid var(--border-strong);
     border-radius: 8px; width: 34px; height: 34px; flex-shrink: 0; font-size: 16px; font-weight: 700;
@@ -124,6 +124,7 @@
 <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
 <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
 <script src="ui-kit.js"></script>
+<script src="calendario-br.js" defer></script>
 </head>
 <body>
 
@@ -140,7 +141,7 @@
         <button class="sidebar-link" type="button" data-area="areaAdmin">Administração</button>
         <button class="sidebar-link" type="button" data-area="areaAgenda">Agenda de Cultos e Eventos</button>
         <button class="sidebar-link" type="button" data-area="areaProfessor">Área do Professor</button>
-        <button class="sidebar-link" type="button" data-area="areaAluno">Área do Aluno</button>
+        <button class="sidebar-link" type="button" data-area="areaAluno">Área do Aluno EBD</button>
         <button class="sidebar-link" type="button" data-area="areaAdministrativo">Secretaria / Administrativo</button>
       </nav>
 
@@ -187,7 +188,7 @@
             </div>
             <div class="admin-form-linha">
               <label>Data início
-                <input type="date" id="eventoDataInicio" required>
+                <input type="text" id="eventoDataInicio" data-data-br placeholder="dd/mm/aaaa" inputmode="numeric" maxlength="10" autocomplete="off" required>
               </label>
               <label>Horário (opcional)
                 <input type="text" id="eventoHora" placeholder="Ex: 18h">
@@ -223,8 +224,8 @@
               <select id="filtroDepartamento">
                 <option value="todos">Todos os departamentos</option>
               </select>
-              <input type="date" id="filtroDataInicio" title="De">
-              <input type="date" id="filtroDataFim" title="Até">
+              <input type="text" id="filtroDataInicio" data-data-br placeholder="dd/mm/aaaa" inputmode="numeric" maxlength="10" autocomplete="off" title="De">
+              <input type="text" id="filtroDataFim" data-data-br placeholder="dd/mm/aaaa" inputmode="numeric" maxlength="10" autocomplete="off" title="Até">
               <input type="text" id="filtroTitulo" placeholder="Buscar por título...">
             </div>
             <div id="adminAgendaLista" class="admin-agenda-lista">Carregando...</div>
@@ -352,9 +353,14 @@
           linha.className = "outra-data-linha";
 
           const input = document.createElement("input");
-          input.type = "date";
-          input.value = valor;
-          input.addEventListener("change", () => { outrasDatasState[indice] = input.value; });
+          input.type = "text";
+          input.setAttribute("data-data-br", "");
+          input.placeholder = "dd/mm/aaaa";
+          input.inputMode = "numeric";
+          input.maxLength = 10;
+          input.autocomplete = "off";
+          input.value = isoParaDataBr(valor);
+          input.addEventListener("change", () => { outrasDatasState[indice] = dataBrParaIso(input.value); });
 
           const ultima = indice === outrasDatasState.length - 1;
           const botao = document.createElement("button");
@@ -439,7 +445,7 @@
           campoCategoriaNova.value = "";
         }
 
-        campoDataInicio.value = ev.dataInicio;
+        campoDataInicio.value = isoParaDataBr(ev.dataInicio);
         campoHora.value = ev.hora || "";
         campoTitulo.value = ev.titulo;
         campoObservacao.value = ev.observacao || "";
@@ -478,8 +484,8 @@
       function aplicarFiltrosERenderizar() {
         const escopo = filtroEscopo.value;
         const departamento = filtroDepartamento.value;
-        const dataDe = filtroDataInicio.value;
-        const dataAte = filtroDataFim.value;
+        const dataDe = dataBrParaIso(filtroDataInicio.value);
+        const dataAte = dataBrParaIso(filtroDataFim.value);
         const buscaTitulo = filtroTitulo.value.trim().toLowerCase();
 
         const filtrados = eventosCache.filter((ev) => {
@@ -580,15 +586,20 @@
           alert("Selecione ou digite um departamento.");
           return;
         }
-        const outrasDatas = outrasDatasState.filter((d) => d && d !== campoDataInicio.value);
-        const todasDatas = [campoDataInicio.value, ...outrasDatas].sort();
+        const dataInicioIso = dataBrParaIso(campoDataInicio.value);
+        if (!dataInicioIso) {
+          alert("Informe a data de início no formato dd/mm/aaaa (data válida).");
+          return;
+        }
+        const outrasDatas = outrasDatasState.filter((d) => d && d !== dataInicioIso);
+        const todasDatas = [dataInicioIso, ...outrasDatas].sort();
         const dataFimCalculada = todasDatas[todasDatas.length - 1];
         try {
           await salvarEvento({
             id: campoId.value || null,
             escopo: campoEscopo.value,
             categoria: categoria,
-            dataInicio: campoDataInicio.value,
+            dataInicio: dataInicioIso,
             dataFim: dataFimCalculada,
             outrasDatas: outrasDatas,
             hora: campoHora.value.trim(),

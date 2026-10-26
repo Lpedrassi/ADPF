@@ -66,10 +66,12 @@ if (form) {
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
-    const email = campoEmail.value.trim();
+    const identificador = campoEmail.value.trim();
     const senha = campoSenha.value;
 
     try {
+      // Login é e-mail e senha
+      const email = identificador;
       const cred = await signInWithEmailAndPassword(auth, email, senha);
       fecharModalLogin();
     } catch (err) {
