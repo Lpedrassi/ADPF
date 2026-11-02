@@ -10,6 +10,8 @@ import {
   doc,
   getDoc,
   setDoc,
+  updateDoc,
+  deleteField,
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
@@ -449,7 +451,7 @@ async function carregarRecursos() {
   const el = document.getElementById("alunoRecursos");
   let temPedido = false;
   try {
-    temPedido = (await buscarPedidosEmAbertoAluno(uidAluno)).length > 0;
+    temPedido = (await buscarPedidosMeuPedido(uidAluno)).length > 0;
   } catch (err) {
     console.error("Erro ao verificar pedidos:", err);
   }
@@ -507,11 +509,14 @@ function fecharModalAluno(id) {
 }
 
 function ligarPedidoRevista() {
-  ["alunoPedidoModal", "alunoDividirModal", "alunoMaisRevistasModal", "alunoMeuPedidoModal"].forEach((id) => {
+  ["alunoPedidoModal", "alunoDividirModal", "alunoMaisRevistasModal", "alunoMeuPedidoModal", "alunoCancelarModal"].forEach((id) => {
     document.body.appendChild(document.getElementById(id));
   });
   document.getElementById("alunoPedidoCancelar").addEventListener("click", fecharPedidoRevista);
   document.getElementById("alunoMeuPedidoFechar").addEventListener("click", () => fecharModalAluno("alunoMeuPedidoModal"));
+  document.getElementById("alunoMeuPedidoCancelar").addEventListener("click", aoClicarCancelar);
+  document.getElementById("alunoCancelarNao").addEventListener("click", () => fecharModalAluno("alunoCancelarModal"));
+  document.getElementById("alunoCancelarSim").addEventListener("click", pedirCancelamento);
   document.getElementById("alunoPedidoForm").addEventListener("submit", (e) => {
     e.preventDefault();
     enviarPedidoRevista();
@@ -834,6 +839,17 @@ function confirmarMaisRevistas() {
   });
 }
 
+// Meu pedido: pedidos ainda não entregues, de qualquer trimestre, mais os entregues do trimestre atual
+async function buscarPedidosMeuPedido(uid) {
+  if (!uid) return [];
+  const atual = proximoTrimestre();
+  const snap = await getDocs(query(collection(db, "pedidosRevistas"), where("uid", "==", uid)));
+  return snap.docs
+    .map((d) => ({ id: d.id, ...d.data() }))
+    .filter((p) => p.status !== "entregue" || (p.ano === atual.ano && p.trimestre === atual.trimestre))
+    .sort((a, b) => (a.ano - b.ano) || (a.trimestre - b.trimestre));
+}
+
 // Pedidos ainda não entregues (a Secretaria dá baixa com status "entregue"), de qualquer trimestre
 async function buscarPedidosEmAbertoAluno(uid) {
   if (!uid) return [];
@@ -859,7 +875,9 @@ async function abrirMeuPedido(sol = solicitanteAluno()) {
   total.textContent = "";
   abrirModalAluno("alunoMeuPedidoModal");
   try {
-    const pedidos = await buscarPedidosEmAbertoAluno(sol.uid);
+    const pedidos = await buscarPedidosMeuPedido(sol.uid);
+    meuPedidoAtual = pedidos;
+    atualizarBotaoCancelar();
     lista.textContent = "";
     // Sem pedido pendente: o botão Meu pedido some (a baixa da Secretaria já aconteceu)
     if (!pedidos.length) {
@@ -894,7 +912,7 @@ async function abrirMeuPedido(sol = solicitanteAluno()) {
       // Cabeçalho do trimestre do pedido (cada pedido tem o seu preço)
       const trimestre = document.createElement("div");
       trimestre.className = "aluno-pedido-trim";
-      trimestre.textContent = p.trimestre + "º trimestre de " + p.ano;
+      trimestre.textContent = p.trimestre + "º trimestre de " + p.ano + (p.cancelamentoSolicitadoEm ? " · cancelamento solicitado" : "");
       lista.appendChild(trimestre);
 
       (p.itens || []).forEach((i) => {
@@ -924,6 +942,115 @@ async function abrirMeuPedido(sol = solicitanteAluno()) {
   } catch (err) {
     console.error("Erro ao carregar seu pedido:", err);
     lista.textContent = "Não foi possível carregar seu pedido agora.";
+  }
+}
+
+// Pedidos em aberto mostrados no Meu pedido (usados pelo botão Cancelar)
+let meuPedidoAtual = [];
+
+// Estado do pedido visto pelo aluno: "solicitado" (Solicitado Aluno ou Solicitado Secretaria), "pedido" ou "entregue".
+// Pedidos antigos ("pendente" e "solicitado") contam como solicitados.
+function statusSecretariaAluno(p) {
+  if (p.status === "entregue") return "entregue";
+  if (p.status === "pedido") return "pedido";
+  return "solicitado";
+}
+
+// Rótulo mostrado ao aluno (mesmos nomes da Secretaria)
+function rotuloStatusAluno(p) {
+  if (statusSecretariaAluno(p) === "entregue") return "Entregue";
+  if (statusSecretariaAluno(p) === "pedido") return "Pedido Feito";
+  if (p.cancelamentoSolicitadoEm) return "Cancelamento Solicitado";
+  return p.status === "solicitado_secretaria" ? "Solicitado Secretaria" : "Solicitado Aluno";
+}
+
+// Cancelar só vale enquanto a Secretaria ainda estiver em "Solicitado pelo Aluno".
+// Quando ela muda para "Pedido", o aluno precisa falar com a secretaria.
+function atualizarBotaoCancelar() {
+  const botao = document.getElementById("alunoMeuPedidoCancelar");
+  const status = document.getElementById("alunoMeuPedidoStatus");
+  const statusAtual = document.getElementById("alunoMeuPedidoStatusAtual");
+  const abertos = meuPedidoAtual.filter((p) => statusSecretariaAluno(p) !== "entregue");
+  const solicitaveis = abertos.filter((p) => statusSecretariaAluno(p) === "solicitado");
+
+  const rotulos = [...new Set(meuPedidoAtual.map(rotuloStatusAluno))];
+  statusAtual.textContent = rotulos.length ? rotulos.join(" · ") : "Sem pedido em aberto";
+
+  const jaPediu = solicitaveis.length > 0 && solicitaveis.every((p) => p.cancelamentoSolicitadoEm);
+  const podeCancelar = solicitaveis.some((p) => !p.cancelamentoSolicitadoEm);
+  if (jaPediu) {
+    botao.textContent = "Desfazer cancelamento";
+    botao.disabled = false;
+    status.textContent = "Você pediu o cancelamento. Se mudou de ideia, desfaça o pedido.";
+  } else if (podeCancelar) {
+    botao.textContent = "Cancelar";
+    botao.disabled = false;
+    status.textContent = "A Secretaria recebe o pedido de cancelamento e decide.";
+  } else {
+    botao.textContent = "Cancelar";
+    botao.disabled = true;
+    status.textContent = abertos.length ? "O pedido já foi enviado para compra. Para cancelar, fale com a secretaria." : "";
+  }
+}
+
+// Botão Cancelar: pede cancelamento (com confirmação) ou, se já pediu, desfaz o pedido
+function aoClicarCancelar() {
+  const botao = document.getElementById("alunoMeuPedidoCancelar");
+  if (botao.textContent === "Desfazer cancelamento") {
+    desfazerCancelamento();
+    return;
+  }
+  document.getElementById("alunoCancelarStatus").textContent = "";
+  abrirModalAluno("alunoCancelarModal");
+}
+
+// Envia o pedido de cancelamento à Secretaria (o aluno não cancela direto)
+async function pedirCancelamento() {
+  const status = document.getElementById("alunoCancelarStatus");
+  const sim = document.getElementById("alunoCancelarSim");
+  const pendentes = meuPedidoAtual.filter((p) => statusSecretariaAluno(p) === "solicitado" && !p.cancelamentoSolicitadoEm);
+  if (!pendentes.length) {
+    fecharModalAluno("alunoCancelarModal");
+    atualizarBotaoCancelar();
+    return;
+  }
+  sim.disabled = true;
+  sim.classList.add("btn-processando");
+  try {
+    const agora = new Date();
+    for (const p of pendentes) {
+      await updateDoc(doc(db, "pedidosRevistas", p.id), { cancelamentoSolicitadoEm: serverTimestamp() });
+      p.cancelamentoSolicitadoEm = agora;
+    }
+    fecharModalAluno("alunoCancelarModal");
+    atualizarBotaoCancelar();
+    window.notificar("Pedido de cancelamento enviado à Secretaria.", "success");
+  } catch (err) {
+    console.error("Erro ao pedir cancelamento:", err);
+    status.textContent = "Não foi possível enviar agora. Tente de novo.";
+    window.notificar("Não foi possível pedir o cancelamento. Tente de novo.", "error");
+  } finally {
+    sim.disabled = false;
+    sim.classList.remove("btn-processando");
+  }
+}
+
+// Aluno se arrependeu: tira o pedido de cancelamento (só enquanto a Secretaria está em "Solicitado pelo Aluno")
+async function desfazerCancelamento() {
+  const botao = document.getElementById("alunoMeuPedidoCancelar");
+  const alvo = meuPedidoAtual.filter((p) => statusSecretariaAluno(p) === "solicitado" && p.cancelamentoSolicitadoEm);
+  botao.disabled = true;
+  try {
+    for (const p of alvo) {
+      await updateDoc(doc(db, "pedidosRevistas", p.id), { cancelamentoSolicitadoEm: deleteField() });
+      delete p.cancelamentoSolicitadoEm;
+    }
+    atualizarBotaoCancelar();
+    window.notificar("Cancelamento desfeito. Seu pedido continua.", "success");
+  } catch (err) {
+    console.error("Erro ao desfazer cancelamento:", err);
+    botao.disabled = false;
+    window.notificar("Não foi possível desfazer agora. Tente de novo.", "error");
   }
 }
 
@@ -996,7 +1123,7 @@ async function enviarPedidoRevista() {
       ano: periodo.ano,
       trimestre: periodo.trimestre,
       itens: itens,
-      status: "pendente",
+      status: "solicitado_aluno",
       criadoEm: serverTimestamp()
     });
     limparListaPedido();

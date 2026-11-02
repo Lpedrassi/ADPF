@@ -251,6 +251,41 @@
     color: var(--muted); cursor: pointer; transition: color 0.2s ease, border-color 0.2s ease;
   }
   .login-close:hover { color: var(--ink); border-color: var(--border-strong); }
+  /* Fechar do Meu pedido: quadrado com × no canto superior direito */
+  .aluno-pedido-fechar {
+    position: absolute; top: 16px; right: 16px;
+    width: 34px; height: 34px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(255,255,255,0.06); border: 1px solid var(--border);
+    color: var(--muted); cursor: pointer; transition: color 0.2s ease, border-color 0.2s ease;
+  }
+  .aluno-pedido-fechar:hover { color: var(--ink); border-color: var(--border-strong); }
+  /* Título do Meu pedido: centralizado, com o degradê prata da Área do Aluno */
+  .aluno-pedido-titulo {
+    margin: 0; text-align: center;
+    background: linear-gradient(180deg, #FFFFFF 0%, #E4E4EA 55%, #9B9BA8 100%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .aluno-pedido-status-linha { margin: 12px 0 0; text-align: center; font-size: 14px; color: var(--muted); }
+  .aluno-pedido-status-linha strong { color: var(--ink); }
+  /* Secretaria: aviso de cancelamento pedido pelo aluno, na linha do pedido */
+  .sec-pedido-cancelamento { font-size: 12px; font-weight: 700; color: #FF9F0A; }
+  /* Status do pedido na Secretaria: a cor da borda e do texto do combobox segue o status */
+  .sec-pedido-select.sec-status-amarelo { border-color: #FFD60A; color: #FFD60A; }
+  .sec-pedido-select.sec-status-verde { border-color: #30D158; color: #30D158; }
+  .sec-pedido-select.sec-status-vermelho { border-color: #FF453A; color: #FF453A; }
+  /* Campos de senha: mostrar e ocultar (olho) */
+  .campo-senha { position: relative; display: block; width: 100%; }
+  .campo-senha input { width: 100%; padding-right: 46px; }
+  .campo-senha-olho {
+    position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+    width: 34px; height: 34px; border-radius: 8px; border: 0; background: transparent;
+    color: var(--muted); cursor: pointer; display: flex; align-items: center; justify-content: center;
+  }
+  .campo-senha-olho:hover, .campo-senha-olho.ativo { color: var(--ink); }
+  /* Conferência de senha: vermelho = diferente, verde = igual */
+  input.senha-erro { border-color: #FF453A !important; }
+  input.senha-ok { border-color: #30D158 !important; }
   .login-card h2 { font-size: 24px; font-weight: 700; margin-top: 14px; }
   @media (max-width: 768px) {
     .login-overlay { padding: 16px; }
@@ -1880,6 +1915,10 @@
         <label for="perfilSenhaConfirmar">Confirmar senha</label>
         <input id="perfilSenhaConfirmar" type="password" placeholder="••••••••" autocomplete="new-password">
       </div>
+      <div id="perfilCodigoAcessoGrupo" data-show="step1">
+        <label for="perfilCodigoAcesso">Já tenho o código dado pela Secretaria (opcional)</label>
+        <input id="perfilCodigoAcesso" type="text" maxlength="6" placeholder="Ex.: K7P2QM" autocomplete="off" style="text-transform:uppercase;">
+      </div>
       <div class="login-divider" data-show="step1">ou</div>
       <button type="button" class="btn btn-ghost btn-google" id="perfilBtnGoogle" data-show="step1" onclick="entrarComGoogle()">
         <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.9 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.6 6.1 29.6 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.7-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.6 15.9 18.9 13 24 13c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.6 6.1 29.6 4 24 4 16.3 4 9.6 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.5 0 10.4-1.9 14.3-5.1l-6.6-5.4C29.6 35.5 26.9 36.5 24 36.5c-5.3 0-9.7-3.4-11.3-8.2l-6.6 5.1C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.4-2.3 4.4-4.3 5.8l6.6 5.4C40.1 36.5 44 30.9 44 24c0-1.3-.1-2.7-.4-3.5z"/></svg>
@@ -2095,6 +2134,20 @@
 
       <div class="login-btn-row">
         <button type="submit" class="btn btn-blue-grad" id="gerenciarPerfilEditBtnSalvar" style="flex:1;justify-content:center;">Salvar</button>
+      </div>
+      <!-- Aluno sem login: gera o código de acesso que ele informa ao criar a conta -->
+      <div class="login-btn-row" id="gerarCodigoAcessoLinha" hidden>
+        <button type="button" class="btn btn-ghost" id="gerarCodigoAcessoBtn" style="flex:1;justify-content:center;">Gerar código de acesso</button>
+      </div>
+      <p class="login-note" id="gerarCodigoAcessoResultado" style="margin-top:8px;" aria-live="polite"></p>
+      <!-- Conta nova que não informou o código: o admin vincula ao cadastro da Secretaria -->
+      <div id="vincularCodigoLinha" hidden style="margin-top:12px;">
+        <label for="vincularCodigoInput">Vincular a um cadastro da Secretaria (código de 6 caracteres)</label>
+        <input id="vincularCodigoInput" type="text" maxlength="6" placeholder="Ex.: K7P2QM" autocomplete="off" style="text-transform:uppercase;">
+        <div class="login-btn-row">
+          <button type="button" class="btn btn-blue-grad" id="vincularCodigoBtn" style="flex:1;justify-content:center;">Vincular cadastro</button>
+        </div>
+        <p class="login-note" id="vincularCodigoResultado" aria-live="polite"></p>
       </div>
     </form>
   </div>
@@ -3214,12 +3267,29 @@
     <!-- Pop-up do aluno: Meu pedido (somente leitura) -->
     <div class="login-overlay" id="alunoMeuPedidoModal" role="dialog" aria-modal="true" aria-labelledby="alunoMeuPedidoTitulo" hidden>
       <div class="login-card aluno-pedido-card">
-        <h3 id="alunoMeuPedidoTitulo" style="margin:0;">Meu pedido</h3>
+        <button class="aluno-pedido-fechar" id="alunoMeuPedidoFechar" type="button" aria-label="Fechar">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+        <h3 id="alunoMeuPedidoTitulo" class="aluno-pedido-titulo">Meu pedido</h3>
+        <p class="aluno-pedido-status-linha">Status: <strong id="alunoMeuPedidoStatusAtual"></strong></p>
         <div id="alunoMeuPedidoLista" class="aluno-pedido-lista" style="margin-top:12px;"></div>
         <div class="aluno-pedido-total">VALOR TOTAL: <strong id="alunoMeuPedidoTotal"></strong></div>
-        <p class="login-note aluno-pedido-status">Para cancelar um pedido, solicite à secretaria.</p>
+        <p class="login-note aluno-pedido-status" id="alunoMeuPedidoStatus"></p>
         <div class="login-btn-row">
-          <button type="button" class="btn btn-ghost" id="alunoMeuPedidoFechar" style="flex:1;justify-content:center;">Fechar</button>
+          <button type="button" class="btn btn-ghost" id="alunoMeuPedidoCancelar" style="flex:1;justify-content:center;">Cancelar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pop-up: confirma o pedido de cancelamento antes de enviar à Secretaria -->
+    <div class="login-overlay" id="alunoCancelarModal" role="dialog" aria-modal="true" aria-labelledby="alunoCancelarTitulo" hidden>
+      <div class="login-card aluno-pedido-card">
+        <h3 id="alunoCancelarTitulo" style="margin:0;">Pedir cancelamento?</h3>
+        <p class="login-note" style="margin:12px 0 0;">A Secretaria vai receber o pedido de cancelamento e decidir. Seu pedido só é cancelado depois dessa confirmação.</p>
+        <p id="alunoCancelarStatus" class="login-note aluno-pedido-status" aria-live="polite"></p>
+        <div class="login-btn-row">
+          <button type="button" class="btn btn-ghost" id="alunoCancelarNao" style="flex:1;justify-content:center;">Não</button>
+          <button type="button" class="btn btn-blue-grad" id="alunoCancelarSim" style="flex:1;justify-content:center;">Sim, pedir cancelamento</button>
         </div>
       </div>
     </div>
@@ -3505,6 +3575,7 @@
           <label>Forma de pagamento <select id="secFiltroForma" class="sec-pedido-select"></select></label>
         </div>
         <div class="sec-revistas-exportar">
+          <button type="button" class="btn btn-blue-grad" id="secRevFazerPedidoBtn">Fazer pedido</button>
           <div class="lc-exportar">
             <button type="button" class="btn btn-ghost" id="secRevExportarBtn" aria-haspopup="true" aria-expanded="false">Exportar</button>
             <div id="secRevExportarMenu" class="lc-exportar-menu" hidden>
@@ -4347,7 +4418,28 @@
   </div>
 </div>
 
-<script type="module" src="aluno.js?v=20261148"></script>
+<!-- Pop-up: trocar senha dentro do site (senha atual, nova e confirmação), sem e-mail -->
+<div class="login-overlay" id="trocarSenhaModal" role="dialog" aria-modal="true" aria-labelledby="trocarSenhaTitulo" hidden>
+  <div class="login-card">
+    <button class="login-close" id="trocarSenhaFechar" type="button" aria-label="Fechar">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+    <span class="pill eyebrow" id="trocarSenhaTitulo"><span class="dot"></span>Trocar senha</span>
+    <p class="login-note" id="trocarSenhaAviso" style="margin:12px 0 0;">Digite a senha atual e a nova senha. Use de 6 a 15 caracteres.</p>
+    <div class="login-form" style="margin-top:14px;">
+      <input type="password" id="trocarSenhaAtual" autocomplete="current-password" placeholder="Senha atual" />
+      <input type="password" id="trocarSenhaNova" autocomplete="new-password" placeholder="Nova senha (6 a 15 caracteres)" maxlength="15" />
+      <input type="password" id="trocarSenhaConfirma" autocomplete="new-password" placeholder="Confirme a nova senha" maxlength="15" />
+    </div>
+    <p id="trocarSenhaStatus" class="login-note" aria-live="polite" style="min-height:1.2em;"></p>
+    <div class="login-btn-row">
+      <button type="button" class="btn btn-ghost" id="trocarSenhaCancelar" style="flex:1;justify-content:center;">Cancelar</button>
+      <button type="button" class="btn btn-blue-grad" id="trocarSenhaSalvar" style="flex:1;justify-content:center;">Trocar senha</button>
+    </div>
+  </div>
+</div>
+
+<script type="module" src="aluno.js?v=20261103"></script>
 <script type="module" src="biblia.js"></script>
 
 <script type="module">
@@ -4355,7 +4447,7 @@
   import {
     getAuth, onAuthStateChanged, signOut,
     createUserWithEmailAndPassword, sendPasswordResetEmail,
-    EmailAuthProvider, reauthenticateWithCredential, verifyBeforeUpdateEmail
+    EmailAuthProvider, reauthenticateWithCredential, verifyBeforeUpdateEmail, updatePassword
   } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
   import {
     getFirestore, doc, getDoc, setDoc, serverTimestamp,
@@ -4387,12 +4479,143 @@
   }
 
   // Código interno de cadastro (oculto na tela): 8 caracteres, sem O/0 nem I/1 para não confundir na leitura
+  // Código de acesso: 6 letras e números, sem caracteres confusos (0/O, 1/I/L)
   function gerarCodigoCadastro() {
-    const letras = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+    const letras = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
     let codigo = "";
-    const bytes = crypto.getRandomValues(new Uint8Array(8));
+    const bytes = crypto.getRandomValues(new Uint8Array(6));
     bytes.forEach((b) => { codigo += letras[b % letras.length]; });
     return codigo;
+  }
+  // Gera um código que ainda não existe em codigosAcesso
+  async function gerarCodigoAcessoLivre() {
+    for (let tentativa = 0; tentativa < 10; tentativa++) {
+      const codigo = gerarCodigoCadastro();
+      const existente = await getDoc(doc(db, "codigosAcesso", codigo));
+      if (!existente.exists()) return codigo;
+    }
+    throw new Error("Não foi possível gerar um código de acesso livre.");
+  }
+
+  // Campos de senha: botão de olho para mostrar e ocultar (o campo continua mascarado por padrão)
+  const ICONE_OLHO = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>';
+  function ligarOlhoSenhas() {
+    document.querySelectorAll('input[type="password"]').forEach((campo) => {
+      if (campo.dataset.olho === "1") return;
+      campo.dataset.olho = "1";
+      const wrap = document.createElement("span");
+      wrap.className = "campo-senha";
+      campo.parentNode.insertBefore(wrap, campo);
+      wrap.appendChild(campo);
+      const botao = document.createElement("button");
+      botao.type = "button";
+      botao.className = "campo-senha-olho";
+      botao.setAttribute("aria-label", "Mostrar senha");
+      botao.innerHTML = ICONE_OLHO;
+      botao.addEventListener("click", () => {
+        const mostrar = campo.type === "password";
+        campo.type = mostrar ? "text" : "password";
+        botao.setAttribute("aria-label", mostrar ? "Ocultar senha" : "Mostrar senha");
+        botao.classList.toggle("ativo", mostrar);
+      });
+      wrap.appendChild(botao);
+    });
+  }
+  // Nova senha e confirmação: borda vermelha se diferentes, verde se iguais
+  function ligarConferenciaSenhas(idNova, idConfirma) {
+    const nova = document.getElementById(idNova);
+    const confirma = document.getElementById(idConfirma);
+    if (!nova || !confirma) return;
+    const conferir = () => {
+      const pintar = (campo, classe) => { campo.classList.toggle("senha-ok", classe === "ok"); campo.classList.toggle("senha-erro", classe === "erro"); };
+      if (!confirma.value) { pintar(nova, ""); pintar(confirma, ""); return; }
+      const classe = nova.value === confirma.value ? "ok" : "erro";
+      pintar(nova, classe);
+      pintar(confirma, classe);
+    };
+    nova.addEventListener("input", conferir);
+    confirma.addEventListener("input", conferir);
+  }
+  ligarOlhoSenhas();
+  ligarConferenciaSenhas("trocarSenhaNova", "trocarSenhaConfirma");
+  ligarConferenciaSenhas("perfilSenha", "perfilSenhaConfirmar");
+
+  // Cadastro de aluno sem login com esse nome (só se for um único); senão null
+  async function cadastroDoAlunoPorNome(nome) {
+    const snap = await getDocs(query(collection(db, "usuarios"), where("perfil", "==", "aluno")));
+    const alvo = nome.trim().toLowerCase();
+    const achados = snap.docs.filter((d) => {
+      const x = d.data();
+      if (x.email) return false;
+      return [x.nome, x.sobrenome].filter(Boolean).join(" ").trim().toLowerCase() === alvo;
+    });
+    return achados.length === 1 ? achados[0].id : null;
+  }
+
+  // Admin/Secretaria: gera o código de um cadastro de aluno sem login.
+  // O código guarda uma cópia dos dados do cadastro, para o aluno assumi-lo ao criar a conta.
+  async function gerarCodigoParaAluno(u) {
+    const codigo = await gerarCodigoAcessoLivre();
+    const dados = {};
+    ["nome", "sobrenome", "dataNascimento", "telefone", "eCrianca", "paiResponsavel", "dadosDeTeste"].forEach((campo) => {
+      if (u[campo] !== undefined) dados[campo] = u[campo];
+    });
+    // Pedidos já feitos por esse cadastro: a conta nova não consegue listá-los, então o código guarda os ids
+    const pedidosDoCadastro = await getDocs(query(collection(db, "pedidosRevistas"), where("uid", "==", u.uid)));
+    await setDoc(doc(db, "codigosAcesso", codigo), {
+      usuarioId: u.uid,
+      usado: false,
+      dados: dados,
+      pedidos: pedidosDoCadastro.docs.map((p) => p.id),
+      criadoPorUid: auth.currentUser.uid,
+      criadoEm: serverTimestamp()
+    });
+    await updateDoc(doc(db, "usuarios", u.uid), { codigo: codigo });
+    return codigo;
+  }
+
+  // Merge: a conta nova assume o cadastro da Secretaria. Move matrículas e pedidos,
+  // marca o código como usado e apaga o cadastro antigo. Retorna { ok: false } se o código não servir.
+  async function vincularContaComCodigo(codigo, novoUid, emailNovo) {
+    const refCodigo = doc(db, "codigosAcesso", codigo);
+    const info = (await getDoc(refCodigo)).data();
+    if (!info || info.usado !== false || !info.usuarioId) return { ok: false };
+    const antigoId = info.usuarioId;
+    // merge: cria o cadastro se não existir (aluno que vincula ao criar a conta) ou atualiza o convidado (admin vincula depois)
+    await setDoc(doc(db, "usuarios", novoUid), {
+      ...(info.dados || {}),
+      email: emailNovo,
+      perfil: "aluno",
+      ativo: true,
+      cadastroPendente: false,
+      origemCadastro: "site",
+      contaAnterior: antigoId,
+      codigoVinculo: codigo,
+      criadoEm: serverTimestamp()
+    }, { merge: true });
+    const matriculas = await getDocs(query(collection(db, "matriculas"), where("uid", "==", antigoId)));
+    for (const m of matriculas.docs) await updateDoc(m.ref, { uid: novoUid });
+    // Pedidos pelo id guardado no código (pedidos criados depois da geração não são movidos)
+    // Ids guardados no código + pedidos ligados ao cadastro agora (o admin consegue listá-los; a conta nova não)
+    let idsPedidos = info.pedidos || [];
+    try {
+      const ligados = await getDocs(query(collection(db, "pedidosRevistas"), where("uid", "==", antigoId)));
+      idsPedidos = [...new Set([...idsPedidos, ...ligados.docs.map((p) => p.id)])];
+    } catch (err) {
+      // Conta nova sem permissão para listar: usa só os ids do código
+    }
+    let pedidosMovidos = 0;
+    for (const idPedido of idsPedidos) {
+      try {
+        await updateDoc(doc(db, "pedidosRevistas", idPedido), { uid: novoUid });
+        pedidosMovidos++;
+      } catch (err) {
+        console.error("Pedido não movido no merge:", idPedido, err);
+      }
+    }
+    await updateDoc(refCodigo, { usado: true, usadoPorUid: novoUid, usadoEm: serverTimestamp() });
+    await deleteDoc(doc(db, "usuarios", antigoId));
+    return { ok: true, matriculas: matriculas.size, pedidos: pedidosMovidos };
   }
 
   // ===== Bolinha amarela: cadastros pendentes de validação =====
@@ -6490,6 +6713,46 @@
     const secRevExportarBtn = document.getElementById("secRevExportarBtn");
     const secRevExportarMenu = document.getElementById("secRevExportarMenu");
     const fecharMenuSecRev = () => { secRevExportarMenu.hidden = true; secRevExportarBtn.setAttribute("aria-expanded", "false"); };
+    // Fazer pedido: passa para "Pedido Feito" os pedidos solicitados que estão na lista filtrada.
+    // Pedidos com cancelamento pedido pelo aluno ficam de fora (a Secretaria decide antes).
+    // Dois cliques: o primeiro mostra quantos vão mudar e o segundo confirma.
+    const btnFazerPedido = document.getElementById("secRevFazerPedidoBtn");
+    const rotuloFazerPedido = "Fazer pedido";
+    let fazerPedidoTimer = null;
+    const resetarFazerPedido = () => {
+      clearTimeout(fazerPedidoTimer);
+      btnFazerPedido.dataset.confirmar = "";
+      btnFazerPedido.textContent = rotuloFazerPedido;
+    };
+    btnFazerPedido.addEventListener("click", async () => {
+      const unicos = new Map();
+      linhasRevistasSecTela.forEach((l) => unicos.set(l.pedido.id, l.pedido));
+      const solicitados = [...unicos.values()].filter((p) => statusBase(p) === "solicitado_aluno" || statusBase(p) === "solicitado_secretaria");
+      const alvo = solicitados.filter((p) => !p.cancelamentoSolicitadoEm);
+      const puladosCancelamento = solicitados.length - alvo.length;
+      if (!alvo.length) {
+        window.notificar(puladosCancelamento ? "Os pedidos solicitados têm cancelamento pedido pelo aluno. Resolva antes de marcar como Pedido Feito." : "Nenhum pedido solicitado nesta lista.", "info");
+        return;
+      }
+      if (btnFazerPedido.dataset.confirmar !== "1") {
+        btnFazerPedido.dataset.confirmar = "1";
+        btnFazerPedido.textContent = `Confirmar (${alvo.length})`;
+        fazerPedidoTimer = setTimeout(resetarFazerPedido, 5000);
+        return;
+      }
+      resetarFazerPedido();
+      btnFazerPedido.disabled = true;
+      try {
+        await Promise.all(alvo.map((p) => updateDoc(doc(db, "pedidosRevistas", p.id), { status: "pedido" })));
+        window.notificar(`${alvo.length} pedido(s) marcado(s) como Pedido Feito.` + (puladosCancelamento ? ` ${puladosCancelamento} com cancelamento pedido ficaram de fora.` : ""), "success");
+        carregarPedidosRevistas();
+      } catch (err) {
+        console.error("Erro ao marcar pedidos como Pedido Feito:", err);
+        window.notificar("Não foi possível marcar os pedidos. Tente de novo.", "error");
+      } finally {
+        btnFazerPedido.disabled = false;
+      }
+    });
     secRevExportarBtn.addEventListener("click", (e) => {
       e.stopPropagation();
       secRevExportarMenu.hidden = !secRevExportarMenu.hidden;
@@ -6578,7 +6841,7 @@
           const p = l.pedido;
           return [
             l.aluno, l.revista, l.tipo, l.trimestre, String(l.qtd), l.valorNum === null ? "Sem preço" : reais(l.valorNum),
-            p.status === "entregue" ? "Entregue" : "Solicitado",
+            ROTULO_STATUS_SEC[statusSecretaria(p)],
             rotuloPago[pagamentoDoPedido(p)] || "",
             rotuloForma[p.formaPagamento] || (p.formaPagamento || "")
           ];
@@ -6648,7 +6911,7 @@
           const p = l.pedido;
           return [
             l.aluno, l.revista, l.tipo, l.trimestre, l.qtd, l.valorNum,
-            p.status === "entregue" ? "Entregue" : "Solicitado",
+            ROTULO_STATUS_SEC[statusSecretaria(p)],
             rotuloPago[pagamentoDoPedido(p)] || "",
             rotuloForma[p.formaPagamento] || (p.formaPagamento || "")
           ];
@@ -6672,6 +6935,40 @@
     let linhasRevistasSecTela = [];
 
     // Combobox pequeno da tabela de pedidos (status, pago, forma de pagamento)
+    // Status do pedido (campo status no banco): solicitado_aluno | solicitado_secretaria | pedido | entregue.
+    // Pedidos antigos ("pendente" e "solicitado") contam como solicitado_aluno.
+    const STATUS_SEC = [
+      ["solicitado_aluno", "Solicitado Aluno"],
+      ["solicitado_secretaria", "Solicitado Secretaria"],
+      ["cancelamento", "Cancelamento Solicitado"],
+      ["pedido", "Pedido Feito"],
+      ["entregue", "Entregue"]
+    ];
+    const ROTULO_STATUS_SEC = Object.fromEntries(STATUS_SEC);
+    // Status sem o pedido de cancelamento (é o que fica gravado)
+    function statusBase(p) {
+      if (p.status === "entregue") return "entregue";
+      if (p.status === "pedido") return "pedido";
+      if (p.status === "solicitado_secretaria") return "solicitado_secretaria";
+      return "solicitado_aluno";
+    }
+    // Status que a Secretaria vê: se o aluno pediu cancelamento e o pedido ainda não foi feito, aparece Cancelamento Solicitado
+    function statusSecretaria(p) {
+      const base = statusBase(p);
+      if (p.cancelamentoSolicitadoEm && (base === "solicitado_aluno" || base === "solicitado_secretaria")) return "cancelamento";
+      return base;
+    }
+    // Cor do status: amarelo (solicitado), vermelho (cancelamento), verde (pedido feito ou entregue)
+    function classeStatusSec(chave) {
+      if (chave === "cancelamento") return "sec-status-vermelho";
+      if (chave === "pedido" || chave === "entregue") return "sec-status-verde";
+      return "sec-status-amarelo";
+    }
+    function pintarStatusSec(sel) {
+      sel.classList.remove("sec-status-amarelo", "sec-status-verde", "sec-status-vermelho");
+      sel.classList.add(classeStatusSec(sel.value));
+    }
+
     function criarSelectSec(opcoes, valor) {
       const sel = document.createElement("select");
       sel.className = "sec-pedido-select";
@@ -6922,6 +7219,8 @@
 
       botao.disabled = true;
       try {
+        // Pedido da Secretaria fica ligado ao cadastro do aluno (id), para migrar no merge de contas
+        const cadastroUid = await cadastroDoAlunoPorNome(alunoNome);
         if (pedidoEditandoId) {
           await updateDoc(doc(db, "pedidosRevistas", pedidoEditandoId), {
             alunoNome: alunoNome,
@@ -6932,7 +7231,7 @@
           });
         } else {
           await addDoc(collection(db, "pedidosRevistas"), {
-            uid: null, // pedido feito pela Secretaria (sem conta de aluno)
+            uid: cadastroUid, // id do cadastro do aluno (sem login); null se não encontrar um único cadastro
             origem: "secretaria",
             alunoNome: alunoNome,
             salaId: null,
@@ -6940,7 +7239,7 @@
             ano: ano,
             trimestre: trimestre,
             itens: itens,
-            status: "pendente",
+            status: "solicitado_secretaria",
             criadoEm: serverTimestamp()
           });
         }
@@ -7023,7 +7322,7 @@
       const alunos = [...new Set(linhas.map((l) => l.pedido.alunoNome || ""))].filter((a) => a).sort((a, b) => a.localeCompare(b, "pt-BR"));
       preencherFiltroSec("secFiltroAluno", [["", "Todos"]].concat(alunos.map((a) => [a, a])));
 
-      preencherFiltroSec("secFiltroStatus", [["", "Todos"], ["solicitado", "Solicitado"], ["entregue", "Entregue"]]);
+      preencherFiltroSec("secFiltroStatus", [["", "Todos"]].concat(STATUS_SEC));
       preencherFiltroSec("secFiltroPago", [["", "Todos"], ["feito", "Sim"], ["pendente", "Pendente"], ["doacao", "Doação"]]);
       preencherFiltroSec("secFiltroForma", [["", "Todos"], ["pix", "Pix"], ["dinheiro", "Dinheiro"]]);
     }
@@ -7088,7 +7387,7 @@
       if (v("secFiltroTrimestre") && `${p.ano}-${p.trimestre}` !== v("secFiltroTrimestre")) return false;
       if (v("secFiltroRevista") && l.revista !== v("secFiltroRevista")) return false;
       if (v("secFiltroAluno") && (p.alunoNome || "") !== v("secFiltroAluno")) return false;
-      if (v("secFiltroStatus") && (p.status === "entregue" ? "entregue" : "solicitado") !== v("secFiltroStatus")) return false;
+      if (v("secFiltroStatus") && statusSecretaria(p) !== v("secFiltroStatus")) return false;
       if (v("secFiltroPago") && pagamentoDoPedido(p) !== v("secFiltroPago")) return false;
       if (v("secFiltroForma") && (p.formaPagamento || "") !== v("secFiltroForma")) return false;
       return true;
@@ -7179,7 +7478,10 @@
 
           // Status, pago e forma de pagamento: ficam gravados no pedido e salvam ao mudar
           const situacao = l.pedido;
-          const selStatus = criarSelectSec([["solicitado", "Solicitado"], ["entregue", "Entregue"]], situacao.status === "entregue" ? "entregue" : "solicitado");
+          const selStatus = criarSelectSec(STATUS_SEC, statusSecretaria(situacao));
+          // "Cancelamento Solicitado" só aparece quando o aluno pede; a Secretaria não escolhe esse status
+          selStatus.querySelector('option[value="cancelamento"]').disabled = true;
+          pintarStatusSec(selStatus);
           // Pendência: se o usuário deixou o pagamento incompleto, a tela mantém a escolha dele
           const pend = pendenciasSec.get(situacao.id) || null;
           const selPago = criarSelectSec([["pendente", "Pendente"], ["feito", "Sim"], ["doacao", "Doação"]], pend ? pend.pagamento : pagamentoDoPedido(situacao));
@@ -7188,6 +7490,7 @@
           selForma.disabled = (pend ? pend.pagamento : pagamentoDoPedido(situacao)) !== "feito";
           const campos = [selStatus, selPago, selForma];
           const salvarSituacao = async () => {
+            pintarStatusSec(selStatus);
             const pagamento = selPago.value; // pendente | feito | doacao
             // Doação sai sempre em dinheiro e não usa forma de pagamento; só o Feito pede a forma
             const precisaForma = pagamento === "feito";
@@ -7237,7 +7540,7 @@
                 await deleteDoc(doc(db, "caixaMovimentacoes", idCaixa));
               }
               await updateDoc(doc(db, "pedidosRevistas", situacao.id), {
-                status: selStatus.value,
+                status: selStatus.value === "cancelamento" ? statusBase(situacao) : selStatus.value,
                 pagamento: pagamento,
                 pago: pagou,
                 formaPagamento: precisaForma ? forma : null
@@ -7262,6 +7565,13 @@
             bloco.appendChild(c);
             linha.appendChild(bloco);
           });
+          // Aluno pediu cancelamento: a Secretaria vê na linha (decide cancelar ou manter)
+          if (situacao.cancelamentoSolicitadoEm) {
+            const avisoCancelamento = document.createElement("span");
+            avisoCancelamento.className = "sec-pedido-cancelamento";
+            avisoCancelamento.textContent = "Aluno pediu cancelamento";
+            linha.appendChild(avisoCancelamento);
+          }
 
           // Editar: reabre o pop-up Adicionar Pedido com os dados do pedido
           // Excluir: dois cliques (o primeiro pede confirmação)
@@ -8211,6 +8521,57 @@
       });
 
       window.__abrirGerenciarPerfilEdit = function (usuario) {
+        // Código de acesso: só para aluno sem login (sem e-mail)
+        const linhaCodigo = document.getElementById("gerarCodigoAcessoLinha");
+        const resultadoCodigo = document.getElementById("gerarCodigoAcessoResultado");
+        const botaoCodigo = document.getElementById("gerarCodigoAcessoBtn");
+        const semLogin = usuario.perfil === "aluno" && !usuario.email;
+        linhaCodigo.hidden = !semLogin;
+        resultadoCodigo.textContent = semLogin && usuario.codigo ? "Código de acesso atual: " + usuario.codigo : "";
+        botaoCodigo.disabled = false;
+        // Vincular: conta nova (com e-mail, perfil convidado) recebe o cadastro da Secretaria pelo código
+        const linhaVincular = document.getElementById("vincularCodigoLinha");
+        const campoVincular = document.getElementById("vincularCodigoInput");
+        const resultadoVincular = document.getElementById("vincularCodigoResultado");
+        const botaoVincular = document.getElementById("vincularCodigoBtn");
+        linhaVincular.hidden = !(usuario.perfil === "convidado" && usuario.email);
+        campoVincular.value = "";
+        resultadoVincular.textContent = "";
+        botaoVincular.onclick = async () => {
+          const codigo = campoVincular.value.trim().toUpperCase();
+          if (!/^[A-Z2-9]{6}$/.test(codigo)) {
+            resultadoVincular.textContent = "O código tem 6 letras ou números.";
+            return;
+          }
+          botaoVincular.disabled = true;
+          try {
+            const vinculo = await vincularContaComCodigo(codigo, usuario.uid, usuario.email);
+            if (!vinculo.ok) {
+              resultadoVincular.textContent = "Código não encontrado ou já usado.";
+            } else {
+              window.notificar("Cadastro vinculado: " + vinculo.matriculas + " matrícula(s) e " + vinculo.pedidos + " pedido(s) movidos.", "success");
+              window.location.reload();
+            }
+          } catch (err) {
+            console.error("Erro ao vincular cadastro:", err);
+            resultadoVincular.textContent = "Não foi possível vincular agora. Tente de novo.";
+          } finally {
+            botaoVincular.disabled = false;
+          }
+        };
+        botaoCodigo.onclick = async () => {
+          botaoCodigo.disabled = true;
+          try {
+            const codigo = await gerarCodigoParaAluno(usuario);
+            usuario.codigo = codigo;
+            resultadoCodigo.textContent = "Código de acesso: " + codigo + ". Entregue ao aluno, que o informa ao criar a conta.";
+          } catch (err) {
+            console.error("Erro ao gerar código de acesso:", err);
+            resultadoCodigo.textContent = "Não foi possível gerar o código agora. Tente de novo.";
+          } finally {
+            botaoCodigo.disabled = false;
+          }
+        };
         usuarioEditandoUid = usuario.uid;
         usuarioEditandoEmail = usuario.email || "";
         usuarioEditandoHash = usuario.celularHash || "";
@@ -11640,7 +12001,7 @@
           paiResponsavel: eCrianca ? salaAlunoAvulsoPai.value.trim() : "",
           perfil: "aluno",
           ativo: true,
-          codigo: gerarCodigoCadastro(),
+          codigo: "", // código de acesso é gerado depois, pela Secretaria ou pelo admin (Usuários e senhas)
           cadastroPendente: true,
           origemCadastro: "professor",
           cadastradoPorUid: usuarioAtualCache.uid,
@@ -12561,15 +12922,52 @@
       }
     });
 
-    trocarSenhaLink.addEventListener("click", async (e) => {
+    // Trocar senha dentro do site: senha atual + nova + confirmação. Não envia e-mail.
+    const trocarSenhaModal = document.getElementById("trocarSenhaModal");
+    const trocarSenhaStatus = document.getElementById("trocarSenhaStatus");
+    const fecharTrocarSenha = () => {
+      trocarSenhaModal.classList.remove("is-open");
+      trocarSenhaModal.hidden = true;
+    };
+    trocarSenhaLink.addEventListener("click", (e) => {
       e.preventDefault();
-      if (!usuarioAtualCache || !usuarioAtualCache.email) return;
+      if (!auth.currentUser) return;
+      ["trocarSenhaAtual", "trocarSenhaNova", "trocarSenhaConfirma"].forEach((id) => { document.getElementById(id).value = ""; });
+      trocarSenhaStatus.textContent = "";
+      trocarSenhaModal.hidden = false;
+      requestAnimationFrame(() => trocarSenhaModal.classList.add("is-open"));
+      document.getElementById("trocarSenhaAtual").focus();
+    });
+    document.getElementById("trocarSenhaFechar").addEventListener("click", fecharTrocarSenha);
+    document.getElementById("trocarSenhaCancelar").addEventListener("click", fecharTrocarSenha);
+    document.getElementById("trocarSenhaSalvar").addEventListener("click", async () => {
+      const atual = document.getElementById("trocarSenhaAtual").value;
+      const nova = document.getElementById("trocarSenhaNova").value;
+      const confirma = document.getElementById("trocarSenhaConfirma").value;
+      const botao = document.getElementById("trocarSenhaSalvar");
+      if (!atual) { trocarSenhaStatus.textContent = "Digite a senha atual."; return; }
+      if (nova.length < 6 || nova.length > 15) { trocarSenhaStatus.textContent = "A nova senha precisa ter de 6 a 15 caracteres."; return; }
+      if (nova !== confirma) { trocarSenhaStatus.textContent = "As senhas digitadas são diferentes."; return; }
+      if (nova === atual) { trocarSenhaStatus.textContent = "A nova senha precisa ser diferente da atual."; return; }
+      const usuario = auth.currentUser;
+      if (!usuario || !usuario.email) { trocarSenhaStatus.textContent = "Entre na sua conta para trocar a senha."; return; }
+      botao.disabled = true;
       try {
-        await sendPasswordResetEmail(auth, usuarioAtualCache.email);
-        mensagemEl.textContent = "Enviamos um link para trocar sua senha em " + usuarioAtualCache.email + ".";
+        await reauthenticateWithCredential(usuario, EmailAuthProvider.credential(usuario.email, atual));
+        await updatePassword(usuario, nova);
+        fecharTrocarSenha();
+        window.notificar("Senha trocada com sucesso.", "success");
       } catch (err) {
-        mensagemEl.textContent = "Não foi possível enviar o e-mail de troca de senha.";
-        console.error(err);
+        console.error("Erro ao trocar senha:", err);
+        if (err.code === "auth/invalid-credential" || err.code === "auth/wrong-password") {
+          trocarSenhaStatus.textContent = "A senha atual está incorreta.";
+        } else if (err.code === "auth/too-many-requests") {
+          trocarSenhaStatus.textContent = "Muitas tentativas. Aguarde um pouco e tente de novo.";
+        } else {
+          trocarSenhaStatus.textContent = "Não foi possível trocar a senha agora. Tente de novo.";
+        }
+      } finally {
+        botao.disabled = false;
       }
     });
 
@@ -12715,8 +13113,8 @@
         mensagemEl.textContent = "Preencha e-mail e senha.";
         return;
       }
-      if (senha.length < 6) {
-        mensagemEl.textContent = "A senha precisa ter pelo menos 6 caracteres.";
+      if (senha.length < 6 || senha.length > 15) {
+        mensagemEl.textContent = "A senha precisa ter de 6 a 15 caracteres.";
         return;
       }
       if (senha !== confirmar) {
@@ -12724,9 +13122,30 @@
         return;
       }
 
+      const codigoDigitado = document.getElementById("perfilCodigoAcesso").value.trim().toUpperCase();
+      if (codigoDigitado && !/^[A-Z2-9]{6}$/.test(codigoDigitado)) {
+        mensagemEl.textContent = "O código tem 6 letras ou números (ex.: K7P2QM).";
+        return;
+      }
+
       btnAvancar1.disabled = true;
       try {
         const cred = await createUserWithEmailAndPassword(auth, email, senha);
+        // Código da Secretaria: se for válido, a conta assume o cadastro dela (merge).
+        // Se não for, o cadastro segue como convidado e o admin faz o vínculo depois.
+        let vinculo = { ok: false };
+        if (codigoDigitado) {
+          try {
+            vinculo = await vincularContaComCodigo(codigoDigitado, cred.user.uid, email);
+          } catch (err) {
+            console.error("Erro ao vincular código de acesso:", err);
+          }
+        }
+        if (vinculo.ok) {
+          window.notificar("Conta criada e vinculada ao seu cadastro na EBD.", "success");
+          window.location.reload();
+          return;
+        }
         await setDoc(doc(db, "usuarios", cred.user.uid), {
           email: email,
           nome: campoNome.value.trim(),
@@ -12738,6 +13157,9 @@
           origemCadastro: "site",
           criadoEm: serverTimestamp()
         });
+        if (codigoDigitado) {
+          window.notificar("Código não encontrado ou já usado. Sua conta foi criada; a equipe vai conferir o vínculo.", "info");
+        }
         wizardPasso = 2;
         aplicarVisibilidade();
         campoDataNascimento.focus();
