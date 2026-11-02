@@ -29,6 +29,21 @@ function carregarPdfJs() {
   return pdfjsCarregado;
 }
 
+// Capa da revista: primeira página do PDF como imagem pequena (data URL JPEG, ~240 px de largura).
+// Guardada no cadastro da revista, para aparecer em qualquer navegador sem depender do Drive.
+export async function gerarCapaDoPdf(bytes, larguraMaxima = 240) {
+  const lib = await carregarPdfJs();
+  const pdf = await lib.getDocument({ data: bytes }).promise;
+  const pagina = await pdf.getPage(1);
+  const escala = larguraMaxima / pagina.getViewport({ scale: 1 }).width;
+  const viewport = pagina.getViewport({ scale: escala });
+  const canvas = document.createElement("canvas");
+  canvas.width = Math.round(viewport.width);
+  canvas.height = Math.round(viewport.height);
+  await pagina.render({ canvasContext: canvas.getContext("2d"), viewport }).promise;
+  return canvas.toDataURL("image/jpeg", 0.8);
+}
+
 // Baixa os bytes do PDF da Google Drive (arquivo com acesso por link)
 export async function baixarRevistaDoDrive(driveFileId) {
   if (!googleApiKey) throw new Error("O leitor de revistas ainda não está configurado.");

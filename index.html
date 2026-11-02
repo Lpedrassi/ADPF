@@ -274,6 +274,12 @@
   .sec-pedido-select.sec-status-amarelo { border-color: #FFD60A; color: #FFD60A; }
   .sec-pedido-select.sec-status-verde { border-color: #30D158; color: #30D158; }
   .sec-pedido-select.sec-status-vermelho { border-color: #FF453A; color: #FF453A; }
+  /* Cabeçalho da chamada: capa da revista à esquerda do título e da lição */
+  .chamada-revista-linha { display: flex; gap: 18px; align-items: center; margin-top: 18px; }
+  .chamada-revista-texto { flex: 1; min-width: 0; }
+  .chamada-capa-revista { flex: 0 0 auto; width: 92px; border-radius: 8px; overflow: hidden; border: 1px solid var(--border); background: rgba(255,255,255,0.04); box-shadow: 0 10px 24px -12px var(--shadow); }
+  .chamada-capa-revista img { display: block; width: 100%; height: auto; }
+  @media (max-width: 560px) { .chamada-capa-revista { width: 66px; } .chamada-revista-linha { gap: 12px; margin-top: 14px; } }
   /* Campos de senha: mostrar e ocultar (olho) */
   .campo-senha { position: relative; display: block; width: 100%; }
   .campo-senha input { width: 100%; padding-right: 46px; }
@@ -3066,13 +3072,21 @@
               </span>
               <span id="chamadaProfessorEscalado" class="chamada-pill"></span>
             </div>
-            <div id="chamadaRevistaBloco" hidden>
-              <div id="chamadaRevistaTitulo" class="chamada-titulo-revista"></div>
-              <div id="chamadaRevistaSub" class="chamada-titulo-revista-sub" hidden></div>
-            </div>
-            <div id="chamadaLicaoBloco" class="chamada-licao-linha" hidden>
-              <span id="chamadaLicaoLabel" class="chamada-licao-label"></span>
-              <span id="chamadaLicaoTitulo"></span>
+            <div class="chamada-revista-linha">
+              <!-- Capa da revista da sala (primeira página do PDF do aluno) -->
+              <div id="chamadaCapaRevista" class="chamada-capa-revista" hidden>
+                <img id="chamadaCapaImg" alt="Capa da revista da sala" loading="lazy" decoding="async">
+              </div>
+              <div class="chamada-revista-texto">
+                <div id="chamadaRevistaBloco" hidden>
+                  <div id="chamadaRevistaTitulo" class="chamada-titulo-revista"></div>
+                  <div id="chamadaRevistaSub" class="chamada-titulo-revista-sub" hidden></div>
+                </div>
+                <div id="chamadaLicaoBloco" class="chamada-licao-linha" hidden>
+                  <span id="chamadaLicaoLabel" class="chamada-licao-label"></span>
+                  <span id="chamadaLicaoTitulo"></span>
+                </div>
+              </div>
             </div>
             <hr class="chamada-divisor">
           </div>
@@ -4439,7 +4453,7 @@
   </div>
 </div>
 
-<script type="module" src="aluno.js?v=20261103"></script>
+<script type="module" src="aluno.js?v=20261105"></script>
 <script type="module" src="biblia.js"></script>
 
 <script type="module">
@@ -4451,11 +4465,13 @@
   } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
   import {
     getFirestore, doc, getDoc, setDoc, serverTimestamp,
-    collection, getDocs, updateDoc, deleteDoc, addDoc, query, where, limit, orderBy, writeBatch
+    collection, getDocs, updateDoc, deleteDoc, addDoc, query, where, limit, orderBy, writeBatch, deleteField
   } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
   import { firebaseConfig } from "./firebase-config.js";
   import { buscarTodosEventos, salvarEvento, excluirEvento, buscarDepartamentosAgenda, salvarDepartamentosAgenda, renomearCategoriaEventos } from "./agenda.js";
-  import { abrirSolicitarRevistaComo, abrirMeuPedidoComo, temPedidoRevistaComo } from "./aluno.js";
+  // Mesma URL da tag <script> abaixo: assim o aluno.js carrega uma única vez (senão, as ações ficam duplicadas)
+  import { abrirSolicitarRevistaComo, abrirMeuPedidoComo, temPedidoRevistaComo } from "./aluno.js?v=20261105";
+  import { gerarCapaDoPdf, baixarRevistaDoDrive } from "./leitor-revista.js";
   import { sincronizarCelularLogin, sincronizarNomeUsuario, validarDadosUnicos, atualizarEmailNosIndices } from "./celular-login.js?v=20261101";
 
   // auth.js e agenda.js (importados acima via <script src>) ja podem ter
@@ -7617,6 +7633,56 @@
               btnExcluir.disabled = false;
             }
           });
+          // Aluno pediu cancelamento: a Secretaria aceita (cancela o pedido) ou mantém
+          if (situacao.cancelamentoSolicitadoEm) {
+            const podeCancelar = pagamentoDoPedido(situacao) === "pendente";
+            const btnAceitar = document.createElement("button");
+            btnAceitar.type = "button";
+            btnAceitar.className = "btn btn-ghost sec-pedido-aceitar-cancel";
+            btnAceitar.textContent = "Aceitar cancelamento";
+            btnAceitar.title = podeCancelar ? "Cancela o pedido do aluno" : "Há pagamento registrado: desfaça no caixa antes de cancelar";
+            btnAceitar.disabled = !podeCancelar;
+            btnAceitar.addEventListener("click", async () => {
+              if (btnAceitar.dataset.armado !== "sim") {
+                btnAceitar.dataset.armado = "sim";
+                btnAceitar.textContent = "Confirmar cancelamento";
+                setTimeout(() => {
+                  if (btnAceitar.isConnected && btnAceitar.dataset.armado === "sim") {
+                    btnAceitar.dataset.armado = "";
+                    btnAceitar.textContent = "Aceitar cancelamento";
+                  }
+                }, 4000);
+                return;
+              }
+              btnAceitar.disabled = true;
+              try {
+                await deleteDoc(doc(db, "pedidosRevistas", situacao.id));
+                window.notificar("Cancelamento aceito: pedido removido.", "success");
+                carregarPedidosRevistas();
+              } catch (err) {
+                console.error("Erro ao aceitar cancelamento:", err);
+                window.notificar("Não foi possível cancelar o pedido.", "error");
+                btnAceitar.disabled = false;
+              }
+            });
+            const btnManter = document.createElement("button");
+            btnManter.type = "button";
+            btnManter.className = "btn btn-ghost sec-pedido-manter";
+            btnManter.textContent = "Manter pedido";
+            btnManter.addEventListener("click", async () => {
+              btnManter.disabled = true;
+              try {
+                await updateDoc(doc(db, "pedidosRevistas", situacao.id), { cancelamentoSolicitadoEm: deleteField() });
+                window.notificar("Pedido mantido. O cancelamento foi retirado.", "success");
+                carregarPedidosRevistas();
+              } catch (err) {
+                console.error("Erro ao manter pedido:", err);
+                window.notificar("Não foi possível manter o pedido.", "error");
+                btnManter.disabled = false;
+              }
+            });
+            acoes.append(btnAceitar, btnManter);
+          }
           acoes.append(btnEditar, btnExcluir);
           linha.appendChild(acoes);
           lista.appendChild(linha);
@@ -10369,6 +10435,18 @@
         if (snap.exists()) {
           const d = snap.data();
           licaoAtualDados = d;
+          // Revistas enviadas antes da capa existir: o admin gera a capa ao abrir (uma vez)
+          if (d.revistaPdfDriveId && !d.revistaPdfCapa && usuarioAtualCache && usuarioAtualCache.perfil === "admin") {
+            (async () => {
+              try {
+                const capa = await gerarCapaDoPdf(await baixarRevistaDoDrive(d.revistaPdfDriveId));
+                await updateDoc(ref, { revistaPdfCapa: capa });
+                if (licaoAtualDados) licaoAtualDados.revistaPdfCapa = capa;
+              } catch (err) {
+                console.error("Não foi possível gerar a capa da revista:", err);
+              }
+            })();
+          }
           const porData = {};
           const paginaPorData = {};
           (d.licoes || []).forEach((l) => {
@@ -10828,7 +10906,13 @@
       btn.disabled = true;
       try {
         const resultado = await enviarArquivoParaDrive(arquivo, salaId);
+        // Capa: primeira página do PDF, guardada no cadastro (não depende do Drive para aparecer)
+        let capa = "";
+        if (/\.pdf$/i.test(arquivo.name)) {
+          try { capa = await gerarCapaDoPdf(await arquivo.arrayBuffer()); } catch (err) { console.error("Capa não gerada:", err); }
+        }
         const revista = {};
+        revista[campo + "Capa"] = capa;
         revista[campo + "Nome"] = arquivo.name;
         revista[campo + "Url"] = resultado.url;
         revista[campo + "DriveId"] = resultado.driveFileId;
@@ -11112,6 +11196,7 @@
       campoTema.value = "";
       if (revistaPdfEl) { revistaPdfEl.hidden = true; revistaPdfEl.innerHTML = ""; }
       let revistaNomeAtual = "";
+      let capaRevistaDriveId = "";
       let licaoNumeroAtual = null;
       let dataAulaISO = dataISO;
       if (salaId) {
@@ -11119,6 +11204,7 @@
           const { ref: licRef, revistaId: revistaDaSala } = await refLicoesDaSala(salaId, ano, trimestre);
           const snap = await getDoc(licRef);
           const dados = snap.exists() ? snap.data() : null;
+          capaRevistaDriveId = dados && dados.revistaPdfCapa ? dados.revistaPdfCapa : "";
           revistaNomeAtual = (await nomeDaRevistaPorId(revistaDaSala)) || (dados && dados.revistaNome) || "";
           const licoesArr = dados && Array.isArray(dados.licoes) ? dados.licoes : [];
           const licaoIndex = licoesArr.findIndex((l) => l.data >= dataISO);
@@ -11141,6 +11227,17 @@
         const dObj = new Date(dataISO + "T00:00:00");
         const meses = ["JAN","FEV","MAR","ABR","MAI","JUN","JUL","AGO","SET","OUT","NOV","DEZ"];
         chamadaData.textContent = dObj.getDate() + " " + meses[dObj.getMonth()] + " " + dObj.getFullYear();
+      }
+      // Capa guardada no cadastro da revista (primeira página do PDF do aluno). Sem capa, o bloco fica oculto.
+      const capaBloco = document.getElementById("chamadaCapaRevista");
+      const capaImg = document.getElementById("chamadaCapaImg");
+      if (capaBloco && capaImg) {
+        capaBloco.hidden = !capaRevistaDriveId;
+        if (capaRevistaDriveId) {
+          capaImg.src = capaRevistaDriveId;
+        } else {
+          capaImg.removeAttribute("src");
+        }
       }
       if (chamadaRevistaBloco) {
         let revistaTitulo = revistaNomeAtual;
@@ -11479,7 +11576,7 @@
       return m ? m[1] : "";
     }
 
-    function criarTileArquivo({ titulo, nome, tipoLink, url, driveFileId, detalhes, podeExcluir, onRemover }) {
+    function criarTileArquivo({ titulo, nome, tipoLink, url, driveFileId, capa, detalhes, podeExcluir, onRemover }) {
       const tile = document.createElement("div");
       tile.className = "arquivo-tile";
       const tituloEl = document.createElement("div");
@@ -11503,7 +11600,15 @@
       // PDF no Drive: a miniatura é a primeira página (a capa); sem imagem, fica o ícone
       let visual = icone;
       const ytId = idDoYoutube(url);
-      if (driveFileId && /\.pdf$/i.test(nome || "")) {
+      if (capa) {
+        // Capa guardada no cadastro da revista (funciona em qualquer navegador)
+        const miniatura = document.createElement("img");
+        miniatura.className = "aluno-arquivo-miniatura";
+        miniatura.alt = "";
+        miniatura.src = capa;
+        miniatura.onerror = () => miniatura.replaceWith(icone);
+        visual = miniatura;
+      } else if (driveFileId && /\.pdf$/i.test(nome || "")) {
         const miniatura = document.createElement("img");
         miniatura.className = "arquivo-tile-miniatura";
         miniatura.alt = "";
@@ -11593,7 +11698,7 @@
           const quem = revistaDados.revistaPdfEnviadoPor || {};
           arquivosSalaLista.appendChild(criarTileArquivo({
             titulo: "Revista da Sala", nome: revistaDados.revistaPdfNome || "revista.pdf",
-            url: revistaDados.revistaPdfUrl, driveFileId: revistaDados.revistaPdfDriveId,
+            url: revistaDados.revistaPdfUrl, driveFileId: revistaDados.revistaPdfDriveId, capa: revistaDados.revistaPdfCapa,
             detalhes: { aula: "Trimestre inteiro", enviadoPorNome: quem.nome, enviadoPorPerfil: quem.perfil, ms: quem.ms },
             podeExcluir: false
           }));

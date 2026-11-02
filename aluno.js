@@ -153,10 +153,12 @@ async function resetarParaAtual() {
 }
 
 // Lê as lições do trimestre escolhido e preenche o combo de aulas
+let pedidoAulasAtual = 0; // evita duplicar as lições quando a sala e o trimestre mudam juntos
 async function carregarAulasDoTrimestre() {
   const status = document.getElementById("alunoSalaStatus");
   const selAula = document.getElementById("alunoAula");
   const trimestre = Number(document.getElementById("alunoTrimestre").value);
+  const estePedido = ++pedidoAulasAtual;
   selAula.innerHTML = "";
   if (!salaIdAluno) return; // sem turma: a mensagem já está na tela
 
@@ -165,6 +167,7 @@ async function carregarAulasDoTrimestre() {
     const salaSnap = await getDoc(doc(db, "salas", salaIdAluno));
     const revistaIdAluno = salaSnap.exists() ? (salaSnap.data().revistaId || "") : "";
     const licaoSnap = await getDoc(doc(db, "licoes", `${revistaIdAluno || salaIdAluno}_${ANO}_${trimestre}`));
+    if (estePedido !== pedidoAulasAtual) return; // outra sala ou trimestre foi escolhido enquanto isso
     const licoes = licaoSnap.exists() && Array.isArray(licaoSnap.data().licoes) ? licaoSnap.data().licoes : [];
     revistaDriveId = licaoSnap.exists() ? (licaoSnap.data()[modoRevistaProfessor ? "revistaProDriveId" : "revistaPdfDriveId"] || "") : "";
 
@@ -1153,8 +1156,9 @@ export function abrirSolicitarRevistaComo(sol) {
 export function abrirMeuPedidoComo(sol) {
   return abrirMeuPedido(sol);
 }
+// Mesma regra do Meu pedido da Área do Aluno (inclui os entregues do trimestre atual)
 export async function temPedidoRevistaComo(sol) {
-  return (await buscarPedidosEmAbertoAluno(sol.uid)).length > 0;
+  return (await buscarPedidosMeuPedido(sol.uid)).length > 0;
 }
 
 // Área do Aluno reaberta: recalcula o botão Meu pedido (index.html chama em mostrarArea)
