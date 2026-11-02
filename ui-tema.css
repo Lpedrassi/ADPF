@@ -123,10 +123,10 @@ textarea:focus {
 
 /* Menu suspenso (cilindro): mais escuro, para o fundo não aparecer por trás */
 .nav-admin-dropdown {
-  /* Quase opaco: o fundo aparece só borrado (desfoque de 30px), sem texto legível por trás */
-  background: linear-gradient(170deg, rgba(12,12,16,0.7) 0%, rgba(6,6,8,0.7) 100%);
-  -webkit-backdrop-filter: blur(30px) saturate(140%);
-  backdrop-filter: blur(30px) saturate(140%);
+  /* Vidro igual ao da barra superior: translúcido, com as cores do fundo e desfoque */
+  background: linear-gradient(180deg, rgba(255,255,255,0.16) 0%, rgba(255,255,255,0.03) 48%, rgba(0,0,0,0.22) 100%), rgba(18,18,26,0.38);
+  -webkit-backdrop-filter: blur(22px) saturate(170%);
+  backdrop-filter: blur(22px) saturate(170%);
   border-top: 1.5px solid rgba(255,255,255,0.18);
   box-shadow: 0 30px 60px rgba(0,0,0,0.6), inset 0 1px 1px rgba(255,255,255,0.08), inset 0 -4px 10px rgba(0,0,0,0.8);
 }
@@ -1253,6 +1253,18 @@ body::after {
   min-width: 0;
   white-space: normal;
 }
+/* O combobox (que substitui o select) divide a linha com "SALA:" e não passa da tela */
+#professorSalaSeletorWrap .combo-dep {
+  flex: 1;
+  min-width: 0;
+  margin-top: 0;
+}
+#professorSalaSeletorWrap .combo-dep-atual {
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 #professorSalaSeletorWrap .combo-dep-atual {
   height: 48px;
   font-size: 16px;
@@ -1466,22 +1478,38 @@ body::after {
 /* ---------- Menu do celular (até 880px): ícone no lugar do nome, painel descendo como o "Olá" ---------- */
 @media (max-width: 880px) {
   .nav { position: relative; }
-  .nav .brand { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); }
+  /* Logo à esquerda; MENU centralizado; Entrar à direita */
+  .nav .brand { margin-right: auto; }
+  .nav-menu-toggle { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); }
+  /* Ao passar o dedo/mouse: efeito glass, igual à pílula do menu do desktop */
+  .nav-menu-toggle:hover {
+    background: linear-gradient(180deg, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0.06) 100%);
+    border-color: rgba(255,255,255,0.3);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.3), 0 4px 14px rgba(0,0,0,0.35);
+    -webkit-backdrop-filter: blur(10px) saturate(160%);
+    backdrop-filter: blur(10px) saturate(160%);
+  }
   .nav .brand-name { display: none; }
   .nav-menu-toggle {
     display: inline-flex; align-items: center; justify-content: center;
-    height: 40px; padding: 0 16px; flex-shrink: 0; cursor: pointer;
+    height: 40px; width: 44px; padding: 0; flex-shrink: 0; cursor: pointer;
     border-radius: 999px; border: 1px solid var(--border-strong); background: rgba(255,255,255,0.06);
     color: var(--ink); font-family: inherit; font-size: 12px; font-weight: 800; letter-spacing: 0.08em;
   }
   .nav-menu-toggle span { display: none; }
+  /* Entrar: só o ícone, redondo como o menu */
+  .nav-login {
+    width: 44px; height: 40px; padding: 0; gap: 0; justify-content: center; border-radius: 999px;
+  }
+  .nav-login-label { display: none; }
 
   .nav-links.aberto {
     display: flex; flex-direction: column; gap: 2px; position: absolute;
-    top: calc(100% + 10px); left: 0; width: 240px; max-width: calc(100vw - 24px); z-index: 90;
+    top: calc(100% + 10px); left: 50%; transform: translateX(-50%); width: 300px; max-width: calc(100vw - 24px); z-index: 90;
     padding: 8px; border-radius: 16px; border: 1px solid var(--border-strong);
-    background: #16161f; box-shadow: 0 24px 48px -16px var(--shadow);
-    backdrop-filter: none; -webkit-backdrop-filter: none;
+    background: linear-gradient(180deg, rgba(255,255,255,0.16) 0%, rgba(255,255,255,0.03) 48%, rgba(0,0,0,0.22) 100%), rgba(18,18,26,0.38);
+    box-shadow: 0 24px 48px -16px var(--shadow);
+    backdrop-filter: blur(22px) saturate(170%); -webkit-backdrop-filter: blur(22px) saturate(170%);
   }
   .nav-links.aberto > .fundo-movel { display: none; }
   .nav-links.aberto > li { display: block; }
@@ -1491,9 +1519,19 @@ body::after {
     padding: 11px 14px; border-radius: 10px; font-size: 13px; font-weight: 600;
     text-transform: none; letter-spacing: 0; color: var(--ink); background: none; border: 0; cursor: pointer;
   }
+  /* Itens com o mesmo efeito de vidro da versão logada e do desktop */
   .nav-links.aberto a:hover,
-  .nav-links.aberto .nav-admin-toggle:hover { background: rgba(255,255,255,0.06); }
+  .nav-links.aberto .nav-admin-toggle:hover {
+    background: linear-gradient(180deg, rgba(255,255,255,0.16) 0%, rgba(255,255,255,0.05) 100%);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.22);
+  }
   .nav-links.aberto a.is-active { background: rgba(255,122,51,0.14); color: var(--laranja); }
+  /* Links com ícone (mesmos ícones do desktop) */
+  .nav-links.aberto > li > a { display: flex; align-items: center; gap: 12px; }
+  .nav-links.aberto > li > a > .nav-ico {
+    display: inline-block; width: 18px; height: 18px; flex-shrink: 0; fill: none; stroke: currentColor; stroke-width: 1.9;
+    stroke-linecap: round; stroke-linejoin: round; color: #F5F5F8;
+  }
   .nav-links.aberto .is-sobre-fundo { color: var(--ink) !important; }
 
   /* Portal (logado): Site / Administração / Portal EBD viram sub-listas que abrem para baixo */
@@ -1501,16 +1539,27 @@ body::after {
   .nav-links.aberto.logado .nav-admin-menu { display: flex !important; flex-direction: column; gap: 2px; }
   .nav-links.aberto.logado .nav-admin-menu { align-items: stretch !important; }
   .nav-links.aberto .nav-admin-menu-item { position: static; width: 100%; }
+  /* Submenu no celular com o mesmo visual do desktop: painel de vidro escuro, itens com ícone e destaque glass */
+  /* Portal EBD / Administração: subitens em hierarquia (recuo e linha à esquerda), sem caixa */
   .nav-links.aberto .nav-admin-dropdown {
-    position: static; display: none; min-width: 0; margin: 0 0 4px 12px; padding: 0;
-    background: none; border: 0; border-left: 2px solid var(--border-strong); border-radius: 0;
+    position: static; display: none; min-width: 0; margin: 2px 0 6px 14px; padding: 0 0 0 8px;
+    background: none; border: 0; border-left: 1px solid rgba(255,255,255,0.18); border-radius: 0;
     box-shadow: none; backdrop-filter: none; -webkit-backdrop-filter: none;
   }
   .nav-links.aberto .nav-admin-menu-item > .nav-admin-toggle.open ~ .nav-admin-dropdown { display: block; }
   .nav-links.aberto .nav-admin-dropdown-item {
-    display: block; width: 100%; padding: 9px 12px; font-size: 12.5px; color: var(--muted); background: none; border: 0;
+    display: flex; align-items: center; gap: 12px; width: 100%; box-sizing: border-box;
+    padding: 12px 16px; border-radius: 16px; font-size: 14.85px; font-weight: 500; color: #F5F5F8;
+    text-transform: none; letter-spacing: 0; background: none; border: 0;
   }
-  .nav-links.aberto .nav-admin-dropdown-item:hover { color: var(--ink); background: rgba(255,255,255,0.06); }
+  .nav-links.aberto .nav-admin-dropdown-item .nav-ico {
+    width: 18px; height: 18px; flex-shrink: 0; fill: none; stroke: currentColor; stroke-width: 1.9;
+    stroke-linecap: round; stroke-linejoin: round; color: #F5F5F8;
+  }
+  .nav-links.aberto .nav-admin-dropdown-item:hover,
+  .nav-links.aberto .nav-admin-dropdown-item.is-sobre-fundo {
+    color: #F5F5F8; background: rgba(255,255,255,0.08); box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
+  }
   .nav-links.aberto .nav-admin-dropdown .fundo-movel-lista { display: none; }
   .nav-links.aberto .nav-admin-toggle::after { content: "›"; float: right; transition: transform 0.2s ease; }
   .nav-links.aberto .nav-admin-toggle.open::after { transform: rotate(90deg); }
@@ -1615,6 +1664,14 @@ body::after {
 @media (max-width: 560px) {
   .sec-pedido-linha { grid-template-columns: 1fr; gap: 2px; }
   .sec-pedido-cabecalho { display: none; }
+  /* Celular: cada dado com seu rótulo, em vez da tabela (ex.: "Solicitante: Marcia") */
+  .sec-pedido-linha > [data-rotulo]::before {
+    content: attr(data-rotulo) ": "; font-weight: 700; color: var(--muted);
+  }
+  /* Controles na mesma linha do rótulo: "Status: [Entregue]" */
+  .sec-pedido-linha > .sec-pedido-campo { display: flex; align-items: center; gap: 8px; min-width: 0; }
+  .sec-pedido-campo::before { flex: 0 0 112px; }
+  .sec-pedido-campo select { flex: 1 1 0; min-width: 0; width: auto; }
 }
 
 /* Lista do combobox (Trimestre/Aula) deve aparecer por cima do card seguinte (Recursos Disponíveis).
@@ -2070,3 +2127,18 @@ body::after {
   .cal-dia.is-hoje { border-color: var(--laranja); }
   .cal-dia.is-sel { background: var(--azul); color: #fff; }
   .cal-rodape { display: flex; justify-content: space-between; margin-top: 10px; }
+
+/* Submenus com desfoque do fundo: a barra não pode ser a camada de desfoque (ela ficaria como
+   "fundo" dos submenus). O desfoque da barra vai para um fundo interno (::before), e o 3D é removido. */
+.nav-links { transform-style: flat; }
+.nav-shell { transform: none; -webkit-transform: none; will-change: auto; }
+.nav { position: relative; -webkit-backdrop-filter: none; backdrop-filter: none; }
+.nav::before {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; z-index: -1; pointer-events: none;
+  -webkit-backdrop-filter: blur(22px) saturate(170%); backdrop-filter: blur(22px) saturate(170%);
+}
+
+/* Menu superior: ícone (casa, engrenagem e livro em chamas) antes de Site, Administração e Portal EBD; títulos em maiúsculas */
+.nav-admin-toggle { text-transform: uppercase; }
+.nav-links.aberto .nav-admin-toggle { text-transform: uppercase; }
+.nav-toggle-ico { width: 18px; height: 18px; display: inline-block; vertical-align: middle; margin-right: 6px; }
