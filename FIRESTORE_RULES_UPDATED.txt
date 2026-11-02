@@ -26,19 +26,23 @@ service cloud.firestore {
         get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.perfil == "professor" ||
         get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.perfil == "administrativo"
       );
-      // Cadastro de um novo usuário: a própria pessoa, ou a equipe criando um aluno pendente de verificação
+      // Cadastro pela própria pessoa: sempre como convidado (ninguém cria a própria conta como admin).
+      // A equipe cria alunos pendentes de verificação.
       allow create: if request.auth != null && (
-        request.auth.uid == userId ||
+        (request.auth.uid == userId && request.resource.data.perfil == "convidado") ||
         ((isAdmin() || isAdministrativo() ||
           get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.perfil == "professor")
           && request.resource.data.cadastroPendente == true
           && request.resource.data.perfil == "aluno")
       );
-      allow update: if request.auth != null
-                    && (
-                      (request.auth.uid == userId && request.resource.data.perfil == resource.data.perfil)
-                      || isAdmin()
-                    );
+      // Atualização: o admin altera tudo. A própria pessoa altera os seus dados, mas não perfil nem cadastroPendente,
+      // e pode desativar a própria conta (ativo: false), nunca reativá-la.
+      allow update: if request.auth != null && (
+        isAdmin() ||
+        (request.auth.uid == userId &&
+         !request.resource.data.diff(resource.data).affectedKeys().hasAny(['perfil', 'cadastroPendente']) &&
+         (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['ativo']) || request.resource.data.ativo == false))
+      );
     }
 
     // Índice do celular (hash -> { uid, email }), usado só para validar duplicidade no Perfil.

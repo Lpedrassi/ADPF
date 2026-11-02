@@ -1594,11 +1594,11 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <script>tailwind.config = { corePlugins: { preflight: false } };</script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
-<link rel="stylesheet" href="ui-tema.css">
+<link rel="stylesheet" href="ui-tema.css?v=20261101">
 <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
 <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
 <script src="ui-kit.js"></script>
-<script src="menu-pilula.js" defer></script>
+<script src="menu-pilula.js?v=20261101" defer></script>
 
 <div class="nav-shell">
   <nav class="nav">
@@ -4085,7 +4085,7 @@
   })();
 </script>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
-<script type="module" src="auth.js"></script>
+<script type="module" src="auth.js?v=20261101"></script>
 <script type="module" src="agenda.js"></script>
 <div class="login-overlay" id="arquivoModal" role="dialog" aria-modal="true" aria-labelledby="arquivoModalTitulo" hidden>
   <div class="login-card">
@@ -4251,7 +4251,7 @@
   import { firebaseConfig } from "./firebase-config.js";
   import { buscarTodosEventos, salvarEvento, excluirEvento, buscarDepartamentosAgenda, salvarDepartamentosAgenda, renomearCategoriaEventos } from "./agenda.js";
   import { abrirSolicitarRevistaComo, abrirMeuPedidoComo, temPedidoRevistaComo } from "./aluno.js";
-  import { sincronizarCelularLogin, sincronizarNomeUsuario, validarDadosUnicos, atualizarEmailNosIndices } from "./celular-login.js";
+  import { sincronizarCelularLogin, sincronizarNomeUsuario, validarDadosUnicos, atualizarEmailNosIndices } from "./celular-login.js?v=20261101";
 
   // auth.js e agenda.js (importados acima via <script src>) ja podem ter
   // inicializado o Firebase primeiro - por isso reaproveita o app existente.
