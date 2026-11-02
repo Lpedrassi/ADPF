@@ -282,6 +282,25 @@
     .login-form input:focus { outline: none; border-color: var(--azul); } .login-senha-wrap { position: relative; } .login-senha-wrap input { padding-right: 44px; } .toggle-senha { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); width: 30px; height: 30px; border: none; background: transparent; color: var(--muted); cursor: pointer; display: flex; align-items: center; justify-content: center; border-radius: 8px; transition: color 0.2s ease; } .toggle-senha:hover { color: var(--ink); }
   #loginModal .login-form input.campo-erro { border-color: var(--vermelho) !important; box-shadow: 0 0 0 3px rgba(255,59,82,0.18); }
   .login-card.tremer { animation: loginTremer 0.45s ease; }
+  /* "Efeito de processamento": anel girando no botão enquanto aguarda o servidor.
+     Aplicar: adicionar a classe .btn-processando no botão (e tirar ao terminar).
+     Cores: alterar só as variáveis abaixo; valem para todos os botões que usam o efeito. */
+  :root {
+    --efeito-proc-ouro: #FFB100;
+    --efeito-proc-ouro-claro: #FFE38A;
+    --efeito-proc-prata: #E5E7EB;
+    --efeito-proc-azul: #3B82FF;
+  }
+  @property --login-ang { syntax: "<angle>"; inherits: false; initial-value: 200deg; }
+  @keyframes loginGirar { to { --login-ang: 560deg; } }
+  .btn.btn-processando { position: relative; }
+  .btn.btn-processando::before {
+    content: ""; position: absolute; inset: -3px; border-radius: inherit; padding: 3px;
+    background: conic-gradient(from var(--login-ang), var(--efeito-proc-ouro), var(--efeito-proc-ouro-claro), var(--efeito-proc-prata), var(--efeito-proc-azul), var(--efeito-proc-prata), var(--efeito-proc-ouro-claro), var(--efeito-proc-ouro));
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor; mask-composite: exclude;
+    pointer-events: none; animation: loginGirar 1.2s linear infinite;
+  }
   @keyframes loginTremer {
     0%, 100% { transform: translateX(0); }
     20% { transform: translateX(-10px); }
@@ -1771,8 +1790,8 @@
         <div class="login-senha-wrap"><input id="loginSenha" type="password" placeholder="••••••••" autocomplete="current-password" required><button type="button" class="toggle-senha" id="toggleSenha" aria-label="Mostrar senha"><svg id="iconOlhoAberto" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/></svg><svg id="iconOlhoFechado" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 19c-7 0-11-7-11-7a21.6 21.6 0 0 1 5.06-5.94M9.9 4.24A10.7 10.7 0 0 1 12 4c7 0 11 7 11 7a21.6 21.6 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg></button></div>
         <a href="#" class="login-forgot" onclick="if (window.recuperarSenha) recuperarSenha(); return false;">Esqueceu a senha?</a>
       </div>
-      <label class="login-lembrar" style="display:flex;align-items:center;gap:8px;font-size:13px;margin:4px 0 0;cursor:pointer;">
-        <input type="checkbox" id="loginLembrar"> Lembrar meu e-mail neste computador
+      <label class="login-lembrar" title="Guarda só o e-mail neste computador" style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:400;text-transform:none;letter-spacing:0;color:var(--muted-2);white-space:nowrap;margin:2px 0 0;cursor:pointer;">
+        <input type="checkbox" id="loginLembrar" style="margin:0;width:13px;height:13px;"> Lembrar meu usuário neste dispositivo
       </label>
       <script>
         // Só o e-mail fica guardado neste navegador (nunca a senha). Desmarcar apaga o que foi guardado.
@@ -4181,7 +4200,7 @@
   })();
 </script>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
-<script type="module" src="auth.js?v=20261101"></script>
+<script type="module" src="auth.js?v=20261103"></script>
 <script type="module" src="agenda.js"></script>
 <div class="login-overlay" id="arquivoModal" role="dialog" aria-modal="true" aria-labelledby="arquivoModalTitulo" hidden>
   <div class="login-card">
@@ -4330,7 +4349,7 @@
   </div>
 </div>
 
-<script type="module" src="aluno.js?v=20261147"></script>
+<script type="module" src="aluno.js?v=20261148"></script>
 <script type="module" src="biblia.js"></script>
 
 <script type="module">

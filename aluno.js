@@ -983,6 +983,7 @@ async function enviarPedidoRevista() {
   if (anteriores.length && !(await confirmarMaisRevistas())) return;
 
   enviar.disabled = true;
+  enviar.classList.add("btn-processando"); // anel dourado enquanto o servidor responde
   try {
     // Pedido novo do trimestre: o id é único (o primeiro usa o id padrão do trimestre)
     const base = `${sol.uid}_${periodo.ano}_${periodo.trimestre}`;
@@ -1012,6 +1013,8 @@ async function enviarPedidoRevista() {
     status.textContent = "Não foi possível fazer o pedido agora. Tente de novo.";
     window.notificar("Não foi possível fazer o pedido. Tente de novo.", "error");
     enviar.disabled = false;
+  } finally {
+    enviar.classList.remove("btn-processando");
   }
 }
 

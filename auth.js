@@ -69,6 +69,9 @@ if (form) {
     const identificador = campoEmail.value.trim();
     const senha = campoSenha.value;
 
+    // Enquanto o servidor responde, o botão Entrar mostra o anel girando
+    const botaoEntrar = form.querySelector('button[type="submit"]');
+    if (botaoEntrar) botaoEntrar.classList.add("btn-processando");
     try {
       // Login é e-mail e senha
       const email = identificador;
@@ -81,6 +84,8 @@ if (form) {
       } else {
         sinalizarErroLogin();
       }
+    } finally {
+      if (botaoEntrar) botaoEntrar.classList.remove("btn-processando");
     }
   });
 
