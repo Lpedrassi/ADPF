@@ -125,6 +125,66 @@ export async function excluirEvento(id) {
 }
 
 // =================================================================
+// Agenda EBD = compromissos da secretaria. Usa a mesma coleção "compromissosSecretaria"
+// que a tela de Agendas da Secretaria (index.html), com os mesmos nomes de campo
+// (titulo, data, dataFim, hora, descricao). Não aparece no site público.
+// =================================================================
+
+const NOME_COLECAO_EBD = "compromissosSecretaria";
+let _cacheEventosEbd = null;
+
+/** Lista os compromissos da secretaria no formato da Agenda EBD (cache simples em memória). */
+export async function buscarEventosEbd(forcarRecarregar = false) {
+  if (_cacheEventosEbd && !forcarRecarregar) return _cacheEventosEbd;
+  const snap = await getDocs(collection(db, NOME_COLECAO_EBD));
+  const lista = [];
+  snap.forEach((d) => {
+    const c = d.data();
+    lista.push({
+      id: d.id,
+      titulo: c.titulo || "",
+      dataInicio: c.data || "",
+      dataFim: c.dataFim || c.data || "",
+      hora: c.hora || null,
+      observacao: c.descricao || null
+    });
+  });
+  lista.sort((a, b) => (a.dataInicio || "").localeCompare(b.dataInicio || ""));
+  _cacheEventosEbd = lista;
+  return lista;
+}
+
+/** Cria ou atualiza um compromisso. `dados`: titulo, dataInicio, dataFim, hora, observacao (+ id para editar). */
+export async function salvarEventoEbd(dados) {
+  const campos = {
+    titulo: dados.titulo,
+    data: dados.dataInicio,
+    dataFim: dados.dataFim || dados.dataInicio,
+    hora: dados.hora || "",
+    descricao: dados.observacao || ""
+  };
+  if (dados.id) {
+    // Edição: não mexe no convidado nem em quem criou
+    await updateDoc(doc(db, NOME_COLECAO_EBD, dados.id), Object.assign({}, campos, {
+      editadoEmMs: Date.now()
+    }));
+  } else {
+    await addDoc(collection(db, NOME_COLECAO_EBD), Object.assign({}, campos, {
+      convidadoUid: "",
+      convidadoNome: "",
+      criadoEm: serverTimestamp(),
+      criadoEmMs: Date.now()
+    }));
+  }
+  _cacheEventosEbd = null;
+}
+
+export async function excluirEventoEbd(id) {
+  await deleteDoc(doc(db, NOME_COLECAO_EBD, id));
+  _cacheEventosEbd = null;
+}
+
+// =================================================================
 // 2) EXIBIÇÃO PÚBLICA (seção "Agenda" do site) — só roda se existir na página
 // =================================================================
 

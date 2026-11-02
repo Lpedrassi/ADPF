@@ -1729,7 +1729,7 @@
         <div class="nav-admin-menu-item">
           <button class="nav-admin-toggle" id="navEbdToggle" type="button"><img class="nav-toggle-ico" src="icones-menu/portal-ebd.png?v=3" alt="">Portal EBD</button>
           <div class="nav-admin-dropdown" id="navEbdDropdown">
-            <button class="nav-admin-dropdown-item" data-area="areaAluno"><svg class="nav-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 5.5c2.5-1.2 5.5-1.2 10 1.2 4.5-2.4 7.5-2.4 10-1.2V19c-2.5-1.2-5.5-1.2-10 1.2-4.5-2.4-7.5-2.4-10-1.2z"/><path d="M12 6.7V20"/></svg>Área do Aluno EBD</button>
+            <button class="nav-admin-dropdown-item" data-area="areaAluno"><svg class="nav-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 5.5c2.5-1.2 5.5-1.2 10 1.2 4.5-2.4 7.5-2.4 10-1.2V19c-2.5-1.2-5.5-1.2-10 1.2-4.5-2.4-7.5-2.4-10-1.2z"/><path d="M12 6.7V20"/></svg>Área do Aluno</button>
             <button class="nav-admin-dropdown-item" data-area="areaProfessor"><svg class="nav-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="3.5" width="14" height="10" rx="1"/><path d="M12 9.5h4"/><circle cx="4.5" cy="9" r="2.2"/><path d="M1 21v-2.5a3.5 3.5 0 0 1 7 0V21"/></svg>Área do Professor</button>
             <button class="nav-admin-dropdown-item" data-area="areaAdministrativo"><svg class="nav-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="13" height="18" rx="2"/><path d="M7 2h5v3H7z"/><path d="M6.5 10h6M6.5 13.5h6M6.5 17h4"/><path d="M18.5 8h2v10l-1 2.5-1-2.5z"/><path d="M18.5 11h2"/></svg>Área da Secretaria</button>
           </div>
@@ -2150,7 +2150,7 @@
     <button class="sidebar-link" type="button" data-area="areaPostsSite">Post's do Site!</button>
 
     <div class="sidebar-category">Portal EBD</div>
-    <button class="sidebar-link" type="button" data-area="areaAluno">Área do Aluno EBD</button>
+    <button class="sidebar-link" type="button" data-area="areaAluno">Área do Aluno</button>
     <button class="sidebar-link" type="button" data-area="areaProfessor">Área do Professor</button>
     <button class="sidebar-link" type="button" data-area="areaAdministrativo">Área da Secretaria</button>
     <button class="sidebar-link" type="button" data-area="areaCadastroSalas">Gerenciar EBD</button>
@@ -2740,16 +2740,14 @@
         <label>Data início
           <input type="text" id="eventoDataInicio" data-data-br placeholder="Ex.: 15/03/2010" inputmode="numeric" maxlength="10" autocomplete="off" required>
         </label>
+        <label>Data fim (opcional)
+          <input type="text" id="eventoDataFim" data-data-br placeholder="Ex.: 17/03/2010" inputmode="numeric" maxlength="10" autocomplete="off" title="Para dias consecutivos, informe o último dia">
+        </label>
+      </div>
+      <div class="admin-form-linha">
         <label>Horário (opcional)
           <input type="text" id="eventoHora" placeholder="Ex: 18h">
         </label>
-      </div>
-      <label class="admin-check">
-        <input type="checkbox" id="checkMaisDeUmDia">
-        Mais dias
-      </label>
-      <div id="blocoOutrasDatas" class="admin-outras-datas" hidden>
-        <div id="listaOutrasDatas"></div>
       </div>
       <label>Título
         <input type="text" id="eventoTitulo" required placeholder="Ex: Culto de Missões">
@@ -3100,7 +3098,7 @@
   </section>
 
   <section id="areaAluno" class="portal-section">
-    <h2>Área do Aluno EBD</h2>
+    <h2>Área do Aluno</h2>
 
     <div id="alunoPainelPrincipal">
       <!-- Avisos da Igreja (topo da página) -->
@@ -12920,9 +12918,7 @@
     const linhaCategoriaNova = document.getElementById("linhaCategoriaNova");
     const campoCategoriaNova = document.getElementById("eventoCategoriaNova");
     const campoDataInicio = document.getElementById("eventoDataInicio");
-    const checkMaisDeUmDia = document.getElementById("checkMaisDeUmDia");
-    const blocoOutrasDatas = document.getElementById("blocoOutrasDatas");
-    const listaOutrasDatas = document.getElementById("listaOutrasDatas");
+    const campoDataFim = document.getElementById("eventoDataFim");
     const campoHora = document.getElementById("eventoHora");
     const campoTitulo = document.getElementById("eventoTitulo");
     const campoObservacao = document.getElementById("eventoObservacao");
@@ -12941,7 +12937,6 @@
     const btnConfirmarDuplicarSim = document.getElementById("btnConfirmarDuplicarSim");
     const btnConfirmarDuplicarNao = document.getElementById("btnConfirmarDuplicarNao");
 
-    let outrasDatasState = [];
     let eventosCache = [];
 
     // Monta o checkbox "Todas", os checkboxes de congregações (uma vez) e o checkbox "Outra..."
@@ -13033,43 +13028,6 @@
         function onNao() { fechar(false); }
         btnConfirmarDuplicarSim.addEventListener("click", onSim);
         btnConfirmarDuplicarNao.addEventListener("click", onNao);
-      });
-    }
-
-    function renderOutrasDatas() {
-      listaOutrasDatas.innerHTML = "";
-      outrasDatasState.forEach((valor, indice) => {
-        const linha = document.createElement("div");
-        linha.className = "outra-data-linha";
-
-        const input = document.createElement("input");
-        input.type = "text";
-        input.setAttribute("data-data-br", "");
-        input.placeholder = "Ex.: 15/03/2010";
-        input.inputMode = "numeric";
-        input.maxLength = 10;
-        mascaraDataBrInput(input);
-        definirDataIso(input, valor);
-        input.addEventListener("change", () => { outrasDatasState[indice] = lerDataIso(input); });
-
-        const ultima = indice === outrasDatasState.length - 1;
-        const botao = document.createElement("button");
-        botao.type = "button";
-        botao.className = "btn-admin-mini";
-        botao.textContent = ultima ? "+" : "×";
-        botao.title = ultima ? "Adicionar outra data" : "Remover esta data";
-        botao.addEventListener("click", () => {
-          if (ultima) {
-            outrasDatasState.push("");
-          } else {
-            outrasDatasState.splice(indice, 1);
-          }
-          renderOutrasDatas();
-        });
-
-        linha.appendChild(input);
-        linha.appendChild(botao);
-        listaOutrasDatas.appendChild(linha);
       });
     }
 
@@ -13215,27 +13173,12 @@
         renderizarComboDep();
       });
 
-    checkMaisDeUmDia.addEventListener("change", () => {
-      if (checkMaisDeUmDia.checked) {
-        blocoOutrasDatas.hidden = false;
-        if (outrasDatasState.length === 0) outrasDatasState = [""];
-      } else {
-        blocoOutrasDatas.hidden = true;
-        outrasDatasState = [];
-      }
-      renderOutrasDatas();
-    });
-
     function limparFormulario() {
       form.reset();
       sincronizarComboDep();
       campoId.value = "";
       btnCancelar.hidden = true;
       linhaCategoriaNova.hidden = true;
-      checkMaisDeUmDia.checked = false;
-      blocoOutrasDatas.hidden = true;
-      outrasDatasState = [];
-      renderOutrasDatas();
       linhaCongregacoesSetor.hidden = campoEscopo.value !== "setor";
       limparCongregacoesSetor();
     }
@@ -13245,11 +13188,8 @@
       return `${dia}/${mes}/${ano}`;
     }
 
+    // Dias consecutivos, como no Google Agenda: "dd/mm/aaaa a dd/mm/aaaa"
     function formatarDatasEvento(ev) {
-      if (ev.outrasDatas && ev.outrasDatas.length > 0) {
-        const todas = [ev.dataInicio, ...ev.outrasDatas].sort();
-        return todas.map(formatarDataLista).join(", ");
-      }
       if (ev.dataFim && ev.dataFim !== ev.dataInicio) {
         return `${formatarDataLista(ev.dataInicio)} a ${formatarDataLista(ev.dataFim)}`;
       }
@@ -13277,6 +13217,7 @@
 
       sincronizarComboDep();
       definirDataIso(campoDataInicio, ev.dataInicio);
+      definirDataIso(campoDataFim, ev.dataFim && ev.dataFim !== ev.dataInicio ? ev.dataFim : "");
       campoHora.value = ev.hora || "";
       campoTitulo.value = ev.titulo;
       campoObservacao.value = ev.observacao || "";
@@ -13297,23 +13238,6 @@
         }
         checkCongregacaoTodas.checked = checkboxesCongregacoes.every((cb) => cb.checked);
       }
-
-      let datasExtras = [];
-      if (ev.outrasDatas && ev.outrasDatas.length > 0) {
-        datasExtras = ev.outrasDatas.slice();
-      } else if (ev.dataFim && ev.dataFim !== ev.dataInicio) {
-        datasExtras = [ev.dataFim];
-      }
-      if (datasExtras.length > 0) {
-        checkMaisDeUmDia.checked = true;
-        blocoOutrasDatas.hidden = false;
-        outrasDatasState = datasExtras;
-      } else {
-        checkMaisDeUmDia.checked = false;
-        blocoOutrasDatas.hidden = true;
-        outrasDatasState = [];
-      }
-      renderOutrasDatas();
 
       btnCancelar.hidden = false;
       form.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -13478,9 +13402,10 @@
 
       if (!lerDataIso(campoDataInicio)) { alert("Informe a data de início no formato 15/03/2010."); return; }
       const dataInicioIso = lerDataIso(campoDataInicio);
-      const outrasDatas = outrasDatasState.filter((d) => d && d !== dataInicioIso);
-      const todasDatas = [dataInicioIso, ...outrasDatas].sort();
-      const dataFimCalculada = todasDatas[todasDatas.length - 1];
+      // Data fim vazia = evento de um dia só
+      const dataFimIso = campoDataFim.value.trim() ? lerDataIso(campoDataFim) : dataInicioIso;
+      if (!dataFimIso) { alert("Informe a data fim no formato 15/03/2010 ou deixe em branco."); return; }
+      if (dataFimIso < dataInicioIso) { alert("A data fim não pode ser antes da data início."); return; }
       const ehEventoNovo = !campoId.value;
       const envolvePqFlorianopolis = ehSetor && congregacoesSetor.includes(CONGREGACAO_LOCAL);
 
@@ -13504,8 +13429,7 @@
           tipo: campoTipo.value,
           categoria: categoria,
           dataInicio: dataInicioIso,
-          dataFim: dataFimCalculada,
-          outrasDatas: outrasDatas,
+          dataFim: dataFimIso,
           hora: campoHora.value.trim(),
           titulo: campoTitulo.value.trim(),
           observacao: campoObservacao.value.trim(),
@@ -13519,8 +13443,7 @@
             tipo: "evento",
             categoria: categoria,
             dataInicio: dataInicioIso,
-            dataFim: dataFimCalculada,
-            outrasDatas: outrasDatas,
+            dataFim: dataFimIso,
             hora: campoHora.value.trim(),
             titulo: campoTitulo.value.trim(),
             observacao: campoObservacao.value.trim(),

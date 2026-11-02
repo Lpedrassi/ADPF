@@ -141,7 +141,7 @@
         <button class="sidebar-link" type="button" data-area="areaAdmin">Administração</button>
         <button class="sidebar-link" type="button" data-area="areaAgenda">Agenda de Cultos e Eventos</button>
         <button class="sidebar-link" type="button" data-area="areaProfessor">Área do Professor</button>
-        <button class="sidebar-link" type="button" data-area="areaAluno">Área do Aluno EBD</button>
+        <button class="sidebar-link" type="button" data-area="areaAluno">Área do Aluno</button>
         <button class="sidebar-link" type="button" data-area="areaAdministrativo">Secretaria / Administrativo</button>
       </nav>
 
@@ -161,45 +161,17 @@
           <form id="formAgendaEvento" class="admin-form">
             <input type="hidden" id="eventoId" value="">
             <div class="admin-form-linha">
-              <label>Escopo
-                <select id="eventoEscopo" required>
-                  <option value="congregacao">Nossa congregação</option>
-                  <option value="setor">Setor</option>
-                </select>
-              </label>
-              <label>Departamento
-                <select id="eventoCategoria" required>
-                  <option value="" disabled selected>Selecione...</option>
-                  <option value="Infantil">Infantil</option>
-                  <option value="Adolescentes">Adolescentes</option>
-                  <option value="Jovens">Jovens</option>
-                  <option value="Varões">Varões</option>
-                  <option value="Feminino">Feminino</option>
-                  <option value="Missões">Missões</option>
-                  <option value="Culto">Culto</option>
-                  <option value="_novo">+ Criar novo...</option>
-                </select>
-              </label>
-            </div>
-            <div class="admin-form-linha" id="linhaCategoriaNova" hidden>
-              <label>Nome do novo departamento
-                <input type="text" id="eventoCategoriaNova" placeholder="Ex: Casais">
-              </label>
-            </div>
-            <div class="admin-form-linha">
               <label>Data início
                 <input type="text" id="eventoDataInicio" data-data-br placeholder="dd/mm/aaaa" inputmode="numeric" maxlength="10" autocomplete="off" required>
               </label>
+              <label>Data fim (opcional)
+                <input type="text" id="eventoDataFim" data-data-br placeholder="dd/mm/aaaa" inputmode="numeric" maxlength="10" autocomplete="off" title="Para dias consecutivos, informe o último dia">
+              </label>
+            </div>
+            <div class="admin-form-linha">
               <label>Horário (opcional)
                 <input type="text" id="eventoHora" placeholder="Ex: 18h">
               </label>
-            </div>
-            <label class="admin-check">
-              <input type="checkbox" id="checkMaisDeUmDia">
-              Mais dias
-            </label>
-            <div id="blocoOutrasDatas" class="admin-outras-datas" hidden>
-              <div id="listaOutrasDatas"></div>
             </div>
             <label>Título
               <input type="text" id="eventoTitulo" required placeholder="Ex: Culto de Missões">
@@ -216,14 +188,6 @@
           <div class="admin-agenda-lista-wrap">
             <h4>Eventos cadastrados</h4>
             <div class="admin-agenda-filtro">
-              <select id="filtroEscopo">
-                <option value="todos">Todos os escopos</option>
-                <option value="congregacao">Só Congregação</option>
-                <option value="setor">Só Setor</option>
-              </select>
-              <select id="filtroDepartamento">
-                <option value="todos">Todos os departamentos</option>
-              </select>
               <input type="text" id="filtroDataInicio" data-data-br placeholder="dd/mm/aaaa" inputmode="numeric" maxlength="10" autocomplete="off" title="De">
               <input type="text" id="filtroDataFim" data-data-br placeholder="dd/mm/aaaa" inputmode="numeric" maxlength="10" autocomplete="off" title="Até">
               <input type="text" id="filtroTitulo" placeholder="Buscar por título...">
@@ -255,7 +219,7 @@
     import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
     import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
     import { firebaseConfig } from "./firebase-config.js";
-    import { buscarTodosEventos, salvarEvento, excluirEvento, importarAgendaInicial } from "./agenda.js";
+    import { buscarEventosEbd, salvarEventoEbd, excluirEventoEbd, importarAgendaInicial } from "./agenda.js?v=20261104";
     import { AGENDA_SEED_2026 } from "./agenda-seed-2026.js";
 
     // agenda.js (importado acima) já pode ter inicializado o Firebase primeiro -
@@ -264,8 +228,6 @@
     const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
-
-    const DEPARTAMENTOS = ["Infantil", "Adolescentes", "Jovens", "Varões", "Feminino", "Missões", "Culto"];
 
     const AREAS_POR_PERFIL = {
       admin: ["areaAdmin", "areaAgenda", "areaProfessor", "areaAluno", "areaAdministrativo"],
@@ -324,91 +286,23 @@
       const statusImportar = document.getElementById("importarAgendaStatus");
       const form = document.getElementById("formAgendaEvento");
       const campoId = document.getElementById("eventoId");
-      const campoEscopo = document.getElementById("eventoEscopo");
-      const campoCategoria = document.getElementById("eventoCategoria");
-      const linhaCategoriaNova = document.getElementById("linhaCategoriaNova");
-      const campoCategoriaNova = document.getElementById("eventoCategoriaNova");
       const campoDataInicio = document.getElementById("eventoDataInicio");
-      const checkMaisDeUmDia = document.getElementById("checkMaisDeUmDia");
-      const blocoOutrasDatas = document.getElementById("blocoOutrasDatas");
-      const listaOutrasDatas = document.getElementById("listaOutrasDatas");
+      const campoDataFim = document.getElementById("eventoDataFim");
       const campoHora = document.getElementById("eventoHora");
       const campoTitulo = document.getElementById("eventoTitulo");
       const campoObservacao = document.getElementById("eventoObservacao");
       const btnCancelar = document.getElementById("btnCancelarEdicao");
       const listaEl = document.getElementById("adminAgendaLista");
-      const filtroEscopo = document.getElementById("filtroEscopo");
-      const filtroDepartamento = document.getElementById("filtroDepartamento");
       const filtroDataInicio = document.getElementById("filtroDataInicio");
       const filtroDataFim = document.getElementById("filtroDataFim");
       const filtroTitulo = document.getElementById("filtroTitulo");
 
-      let outrasDatasState = [];
       let eventosCache = [];
-
-      function renderOutrasDatas() {
-        listaOutrasDatas.innerHTML = "";
-        outrasDatasState.forEach((valor, indice) => {
-          const linha = document.createElement("div");
-          linha.className = "outra-data-linha";
-
-          const input = document.createElement("input");
-          input.type = "text";
-          input.setAttribute("data-data-br", "");
-          input.placeholder = "dd/mm/aaaa";
-          input.inputMode = "numeric";
-          input.maxLength = 10;
-          input.autocomplete = "off";
-          input.value = isoParaDataBr(valor);
-          input.addEventListener("change", () => { outrasDatasState[indice] = dataBrParaIso(input.value); });
-
-          const ultima = indice === outrasDatasState.length - 1;
-          const botao = document.createElement("button");
-          botao.type = "button";
-          botao.className = "btn-admin-mini";
-          botao.textContent = ultima ? "+" : "×";
-          botao.title = ultima ? "Adicionar outra data" : "Remover esta data";
-          botao.addEventListener("click", () => {
-            if (ultima) {
-              outrasDatasState.push("");
-            } else {
-              outrasDatasState.splice(indice, 1);
-            }
-            renderOutrasDatas();
-          });
-
-          linha.appendChild(input);
-          linha.appendChild(botao);
-          listaOutrasDatas.appendChild(linha);
-        });
-      }
-
-      campoCategoria.addEventListener("change", () => {
-        const isNovo = campoCategoria.value === "_novo";
-        linhaCategoriaNova.hidden = !isNovo;
-        if (isNovo) campoCategoriaNova.focus();
-      });
-
-      checkMaisDeUmDia.addEventListener("change", () => {
-        if (checkMaisDeUmDia.checked) {
-          blocoOutrasDatas.hidden = false;
-          if (outrasDatasState.length === 0) outrasDatasState = [""];
-        } else {
-          blocoOutrasDatas.hidden = true;
-          outrasDatasState = [];
-        }
-        renderOutrasDatas();
-      });
 
       function limparFormulario() {
         form.reset();
         campoId.value = "";
         btnCancelar.hidden = true;
-        linhaCategoriaNova.hidden = true;
-        checkMaisDeUmDia.checked = false;
-        blocoOutrasDatas.hidden = true;
-        outrasDatasState = [];
-        renderOutrasDatas();
       }
 
       function formatarDataLista(dataISO) {
@@ -416,11 +310,8 @@
         return `${dia}/${mes}/${ano}`;
       }
 
+      // Dias consecutivos, como no Google Agenda: "dd/mm/aaaa a dd/mm/aaaa"
       function formatarDatasEvento(ev) {
-        if (ev.outrasDatas && ev.outrasDatas.length > 0) {
-          const todas = [ev.dataInicio, ...ev.outrasDatas].sort();
-          return todas.map(formatarDataLista).join(", ");
-        }
         if (ev.dataFim && ev.dataFim !== ev.dataInicio) {
           return `${formatarDataLista(ev.dataInicio)} a ${formatarDataLista(ev.dataFim)}`;
         }
@@ -429,68 +320,22 @@
 
       function preencherFormulario(ev, manterId) {
         campoId.value = manterId ? ev.id : "";
-        campoEscopo.value = ev.escopo;
-
-        if (ev.categoria && DEPARTAMENTOS.includes(ev.categoria)) {
-          campoCategoria.value = ev.categoria;
-          linhaCategoriaNova.hidden = true;
-          campoCategoriaNova.value = "";
-        } else if (ev.categoria) {
-          campoCategoria.value = "_novo";
-          linhaCategoriaNova.hidden = false;
-          campoCategoriaNova.value = ev.categoria;
-        } else {
-          campoCategoria.value = "";
-          linhaCategoriaNova.hidden = true;
-          campoCategoriaNova.value = "";
-        }
-
         campoDataInicio.value = isoParaDataBr(ev.dataInicio);
+        campoDataFim.value = ev.dataFim && ev.dataFim !== ev.dataInicio ? isoParaDataBr(ev.dataFim) : "";
         campoHora.value = ev.hora || "";
         campoTitulo.value = ev.titulo;
         campoObservacao.value = ev.observacao || "";
-
-        let datasExtras = [];
-        if (ev.outrasDatas && ev.outrasDatas.length > 0) {
-          datasExtras = ev.outrasDatas.slice();
-        } else if (ev.dataFim && ev.dataFim !== ev.dataInicio) {
-          datasExtras = [ev.dataFim];
-        }
-        if (datasExtras.length > 0) {
-          checkMaisDeUmDia.checked = true;
-          blocoOutrasDatas.hidden = false;
-          outrasDatasState = datasExtras;
-        } else {
-          checkMaisDeUmDia.checked = false;
-          blocoOutrasDatas.hidden = true;
-          outrasDatasState = [];
-        }
-        renderOutrasDatas();
 
         btnCancelar.hidden = false;
         form.scrollIntoView({ behavior: "smooth", block: "center" });
       }
 
-      function popularFiltroDepartamento() {
-        const atual = filtroDepartamento.value;
-        const departamentos = new Set(DEPARTAMENTOS);
-        eventosCache.forEach((e) => { if (e.categoria) departamentos.add(e.categoria); });
-        const opcoes = [...departamentos].sort();
-        filtroDepartamento.innerHTML = '<option value="todos">Todos os departamentos</option>' +
-          opcoes.map((d) => `<option value="${d}">${d}</option>`).join("");
-        if (opcoes.includes(atual)) filtroDepartamento.value = atual;
-      }
-
       function aplicarFiltrosERenderizar() {
-        const escopo = filtroEscopo.value;
-        const departamento = filtroDepartamento.value;
         const dataDe = dataBrParaIso(filtroDataInicio.value);
         const dataAte = dataBrParaIso(filtroDataFim.value);
         const buscaTitulo = filtroTitulo.value.trim().toLowerCase();
 
         const filtrados = eventosCache.filter((ev) => {
-          if (escopo !== "todos" && ev.escopo !== escopo) return false;
-          if (departamento !== "todos" && ev.categoria !== departamento) return false;
           if (dataDe && ev.dataInicio < dataDe) return false;
           if (dataAte && ev.dataInicio > dataAte) return false;
           if (buscaTitulo && !ev.titulo.toLowerCase().includes(buscaTitulo)) return false;
@@ -514,22 +359,10 @@
           const corpo = document.createElement("div");
           corpo.className = "admin-agenda-item-corpo";
 
-          const tag = document.createElement("span");
-          tag.className = `admin-agenda-item-tag ${ev.escopo}`;
-          tag.textContent = ev.escopo === "congregacao" ? "Congregação" : "Setor";
-
           const titulo = document.createElement("span");
           titulo.textContent = ev.titulo + (ev.hora ? ` — ${ev.hora}` : "");
 
-          corpo.appendChild(tag);
           corpo.appendChild(titulo);
-
-          if (ev.categoria) {
-            const dept = document.createElement("span");
-            dept.className = "admin-agenda-item-dept";
-            dept.textContent = ev.categoria;
-            corpo.appendChild(dept);
-          }
 
           const botoes = document.createElement("div");
           botoes.className = "admin-agenda-item-botoes";
@@ -549,7 +382,7 @@
           btnExcluir.textContent = "Excluir";
           btnExcluir.addEventListener("click", async () => {
             if (!confirm(`Excluir o evento "${ev.titulo}"?`)) return;
-            await excluirEvento(ev.id);
+            await excluirEventoEbd(ev.id);
             recarregarLista();
           });
 
@@ -567,41 +400,37 @@
       async function recarregarLista() {
         listaEl.textContent = "Carregando...";
         try {
-          eventosCache = await buscarTodosEventos(true);
+          eventosCache = await buscarEventosEbd(true);
         } catch (err) {
           listaEl.textContent = "Não foi possível carregar os eventos.";
           console.error(err);
           return;
         }
-        popularFiltroDepartamento();
         aplicarFiltrosERenderizar();
       }
 
       form.addEventListener("submit", async (e) => {
         e.preventDefault();
-        const categoria = campoCategoria.value === "_novo"
-          ? campoCategoriaNova.value.trim()
-          : campoCategoria.value;
-        if (!categoria) {
-          alert("Selecione ou digite um departamento.");
-          return;
-        }
         const dataInicioIso = dataBrParaIso(campoDataInicio.value);
         if (!dataInicioIso) {
           alert("Informe a data de início no formato dd/mm/aaaa (data válida).");
           return;
         }
-        const outrasDatas = outrasDatasState.filter((d) => d && d !== dataInicioIso);
-        const todasDatas = [dataInicioIso, ...outrasDatas].sort();
-        const dataFimCalculada = todasDatas[todasDatas.length - 1];
+        // Data fim vazia = evento de um dia só
+        const dataFimIso = campoDataFim.value.trim() ? dataBrParaIso(campoDataFim.value) : dataInicioIso;
+        if (!dataFimIso) {
+          alert("Informe a data fim no formato dd/mm/aaaa (data válida) ou deixe em branco.");
+          return;
+        }
+        if (dataFimIso < dataInicioIso) {
+          alert("A data fim não pode ser antes da data início.");
+          return;
+        }
         try {
-          await salvarEvento({
+          await salvarEventoEbd({
             id: campoId.value || null,
-            escopo: campoEscopo.value,
-            categoria: categoria,
             dataInicio: dataInicioIso,
-            dataFim: dataFimCalculada,
-            outrasDatas: outrasDatas,
+            dataFim: dataFimIso,
             hora: campoHora.value.trim(),
             titulo: campoTitulo.value.trim(),
             observacao: campoObservacao.value.trim()
@@ -615,8 +444,6 @@
       });
 
       btnCancelar.addEventListener("click", limparFormulario);
-      filtroEscopo.addEventListener("change", aplicarFiltrosERenderizar);
-      filtroDepartamento.addEventListener("change", aplicarFiltrosERenderizar);
       filtroDataInicio.addEventListener("change", aplicarFiltrosERenderizar);
       filtroDataFim.addEventListener("change", aplicarFiltrosERenderizar);
       filtroTitulo.addEventListener("input", aplicarFiltrosERenderizar);
