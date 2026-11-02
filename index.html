@@ -354,6 +354,21 @@
   .usuarios-filtro-campo select:focus { outline: none; border-color: var(--azul); }
   .usuarios-filtro-busca { grid-column: span 2; }
   @media (max-width: 760px) { .usuarios-filtro-busca { grid-column: 1 / -1; } }
+  /* Celular: filtros recolhidos atrás de + FILTRO (desktop segue com os filtros sempre abertos) */
+  .usuarios-filtro-toggle { display: none; }
+  @media (max-width: 560px) {
+    .usuarios-filtro-toggle {
+      display: block; width: 100%; margin: 12px 0 16px; padding: 10px; border-radius: 12px; cursor: pointer;
+      border: 1px solid var(--border-strong); background: rgba(255,255,255,0.06); color: var(--ink);
+      font: inherit; font-size: 13px; font-weight: 800; letter-spacing: .04em;
+    }
+    #usuariosFiltros { display: none; }
+    #usuariosFiltros.aberto { display: grid; }
+    /* Ordenar por: rótulo em cima e Nome, Email e Status lado a lado, cabendo na tela */
+    #usuariosOrdenar { flex-wrap: nowrap !important; gap: 8px; }
+    #usuariosOrdenar > span { flex: 0 0 auto !important; width: auto !important; white-space: nowrap; }
+    #usuariosOrdenar button { flex: 1 1 0; min-width: 0; padding: 8px 4px; white-space: nowrap; }
+  }
   .usuarios-ordenar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; font-size: 13px; color: var(--muted); }
   .usuarios-ordenar button.is-ativo { border-color: var(--azul); color: var(--ink); }
   .pendencia-usuarios { display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: #FFD60A; margin-left: 8px; vertical-align: middle; box-shadow: 0 0 0 3px rgba(255,214,10,.22); }
@@ -394,6 +409,8 @@
   .perfil-acao-excluir { border-color: var(--vermelho); color: var(--vermelho); background: rgba(255,59,82,.08); }
   .perfil-acao-excluir:hover { background: rgba(255,59,82,.16); border-color: var(--vermelho); }
   @media (max-width: 560px) { .perfil-acoes-redondas { flex-direction: column; } }
+  /* Os três botões (Trocar senha, Salvar, Excluir Conta) com o mesmo tamanho, no celular e no desktop */
+  .perfil-acoes-redondas .perfil-acao-redonda { height: 44px !important; min-height: 44px; width: 100%; margin: 0; box-sizing: border-box; line-height: 1; font-size: 13.5px; }
   .btn-danger { background: rgba(255,59,59,0.08); color: var(--vermelho); border-color: var(--vermelho); }
   .btn-danger:hover { background: var(--vermelho); color: #fff; transform: translateY(-2px); }
 
@@ -1023,6 +1040,11 @@
   .portal-section { display: none; max-width: 900px; margin: 40px auto; padding: 26px; background: var(--surface); border: 1px solid var(--border); border-radius: 20px; }
   .portal-section.ativo { display: block; }
   .portal-section h2 { margin-top: 0; font-size: 18px; }
+  /* Título das páginas internas (Área do Professor, Área do Aluno, Secretaria, Administração, Portal EBD): degradê prata e branco */
+  .portal-section > h2 {
+    background: linear-gradient(180deg, #FFFFFF 0%, #E4E4EA 55%, #9B9BA8 100%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
   #areaProfessor h2 { text-align: center; text-transform: uppercase; margin-bottom: 24px; }
   .professor-boas-vindas { margin: 0 0 20px; font-size: 14px; color: var(--muted); line-height: 1.7; overflow: hidden; max-height: 900px; transition: max-height 0.35s ease, opacity 0.3s ease, margin 0.3s ease; }
   .professor-boas-vindas.recolhido { max-height: 0; opacity: 0; margin-bottom: 0; }
@@ -1284,6 +1306,11 @@
     box-shadow: 0 10px 28px rgba(0,0,0,0.35); transform: translateY(-2px);
   }
   #areaAcessosUsuarios .admin-perfis-item-nome { font-weight: 600; }
+  /* Cada cadastro: "Usuário: Nome" em cima; embaixo, [ícone] [perfil] [editar] */
+  #areaAcessosUsuarios .admin-perfis-item { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 10px 12px; align-items: center; }
+  #areaAcessosUsuarios .admin-perfis-item-info { grid-column: 1 / -1; min-width: 0; }
+  #areaAcessosUsuarios .admin-perfis-item-email { display: none; }
+  #areaAcessosUsuarios .admin-perfis-item-nome { overflow-wrap: anywhere; }
   #areaAcessosUsuarios .admin-perfis-item-email { font-size: 12px; }
   #areaAcessosUsuarios .admin-perfis-item-select {
     background: rgba(9,9,14,0.6); border: 1px solid var(--border-strong); border-radius: 12px;
@@ -1610,7 +1637,7 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <script>tailwind.config = { corePlugins: { preflight: false } };</script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
-<link rel="stylesheet" href="ui-tema.css?v=20261121">
+<link rel="stylesheet" href="ui-tema.css?v=20261140">
 <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
 <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
 <script src="ui-kit.js"></script>
@@ -1722,6 +1749,27 @@
         <div class="login-senha-wrap"><input id="loginSenha" type="password" placeholder="••••••••" autocomplete="current-password" required><button type="button" class="toggle-senha" id="toggleSenha" aria-label="Mostrar senha"><svg id="iconOlhoAberto" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/></svg><svg id="iconOlhoFechado" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 19c-7 0-11-7-11-7a21.6 21.6 0 0 1 5.06-5.94M9.9 4.24A10.7 10.7 0 0 1 12 4c7 0 11 7 11 7a21.6 21.6 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg></button></div>
         <a href="#" class="login-forgot" onclick="if (window.recuperarSenha) recuperarSenha(); return false;">Esqueceu a senha?</a>
       </div>
+      <label class="login-lembrar" style="display:flex;align-items:center;gap:8px;font-size:13px;margin:4px 0 0;cursor:pointer;">
+        <input type="checkbox" id="loginLembrar"> Lembrar meu e-mail neste computador
+      </label>
+      <script>
+        // Só o e-mail fica guardado neste navegador (nunca a senha). Desmarcar apaga o que foi guardado.
+        (function () {
+          var chave = "adpf.lembrarEmail";
+          var caixa = document.getElementById("loginLembrar");
+          var email = document.getElementById("loginEmail");
+          try {
+            var salvo = localStorage.getItem(chave);
+            if (salvo) { email.value = salvo; caixa.checked = true; }
+          } catch (e) {}
+          document.querySelector(".login-form").addEventListener("submit", function () {
+            try {
+              if (caixa.checked) localStorage.setItem(chave, email.value.trim());
+              else localStorage.removeItem(chave);
+            } catch (e) {}
+          });
+        })();
+      </script>
       <div class="login-btn-row">
         <button type="button" class="btn btn-ghost btn-blue-grad">Criar Conta</button>
         <button type="submit" class="btn btn-primary btn-gold">Entrar</button>
@@ -2014,7 +2062,7 @@
 <div class="login-overlay" id="modalConfirmarExcluirConta" role="dialog" aria-modal="true" aria-labelledby="confirmarExcluirContaTitulo" hidden>
   <div class="login-card confirm-card">
     <span class="pill eyebrow" id="confirmarExcluirContaTitulo"><span class="dot"></span>Excluir Conta</span>
-    <p>Tem certeza que deseja excluir sua conta? Essa ação não pode ser desfeita.</p>
+    <p id="excluirContaAviso">Atenção: ao confirmar, sua conta será excluída definitivamente e não será possível recuperar os seus dados depois. Se precisar usar o site novamente, será necessário criar uma nova conta.</p>
     <div class="login-btn-row">
       <button type="button" class="btn btn-ghost" id="btnExcluirContaNao">Cancelar</button>
       <button type="button" class="btn btn-danger" id="btnExcluirContaSim">Sim, excluir</button>
@@ -2533,7 +2581,16 @@
   <section id="areaAcessosUsuarios" class="portal-section">
     <h2>Usuarios e Perfil de acesso</h2>
     <p class="admin-agenda-info">Defina o perfil de acesso de cada pessoa cadastrada no site. Contas novas entram como "Convidado" até serem revisadas aqui.</p>
-    <div class="usuarios-filtros">
+    <!-- No celular, os filtros ficam recolhidos: o botão + FILTRO abre e fecha -->
+    <button type="button" class="usuarios-filtro-toggle" id="usuariosFiltroToggle" aria-expanded="false" aria-controls="usuariosFiltros">+ FILTRO</button>
+    <script>
+      document.getElementById("usuariosFiltroToggle").addEventListener("click", function () {
+        var aberto = document.getElementById("usuariosFiltros").classList.toggle("aberto");
+        this.setAttribute("aria-expanded", String(aberto));
+        this.textContent = aberto ? "− FILTRO" : "+ FILTRO";
+      });
+    </script>
+    <div class="usuarios-filtros" id="usuariosFiltros">
       <label class="usuarios-filtro-campo usuarios-filtro-busca">Usuarios
         <input type="text" id="filtroUsuariosBusca" placeholder="Digite o nome ou o e-mail..." autocomplete="off">
       </label>
@@ -6274,7 +6331,7 @@
         lista.textContent = "";
         const cabecalho = document.createElement("div");
         cabecalho.className = "sec-revista-cabecalho";
-        ["Revista", "Qtd.", "Revista de"].forEach((titulo) => {
+        ["Revista", "Qtd.", "Tipo"].forEach((titulo) => {
           const celula = document.createElement("span");
           celula.textContent = titulo;
           cabecalho.appendChild(celula);
@@ -6316,7 +6373,7 @@
           tipo.disabled = true;
           const tipoRotulo = document.createElement("label");
           tipoRotulo.className = "aluno-pedido-qtd";
-          tipoRotulo.append("Revista de: ", tipo);
+          tipoRotulo.append("Tipo: ", tipo);
 
           const atualizarLinhaSec = () => {
             qtd.disabled = !marca.checked;
@@ -6650,8 +6707,10 @@
         // Formato novo: { aluno, professor }. Formato antigo (um número): vale para os dois.
         const valorDe = (v, tipo) => {
           const n = typeof v === "number" ? v : Number(v && typeof v === "object" ? v[tipo] : undefined);
-          return n > 0 ? String(n).replace(".", ",") : "";
+          return n > 0 ? n : 0;
         };
+        // Centavos -> "R$ 1.234,56" (máscara do campo de valor)
+        const formatarMoeda = (centavos) => "R$ " + Math.floor(centavos / 100).toLocaleString("pt-BR") + "," + String(centavos % 100).padStart(2, "0");
         itens.forEach((r) => {
           const linha = document.createElement("div");
           linha.className = "sec-valores-linha";
@@ -6662,14 +6721,18 @@
           const criarValor = (tipo, rotuloTexto) => {
             const valor = document.createElement("input");
             valor.type = "text";
-            valor.inputMode = "decimal";
-            valor.placeholder = "0,00";
-            valor.value = valorDe(precos[r.id], tipo);
+            valor.inputMode = "numeric";
+            // Máscara: digitar 1234 mostra R$ 12,34 (o R$ já vem dentro do campo)
+            valor.value = formatarMoeda(Math.round(valorDe(precos[r.id], tipo) * 100));
+            valor.addEventListener("input", () => {
+              valor.value = formatarMoeda(Number(valor.value.replace(/\D/g, "")));
+            });
             valor.className = "sec-valores-campo valor-" + tipo;
             valor.setAttribute("aria-label", rotuloTexto + " de " + (r.nome || ""));
             const rotulo = document.createElement("label");
             rotulo.className = "sec-valores-rotulo";
-            rotulo.append("R$ ", valor);
+            rotulo.dataset.rotulo = tipo === "aluno" ? "Revista de Aluno" : "Revista de Professor";
+            rotulo.append(valor);
             return rotulo;
           };
           linha.append(nome, criarValor("aluno", "Valor aluno"), criarValor("professor", "Valor professor"));
@@ -6688,11 +6751,10 @@
       const precos = {};
       let invalido = false;
       // Vazio = sem valor; número inválido = erro
+      // Campo com máscara "R$ 12,34": os dígitos são os centavos; zero = sem valor
       const lerValor = (txt) => {
-        const t = txt.trim().replace(/\./g, "").replace(",", ".");
-        if (t === "") return null;
-        const n = Number(t);
-        return n >= 0 ? n : NaN;
+        const centavos = Number(txt.replace(/\D/g, ""));
+        return centavos > 0 ? centavos / 100 : null;
       };
       document.querySelectorAll("#secValoresLista .sec-valores-linha:not(.sec-valores-cabecalho)").forEach((linha) => {
         const a = lerValor(linha.querySelector(".valor-aluno").value);
@@ -7799,7 +7861,8 @@
           info.className = "admin-perfis-item-info";
           const nomeEl = document.createElement("span");
           nomeEl.className = "admin-perfis-item-nome";
-          nomeEl.textContent = [u.nome, u.sobrenome].filter(Boolean).join(" ") || "(sem nome)";
+          nomeEl.textContent = "Usuário: " + ([u.nome, u.sobrenome].filter(Boolean).join(" ") || "(sem nome)");
+          nomeEl.title = u.email || u.uid;
           const emailEl = document.createElement("span");
           emailEl.className = "admin-perfis-item-email";
           emailEl.textContent = u.email || u.uid;
@@ -10751,7 +10814,7 @@
         const st = chamadaEstado[aluno.chave];
 
         const item = document.createElement("div");
-        item.className = "admin-perfis-item";
+        item.className = "admin-perfis-item chamada-item";
 
         const info = document.createElement("div");
         info.className = "admin-perfis-item-info";
@@ -10761,6 +10824,8 @@
 
         const checkbox = document.createElement("input");
         checkbox.type = "checkbox";
+        // Cor da marcação: azul para aluno e laranja para professor
+        checkbox.className = "chamada-check chamada-check-" + aluno.tipo;
         checkbox.checked = !!st.presente;
         checkbox.addEventListener("change", () => {
           st.presente = checkbox.checked;
@@ -10775,16 +10840,17 @@
         nomeEl.className = "admin-perfis-item-nome";
         nomeEl.textContent = aluno.nome;
         nomeWrap.appendChild(nomeEl);
-        nomeWrap.appendChild(document.createElement("br"));
+        // Nome e idade na mesma linha: "João Ferreira - 26 Anos"
         const subEl = document.createElement("span");
         subEl.className = "admin-perfis-item-sub";
-        subEl.textContent = aluno.tipo === "professor" ? "Professor(a) da Sala" : "Idade: " + (aluno.idade != null ? aluno.idade : "—");
+        subEl.textContent = aluno.tipo === "professor" ? "" : " - " + (aluno.idade != null ? aluno.idade + " Anos" : "—");
         nomeWrap.appendChild(subEl);
 
         info.appendChild(checkbox);
         info.appendChild(nomeWrap);
 
         const direita = document.createElement("div");
+        direita.className = "chamada-acoes";
         direita.style.display = "flex";
         direita.style.gap = "8px";
         direita.style.alignItems = "center";
@@ -10808,6 +10874,11 @@
         direita.appendChild(novoCampoOferta(st.ofertaValor, (v) => { st.ofertaValor = v; recalcularResumo(); }));
         direita.appendChild(novoSeletorMetodo(st.ofertaMetodo, (v) => { st.ofertaMetodo = v; }));
 
+        // Linha de cima: "Aluno" ou "Professor"
+        const tipoEl = document.createElement("span");
+        tipoEl.className = "chamada-tipo";
+        tipoEl.textContent = aluno.tipo === "professor" ? "Professor" : "Aluno";
+        item.appendChild(tipoEl);
         item.appendChild(info);
         item.appendChild(direita);
         chamadaLista.appendChild(item);
@@ -12423,7 +12494,21 @@
         if (!modalExcluir) { resolve(window.confirm("Excluir sua conta? Essa ação não pode ser desfeita.")); return; }
         modalExcluir.hidden = false;
         requestAnimationFrame(() => modalExcluir.classList.add("is-open"));
+        // O aviso fica 8 segundos na tela antes de liberar o botão de confirmar
+        let restante = 8;
+        btnExcluirSim.disabled = true;
+        btnExcluirSim.textContent = "Sim, excluir (" + restante + ")";
+        const relogio = setInterval(() => {
+          restante -= 1;
+          if (restante > 0) { btnExcluirSim.textContent = "Sim, excluir (" + restante + ")"; return; }
+          clearInterval(relogio);
+          btnExcluirSim.disabled = false;
+          btnExcluirSim.textContent = "Sim, excluir";
+        }, 1000);
         function fechar(resultado) {
+          clearInterval(relogio);
+          btnExcluirSim.disabled = false;
+          btnExcluirSim.textContent = "Sim, excluir";
           modalExcluir.classList.remove("is-open");
           setTimeout(() => { modalExcluir.hidden = true; }, 200);
           btnExcluirSim.removeEventListener("click", onSim);
@@ -14477,6 +14562,23 @@
     }
   })();
 
+</script>
+
+<script>
+  // Celular: ao abrir um canvas, a área aberta desce até a tela (no desktop a sanfona já aparece).
+  // O destino é o painel do canvas: canvasPainel + nome (ex.: chamada -> canvasPainelChamada) ou o id em data-abrir.
+  (function () {
+    document.addEventListener("click", function (e) {
+      var card = e.target.closest(".professor-canvas-card");
+      if (!card || !window.matchMedia("(max-width: 560px)").matches) return;
+      var id = card.dataset.abrir || (card.dataset.canvas ? "canvasPainel" + card.dataset.canvas.charAt(0).toUpperCase() + card.dataset.canvas.slice(1) : "");
+      if (!id) return;
+      setTimeout(function () {
+        var painel = document.getElementById(id);
+        if (painel && painel.offsetParent !== null) painel.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 150);
+    });
+  })();
 </script>
 
 </html>

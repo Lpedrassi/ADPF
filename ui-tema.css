@@ -925,6 +925,34 @@ body::after {
 .post-coluna-imagem .post-imagem-canva { width: 100%; height: 100%; max-width: none; aspect-ratio: auto; }
 /* Título da tela Gerenciar Posts do Carrosel: maior e centralizado */
 #areaPostsSite > h2 { text-align: center; font-size: 28px; }
+/* Celular: a área aberta pelo canvas para logo abaixo do menu fixo */
+@media (max-width: 560px) {
+  .professor-canvas-painel, [id^="secNivel"] { scroll-margin-top: 96px; }
+}
+/* Chamada da Sala do Professor: nome e idade na primeira linha; oferta e forma de pagamento embaixo, lado a lado */
+.chamada-item { flex-direction: column; align-items: stretch; gap: 10px; }
+.chamada-item > .admin-perfis-item-info { flex: none; }
+.chamada-acoes { flex-wrap: wrap; padding-left: 30px; }
+.chamada-item .admin-perfis-item-sub,
+.chamada-item .admin-perfis-item-nome {
+  display: inline; font-family: inherit; font-size: 14px; color: var(--ink);
+}
+.chamada-item .admin-perfis-item-nome { font-weight: 700; }
+.chamada-tipo { font-size: 11px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.chamada-check { width: 18px; height: 18px; flex-shrink: 0; cursor: pointer; }
+.chamada-check-aluno { accent-color: #3B82FF; }
+.chamada-check-professor { accent-color: #FF7A33; }
+.chamada-item .admin-perfis-item-sub { font-weight: 400; }
+.chamada-acoes input[type=number] { width: 96px !important; flex-shrink: 0; }
+.chamada-acoes select { flex: 1 1 0; min-width: 0; max-width: 220px; }
+/* Gerenciar Posts no celular: uma coluna só (imagem em cima, campos embaixo), para Tag/Departamento e Data/Horário caberem alinhados */
+@media (max-width: 560px) {
+  .admin-noticia-form { grid-template-columns: 1fr; }
+  .post-coluna-imagem .post-imagem-wrap { flex: none; height: 220px; }
+  .post-coluna-imagem .post-imagem-canva { height: 100%; }
+  .post-tag-linha, .post-data-hora { grid-template-columns: 1fr 1fr; align-items: start; }
+  .post-tag-linha .cat-combo-rotulo, .post-data-hora label { white-space: nowrap; }
+}
 /* Ícone de sino dos Avisos e Comunicados: quadrado escuro com sino dourado (referência do Lucas) */
 .aviso-sino img { width: 64px; height: 64px; object-fit: contain; display: block; }
 /* Botão voltar da Secretaria: só o ícone, com a palavra VOLTAR ao passar o mouse */
@@ -1646,11 +1674,16 @@ body::after {
 .sec-pedido-acoes .sec-caixa-editar { width: 30px; height: 30px; padding: 0; display: inline-flex; align-items: center; justify-content: center; line-height: 1; }
 .sec-pedido-acoes .sec-pedido-excluir { display: inline-flex; align-items: center; justify-content: center; }
 /* Valores das revistas: revista | valor aluno | valor professor */
-.sec-valores-linha { display: grid; grid-template-columns: minmax(0, 1fr) 150px 150px; gap: 12px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border-strong); }
-.sec-valores-cabecalho { padding: 8px 0; font-size: 12px; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
-.sec-valores-nome { font-size: 13px; font-weight: 700; color: var(--ink); }
-.admin-form .sec-valores-rotulo { display: flex; flex-direction: row; align-items: center; gap: 6px; margin: 0; font-size: 13px; color: var(--muted); }
-.admin-form .sec-valores-campo { width: 100%; padding: 6px 8px; text-align: right; }
+/* Valores das revistas: nome da revista em cima; "Revista de Aluno" e "Revista de Professor" lado a lado, rótulo acima de cada campo (desktop e celular) */
+.sec-valores-linha.sec-valores-cabecalho { display: none; }
+.sec-valores-linha { display: flex; flex-wrap: wrap; gap: 10px 14px; padding: 10px 0; border-bottom: 1px solid var(--border-strong); }
+.sec-valores-nome { flex: 0 0 100%; font-size: 13px; font-weight: 700; color: var(--ink); }
+.admin-form .sec-valores-linha > .sec-valores-rotulo { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; align-items: stretch; gap: 4px; margin: 0; }
+.sec-valores-rotulo::before {
+  content: attr(data-rotulo); font-size: 11px; font-weight: 800; color: var(--muted);
+  text-transform: uppercase; letter-spacing: .04em;
+}
+.admin-form .sec-valores-campo { width: 100%; box-sizing: border-box; padding: 6px 8px; text-align: right; }
 
 /* Excluir: × vermelho sempre (igual aos outros formulários) */
 .sec-pedido-acoes .sec-pedido-excluir { width: 30px; height: 30px; font-size: 18px; font-weight: 700; line-height: 1; color: #F5F5F8; border: 1px solid var(--border-strong); border-radius: 8px; background: var(--surface-2); cursor: pointer; padding: 0; }
@@ -1670,6 +1703,11 @@ body::after {
   }
   /* Controles na mesma linha do rótulo: "Status: [Entregue]" */
   .sec-pedido-linha > .sec-pedido-campo { display: flex; align-items: center; gap: 8px; min-width: 0; }
+  /* Pedido da Secretaria no celular: revista em cima; "QTD" e "Tipo" embaixo, lado a lado (sem cabeçalho sobreposto) */
+  .sec-revista-cabecalho { display: none; }
+  .sec-revista-linha { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 18px; }
+  .sec-revista-linha > .aluno-pedido-check { flex: 0 0 100%; }
+  .sec-revista-linha > .aluno-pedido-qtd { flex: 0 0 auto; }
   .sec-pedido-campo::before { flex: 0 0 112px; }
   .sec-pedido-campo select { flex: 1 1 0; min-width: 0; width: auto; }
 }
