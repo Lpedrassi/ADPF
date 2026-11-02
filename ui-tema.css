@@ -1497,8 +1497,9 @@ body::after {
   .nav-links.aberto .is-sobre-fundo { color: var(--ink) !important; }
 
   /* Portal (logado): Site / Administração / Portal EBD viram sub-listas que abrem para baixo */
-  .nav-links.aberto .nav-admin-menu { display: flex !important; flex-direction: column; gap: 2px; }
-  .nav-links.aberto .nav-admin-menu { align-items: stretch !important; }
+  /* Só logado: sem a classe "logado" o menu de acesso continua oculto (display: none do HTML) */
+  .nav-links.aberto.logado .nav-admin-menu { display: flex !important; flex-direction: column; gap: 2px; }
+  .nav-links.aberto.logado .nav-admin-menu { align-items: stretch !important; }
   .nav-links.aberto .nav-admin-menu-item { position: static; width: 100%; }
   .nav-links.aberto .nav-admin-dropdown {
     position: static; display: none; min-width: 0; margin: 0 0 4px 12px; padding: 0;
