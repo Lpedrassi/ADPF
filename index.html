@@ -494,6 +494,13 @@
     -webkit-background-clip: text; background-clip: text; color: transparent;
   }
   .btn-dourado:hover { border-color: rgba(255,196,61,0.7); background: rgba(255,196,61,0.2); transform: translateY(-1px); }
+  .so-celular { display: none; }
+  /* Celular: "Horários / de cultos" em duas linhas, centralizado, dentro da pílula */
+  @media (max-width: 560px) {
+    .so-celular { display: inline; }
+    .btn-dourado { line-height: 1.25; text-align: center; padding: 12px 22px; max-width: 100%; }
+    .btn-dourado > span { display: inline-block; text-align: center; }
+  }
 
   .emblem-row { margin: 60px 0 148px; display: flex; justify-content: center; position: relative; z-index: 2; }
   .emblem-social { position: relative; width: 200px; height: 200px; }
@@ -825,7 +832,11 @@
   .agenda-mes-seletor button:hover { background: var(--surface-2); border-color: var(--laranja); }
   .agenda-mes-seletor span { min-width: 190px; text-align: center; font-family: "Unbounded", sans-serif; font-size: 15px; font-weight: 700; }
   .agenda-colunas { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; align-items: start; }
-  @media (max-width: 780px) { .agenda-colunas { grid-template-columns: 1fr; gap: 0; } }
+  /* Celular: uma coluna com espaço entre "Agenda Pq Florianópolis" e "Agenda do Setor" (não se sobrepõem) */
+  @media (max-width: 780px) {
+    .agenda-colunas { grid-template-columns: 1fr; gap: 36px; }
+    .agenda-colunas .agenda-bloco { margin-bottom: 0; }
+  }
   .agenda-colunas .agenda-bloco { margin-bottom: 0; }
   .agenda-bloco { margin-bottom: 30px; }
   .agenda-bloco:last-child { margin-bottom: 0; }
@@ -2064,7 +2075,7 @@
     <h1>Assembleia de Deus Belém<br><span class="grad-text">Pq Florianópolis</span></h1>
     <p class="hero-sub">Uma congregação que ensina a Palavra, fé, comunhão para toda a familia!</p>
     <div class="hero-actions">
-      <a class="btn-dourado" href="#cultos"><span>Horários de cultos</span></a>
+      <a class="btn-dourado" href="#cultos"><span>Horários<br class="so-celular"> de cultos</span></a>
       <a class="btn glass-btn" style="--c:#34D399;--c2:#A7F3D0" href="#ebd">Conheça a EBD</a>
     </div>
     <div class="quicklinks">
