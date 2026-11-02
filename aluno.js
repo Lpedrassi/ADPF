@@ -643,7 +643,7 @@ function desenharListaRevistas() {
     // Valor total desta revista (preenchido por atualizarCustoRevista)
     const valor = document.createElement("span");
     valor.className = "aluno-pedido-valor";
-    valor.textContent = "—";
+    valor.textContent = "R$ 0,00";
 
     // Mudou a escolha: a divisão deixa de valer
     const atualizarLinha = () => {
@@ -660,7 +660,16 @@ function desenharListaRevistas() {
       tipo.disabled = !marca.checked || Number(qtd.value) > 1;
       atualizarCustoRevista();
     });
-    linha.append(rotulo, qtd, tipo, valor);
+    // Cada campo com seu rótulo (QTD, Tipo, Valor): o rótulo só aparece no celular
+    const rotuloCampo = (texto, controle) => {
+      const bloco = document.createElement("label");
+      bloco.className = "aluno-pedido-campo-m";
+      const nomeCampo = document.createElement("span");
+      nomeCampo.textContent = texto;
+      bloco.append(nomeCampo, controle);
+      return bloco;
+    };
+    linha.append(rotulo, rotuloCampo("QTD", qtd), rotuloCampo("Tipo", tipo), rotuloCampo("Valor", valor));
     lista.appendChild(linha);
   });
 }
@@ -744,7 +753,7 @@ function atualizarCustoRevista() {
     const marca = linha.querySelector("input[type=checkbox]");
     const celula = linha.querySelector(".aluno-pedido-valor");
     if (!marca.checked) {
-      celula.textContent = "—";
+      celula.textContent = "R$ 0,00";
       return;
     }
     marcadas++;

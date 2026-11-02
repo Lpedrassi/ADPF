@@ -1446,6 +1446,17 @@
   .rel-tile-valor { font-size: var(--rel-fs-numero); font-weight: 800; line-height: 1; color: var(--cor); }
   .rel-tile-rotulo { font-size: var(--rel-fs-texto); font-weight: 600; margin-top: 3px; }
   .rel-tile-sub { font-size: var(--rel-fs-detalhe); color: var(--cor); }
+  /* Celular: cada indicador numa linha só, "[ícone] 8 Presentes - 73%" */
+  @media (max-width: 560px) {
+    .rel-tiles { gap: 8px; }
+    .rel-tile { padding: 8px 12px; gap: 10px; }
+    .rel-tile-icone { width: 34px; height: 34px; }
+    .rel-tile-texto { flex-direction: row; flex-wrap: wrap; align-items: baseline; gap: 6px; }
+    .rel-tile-valor { font-size: 20px; }
+    .rel-tile-rotulo { margin-top: 0; font-size: 13px; }
+    .rel-tile-sub::before { content: "- "; }
+    .rel-tile-sub:empty { display: none; }
+  }
 
   .rel-grade { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; align-items: start; }
   .rel-coluna { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
@@ -1462,6 +1473,15 @@
   .rel-pill.falta { background: #FF3B52; }
   .rel-pill.visitante { background: #FF7A33; color: var(--laranja-ink); }
   .rel-check { width: 18px; height: 18px; border-radius: 50%; background: #34D399; color: #fff; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  /* Status só com ícone: check verde (presente) e X vermelho (ausente), com balão de texto ao passar o mouse ou tocar */
+  .rel-status { position: relative; width: 24px; height: 24px; border-radius: 50%; color: #fff; display: flex; align-items: center; justify-content: center; flex-shrink: 0; cursor: default; outline: none; font-size: 15px; font-weight: 800; line-height: 1; }
+  .rel-status svg { width: 12px; height: 12px; }
+  .rel-status-presente { background: #34D399; }
+  .rel-status > .rel-motivo-select { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; font-size: 16px; border: 0; }
+  .rel-motivo-foto { width: 30px; height: 30px; background: none; cursor: pointer; }
+  .rel-motivo-foto img { width: 30px; height: 30px; display: block; }
+  .rel-status-balao { position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%); padding: 4px 9px; border-radius: 8px; background: #15171f; color: #fff; font-size: 11px; font-weight: 600; white-space: nowrap; border: 1px solid var(--border-strong); opacity: 0; pointer-events: none; transition: opacity .15s ease; z-index: 5; }
+  .rel-status:hover .rel-status-balao, .rel-status:focus .rel-status-balao { opacity: 1; }
   .rel-check svg { width: 11px; height: 11px; }
   .rel-motivo { position: relative; flex-shrink: 0; width: 132px; display: flex; }
   .rel-motivo-texto { display: block; width: 100%; padding: 5px 9px; border-radius: 10px; background: #FF3B52; color: #fff; font-size: var(--rel-fs-detalhe); font-weight: 400; line-height: 1.25; text-align: center; overflow-wrap: anywhere; }
@@ -1480,6 +1500,8 @@
   .rel-barra-trilho { height: 8px; border-radius: 999px; background: var(--border); overflow: hidden; }
   .rel-barra-preench { height: 100%; background: var(--laranja); border-radius: 999px; }
   .rel-barra-valor { font-weight: 700; }
+  .rel-barra-rotulo { display: flex; align-items: center; gap: 6px; min-width: 0; }
+  .rel-barra-icone { width: 22px; height: 22px; flex-shrink: 0; }
   .rel-notas { margin-top: 12px; }
   .relatorio-notas { width: 100%; min-height: 96px; padding: 10px 12px; border-radius: 12px; background: var(--surface); border: 1px solid var(--border); color: var(--ink); font-family: "Plus Jakarta Sans", sans-serif; font-size: var(--rel-fs-texto); resize: vertical; }
   .relatorio-notas:focus { outline: none; border-color: var(--azul); }
@@ -1637,7 +1659,7 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <script>tailwind.config = { corePlugins: { preflight: false } };</script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
-<link rel="stylesheet" href="ui-tema.css?v=20261140">
+<link rel="stylesheet" href="ui-tema.css?v=20261146">
 <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
 <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
 <script src="ui-kit.js"></script>
@@ -3202,7 +3224,8 @@
     <!-- Pop-up Solicitar Revista (trimestre, sala, revistas com quantidade, custo e Fazer o Pedido) -->
     <div class="login-overlay" id="alunoPedidoModal" role="dialog" aria-modal="true" aria-labelledby="alunoPedidoTitulo" hidden>
       <div class="login-card aluno-pedido-card">
-        <h3 id="alunoPedidoTitulo" style="margin:12px 0 0;">Pedido da revista</h3>
+        <h2 id="alunoPedidoTitulo" class="aluno-pedido-titulo">Pedido de Revista</h2>
+        <p class="aluno-pedido-descricao">Escolha as revistas que deseja pedir para o próximo trimestre. Informe a quantidade e se é revista de aluno ou de professor. O valor total é calculado na hora, e o pedido segue para a Secretaria da EBD.</p>
         <form id="alunoPedidoForm" class="admin-form" style="margin-top:14px;">
           <div class="aluno-pedido-trimestre">Trimestre: <strong id="alunoPedidoTrimestreTexto"></strong></div>
           <div class="aluno-pedido-titulo-lista">REVISTAS: (Selecione as que deseja comprar).</div>
@@ -4307,7 +4330,7 @@
   </div>
 </div>
 
-<script type="module" src="aluno.js"></script>
+<script type="module" src="aluno.js?v=20261147"></script>
 <script type="module" src="biblia.js"></script>
 
 <script type="module">
@@ -11753,16 +11776,14 @@
       linha.className = "rel-linha";
       const nome = document.createElement("strong");
       nome.textContent = aluno.nome || "(sem nome)";
-      const selo = document.createElement("span");
-      selo.className = "rel-pill falta";
-      selo.textContent = "Ausente";
+      // Sem motivo: X vermelho. Com motivo escolhido: o ícone do motivo. Só o círculo aparece (sem texto ao lado)
+      const nomeDoMotivo = aluno.motivo ? nomeMotivoAusencia(aluno.motivo) : "";
+      const arquivoIcone = arquivoIconeMotivo(nomeDoMotivo);
+      const selo = arquivoIcone
+        ? criarIconeMotivoRelatorio(arquivoIcone, nomeDoMotivo)
+        : criarStatusRelatorio("falta", "Ausente");
 
-      // Motivo: o texto aparece em vermelho (pode quebrar em 2 linhas); o combobox fica por cima, invisível, e abre a lista ao clicar
-      const caixa = document.createElement("span");
-      caixa.className = "rel-motivo";
-      const texto = document.createElement("span");
-      texto.className = "rel-motivo-texto";
-      texto.textContent = aluno.motivo ? nomeMotivoAusencia(aluno.motivo) : "Escolha o motivo...";
+      // O círculo tem a lista de motivos por cima, invisível: tocar ou clicar nele abre a escolha
       const select = document.createElement("select");
       select.className = "rel-motivo-select";
       select.setAttribute("aria-label", "Motivo da falta de " + (aluno.nome || ""));
@@ -11773,8 +11794,8 @@
         await gravarMotivoRelatorio(rel, aluno.matriculaId, select.value);
         redesenhar();
       });
-      caixa.append(texto, select);
-      linha.append(avatarRelatorio(aluno.nome, indice), nome, selo, caixa);
+      selo.appendChild(select);
+      linha.append(avatarRelatorio(aluno.nome, indice), nome, selo);
       return linha;
     }
 
@@ -11784,18 +11805,61 @@
       linha.className = "rel-linha";
       const n = document.createElement("strong");
       n.textContent = nome || "(sem nome)";
+      // Presente: só o check verde. Ausente: X vermelho. Visitante: continua com a pílula
+      if (classe === "presente" || classe === "falta") {
+        linha.append(avatarRelatorio(nome, indice), n, criarStatusRelatorio(classe, rotulo));
+        return linha;
+      }
       const selo = document.createElement("span");
       selo.className = "rel-pill " + classe;
       selo.textContent = rotulo;
       linha.append(avatarRelatorio(nome, indice), n, selo);
-      if (comCheck) {
-        const ck = document.createElement("span");
-        ck.className = "rel-check";
-        ck.innerHTML = ICONE_CHECK_REL;
-        linha.appendChild(ck);
-      }
       return linha;
     }
+
+    // Ícone de status (check verde ou X vermelho). O texto aparece num balão ao passar o mouse ou tocar
+    function criarStatusRelatorio(tipo, texto) {
+      const s = document.createElement("span");
+      // Ausente usa o mesmo círculo vermelho com X do site (cadastro inativo em Usuarios)
+      s.className = tipo === "falta" ? "usuario-status inativo rel-status rel-status-falta" : "rel-status rel-status-presente";
+      s.tabIndex = 0;
+      s.setAttribute("role", "img");
+      s.setAttribute("aria-label", texto);
+      if (tipo === "presente") s.innerHTML = ICONE_CHECK_REL;
+      const balao = document.createElement("span");
+      balao.className = "rel-status-balao";
+      balao.textContent = texto;
+      s.appendChild(balao);
+      return s;
+    }
+
+    // Ícone de cada motivo (pelo nome; "Estudando" e "Trabalhando" têm ícones próprios)
+    function arquivoIconeMotivo(nomeMotivo) {
+      const n = (nomeMotivo || "").toLowerCase();
+      if (!n) return "";
+      if (n.includes("estud")) return "estudando.png";
+      if (n.includes("trabalh")) return "trabalhando.png";
+      if (n.includes("doente")) return "doente.png";
+      if (n.includes("falta") || n.includes("sem motivo")) return "sem-motivo.png";
+      return "";
+    }
+
+    function criarIconeMotivoRelatorio(arquivo, texto) {
+      const s = document.createElement("span");
+      s.className = "rel-status rel-motivo-foto";
+      s.tabIndex = 0;
+      s.setAttribute("aria-label", texto);
+      const img = document.createElement("img");
+      img.src = "icones-motivos/" + arquivo;
+      img.alt = "";
+      s.appendChild(img);
+      const balao = document.createElement("span");
+      balao.className = "rel-status-balao";
+      balao.textContent = texto;
+      s.appendChild(balao);
+      return s;
+    }
+
 
     function novaOpcaoMotivo(valor, texto, atual) {
       const opt = document.createElement("option");
@@ -11964,7 +12028,10 @@
       return ids.map((id) => {
         const pct = total ? Math.round((contagem[id] / total) * 100) : 0;
         const nome = id ? nomeMotivoAusencia(id) : "Sem motivo informado";
-        return '<div class="rel-barra-linha"><span class="rel-barra-rotulo">' + escaparHtmlRel(nome) + '</span><div class="rel-barra-trilho"><div class="rel-barra-preench" style="width:' + pct + '%"></div></div><span class="rel-barra-valor">' + contagem[id] + "</span></div>";
+        // Emoji do motivo antes do nome (mesmos ícones usados no círculo de cada aluno)
+        const arquivo = arquivoIconeMotivo(nome);
+        const emoji = arquivo ? '<img class="rel-barra-icone" src="icones-motivos/' + arquivo + '" alt="">' : "";
+        return '<div class="rel-barra-linha"><span class="rel-barra-rotulo">' + emoji + escaparHtmlRel(nome) + '</span><div class="rel-barra-trilho"><div class="rel-barra-preench" style="width:' + pct + '%"></div></div><span class="rel-barra-valor">' + contagem[id] + "</span></div>";
       }).join("");
     }
 
@@ -12018,10 +12085,10 @@
       const tiles = document.createElement("div");
       tiles.className = "rel-tiles";
       tiles.append(
+        tileResumoRelatorio(matriculados, "Matriculados", "", "azul"),
         tileResumoRelatorio(presentesAlunos.length, "Presentes", porcentagem(presentesAlunos.length), "verde"),
         tileResumoRelatorio(faltas.length, "Ausentes", porcentagem(faltas.length), "vermelho"),
-        tileResumoRelatorio(visitantes.length, "Visitantes", porcentagem(visitantes.length), "amarelo"),
-        tileResumoRelatorio(matriculados, "Total de alunos", "Matriculados", "azul")
+        tileResumoRelatorio(visitantes.length, "Visitantes", porcentagem(visitantes.length), "amarelo")
       );
       presenca.appendChild(tiles);
       painelDash.appendChild(presenca);
@@ -14575,7 +14642,13 @@
       if (!id) return;
       setTimeout(function () {
         var painel = document.getElementById(id);
-        if (painel && painel.offsetParent !== null) painel.scrollIntoView({ behavior: "smooth", block: "start" });
+        // Painel que cabe na tela: centralizado. Painel maior que a tela: começa no topo para não cortar o início
+        if (painel && painel.offsetParent !== null) {
+          // Cabe na tela: centraliza (a margem de rolagem do painel desconta o menu fixo).
+          // Maior que a tela: começa logo abaixo do menu.
+          var cabe = painel.offsetHeight < window.innerHeight - 120;
+          painel.scrollIntoView({ behavior: "smooth", block: cabe ? "center" : "start" });
+        }
       }, 150);
     });
   })();
