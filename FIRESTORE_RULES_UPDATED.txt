@@ -92,8 +92,9 @@ service cloud.firestore {
       allow read: if true;
       allow write: if isAdmin();
     }
+    // Salas e escala da EBD: públicas (a home mostra os professores e quem está escalado)
     match /salas/{salaId} {
-      allow read: if aprovado();
+      allow read: if true;
       allow write: if isAdmin();
     }
     match /relatoriosAula/{relatorioId} {
@@ -135,6 +136,12 @@ service cloud.firestore {
       allow read: if aprovado();
       allow write: if isAdmin();
     }
+    // Versão pública das lições (só data e título): a home e o Ver Escala mostram para todos.
+    // Os PDFs e os links continuam em licoes (só logados).
+    match /licoesPublicas/{revistaId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
     match /arquivosSala/{arquivoId} {
       allow read: if aprovado();
       allow create, update: if aprovado() && (
@@ -144,7 +151,7 @@ service cloud.firestore {
       );
     }
     match /escalaEbd/{escalaId} {
-      allow read: if aprovado();
+      allow read: if true;
       allow write: if isAdmin();
     }
     match /caixaMovimentacoes/{movimentacaoId} {

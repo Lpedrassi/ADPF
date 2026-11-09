@@ -1858,7 +1858,8 @@
         <button type="submit" class="btn btn-primary btn-gold">Entrar</button>
       </div>
       <div class="login-divider">ou</div>
-      <button type="button" class="btn btn-ghost btn-google" onclick="entrarComGoogle()">
+      <!-- Desativado temporariamente (trava de acesso): sem função e com aparência apagada -->
+      <button type="button" class="btn btn-ghost btn-google" disabled aria-disabled="true" title="Indisponível temporariamente" style="opacity:0.4;cursor:not-allowed;pointer-events:none;">
         <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.9 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.6 6.1 29.6 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.7-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.6 15.9 18.9 13 24 13c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.6 6.1 29.6 4 24 4 16.3 4 9.6 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.5 0 10.4-1.9 14.3-5.1l-6.6-5.4C29.6 35.5 26.9 36.5 24 36.5c-5.3 0-9.7-3.4-11.3-8.2l-6.6 5.1C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.4-2.3 4.4-4.3 5.8l6.6 5.4C40.1 36.5 44 30.9 44 24c0-1.3-.1-2.7-.4-3.5z"/></svg>
         Conectar com Google
       </button>
@@ -1927,7 +1928,8 @@
         <input id="perfilCodigoAcesso" type="text" maxlength="6" placeholder="Ex.: K7P2QM" autocomplete="off" style="text-transform:uppercase;">
       </div>
       <div class="login-divider" data-show="step1">ou</div>
-      <button type="button" class="btn btn-ghost btn-google" id="perfilBtnGoogle" data-show="step1" onclick="entrarComGoogle()">
+      <!-- Desativado temporariamente (trava de acesso): sem função e com aparência apagada -->
+      <button type="button" class="btn btn-ghost btn-google" id="perfilBtnGoogle" data-show="step1" disabled aria-disabled="true" title="Indisponível temporariamente" style="opacity:0.4;cursor:not-allowed;pointer-events:none;">
         <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.9 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.6 6.1 29.6 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.7-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.6 15.9 18.9 13 24 13c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.6 6.1 29.6 4 24 4 16.3 4 9.6 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.5 0 10.4-1.9 14.3-5.1l-6.6-5.4C29.6 35.5 26.9 36.5 24 36.5c-5.3 0-9.7-3.4-11.3-8.2l-6.6 5.1C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.4-2.3 4.4-4.3 5.8l6.6 5.4C40.1 36.5 44 30.9 44 24c0-1.3-.1-2.7-.4-3.5z"/></svg>
         Usar dados do Google
       </button>
@@ -10408,6 +10410,12 @@
           licoes: licoesArr,
           atualizadoEm: serverTimestamp()
         }, { merge: true });
+        // Versão pública (só data e título): a home e o Ver Escala mostram para todos; os PDFs ficam em licoes
+        await setDoc(doc(db, "licoesPublicas", ref.id), {
+          ano: ano,
+          trimestre: trimestre,
+          licoes: licoesArr.map((l) => ({ data: l.data, titulo: l.titulo || "" }))
+        }, { merge: true });
         avisar("Salvo automaticamente.", "ok");
       } catch (err) {
         avisar("Não foi possível salvar. " + (err.message || ""), "erro");
@@ -14244,9 +14252,11 @@
       const profListEl = backEl.querySelector(".turma-back-professors span");
       const profEscaladoEl = backEl.querySelector(".turma-back-current span");
       try {
-        // Lista de professores da turma
-        const turmaSnap = await getDoc(doc(db, "turmas", turmaId));
-        const professores = turmaSnap.exists() ? (turmaSnap.data().professores || []) : [];
+        // Lista de professores da sala: o mesmo cadastro do Gerenciar Escala (salas/{id}.professores)
+        const salaCardSnap = salaDaTurma[turmaId] ? await getDoc(doc(db, "salas", salaDaTurma[turmaId])) : null;
+        const professores = salaCardSnap && salaCardSnap.exists()
+          ? (salaCardSnap.data().professores || []).map((p) => p.nome || "")
+          : [];
         // Sem o título "Professor/Professora" no card: só o nome
         const nomes = professores.map((p) => String(p).replace(/^\s*Professora?\s+/i, ""));
         profListEl.textContent = nomes.length ? nomes.join(", ") : "—";
@@ -14260,7 +14270,7 @@
         let dataAula = domingoISO;
         if (salaId) {
           const { ref: licRef } = await refLicoesDaSala(salaId, domingo.getFullYear(), Math.floor(domingo.getMonth() / 3) + 1);
-          const licSnap = await getDoc(licRef);
+          const licSnap = await getDoc(doc(db, "licoesPublicas", licRef.id));
           const licoes = licSnap.exists() && Array.isArray(licSnap.data().licoes) ? licSnap.data().licoes : [];
           const idx = licoes.findIndex((l) => l.data >= domingoISO);
           if (idx >= 0) {
@@ -14312,15 +14322,22 @@
 
     async function abrirModalLicoes(turmaId, turmaTitulo) {
       try {
-        // Buscar 13 lições do Firestore
-        const licoesRef = collection(db, "turmas", turmaId, "licoes");
-        const q = query(licoesRef, orderBy("numero", "asc"), limit(13));
-        const snapshot = await getDocs(q);
-
+        // Lições da revista da sala (Gerenciar Lições) e o professor de cada data (Gerenciar Escala)
+        const salaModal = salaDaTurma[turmaId];
+        const agoraModal = new Date();
+        const { ref: licRefModal } = await refLicoesDaSala(salaModal, agoraModal.getFullYear(), Math.floor(agoraModal.getMonth() / 3) + 1);
+        const licSnapModal = await getDoc(doc(db, "licoesPublicas", licRefModal.id));
+        const licoesRevista = licSnapModal.exists() && Array.isArray(licSnapModal.data().licoes) ? licSnapModal.data().licoes : [];
         const licoes = [];
-        snapshot.forEach((doc) => {
-          licoes.push(doc.data());
-        });
+        for (const [i, l] of licoesRevista.entries()) {
+          const esc = await getDoc(doc(db, "escalaEbd", salaModal + "_" + l.data));
+          licoes.push({
+            numero: i + 1,
+            titulo: l.titulo || "",
+            data: isoParaBrCard(l.data),
+            professor: esc.exists() ? (esc.data().professorNome || "") : ""
+          });
+        }
 
         // Criar e mostrar modal
         mostrarModalLicoes(turmaTitulo, licoes);
@@ -14386,10 +14403,14 @@
   // Função global para abrir escala detalhada de mês a mês
   window.abrirEscalaDetalhada = async function(turmaId, turmaTitulo) {
     try {
-      const escalasRef = collection(db, "turmas", turmaId, "escalas");
-      const snapshot = await getDocs(query(escalasRef, orderBy("mes", "asc")));
-      const escalas = [];
-      snapshot.forEach((doc) => { escalas.push(doc.data()); });
+      // Escala de cada domingo da sala (Gerenciar Escala grava em escalaEbd)
+      const salaEscala = { "infantil-1": "cordeirinhos-de-cristo", "infantil-2": "estrela-da-manha", "adolescentes": "manancial", "jovens": "renacer-em-cristo", "adulto-varoes": "sacerdotes-de-cristo", "adulto-feminino": "colunas-da-verdade", "novos-convertidos": "novos-convertidos" }[turmaId];
+      const snapshot = await getDocs(query(collection(db, "escalaEbd"), where("salaId", "==", salaEscala)));
+      const escalas = snapshot.docs
+        .map((d) => ({ data: d.id.slice(salaEscala.length + 1), professor: d.data().professorNome || "" }))
+        .filter((e) => e.data)
+        .sort((a, b) => a.data.localeCompare(b.data))
+        .map((e) => ({ rotulo: e.data.split("-").reverse().join("/"), professor: e.professor }));
       mostrarModalEscala(turmaTitulo, escalas);
     } catch (err) {
       console.error(`Erro ao carregar escala: ${err}`);
@@ -14409,9 +14430,8 @@
     const card = document.createElement("div");
     card.className = "login-card";
     card.style.cssText = "width:90%;max-width:700px;max-height:80vh;overflow-y:auto;";
-    let html = `<h2>Escala Mensal — ${turmaTitulo}</h2><table style='width:100%;border-collapse:collapse;font-size:14px;'><tr style='background:#f5f5f5;'><th style='border:1px solid #ddd;padding:8px;'>Mês</th><th style='border:1px solid #ddd;padding:8px;'>Professor(a)</th></tr>`;
-    const meses = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
-    escalas.forEach((e) => { html += `<tr style='border:1px solid #ddd;'><td style='border:1px solid #ddd;padding:8px;'>${meses[e.mes-1]}</td><td style='border:1px solid #ddd;padding:8px;'>${e.professor || "—"}</td></tr>`; });
+    let html = `<h2>Escala de Professores — ${turmaTitulo}</h2><table style='width:100%;border-collapse:collapse;font-size:14px;'><tr style='background:#f5f5f5;'><th style='border:1px solid #ddd;padding:8px;'>Domingo</th><th style='border:1px solid #ddd;padding:8px;'>Professor(a)</th></tr>`;
+    escalas.forEach((e) => { html += `<tr style='border:1px solid #ddd;'><td style='border:1px solid #ddd;padding:8px;'>${e.rotulo}</td><td style='border:1px solid #ddd;padding:8px;'>${e.professor || "—"}</td></tr>`; });
     html += "</table><button class='btn' style='margin-top:16px;width:100%;'>Fechar</button>";
     card.innerHTML = html;
     modalEscala.innerHTML = "";
