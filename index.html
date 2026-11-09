@@ -1853,7 +1853,8 @@
         })();
       </script>
       <div class="login-btn-row">
-        <button type="button" class="btn btn-ghost btn-blue-grad">Criar Conta</button>
+        <!-- Desativado temporariamente (trava de acesso): sem ação e com aparência apagada -->
+        <button type="button" class="btn btn-ghost btn-blue-grad" disabled aria-disabled="true" title="Cadastro temporariamente indisponível" style="opacity:0.4;cursor:not-allowed;pointer-events:none;">Criar Conta</button>
         <button type="submit" class="btn btn-primary btn-gold">Entrar</button>
       </div>
       <div class="login-divider">ou</div>
@@ -5287,7 +5288,11 @@
 
     // Áreas liberadas para o perfil (configuradas em Gerenciar Perfis)
     await carregarPerfisAcesso();
-    const areasLiberadas = areasDoPerfil(perfil);
+    // Trava temporária: convidado (login criado, sem perfil liberado) não acessa nenhuma área do portal
+    const areasLiberadas = perfil === "convidado" ? [] : areasDoPerfil(perfil);
+    if (perfil === "convidado") {
+      window.notificar("Seu cadastro está aguardando liberação pela Secretaria. Até lá, o portal fica fechado.", "info");
+    }
     document.querySelectorAll(".sidebar-link").forEach((link) => {
       link.hidden = !areasLiberadas.includes(link.dataset.area);
     });

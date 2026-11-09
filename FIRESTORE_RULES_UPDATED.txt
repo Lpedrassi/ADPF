@@ -2,13 +2,21 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    function isAdmin() {
+    // TRAVA TEMPORÁRIA (02/11/2026, até reestruturar a segurança): quem criou login e ainda é "convidado"
+    // não lê nem grava nada do portal. Para liberar, o admin muda o perfil no Gerenciar Perfis.
+    function aprovado() {
       return request.auth != null &&
+        exists(/databases/$(database)/documents/usuarios/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.perfil != "convidado";
+    }
+
+    function isAdmin() {
+      return aprovado() &&
         get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.perfil == "admin";
     }
 
     function isAdministrativo() {
-      return request.auth != null &&
+      return aprovado() &&
         get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.perfil == "administrativo";
     }
 
@@ -85,17 +93,17 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
     match /salas/{salaId} {
-      allow read: if request.auth != null;
+      allow read: if aprovado();
       allow write: if isAdmin();
     }
     match /relatoriosAula/{relatorioId} {
-      allow read: if request.auth != null;
-      allow create, update: if request.auth != null && (
+      allow read: if aprovado();
+      allow create, update: if aprovado() && (
         isAdmin() ||
         get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.perfil == "administrativo" ||
         podeEscalarNaSala(request.resource.data.salaId)
       );
-      allow delete: if request.auth != null && (isAdmin() || isAdministrativo());
+      allow delete: if aprovado() && (isAdmin() || isAdministrativo());
     }
     // Códigos de acesso (Secretaria/admin geram). O aluno confere um código pelo próprio código
     // (get, nunca list) e o marca como usado no merge.
@@ -112,8 +120,8 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
     match /matriculas/{matriculaId} {
-      allow read: if request.auth != null;
-      allow create, update: if request.auth != null && (
+      allow read: if aprovado();
+      allow create, update: if aprovado() && (
         isAdmin() ||
         get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.perfil == "administrativo" ||
         podeEscalarNaSala(request.resource.data.salaId) ||
@@ -124,68 +132,68 @@ service cloud.firestore {
       );
     }
     match /licoes/{licaoId} {
-      allow read: if request.auth != null;
+      allow read: if aprovado();
       allow write: if isAdmin();
     }
     match /arquivosSala/{arquivoId} {
-      allow read: if request.auth != null;
-      allow create, update: if request.auth != null && (
+      allow read: if aprovado();
+      allow create, update: if aprovado() && (
         isAdmin() ||
         get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.perfil == "administrativo" ||
         podeEscalarNaSala(request.resource.data.salaId)
       );
     }
     match /escalaEbd/{escalaId} {
-      allow read: if request.auth != null;
+      allow read: if aprovado();
       allow write: if isAdmin();
     }
     match /caixaMovimentacoes/{movimentacaoId} {
-      allow read, write: if request.auth != null && (isAdmin() || isAdministrativo());
+      allow read, write: if aprovado() && (isAdmin() || isAdministrativo());
     }
     // Agendas da Secretaria (compromissos): só admin e administrativo
     match /compromissosSecretaria/{compromissoId} {
-      allow read, write: if request.auth != null && (isAdmin() || isAdministrativo());
+      allow read, write: if aprovado() && (isAdmin() || isAdministrativo());
     }
     // Avisos para usuários (convites de compromisso): admin e administrativo criam;
     // o destinatário lê o próprio aviso e só pode marcá-lo como lido
     match /avisosUsuarios/{avisoId} {
-      allow read: if request.auth != null && resource.data.uidDestino == request.auth.uid;
-      allow create: if request.auth != null && (isAdmin() || isAdministrativo());
-      allow update: if request.auth != null && resource.data.uidDestino == request.auth.uid
+      allow read: if aprovado() && resource.data.uidDestino == request.auth.uid;
+      allow create: if aprovado() && (isAdmin() || isAdministrativo());
+      allow update: if aprovado() && resource.data.uidDestino == request.auth.uid
                     && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['lido']);
-      allow delete: if request.auth != null && (isAdmin() || isAdministrativo());
+      allow delete: if aprovado() && (isAdmin() || isAdministrativo());
     }
     // Perfis de acesso (Gerenciar Perfis): todos os logados leem (para montar o menu);
     // só o Administrador Master cria, edita e exclui
     match /perfisAcesso/{perfilId} {
-      allow read: if request.auth != null;
+      allow read: if aprovado();
       allow write: if isAdmin();
     }
     // Categorias dos posts do carrosel (Secretaria/Administração editam)
     match /configPosts/{docId} {
-      allow read: if request.auth != null && (isAdmin() || isAdministrativo());
-      allow write: if request.auth != null && (isAdmin() || isAdministrativo());
+      allow read: if aprovado() && (isAdmin() || isAdministrativo());
+      allow write: if aprovado() && (isAdmin() || isAdministrativo());
     }
     match /materiaisEstoque/{materialId} {
-      allow read, write: if request.auth != null && (isAdmin() || isAdministrativo());
+      allow read, write: if aprovado() && (isAdmin() || isAdministrativo());
     }
     match /materiaisMovimentacoes/{movimentacaoId} {
-      allow read, write: if request.auth != null && (isAdmin() || isAdministrativo());
+      allow read, write: if aprovado() && (isAdmin() || isAdministrativo());
     }
     // Pedidos de revista: o aluno cria só o próprio pedido e lê o próprio;
     // a Secretaria lê todos e corrige (pagamento, status)
     match /pedidosRevistas/{pedidoId} {
-      allow create: if request.auth != null && (
+      allow create: if aprovado() && (
         request.resource.data.uid == request.auth.uid ||
         isAdmin() || isAdministrativo()
       );
-      allow read: if request.auth != null && (
+      allow read: if aprovado() && (
         (resource != null && resource.data.uid == request.auth.uid) ||
         isAdmin() || isAdministrativo()
       );
       // Aluno só pede ou desfaz cancelamento no próprio pedido, e só enquanto a Secretaria
       // estiver em "Solicitado pelo Aluno" (status pendente). Em "Pedido" ou "Entregue", fala com a secretaria.
-      allow update: if request.auth != null && (
+      allow update: if aprovado() && (
         isAdmin() || isAdministrativo() ||
         (resource.data.uid == request.auth.uid &&
           !(resource.data.status in ['pedido', 'entregue']) &&
@@ -195,17 +203,17 @@ service cloud.firestore {
           && request.resource.data.uid == request.auth.uid
           && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['uid']))
       );
-      allow delete: if request.auth != null && (isAdmin() || isAdministrativo());
+      allow delete: if aprovado() && (isAdmin() || isAdministrativo());
     }
     // Valores das revistas (Secretaria cadastra; alunos leem para ver o total do pedido)
     // Listas compartilhadas do site (ex.: motivos de ausência). Todos leem; só o Administrador grava.
     match /configListas/{docId} {
-      allow read: if request.auth != null;
+      allow read: if aprovado();
       allow write: if isAdmin();
     }
     match /configRevistas/{docId} {
-      allow read: if request.auth != null;
-      allow write: if request.auth != null && (isAdmin() || isAdministrativo());
+      allow read: if aprovado();
+      allow write: if aprovado() && (isAdmin() || isAdministrativo());
     }
 
     // ===== NOVO: Turmas EBD (Escalas de Professores) =====
